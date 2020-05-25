@@ -20,7 +20,6 @@ func CreateEventImg(image event.EventImage) (event.EventImage, error) {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
-
 }
 func UpdateEventImg(image event.EventImage) (event.EventImage, error) {
 

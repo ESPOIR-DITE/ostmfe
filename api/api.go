@@ -5,7 +5,7 @@ import (
 	"ostmfe/config"
 )
 
-const BASE_URL string = "http://localhost:9099/ostm/"
+const BASE_URL string = "http://localhost:9000/ostm/"
 
 func Rest() *resty.Request {
 	return resty.R().SetAuthToken("").

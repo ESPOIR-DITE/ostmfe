@@ -6,7 +6,7 @@ import (
 	"ostmfe/domain/event"
 )
 
-const evenT = api.BASE_URL + "evenT"
+const evenT = api.BASE_URL + "event/"
 
 func CreateEvent(myEvent event.Event) (event.Event, error) {
 

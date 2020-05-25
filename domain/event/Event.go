@@ -15,6 +15,7 @@ type EventImage struct {
 }
 
 type EventPartener struct {
+	Id          string `json:"id"`
 	PartenerId  string `json:"partenerId"`
 	EventId     string `json:"eventId"`
 	Description string `json:"description"`

@@ -1,16 +1,16 @@
-package event_io
+package user_io
 
 import (
 	"errors"
 	"ostmfe/api"
-	"ostmfe/domain/event"
+	user2 "ostmfe/domain/user"
 )
 
-const eventprojectURL = api.BASE_URL + "event_project/"
+const useraccountURL = api.BASE_URL + "user_account"
 
-func CreateEventProject(prj event.EventProject) (event.EventProject, error) {
-	entity := event.EventProject{}
-	resp, _ := api.Rest().SetBody(prj).Post(eventprojectURL + "create")
+func CreateUserAccount(account user2.UserAccount) (user2.UserAccount, error) {
+	var entity user2.UserAccount
+	resp, _ := api.Rest().SetBody(account).Post(useraccountURL + "create")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -20,9 +20,9 @@ func CreateEventProject(prj event.EventProject) (event.EventProject, error) {
 	}
 	return entity, nil
 }
-func UpdateEventProject(prj event.EventProject) (event.EventProject, error) {
-	entity := event.EventProject{}
-	resp, _ := api.Rest().SetBody(prj).Post(eventprojectURL + "update")
+func UpdateUserAccount(account user2.UserAccount) (user2.UserAccount, error) {
+	var entity user2.UserAccount
+	resp, _ := api.Rest().SetBody(account).Post(useraccountURL + "update")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -32,9 +32,9 @@ func UpdateEventProject(prj event.EventProject) (event.EventProject, error) {
 	}
 	return entity, nil
 }
-func ReadEventProject(id string) (event.EventProject, error) {
-	entity := event.EventProject{}
-	resp, _ := api.Rest().Get(eventprojectURL + "read?id" + id)
+func ReadUserAccount(id string) (user2.UserAccount, error) {
+	var entity user2.UserAccount
+	resp, _ := api.Rest().Get(useraccountURL + "read?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -44,9 +44,9 @@ func ReadEventProject(id string) (event.EventProject, error) {
 	}
 	return entity, nil
 }
-func DeleteEventProject(id string) (event.EventProject, error) {
-	entity := event.EventProject{}
-	resp, _ := api.Rest().Get(eventprojectURL + "delete?id" + id)
+func DeleteUserAccount(id string) (user2.UserAccount, error) {
+	var entity user2.UserAccount
+	resp, _ := api.Rest().Get(useraccountURL + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -56,9 +56,9 @@ func DeleteEventProject(id string) (event.EventProject, error) {
 	}
 	return entity, nil
 }
-func ReadEventProjects() ([]event.EventProject, error) {
-	entity := []event.EventProject{}
-	resp, _ := api.Rest().Get(eventprojectURL + "reads")
+func ReadUserAccounts() ([]user2.UserAccount, error) {
+	var entity []user2.UserAccount
+	resp, _ := api.Rest().Get(useraccountURL + "reads")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}

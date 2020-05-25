@@ -6,7 +6,7 @@ import (
 	"ostmfe/domain/place"
 )
 
-const places = api.BASE_URL + "places"
+const places = api.BASE_URL + "place/"
 
 func CreatePlace(plcs place.Place) (place.Place, error) {
 

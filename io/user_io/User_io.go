@@ -1,68 +1,73 @@
-package event_io
+package user_io
 
 import (
 	"errors"
 	"ostmfe/api"
-	"ostmfe/domain/event"
+	user2 "ostmfe/domain/user"
 )
 
-const eventprojectURL = api.BASE_URL + "event_project/"
+const userURL = api.BASE_URL + "user/"
 
-func CreateEventProject(prj event.EventProject) (event.EventProject, error) {
-	entity := event.EventProject{}
-	resp, _ := api.Rest().SetBody(prj).Post(eventprojectURL + "create")
+func CreateUser(userObject user2.Users) (user2.Users, error) {
+	var entity user2.Users
+	resp, _ := api.Rest().SetBody(userObject).Post(userURL + "create")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
 	err := api.JSON.Unmarshal(resp.Body(), &entity)
+
 	if err != nil {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
 }
-func UpdateEventProject(prj event.EventProject) (event.EventProject, error) {
-	entity := event.EventProject{}
-	resp, _ := api.Rest().SetBody(prj).Post(eventprojectURL + "update")
+func UpdateUser(userObject user2.Users) (user2.Users, error) {
+	var entity user2.Users
+	resp, _ := api.Rest().SetBody(userObject).Post(userURL + "update")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
 	err := api.JSON.Unmarshal(resp.Body(), &entity)
+
 	if err != nil {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
 }
-func ReadEventProject(id string) (event.EventProject, error) {
-	entity := event.EventProject{}
-	resp, _ := api.Rest().Get(eventprojectURL + "read?id" + id)
+func ReadUser(id string) (user2.Users, error) {
+	var entity user2.Users
+	resp, _ := api.Rest().Get(userURL + "read?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
 	err := api.JSON.Unmarshal(resp.Body(), &entity)
+
 	if err != nil {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
 }
-func DeleteEventProject(id string) (event.EventProject, error) {
-	entity := event.EventProject{}
-	resp, _ := api.Rest().Get(eventprojectURL + "delete?id" + id)
+func DeleteUser(id string) (user2.Users, error) {
+	var entity user2.Users
+	resp, _ := api.Rest().Get(userURL + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
 	err := api.JSON.Unmarshal(resp.Body(), &entity)
+
 	if err != nil {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
 }
-func ReadEventProjects() ([]event.EventProject, error) {
-	entity := []event.EventProject{}
-	resp, _ := api.Rest().Get(eventprojectURL + "reads")
+func ReadUsers() ([]user2.Users, error) {
+	var entity []user2.Users
+	resp, _ := api.Rest().Get(userURL + "reads")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
 	err := api.JSON.Unmarshal(resp.Body(), &entity)
+
 	if err != nil {
 		return entity, errors.New(resp.Status())
 	}

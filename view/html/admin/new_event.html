@@ -10,6 +10,50 @@
   <meta name="author" content="">
 
   <title>SB Admin 2 - Register</title>
+  <style>
+    .form-select {
+      height: 40px;
+      width: 100%;
+    }
+    .form-select .nice-select {
+      border: none;
+      border-radius: 0px;
+      height: 40px;
+      background: #f9f9ff;
+      padding-left: 45px;
+      padding-right: 40px;
+      width: 100%;
+    }
+    .nice-select {
+      -webkit-tap-highlight-color: transparent;
+      background-color: #fff;
+      border-radius: 5px;
+      border: solid 1px #e8e8e8;
+      box-sizing: border-box;
+      clear: both;
+      cursor: pointer;
+      display: block;
+      float: left;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: normal;
+      height: 42px;
+      line-height: 40px;
+      outline: none;
+      padding-left: 18px;
+      padding-right: 30px;
+      position: relative;
+      text-align: left !important;
+      -webkit-transition: all 0.2s ease-in-out;
+      transition: all 0.2s ease-in-out;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      white-space: nowrap;
+      width: auto;
+    }
+  </style>
 
   <!-- Custom fonts for this template-->
   <link href="../../assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -17,7 +61,7 @@
 
   <!-- Custom styles for this template-->
   <link href="../../assets/css/sb-admin-2.min.css" rel="stylesheet">
-
+  <link rel="stylesheet" href="../../assets/css/main.css">
 </head>
 
 <body class="bg-gradient-primary">
@@ -28,50 +72,57 @@
       <div class="card-body p-0">
         <!-- Nested Row within Card Body -->
         <div class="row">
-          <div class="col-lg-5 d-none d-lg-block bg-register-image"></div>
+
+          <div class="col-lg-5 d-none d-lg-block ">
+            <div class="map-wrap" style="width:100%; height: 100%;" id="map"></div>
+
+          </div>
+
           <div class="col-lg-7">
             <div class="p-5">
               <div class="text-center">
-                <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
+                <h1 class="h4 text-gray-900 mb-4">Create new Event</h1>
               </div>
-              <form class="user">
+              <form class="user" method="post" action="/admin_user/">
                 <div class="form-group row">
                   <div class="col-sm-6 mb-3 mb-sm-0">
-                    <input type="text" class="form-control form-control-user" id="exampleFirstName" placeholder="First Name">
+                    <input type="text" name="event_name" class="form-control form-control-user" id="exampleFirstName" placeholder="Event Name">
                   </div>
                   <div class="col-sm-6">
-                    <input type="text" class="form-control form-control-user" id="exampleLastName" placeholder="Last Name">
+                    <input type="date" name="date" class="form-control form-control-user" id="exampleLastName" placeholder="Event date">
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <div class="col-sm-6">
+                    <select name="project" class="browser-default custom-select">
+                      <option selected>Choose a project</option>
+                      <option value="1">One</option>
+                      <option value="2">Two</option>
+                      <option value="3">Three</option>
+                    </select>
+                  </div>
+                  <div class="col-sm-6">
+                    <select name="partner" class="browser-default custom-select">
+                      <option selected>Choose a partner</option>
+                      <option value="1">One</option>
+                      <option value="2">Two</option>
+                      <option value="3">Three</option>
+                    </select>
                   </div>
                 </div>
                 <div class="form-group">
-                  <input type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Email Address">
+                  <input type="text" class="form-control form-control-user" name="latlng" id="exampleRepeatPassword" placeholder="Map coordinates">
                 </div>
-                <div class="form-group row">
-                  <div class="col-sm-6 mb-3 mb-sm-0">
-                    <input type="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Password">
-                  </div>
-                  <div class="col-sm-6">
-                    <input type="password" class="form-control form-control-user" id="exampleRepeatPassword" placeholder="Repeat Password">
-                  </div>
+
+                <div class="form-group">
+                    <input type="text" class="form-control form-control-user" name="place" placeholder="Location name">
                 </div>
-                <a href="login.html" class="btn btn-primary btn-user btn-block">
-                  Register Account
-                </a>
+                <button type="submit" class="btn btn-primary btn-user btn-block">
+                  Next
+                </button>
                 <hr>
-                <a href="index.html" class="btn btn-google btn-user btn-block">
-                  <i class="fab fa-google fa-fw"></i> Register with Google
-                </a>
-                <a href="index.html" class="btn btn-facebook btn-user btn-block">
-                  <i class="fab fa-facebook-f fa-fw"></i> Register with Facebook
-                </a>
+                <a href="/admin_user" class="btn btn-google btn-user btn-block">Cancel</a>
               </form>
-              <hr>
-              <div class="text-center">
-                <a class="small" href="forgot-password.html">Forgot Password?</a>
-              </div>
-              <div class="text-center">
-                <a class="small" href="login.html">Already have an account? Login!</a>
-              </div>
             </div>
           </div>
         </div>
@@ -83,12 +134,16 @@
   <!-- Bootstrap core JavaScript-->
   <script src="../../assets/vendor/jquery/jquery.min.js"></script>
   <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
   <!-- Core plugin JavaScript-->
   <script src="../../assets/vendor/jquery-easing/jquery.easing.min.js"></script>
-
+  <!-- Custom map-->
+<script src="../../assets/js/customer/mymap.js"></script>
   <!-- Custom scripts for all pages-->
   <script src="../../assets/js/sb-admin-2.min.js"></script>
+  <script async defer
+          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA&callback=initMap">
+  </script>
+  <!--script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA"></script-->
 
 </body>
 

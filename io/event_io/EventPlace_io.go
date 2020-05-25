@@ -6,12 +6,12 @@ import (
 	"ostmfe/domain/event"
 )
 
-const eventP = api.BASE_URL + "eventP"
+const eventplaceURL = api.BASE_URL + "event_place/"
 
 func CreateEventPlace(E event.EventPlace) (event.EventPlace, error) {
 
 	entity := event.EventPlace{}
-	resp, _ := api.Rest().SetBody(E).Post(eventP + "create")
+	resp, _ := api.Rest().SetBody(E).Post(eventplaceURL + "create")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -24,7 +24,7 @@ func CreateEventPlace(E event.EventPlace) (event.EventPlace, error) {
 func UpdateEventPlace(E event.EventPlace) (event.EventPlace, error) {
 
 	entity := event.EventPlace{}
-	resp, _ := api.Rest().SetBody(E).Post(eventP + "update")
+	resp, _ := api.Rest().SetBody(E).Post(eventplaceURL + "update")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -37,7 +37,7 @@ func UpdateEventPlace(E event.EventPlace) (event.EventPlace, error) {
 func ReadEventPlace(id string) (event.EventPlace, error) {
 
 	entity := event.EventPlace{}
-	resp, _ := api.Rest().Get(eventP + "read?id" + id)
+	resp, _ := api.Rest().Get(eventplaceURL + "read?id" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -50,7 +50,7 @@ func ReadEventPlace(id string) (event.EventPlace, error) {
 func DeleteEventPlace(id string) (event.EventPlace, error) {
 
 	entity := event.EventPlace{}
-	resp, _ := api.Rest().Get(eventP + "delete?id" + id)
+	resp, _ := api.Rest().Get(eventplaceURL + "delete?id" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -60,10 +60,10 @@ func DeleteEventPlace(id string) (event.EventPlace, error) {
 	}
 	return entity, nil
 }
-func ReadEventPlaces() (event.EventPlace, error) {
+func ReadEventPlaces() ([]event.EventPlace, error) {
 
-	entity := event.EventPlace{}
-	resp, _ := api.Rest().Get(eventP + "reads")
+	entity := []event.EventPlace{}
+	resp, _ := api.Rest().Get(eventplaceURL + "reads")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}

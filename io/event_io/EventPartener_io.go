@@ -3,14 +3,14 @@ package event_io
 import (
 	"errors"
 	"ostmfe/api"
-	"ostmfe/domain/partner"
+	event2 "ostmfe/domain/event"
 )
 
-const eventPrtnr = api.BASE_URL + "eventPrtnr"
+const eventPrtnr = api.BASE_URL + "event_partner/"
 
-func CreateEventPartener(prtnr partner.Partner) (partner.Partner, error) {
+func CreateEventPartener(prtnr event2.EventPartener) (event2.EventPartener, error) {
 
-	entity := partner.Partner{}
+	entity := event2.EventPartener{}
 	resp, _ := api.Rest().SetBody(prtnr).Post(eventPrtnr + "create")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
@@ -20,11 +20,10 @@ func CreateEventPartener(prtnr partner.Partner) (partner.Partner, error) {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
-
 }
-func UpdateEventPartener(prtnr partner.Partner) (partner.Partner, error) {
+func UpdateEventPartener(prtnr event2.EventPartener) (event2.EventPartener, error) {
 
-	entity := partner.Partner{}
+	entity := event2.EventPartener{}
 	resp, _ := api.Rest().SetBody(prtnr).Post(eventPrtnr + "update")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
@@ -36,9 +35,9 @@ func UpdateEventPartener(prtnr partner.Partner) (partner.Partner, error) {
 	return entity, nil
 
 }
-func ReadEventPartener(id string) (partner.Partner, error) {
+func ReadEventPartener(id string) (event2.EventPartener, error) {
 
-	entity := partner.Partner{}
+	entity := event2.EventPartener{}
 	resp, _ := api.Rest().Get(eventPrtnr + "read?id" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
@@ -50,9 +49,9 @@ func ReadEventPartener(id string) (partner.Partner, error) {
 	return entity, nil
 
 }
-func DeleteEventPartener(id string) (partner.Partner, error) {
+func DeleteEventPartener(id string) (event2.EventPartener, error) {
 
-	entity := partner.Partner{}
+	entity := event2.EventPartener{}
 	resp, _ := api.Rest().Get(eventPrtnr + "delete?id" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
@@ -64,9 +63,9 @@ func DeleteEventPartener(id string) (partner.Partner, error) {
 	return entity, nil
 
 }
-func ReadEventParteners() (partner.Partner, error) {
+func ReadEventParteners() (event2.EventPartener, error) {
 
-	entity := partner.Partner{}
+	entity := event2.EventPartener{}
 	resp, _ := api.Rest().Get(eventPrtnr + "reads")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
