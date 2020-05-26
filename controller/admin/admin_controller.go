@@ -1,19 +1,20 @@
 package admin
 
 import (
-	"bufio"
 	"fmt"
 	"github.com/go-chi/chi"
 	"html/template"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"ostmfe/config"
 	"ostmfe/controller/misc"
 	event2 "ostmfe/domain/event"
 	place2 "ostmfe/domain/place"
+	project2 "ostmfe/domain/project"
 	user2 "ostmfe/domain/user"
 	"ostmfe/io/event_io"
 	"ostmfe/io/place_io"
+	"ostmfe/io/project_io"
 	"ostmfe/io/user_io"
 	"time"
 )
@@ -73,22 +74,84 @@ func CreateProjectHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		//fileslist := r.Form["file"]
+
 		file, _, err := r.FormFile("file")
+		file2, _, err := r.FormFile("file2")
+		file3, _, err := r.FormFile("file3")
+		file4, _, err := r.FormFile("file4")
+		file5, _, err := r.FormFile("file5")
+		file6, _, err := r.FormFile("file6")
+		project_name := r.PostFormValue("project_name")
+		description := r.PostFormValue("description")
 		if err != nil {
-			fmt.Println(err, "<<<<<<error when getting file>>>>>>>", file)
+			fmt.Println(err, "<<<<<< error reading file>>>>>>>")
+		}
+
+		filesArray := []io.Reader{file, file2, file3, file4, file5, file6}
+		filesByteArray := misc.CheckFiles(filesArray)
+		//reader := bufio.NewReader(file)
+		//reader2 := bufio.NewReader(file2)
+		//reader3 := bufio.NewReader(file3)
+		//reader4 := bufio.NewReader(file4)
+		//reader5 := bufio.NewReader(file5)
+		//reader6 := bufio.NewReader(file6)
+		//
+		//content, _ := ioutil.ReadAll(reader)
+		//content2, _ := ioutil.ReadAll(reader2)
+		//content3, _ := ioutil.ReadAll(reader3)
+		//content4, _ := ioutil.ReadAll(reader4)
+		//content5, _ := ioutil.ReadAll(reader5)
+		//content6, _ := ioutil.ReadAll(reader6)
+		fmt.Println(project_name, "<<<Project Name|| description>>>", description)
+
+		if project_name != "" && description != "" {
+			project := project2.Project{"", project_name, description}
+			new_project, err := project_io.CreateProject(project)
+			if err != nil {
+				fmt.Println(err, " could not create project Line: 190")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/project/new", 301)
+				return
+			}
+			//COnverting file(byte arrays) into Array of byte
+			//sliceOfImage := [][]byte{content, content2, content3, content4, content5, content6}
+
+			projectImage := project2.ProjectImage{"", new_project.Id, "", ""}
+			helper := project2.ProjectImageHelper{filesByteArray, projectImage}
+			_, errr := project_io.CreateProjectImage(helper)
+			if errr != nil {
+				fmt.Println(err, " error creating projectImage")
+				_, err := project_io.DeleteProject(new_project.Id)
+				if err != nil {
+					fmt.Println(err, " error deleting project")
+				}
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/project/new", 301)
+				return
+			}
+			if app.Session.GetString(r.Context(), "creation-successful") != "" {
+				app.Session.Remove(r.Context(), "creation-successful")
+			}
+			app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new project : "+project_name)
+			http.Redirect(w, r, "/admin_user", 301)
+			return
+			//event_name := r.PostFormValue("event_name")
+		}
+		fmt.Println("One of the field is missing")
+		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
+			app.Session.Remove(r.Context(), "creation-unknown-error")
 			return
 		}
-		reader := bufio.NewReader(file)
+		app.Session.Put(r.Context(), "creation-unknown-error", "You have encountered an unknown error, please try again")
+		http.Redirect(w, r, "/admin_user/project/new", 301)
+		return
 
-		content, _ := ioutil.ReadAll(reader)
-
-		//fileString := string(content)
-
-		sliceOfImage := [][]byte{content}
-		//listofFiles :=contains(fileslist)
-		fmt.Println(sliceOfImage[0])
-
-		//event_name := r.PostFormValue("event_name")
 	}
 
 }
@@ -214,6 +277,9 @@ func CreateEventHandler(app *config.Env) http.HandlerFunc {
 					http.Redirect(w, r, "/admin_user/users/new", 301)
 					return
 				}
+			}
+			if app.Session.GetString(r.Context(), "creation-successful") != "" {
+				app.Session.Remove(r.Context(), "creation-successful")
 			}
 			app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new Event : "+event_name)
 			http.Redirect(w, r, "/admin_user", 301)

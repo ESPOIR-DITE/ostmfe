@@ -6,12 +6,11 @@ import (
 	"ostmfe/domain/project"
 )
 
-const projectURL = api.BASE_URL + "project/"
+const projectimageURL = api.BASE_URL + "project_Image/"
 
-func CreateProject(P project.Project) (project.Project, error) {
-
-	entity := project.Project{}
-	resp, _ := api.Rest().SetBody(P).Post(projectURL + "create")
+func CreateProjectImage(helper project.ProjectImageHelper) (project.ProjectImage, error) {
+	entity := project.ProjectImage{}
+	resp, _ := api.Rest().SetBody(helper).Post(projectimageURL + "create")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -20,12 +19,10 @@ func CreateProject(P project.Project) (project.Project, error) {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
-
 }
-func updateProject(P project.Project) (project.Project, error) {
-
-	entity := project.Project{}
-	resp, _ := api.Rest().SetBody(P).Post(projectURL + "update")
+func UpdateProjectImage(helper project.ProjectImage) (project.ProjectImage, error) {
+	entity := project.ProjectImage{}
+	resp, _ := api.Rest().SetBody(helper).Post(projectimageURL + "update")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -34,12 +31,10 @@ func updateProject(P project.Project) (project.Project, error) {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
-
 }
-func ReadProject(id string) (project.Project, error) {
-
-	entity := project.Project{}
-	resp, _ := api.Rest().Get(projectURL + "read?id" + id)
+func ReadProjectImage(id string) (project.ProjectImage, error) {
+	entity := project.ProjectImage{}
+	resp, _ := api.Rest().Get(projectimageURL + "read?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -48,12 +43,10 @@ func ReadProject(id string) (project.Project, error) {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
-
 }
-func DeleteProject(id string) (project.Project, error) {
-
-	entity := project.Project{}
-	resp, _ := api.Rest().Get(projectURL + "delete?id" + id)
+func ReadProjectImages(id string) ([]project.ProjectImage, error) {
+	entity := []project.ProjectImage{}
+	resp, _ := api.Rest().Get(projectimageURL + "read?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -62,12 +55,10 @@ func DeleteProject(id string) (project.Project, error) {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
-
 }
-func ReadProjects() (project.Project, error) {
-
-	entity := project.Project{}
-	resp, _ := api.Rest().Get(projectURL + "reads")
+func DeleteProjectImage(id string) (project.ProjectImage, error) {
+	entity := project.ProjectImage{}
+	resp, _ := api.Rest().Get(projectimageURL + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -76,5 +67,4 @@ func ReadProjects() (project.Project, error) {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
-
 }

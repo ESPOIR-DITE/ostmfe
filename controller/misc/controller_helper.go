@@ -1,6 +1,10 @@
 package misc
 
 import (
+	"bufio"
+	"fmt"
+	"io"
+	"io/ioutil"
 	"strings"
 	"time"
 )
@@ -40,4 +44,17 @@ func SeparateLatLng(latlng string) (string, string) {
 	latitude = parts[0]
 	longitude = parts[1]
 	return latitude, longitude
+}
+
+func CheckFiles(files []io.Reader) [][]byte {
+	var bytelist [][]byte
+	for index, reablefile := range files {
+		if reablefile != nil {
+			reader := bufio.NewReader(reablefile)
+			content, _ := ioutil.ReadAll(reader)
+			bytelist = append(bytelist, content)
+			fmt.Println(" done with file: ", index)
+		}
+	}
+	return bytelist
 }
