@@ -38,7 +38,7 @@ func UpdateEvent(myEvent event.Event) (event.Event, error) {
 func ReadEvent(id string) (event.Event, error) {
 
 	entity := event.Event{}
-	resp, _ := api.Rest().Get(evenT + "read?id" + id)
+	resp, _ := api.Rest().Get(evenT + "read?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -51,7 +51,7 @@ func ReadEvent(id string) (event.Event, error) {
 func DeleteEvent(id string) (event.Event, error) {
 
 	entity := event.Event{}
-	resp, _ := api.Rest().Get(evenT + "delete?id" + id)
+	resp, _ := api.Rest().Get(evenT + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -61,8 +61,8 @@ func DeleteEvent(id string) (event.Event, error) {
 	}
 	return entity, nil
 }
-func ReadEvents() (event.Event, error) {
-	entity := event.Event{}
+func ReadEvents() ([]event.Event, error) {
+	entity := []event.Event{}
 	resp, _ := api.Rest().Get(evenT + "reads")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())

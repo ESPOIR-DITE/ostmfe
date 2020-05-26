@@ -39,7 +39,7 @@ func updateProject(P project.Project) (project.Project, error) {
 func ReadProject(id string) (project.Project, error) {
 
 	entity := project.Project{}
-	resp, _ := api.Rest().Get(projectURL + "read?id" + id)
+	resp, _ := api.Rest().Get(projectURL + "read?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -53,7 +53,7 @@ func ReadProject(id string) (project.Project, error) {
 func DeleteProject(id string) (project.Project, error) {
 
 	entity := project.Project{}
-	resp, _ := api.Rest().Get(projectURL + "delete?id" + id)
+	resp, _ := api.Rest().Get(projectURL + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -64,9 +64,9 @@ func DeleteProject(id string) (project.Project, error) {
 	return entity, nil
 
 }
-func ReadProjects() (project.Project, error) {
+func ReadProjects() ([]project.Project, error) {
 
-	entity := project.Project{}
+	entity := []project.Project{}
 	resp, _ := api.Rest().Get(projectURL + "reads")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())

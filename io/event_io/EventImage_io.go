@@ -6,12 +6,12 @@ import (
 	"ostmfe/domain/event"
 )
 
-const eventImg = api.BASE_URL + "eventImg"
+const eventimageURL = api.BASE_URL + "event_image/"
 
 func CreateEventImg(image event.EventImage) (event.EventImage, error) {
 
 	entity := event.EventImage{}
-	resp, _ := api.Rest().SetBody(image).Post(eventImg + "create")
+	resp, _ := api.Rest().SetBody(image).Post(eventimageURL + "create")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -24,7 +24,7 @@ func CreateEventImg(image event.EventImage) (event.EventImage, error) {
 func UpdateEventImg(image event.EventImage) (event.EventImage, error) {
 
 	entity := event.EventImage{}
-	resp, _ := api.Rest().SetBody(image).Post(eventImg + "update")
+	resp, _ := api.Rest().SetBody(image).Post(eventimageURL + "update")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -38,7 +38,7 @@ func UpdateEventImg(image event.EventImage) (event.EventImage, error) {
 func ReadEventImg(id string) (event.EventImage, error) {
 
 	entity := event.EventImage{}
-	resp, _ := api.Rest().Get(eventImg + "read?id" + id)
+	resp, _ := api.Rest().Get(eventimageURL + "read?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -52,7 +52,7 @@ func ReadEventImg(id string) (event.EventImage, error) {
 func DeleteEventImg(id string) (event.EventImage, error) {
 
 	entity := event.EventImage{}
-	resp, _ := api.Rest().Get(eventImg + "delete?id" + id)
+	resp, _ := api.Rest().Get(eventimageURL + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -63,10 +63,10 @@ func DeleteEventImg(id string) (event.EventImage, error) {
 	return entity, nil
 
 }
-func ReadEventmgs() (event.EventImage, error) {
+func ReadEventmgs() ([]event.EventImage, error) {
 
-	entity := event.EventImage{}
-	resp, _ := api.Rest().Get(eventImg + "reads")
+	entity := []event.EventImage{}
+	resp, _ := api.Rest().Get(eventimageURL + "reads")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}

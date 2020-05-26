@@ -9,10 +9,12 @@ import (
 	"ostmfe/config"
 	"ostmfe/controller/misc"
 	event2 "ostmfe/domain/event"
+	partner2 "ostmfe/domain/partner"
 	place2 "ostmfe/domain/place"
 	project2 "ostmfe/domain/project"
 	user2 "ostmfe/domain/user"
 	"ostmfe/io/event_io"
+	"ostmfe/io/partner_io"
 	"ostmfe/io/place_io"
 	"ostmfe/io/project_io"
 	"ostmfe/io/user_io"
@@ -44,9 +46,17 @@ func Home(app *config.Env) http.Handler {
 	r.Post("/project/create", CreateProjectHandler(app))
 	//r.Get("/projects/delete",DeleteProjectsHandler(app))
 
+	r.Get("/partner", PartenersHandler(app))
+	r.Get("/partner/new", NewPartenersHandler(app))
+	r.Get("/partner/edit", EditePartenersHandler(app))
+	r.Post("/partner/create", CreatePartenersHandler(app))
+
 	r.Get("/place", PlacesHandler(app))
 	r.Get("/place/new", NewPlacesHandler(app))
 	r.Get("/place/edit", EditPlacesHandler(app))
+	r.Post("/place/create_stp1", CreateStp1Handler(app))
+	r.Post("/place/create_stp2", CreateStp2Handler(app))
+	r.Get("/place/new_stp2/{placeId}", NewPlaceStp2Handler(app))
 
 	r.Get("/collection", CollectionHandler(app))
 	r.Get("/collection/new", NewCollectionHandler(app))
@@ -57,6 +67,185 @@ func Home(app *config.Env) http.Handler {
 	r.Get("/history/edit", EditHistoryHandler(app))
 
 	return r
+}
+
+func CreateStp2Handler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		//fileslist := r.Form["file"]
+
+		file, _, err := r.FormFile("file")
+		file2, _, err := r.FormFile("file2")
+		file3, _, err := r.FormFile("file3")
+		file4, _, err := r.FormFile("file4")
+		file5, _, err := r.FormFile("file5")
+		file6, _, err := r.FormFile("file6")
+		project_name := r.PostFormValue("project_name")
+		description := r.PostFormValue("description")
+		if err != nil {
+			fmt.Println(err, "<<<<<< error reading file>>>>>>>")
+		}
+
+		filesArray := []io.Reader{file, file2, file3, file4, file5, file6}
+		filesByteArray := misc.CheckFiles(filesArray)
+	}
+}
+
+func NewPlaceStp2Handler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		placeId := chi.URLParam(r, "placeId")
+		place, err := place_io.ReadPlace(placeId)
+		if err != nil {
+			fmt.Println(err, " error reading the Place")
+			if app.Session.GetString(r.Context(), "user-read-error") != "" {
+				app.Session.Remove(r.Context(), "user-read-error")
+			}
+			app.Session.Put(r.Context(), "user-read-error", "An error has occurred, Please try again late")
+			http.Redirect(w, r, "/admin_user/place/new", 301)
+			return
+		}
+		type PageData struct {
+			Place place2.Place
+		}
+		data := PageData{place}
+		files := []string{
+			app.Path + "admin/place/image_place.html",
+			//app.Path + "admin/template/navbar.html",
+			//app.Path + "base_templates/footer.html",
+		}
+		ts, err := template.ParseFiles(files...)
+		if err != nil {
+			app.ErrorLog.Println(err.Error())
+			return
+		}
+		err = ts.Execute(w, data)
+		if err != nil {
+			app.ErrorLog.Println(err.Error())
+		}
+	}
+}
+
+func CreateStp1Handler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		title := r.PostFormValue("title")
+		latlng := r.PostFormValue("latlng")
+		description := r.PostFormValue("description")
+		if title != "" && latlng != "" {
+			latitude, longitude := misc.SeparateLatLng(latlng)
+			place := place2.Place{"", title, latitude, longitude, description}
+			newPlace, err := place_io.CreatePlace(place)
+			if err != nil {
+				fmt.Println(err, " error when creating a new Place")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/place/new", 301)
+				return
+			}
+			if app.Session.GetString(r.Context(), "creation-successful") != "" {
+				app.Session.Remove(r.Context(), "creation-successful")
+			}
+			app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new Place : "+newPlace.Title)
+			http.Redirect(w, r, "/admin_user/place/new_stp2/"+newPlace.Id, 301)
+			return
+		}
+		fmt.Println("One of the field is missing")
+		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
+			app.Session.Remove(r.Context(), "creation-unknown-error")
+			return
+		}
+		app.Session.Put(r.Context(), "creation-unknown-error", "You have encountered an unknown error, please try again")
+		http.Redirect(w, r, "/admin_user/place/new", 301)
+		return
+	}
+}
+
+func CreatePartenersHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		partner_name := r.PostFormValue("partner_name")
+		description := r.PostFormValue("description")
+		url := r.PostFormValue("url")
+
+		if url != "" && description != "" && partner_name != "" {
+			partner := partner2.Partner{"", partner_name, description, url}
+			partnerResult, err := partner_io.CreatePartner(partner)
+			if err != nil {
+				fmt.Println(err, " error creating a new partner")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/partner/new", 301)
+				return
+			}
+			if app.Session.GetString(r.Context(), "creation-successful") != "" {
+				app.Session.Remove(r.Context(), "creation-successful")
+			}
+			app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new partenr : "+partnerResult.Name)
+			http.Redirect(w, r, "/admin_user", 301)
+			return
+		}
+	}
+}
+
+func EditePartenersHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		files := []string{
+			app.Path + "admin/collection/edit_partner.html",
+			//app.Path + "admin/template/navbar.html",
+			//app.Path + "base_templates/footer.html",
+		}
+		ts, err := template.ParseFiles(files...)
+		if err != nil {
+			app.ErrorLog.Println(err.Error())
+			return
+		}
+		err = ts.Execute(w, nil)
+		if err != nil {
+			app.ErrorLog.Println(err.Error())
+		}
+	}
+}
+
+func PartenersHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		files := []string{
+			app.Path + "admin/partner/partner.html",
+			//app.Path + "admin/template/navbar.html",
+			//app.Path + "base_templates/footer.html",
+		}
+		ts, err := template.ParseFiles(files...)
+		if err != nil {
+			app.ErrorLog.Println(err.Error())
+			return
+		}
+		err = ts.Execute(w, nil)
+		if err != nil {
+			app.ErrorLog.Println(err.Error())
+		}
+	}
+}
+
+func NewPartenersHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		files := []string{
+			app.Path + "admin/partner/new_partner.html",
+			//app.Path + "admin/template/navbar.html",
+			//app.Path + "base_templates/footer.html",
+		}
+		ts, err := template.ParseFiles(files...)
+		if err != nil {
+			app.ErrorLog.Println(err.Error())
+			return
+		}
+		err = ts.Execute(w, nil)
+		if err != nil {
+			app.ErrorLog.Println(err.Error())
+		}
+	}
 }
 func contains(slice []string) [][]byte {
 	var set [][]byte
@@ -225,7 +414,7 @@ func CreateEventHandler(app *config.Env) http.HandlerFunc {
 				return
 			}
 			latitude, longitude := misc.SeparateLatLng(latlng)
-			place := place2.Place{"", place, latitude, longitude}
+			place := place2.Place{"", place, latitude, longitude, ""}
 			newPlace, err := place_io.CreatePlace(place)
 			if err != nil {
 				fmt.Println(err, " error when creating a new place")
@@ -483,7 +672,7 @@ func EditPlacesHandler(app *config.Env) http.HandlerFunc {
 func NewPlacesHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		files := []string{
-			app.Path + "admin/place/new_places.html",
+			app.Path + "admin/place/new_place.html",
 			//app.Path + "admin/template/navbar.html",
 			//app.Path + "base_templates/footer.html",
 		}
@@ -615,6 +804,20 @@ func EditEventsHandler(app *config.Env) http.HandlerFunc {
 
 func NewEventsHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		//Reading all the Projects
+		projects, err := project_io.ReadProjects()
+		if err != nil {
+			fmt.Println(err, " error reading all the projects")
+		}
+		partners, err := partner_io.ReadPartners()
+		if err != nil {
+			fmt.Println(err, " error reading all the partners")
+		}
+		type PageData struct {
+			Projects []project2.Project
+			Partners []partner2.Partner
+		}
+		data := PageData{projects, partners}
 		files := []string{
 			app.Path + "admin/new_event.html",
 			//app.Path + "admin/template/navbar.html",
@@ -625,7 +828,7 @@ func NewEventsHandler(app *config.Env) http.HandlerFunc {
 			app.ErrorLog.Println(err.Error())
 			return
 		}
-		err = ts.Execute(w, nil)
+		err = ts.Execute(w, data)
 		if err != nil {
 			app.ErrorLog.Println(err.Error())
 		}

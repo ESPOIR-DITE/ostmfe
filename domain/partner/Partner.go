@@ -4,4 +4,5 @@ type Partner struct {
 	Id          string `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
+	Link        string `json:"link"`
 }

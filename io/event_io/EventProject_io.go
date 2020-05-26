@@ -34,7 +34,7 @@ func UpdateEventProject(prj event.EventProject) (event.EventProject, error) {
 }
 func ReadEventProject(id string) (event.EventProject, error) {
 	entity := event.EventProject{}
-	resp, _ := api.Rest().Get(eventprojectURL + "read?id" + id)
+	resp, _ := api.Rest().Get(eventprojectURL + "read?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -46,7 +46,7 @@ func ReadEventProject(id string) (event.EventProject, error) {
 }
 func DeleteEventProject(id string) (event.EventProject, error) {
 	entity := event.EventProject{}
-	resp, _ := api.Rest().Get(eventprojectURL + "delete?id" + id)
+	resp, _ := api.Rest().Get(eventprojectURL + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}

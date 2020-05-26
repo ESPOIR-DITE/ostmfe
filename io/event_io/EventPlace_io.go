@@ -37,7 +37,7 @@ func UpdateEventPlace(E event.EventPlace) (event.EventPlace, error) {
 func ReadEventPlace(id string) (event.EventPlace, error) {
 
 	entity := event.EventPlace{}
-	resp, _ := api.Rest().Get(eventplaceURL + "read?id" + id)
+	resp, _ := api.Rest().Get(eventplaceURL + "read?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -50,7 +50,7 @@ func ReadEventPlace(id string) (event.EventPlace, error) {
 func DeleteEventPlace(id string) (event.EventPlace, error) {
 
 	entity := event.EventPlace{}
-	resp, _ := api.Rest().Get(eventplaceURL + "delete?id" + id)
+	resp, _ := api.Rest().Get(eventplaceURL + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}

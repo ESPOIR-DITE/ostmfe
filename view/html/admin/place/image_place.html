@@ -28,35 +28,38 @@
       <div class="card-body p-0">
         <!-- Nested Row within Card Body -->
         <div class="row">
-          <div class="col-lg-7 d-none d-lg-block ">
-            <div class="map-wrap" style="width:100%; height: 100%;" id="map"></div>
-          </div>
-          <div class="col-lg-5">
+          <div class="col-lg-5 d-none d-lg-block bg-register-image"></div>
+          <div class="col-lg-7">
             <div class="p-5">
               <div class="text-center">
-                <h1 class="h4 text-gray-900 mb-4">Create a new Place!</h1>
+                <h1 class="h4 text-gray-900 mb-4">Step 2 Of {{.Place.Title}}</h1>
               </div>
-              <form class="user" method="post" action="/admin_user/place/create_stp1">
+              <form class="user"method="post" action="/admin_user/create_stp2">
                 <div class="form-group">
-                  <label>Place Title</label>
-                  <input type="text" class="form-control" name="title" id="exampleInputEmail" placeholder="Place name ex: la peirre tailler!">
+                  <label>Place History</label>
+                  <textarea  class="form-control" id="exampleInputEmail" placeholder="Email Address"></textarea>
                 </div>
-                <div class="form-group">
-                  <label>Place coordinates <small>Please click on the map</small> </label>
-                  <input type="text" class="form-control " name="latlng" id="exampleRepeatPassword" placeholder="" disabled>
-                </div>
-                <div class="form-group">
-                  <label>Place Description</label>
-                  <textarea  class="form-control" name="description" id="exampleInputEmail" placeholder="Place name ex: la peirre tailler!"></textarea>
+                <div class="form-group ">
+                  <label>Project profile Picture</label>
+                  <input type="file"name="file" class="form-control " id="file" placeholder="Project Name" required>
                 </div>
 
-                <button type="submit" class="btn btn-primary  btn-block">
-                  Next
+                <div class="form-group  row" id="filesArea"></div>
+                <div class="form-group row" >
+                  <div class="col-sm-6" >
+                    <button type="button" id="add_form_field" class="btn btn-primary btn-user btn-block">
+                      Add a picture
+                    </button>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                  Complete
                 </button>
                 <hr>
-                <button href="/admin_user" class="btn btn-google  btn-block">
-                  <i class="fab fa-fw"></i> Cancel
-                </button>
+                <a href="/admin_user/" class="btn btn-google btn-user btn-block">
+                  <i class="fab fa-google fa-fw"></i> Register with Google
+                </a>
               </form>
             </div>
           </div>
@@ -72,13 +75,10 @@
 
   <!-- Core plugin JavaScript-->
   <script src="../../assets/vendor/jquery-easing/jquery.easing.min.js"></script>
-  <!-- Custom map-->
-  <script src="../../assets/js/customer/mymap.js"></script>
+
   <!-- Custom scripts for all pages-->
   <script src="../../assets/js/sb-admin-2.min.js"></script>
-  <script async defer
-          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA&callback=initMap">
-  </script>
+<script src="../../assets/js/customer/myFileUpload.js"></script>
 
 </body>
 

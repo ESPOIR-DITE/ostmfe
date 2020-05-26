@@ -38,7 +38,7 @@ func UpdateEventPartener(prtnr event2.EventPartener) (event2.EventPartener, erro
 func ReadEventPartener(id string) (event2.EventPartener, error) {
 
 	entity := event2.EventPartener{}
-	resp, _ := api.Rest().Get(eventPrtnr + "read?id" + id)
+	resp, _ := api.Rest().Get(eventPrtnr + "read?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -52,7 +52,7 @@ func ReadEventPartener(id string) (event2.EventPartener, error) {
 func DeleteEventPartener(id string) (event2.EventPartener, error) {
 
 	entity := event2.EventPartener{}
-	resp, _ := api.Rest().Get(eventPrtnr + "delete?id" + id)
+	resp, _ := api.Rest().Get(eventPrtnr + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
