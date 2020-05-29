@@ -3,15 +3,15 @@ package place_io
 import (
 	"errors"
 	"ostmfe/api"
-	"ostmfe/domain/place"
+	place2 "ostmfe/domain/place"
 )
 
-const places = api.BASE_URL + "place/"
+const placeimageURL = api.BASE_URL + "place_image/"
 
-func CreatePlace(plcs place.Place) (place.Place, error) {
+func CreatePlaceImage(helper place2.PlaceImageHelper) (place2.PlaceImage, error) {
+	entity := place2.PlaceImage{}
 
-	entity := place.Place{}
-	resp, _ := api.Rest().SetBody(plcs).Post(places + "create")
+	resp, _ := api.Rest().SetBody(helper).Post(placeimageURL + "create")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -20,12 +20,11 @@ func CreatePlace(plcs place.Place) (place.Place, error) {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
-
 }
-func UpdatePlace(plcs place.Place) (place.Place, error) {
+func UpdatePlaceImage(image place2.PlaceImage) (place2.PlaceImage, error) {
+	entity := place2.PlaceImage{}
 
-	entity := place.Place{}
-	resp, _ := api.Rest().SetBody(plcs).Post(places + "update")
+	resp, _ := api.Rest().SetBody(image).Post(placeimageURL + "update")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -34,12 +33,11 @@ func UpdatePlace(plcs place.Place) (place.Place, error) {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
-
 }
-func ReadPlace(id string) (place.Place, error) {
+func ReadPlaceImage(id string) (place2.PlaceImage, error) {
+	entity := place2.PlaceImage{}
 
-	entity := place.Place{}
-	resp, _ := api.Rest().Get(places + "read?id=" + id)
+	resp, _ := api.Rest().Get(placeimageURL + "read?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -48,12 +46,11 @@ func ReadPlace(id string) (place.Place, error) {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
-
 }
-func DeletePlace(id string) (place.Place, error) {
+func DeletePlaceImage(id string) (place2.PlaceImage, error) {
+	entity := place2.PlaceImage{}
 
-	entity := place.Place{}
-	resp, _ := api.Rest().Get(places + "delte?id=" + id)
+	resp, _ := api.Rest().Get(placeimageURL + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -62,12 +59,11 @@ func DeletePlace(id string) (place.Place, error) {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
-
 }
-func ReadPlaces() (place.Place, error) {
+func ReadPlaceImages() ([]place2.PlaceImage, error) {
+	entity := []place2.PlaceImage{}
 
-	entity := place.Place{}
-	resp, _ := api.Rest().Get(places + "reads")
+	resp, _ := api.Rest().Get(placeimageURL + "reads")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -76,5 +72,4 @@ func ReadPlaces() (place.Place, error) {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
-
 }

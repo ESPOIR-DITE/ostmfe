@@ -11,6 +11,7 @@
 
   <title>SB Admin 2 - Register</title>
   <base href="/">
+
   <!-- Custom fonts for this template-->
   <link href="../../assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
@@ -32,36 +33,43 @@
           <div class="col-lg-7">
             <div class="p-5">
               <div class="text-center">
-                <h1 class="h4 text-gray-900 mb-4">Step 2 Of {{.Place.Title}}</h1>
+                <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
               </div>
-              <form class="user"method="post" action="/admin_user/place/create_stp2" enctype="multipart/form-data">
-                <div class="form-group">
-                  <label>Place History</label>
-                  <textarea style="height: 200px" name="history" class="form-control" id="exampleInputEmail" placeholder="History...."></textarea>
-                </div>
-                <input type="hidden"name="placeId" value="{{.Place.Id}}" class="form-control " id="file" placeholder="Project Name" required>
-                <div class="form-group ">
-                  <label>Project profile Picture</label>
-                  <input type="file"name="file" class="form-control " id="file" placeholder="Project Name" required>
-                </div>
-
-                <div class="form-group  row" id="filesArea"></div>
-                <div class="form-group row" >
-                  <div class="col-sm-6" >
-                    <button type="button" id="add_form_field" class="btn btn-primary btn-user btn-block">
-                      Add a picture
-                    </button>
+              <form class="user" method="post" action="/admin_user/partner/create">
+                <div class="form-group row">
+                  <div class="col-sm-6">
+                    <label>Partner Name</label>
+                    <input type="text" name="partner_name" class="form-control form-control-user" id="exampleFirstName" placeholder="CPUT" required>
                   </div>
+                  <div class="col-sm-6">
+                    <label>Partner Name</label>
+                    <input type="text" name="partner_name" class="form-control form-control-user" id="exampleFirstName" placeholder="CPUT" required>
+                  </div>
+                  </div>
+                <div class="form-group">
+                  <label>description</label>
+                  <input type="url" name="url" class="form-control form-control-user" id="exampleInputEmail" placeholder="www.link.co.za" required>
+                </div>
+                <div class="form-group">
+                  <label>description</label>
+                  <textarea name="description" class="form-control form-control-user" id="exampleInputEmail" placeholder="Email Address" required></textarea>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-block">
-                  Complete
+                <button type="submit" class="btn btn-primary btn-user btn-block">
+                  Register Account
                 </button>
                 <hr>
-                <a href="/admin_user/" class="btn btn-google btn-user btn-block">
-                  <i class="fab fa-google fa-fw"></i> Register with Google
+                <a href="/admin_user" class="btn btn-google btn-user btn-block">
+                  <i class="fab fa-google fa-fw"></i> Cancel
                 </a>
               </form>
+              <hr>
+              <div class="text-center">
+                <a class="small" href="forgot-password.html">Forgot Password?</a>
+              </div>
+              <div class="text-center">
+                <a class="small" href="login.html">Already have an account? Login!</a>
+              </div>
             </div>
           </div>
         </div>
@@ -79,7 +87,6 @@
 
   <!-- Custom scripts for all pages-->
   <script src="../../assets/js/sb-admin-2.min.js"></script>
-<script src="../../assets/js/customer/myFileUpload.js"></script>
 
 </body>
 

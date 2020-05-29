@@ -6,9 +6,9 @@ import (
 	"ostmfe/domain/people"
 )
 
-const peopleImg = api.BASE_URL + "peopleImg"
+const peopleImg = api.BASE_URL + "people_image/"
 
-func CreatePeopleImage(pI people.People_image) (people.People_image, error) {
+func CreatePeopleImage(pI people.PlaceImageHelper) (people.People_image, error) {
 
 	entity := people.People_image{}
 	resp, _ := api.Rest().SetBody(pI).Post(peopleImg + "create")
@@ -39,7 +39,7 @@ func UpdatePeopleImage(pI people.People_image) (people.People_image, error) {
 func ReadPeopleImage(id string) (people.People_image, error) {
 
 	entity := people.People_image{}
-	resp, _ := api.Rest().Get(peopleImg + "read?id" + id)
+	resp, _ := api.Rest().Get(peopleImg + "read?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -53,7 +53,7 @@ func ReadPeopleImage(id string) (people.People_image, error) {
 func DeletePeopleImage(id string) (people.People_image, error) {
 
 	entity := people.People_image{}
-	resp, _ := api.Rest().Get(peopleImg + "delete?id" + id)
+	resp, _ := api.Rest().Get(peopleImg + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}

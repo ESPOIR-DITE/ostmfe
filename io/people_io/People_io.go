@@ -6,7 +6,7 @@ import (
 	"ostmfe/domain/people"
 )
 
-const pple = api.BASE_URL + "pple"
+const pple = api.BASE_URL + "people/"
 
 func CreatePeople(P people.People) (people.People, error) {
 	entity := people.People{}
@@ -34,7 +34,7 @@ func UpdatePeople(P people.People) (people.People, error) {
 }
 func ReadPeople(id string) (people.People, error) {
 	entity := people.People{}
-	resp, _ := api.Rest().Get(pple + "Read?id" + id)
+	resp, _ := api.Rest().Get(pple + "read?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -46,7 +46,7 @@ func ReadPeople(id string) (people.People, error) {
 }
 func DeletePeople(id string) (people.People, error) {
 	entity := people.People{}
-	resp, _ := api.Rest().Get(pple + "delete?id" + id)
+	resp, _ := api.Rest().Get(pple + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}

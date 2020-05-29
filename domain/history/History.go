@@ -5,7 +5,6 @@ import "time"
 type History struct {
 	Id          string    `json:"id"`
 	Description string    `json:"description"`
-	ImageID     string    `json:"image_id"`
 	Content     string    `json:"content"`
 	Date        time.Time `json:"date"`
 }

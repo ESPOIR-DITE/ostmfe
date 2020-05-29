@@ -9,12 +9,16 @@ import (
 	"ostmfe/config"
 	"ostmfe/controller/misc"
 	event2 "ostmfe/domain/event"
+	history2 "ostmfe/domain/history"
 	partner2 "ostmfe/domain/partner"
+	people2 "ostmfe/domain/people"
 	place2 "ostmfe/domain/place"
 	project2 "ostmfe/domain/project"
 	user2 "ostmfe/domain/user"
 	"ostmfe/io/event_io"
+	"ostmfe/io/history_io"
 	"ostmfe/io/partner_io"
+	"ostmfe/io/people_io"
 	"ostmfe/io/place_io"
 	"ostmfe/io/project_io"
 	"ostmfe/io/user_io"
@@ -55,7 +59,7 @@ func Home(app *config.Env) http.Handler {
 	r.Get("/place/new", NewPlacesHandler(app))
 	r.Get("/place/edit", EditPlacesHandler(app))
 	r.Post("/place/create_stp1", CreateStp1Handler(app))
-	r.Post("/place/create_stp2", CreateStp2Handler(app))
+	r.Post("/place/create_stp2", CreatePlaceStp2Handler(app))
 	r.Get("/place/new_stp2/{placeId}", NewPlaceStp2Handler(app))
 
 	r.Get("/collection", CollectionHandler(app))
@@ -66,10 +70,295 @@ func Home(app *config.Env) http.Handler {
 	r.Get("/history/new", NewHistoryHandler(app))
 	r.Get("/history/edit", EditHistoryHandler(app))
 
+	r.Get("/people", PeopleHandler(app))
+	r.Get("/people/new", NewPeopleHandler(app))
+	r.Get("/people/new-stp2/{peopleId}", NewPeoplestp2Handler(app))
+	r.Get("/people/edit", EditPeopleHandler(app))
+	r.Post("/people/create_stp1", CreatePeopleHandler(app))
+	r.Post("/people/create_stp2", CreatePeopleStp2Handler(app))
+
 	return r
 }
 
-func CreateStp2Handler(app *config.Env) http.HandlerFunc {
+func NewPeoplestp2Handler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		peopleId := chi.URLParam(r, "peopleId")
+		people, err := people_io.ReadPeople(peopleId)
+		if err != nil {
+			fmt.Println(err, " error reading the people")
+			if app.Session.GetString(r.Context(), "user-read-error") != "" {
+				app.Session.Remove(r.Context(), "user-read-error")
+			}
+			app.Session.Put(r.Context(), "user-read-error", "An error has occurred, Please try again late")
+			http.Redirect(w, r, "/admin_user/people/new", 301)
+			return
+		}
+		type PageData struct {
+			People people2.People
+		}
+		data := PageData{People: people}
+		files := []string{
+			app.Path + "admin/people/image_people.html",
+			//app.Path + "admin/template/navbar.html",
+			//app.Path + "base_templates/footer.html",
+		}
+		ts, err := template.ParseFiles(files...)
+		if err != nil {
+			app.ErrorLog.Println(err.Error())
+			return
+		}
+		err = ts.Execute(w, data)
+		if err != nil {
+			app.ErrorLog.Println(err.Error())
+		}
+	}
+}
+
+func CreatePeopleStp2Handler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var place place2.Place
+		r.ParseForm()
+		//fileslist := r.Form["file"]
+
+		file, _, err := r.FormFile("file")
+		file2, _, err := r.FormFile("file2")
+		file3, _, err := r.FormFile("file3")
+		file4, _, err := r.FormFile("file4")
+		file5, _, err := r.FormFile("file5")
+		file6, _, err := r.FormFile("file6")
+		history := r.PostFormValue("history")
+		date, _ := time.Parse(misc.YYYYMMDD_FORMAT, r.PostFormValue("date"))
+		peopleId := r.PostFormValue("peopleId")
+		description := r.PostFormValue("description")
+		latlng := r.PostFormValue("latlng")
+		title := r.PostFormValue("title")
+		if err != nil {
+			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
+		}
+		filesArray := []io.Reader{file, file2, file3, file4, file5, file6}
+		filesByteArray := misc.CheckFiles(filesArray)
+
+		if history != "" && peopleId != "" && title != "" && description != "" {
+			historyObejct := history2.History{"", description, history, date}
+			historynew, Err := history_io.CreateHistory(historyObejct)
+			if Err != nil {
+				fmt.Println(err, " error creating a new history")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/people/new_stp2/"+peopleId, 301)
+				return
+			}
+			// I am checking if the this person is relative to a particular place
+			if latlng != "" {
+				latitude, longitude := misc.SeparateLatLng(latlng)
+				placeObject := place2.Place{"", title, latitude, longitude, ""}
+				place, err = place_io.CreatePlace(placeObject)
+				if err != nil {
+					fmt.Println(err, " error creating a new Place")
+					_, err := history_io.DeleteHistory(historynew.Id)
+					if err != nil {
+						fmt.Println(err, " error could not delete history")
+					}
+					if app.Session.GetString(r.Context(), "user-create-error") != "" {
+						app.Session.Remove(r.Context(), "user-create-error")
+					}
+					app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+					http.Redirect(w, r, "/admin_user/people/new_stp2/"+peopleId, 301)
+					return
+				}
+			}
+
+			peopleHistory := people2.PeopleHistory{"", peopleId, history}
+
+			peopleHistoryNew, err := people_io.CreatePeopleHistory(peopleHistory)
+			if err != nil {
+				fmt.Println(err, " error creating a new people history")
+				_, err := history_io.DeleteHistory(historynew.Id)
+				if err != nil {
+					fmt.Println(err, " error could not delete history")
+				}
+				//we need to make sure that the place was created
+				if place.Id != "" {
+					_, err := place_io.DeletePlace(place.Id)
+					if err != nil {
+						fmt.Println(err, " error could not delete history")
+					}
+				}
+
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/people/new_stp2/"+peopleId, 301)
+				return
+			}
+			peopleImageObject := people2.People_image{"", peopleId, "", ""}
+			peopleImage := people2.PlaceImageHelper{peopleImageObject, filesByteArray}
+			_, errr := people_io.CreatePeopleImage(peopleImage)
+			/***
+			RolBack
+			*/
+			if errr != nil {
+				_, err := history_io.DeleteHistory(historynew.Id)
+				if err != nil {
+					fmt.Println(err, " error could not delete history")
+				}
+				//we need to make sure that the place was created
+				if place.Id != "" {
+					_, err := place_io.DeletePlace(place.Id)
+					if err != nil {
+						fmt.Println(err, " error could not delete history")
+					}
+				}
+				//Now deleting People History
+				_, errx := people_io.DeletePeopleHistory(peopleHistoryNew.Id)
+				if errx != nil {
+					fmt.Println(err, " error could not delete people History")
+				}
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/place/new_stp2/"+peopleId, 301)
+				return
+			}
+
+			newPeople, errr := people_io.ReadPeople(peopleId)
+			if errr != nil {
+				fmt.Println(err, " error reading Place Line: 121")
+			}
+			if app.Session.GetString(r.Context(), "creation-successful") != "" {
+				app.Session.Remove(r.Context(), "creation-successful")
+			}
+			app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new person : "+newPeople.Name)
+			http.Redirect(w, r, "/admin_user", 301)
+			return
+		}
+		fmt.Println("One of the field is missing")
+		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
+			app.Session.Remove(r.Context(), "creation-unknown-error")
+		}
+		app.Session.Put(r.Context(), "creation-unknown-error", "You have encountered an unknown error, please try again")
+		http.Redirect(w, r, "/admin_user/people/new_stp2/"+peopleId, 301)
+		return
+	}
+}
+
+func CreatePeopleHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		name := r.PostFormValue("partner_name")
+		surname := r.PostFormValue("surname")
+		profession := r.PostFormValue("profession")
+		b_date, _ := time.Parse(misc.YYYYMMDD_FORMAT, r.PostFormValue("b_date"))
+		d_date, _ := time.Parse(misc.YYYYMMDD_FORMAT, r.PostFormValue("d_date"))
+		origin := r.PostFormValue("origin")
+		if name != "" && surname != "" && profession != "" && origin != "" {
+			peopleObject := people2.People{"", name, surname, b_date, d_date, origin, profession}
+			people, err := people_io.CreatePeople(peopleObject)
+			if err != nil {
+				fmt.Println(err, " error creating a new people")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/people/new", 301)
+				return
+			}
+			if people.Id != "" {
+				if app.Session.GetString(r.Context(), "creation-successful") != "" {
+					app.Session.Remove(r.Context(), "creation-successful")
+				}
+				app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new project : "+people.Name)
+				http.Redirect(w, r, "/admin_user/people/new-stp2/"+people.Id, 301)
+				return
+			}
+		}
+		fmt.Println("One of the field is missing or newPlace.Id is nil")
+		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
+			app.Session.Remove(r.Context(), "creation-unknown-error")
+		}
+		app.Session.Put(r.Context(), "creation-unknown-error", "You have encountered an unknown error, please try again")
+		http.Redirect(w, r, "/admin_user/people/new", 301)
+		return
+	}
+}
+
+func EditPeopleHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		files := []string{
+			app.Path + "admin/collection/edit_people.html",
+			//app.Path + "admin/template/navbar.html",
+			//app.Path + "base_templates/footer.html",
+		}
+		ts, err := template.ParseFiles(files...)
+		if err != nil {
+			app.ErrorLog.Println(err.Error())
+			return
+		}
+		err = ts.Execute(w, nil)
+		if err != nil {
+			app.ErrorLog.Println(err.Error())
+		}
+	}
+}
+
+func NewPeopleHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var unknown_error string
+		var backend_error string
+		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
+			unknown_error = app.Session.GetString(r.Context(), "creation-unknown-error")
+			app.Session.Remove(r.Context(), "creation-unknown-error")
+		}
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			backend_error = app.Session.GetString(r.Context(), "user-create-error")
+			app.Session.Remove(r.Context(), "user-create-error")
+		}
+		type PagePage struct {
+			Backend_error string
+			Unknown_error string
+		}
+		data := PagePage{backend_error, unknown_error}
+		files := []string{
+			app.Path + "admin/people/new_people.html",
+			//app.Path + "admin/template/navbar.html",
+			//app.Path + "base_templates/footer.html",
+		}
+		ts, err := template.ParseFiles(files...)
+		if err != nil {
+			app.ErrorLog.Println(err.Error())
+			return
+		}
+		err = ts.Execute(w, data)
+		if err != nil {
+			app.ErrorLog.Println(err.Error())
+		}
+	}
+}
+
+func PeopleHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		files := []string{
+			app.Path + "admin/collection/people.html",
+			//app.Path + "admin/template/navbar.html",
+			//app.Path + "base_templates/footer.html",
+		}
+		ts, err := template.ParseFiles(files...)
+		if err != nil {
+			app.ErrorLog.Println(err.Error())
+			return
+		}
+		err = ts.Execute(w, nil)
+		if err != nil {
+			app.ErrorLog.Println(err.Error())
+		}
+	}
+}
+
+func CreatePlaceStp2Handler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		//fileslist := r.Form["file"]
@@ -80,14 +369,52 @@ func CreateStp2Handler(app *config.Env) http.HandlerFunc {
 		file4, _, err := r.FormFile("file4")
 		file5, _, err := r.FormFile("file5")
 		file6, _, err := r.FormFile("file6")
-		project_name := r.PostFormValue("project_name")
+		history := r.PostFormValue("history")
+		placeId := r.PostFormValue("placeId")
 		description := r.PostFormValue("description")
 		if err != nil {
-			fmt.Println(err, "<<<<<< error reading file>>>>>>>")
+			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
 		}
 
 		filesArray := []io.Reader{file, file2, file3, file4, file5, file6}
 		filesByteArray := misc.CheckFiles(filesArray)
+		placeHistoryObject := place2.PlaceHistory{"", placeId, history}
+		placeHistory, err := place_io.CreatePlaceHistpory(placeHistoryObject)
+		if err != nil {
+			fmt.Println(err, " error creating a new placeHistory")
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+			http.Redirect(w, r, "/admin_user/place/new_stp2/"+placeId, 301)
+			return
+		}
+		placeImageObejct := place2.PlaceImage{"", placeId, "", description}
+		placeImageHelper := place2.PlaceImageHelper{placeImageObejct, filesByteArray}
+		_, errr := place_io.CreatePlaceImage(placeImageHelper)
+		if errr != nil {
+			fmt.Println(errr, " error creating projectImage")
+			_, err := place_io.DeletePlaceHistpory(placeHistory.Id)
+			if err != nil {
+				fmt.Println(err, " error deleting Place History")
+			}
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+			http.Redirect(w, r, "/admin_user/place/new_stp2/"+placeId, 301)
+			return
+		}
+		place, err := place_io.ReadPlace(placeId)
+		if err != nil {
+			fmt.Println(err, " error reading Place Line: 121")
+		}
+		if app.Session.GetString(r.Context(), "creation-successful") != "" {
+			app.Session.Remove(r.Context(), "creation-successful")
+		}
+		app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new project : "+place.Title)
+		http.Redirect(w, r, "/admin_user", 301)
+		return
 	}
 }
 
@@ -131,6 +458,7 @@ func CreateStp1Handler(app *config.Env) http.HandlerFunc {
 		title := r.PostFormValue("title")
 		latlng := r.PostFormValue("latlng")
 		description := r.PostFormValue("description")
+		fmt.Println(title, "<<<title|| latlng>>>>", latlng, "  description>>>", description)
 		if title != "" && latlng != "" {
 			latitude, longitude := misc.SeparateLatLng(latlng)
 			place := place2.Place{"", title, latitude, longitude, description}
@@ -144,17 +472,21 @@ func CreateStp1Handler(app *config.Env) http.HandlerFunc {
 				http.Redirect(w, r, "/admin_user/place/new", 301)
 				return
 			}
-			if app.Session.GetString(r.Context(), "creation-successful") != "" {
-				app.Session.Remove(r.Context(), "creation-successful")
+			//Here are trying to make sure that newPlace.Id is not nil.
+			if newPlace.Id != "" {
+				fmt.Println("successful")
+				if app.Session.GetString(r.Context(), "creation-successful") != "" {
+					app.Session.Remove(r.Context(), "creation-successful")
+				}
+				app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new Place : "+newPlace.Title)
+				http.Redirect(w, r, "/admin_user/place/new_stp2/"+newPlace.Id, 301)
+				return
 			}
-			app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new Place : "+newPlace.Title)
-			http.Redirect(w, r, "/admin_user/place/new_stp2/"+newPlace.Id, 301)
-			return
+
 		}
-		fmt.Println("One of the field is missing")
+		fmt.Println("One of the field is missing or newPlace.Id is nil")
 		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
 			app.Session.Remove(r.Context(), "creation-unknown-error")
-			return
 		}
 		app.Session.Put(r.Context(), "creation-unknown-error", "You have encountered an unknown error, please try again")
 		http.Redirect(w, r, "/admin_user/place/new", 301)
@@ -231,6 +563,21 @@ func PartenersHandler(app *config.Env) http.HandlerFunc {
 
 func NewPartenersHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var unknown_error string
+		var backend_error string
+		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
+			unknown_error = app.Session.GetString(r.Context(), "creation-unknown-error")
+			app.Session.Remove(r.Context(), "creation-unknown-error")
+		}
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			backend_error = app.Session.GetString(r.Context(), "user-create-error")
+			app.Session.Remove(r.Context(), "user-create-error")
+		}
+		type PagePage struct {
+			Backend_error string
+			Unknown_error string
+		}
+		data := PagePage{backend_error, unknown_error}
 		files := []string{
 			app.Path + "admin/partner/new_partner.html",
 			//app.Path + "admin/template/navbar.html",
@@ -241,7 +588,7 @@ func NewPartenersHandler(app *config.Env) http.HandlerFunc {
 			app.ErrorLog.Println(err.Error())
 			return
 		}
-		err = ts.Execute(w, nil)
+		err = ts.Execute(w, data)
 		if err != nil {
 			app.ErrorLog.Println(err.Error())
 		}
@@ -312,7 +659,7 @@ func CreateProjectHandler(app *config.Env) http.HandlerFunc {
 			helper := project2.ProjectImageHelper{filesByteArray, projectImage}
 			_, errr := project_io.CreateProjectImage(helper)
 			if errr != nil {
-				fmt.Println(err, " error creating projectImage")
+				fmt.Println(errr, " error creating projectImage")
 				_, err := project_io.DeleteProject(new_project.Id)
 				if err != nil {
 					fmt.Println(err, " error deleting project")
@@ -554,6 +901,21 @@ func EditHistoryHandler(app *config.Env) http.HandlerFunc {
 
 func NewHistoryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var unknown_error string
+		var backend_error string
+		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
+			unknown_error = app.Session.GetString(r.Context(), "creation-unknown-error")
+			app.Session.Remove(r.Context(), "creation-unknown-error")
+		}
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			backend_error = app.Session.GetString(r.Context(), "user-create-error")
+			app.Session.Remove(r.Context(), "user-create-error")
+		}
+		type PagePage struct {
+			Backend_error string
+			Unknown_error string
+		}
+		data := PagePage{backend_error, unknown_error}
 		files := []string{
 			app.Path + "admin/collection/new_history.html",
 			//app.Path + "admin/template/navbar.html",
@@ -564,7 +926,7 @@ func NewHistoryHandler(app *config.Env) http.HandlerFunc {
 			app.ErrorLog.Println(err.Error())
 			return
 		}
-		err = ts.Execute(w, nil)
+		err = ts.Execute(w, data)
 		if err != nil {
 			app.ErrorLog.Println(err.Error())
 		}
@@ -613,6 +975,21 @@ func EditCollectionHandler(app *config.Env) http.HandlerFunc {
 
 func NewCollectionHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var unknown_error string
+		var backend_error string
+		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
+			unknown_error = app.Session.GetString(r.Context(), "creation-unknown-error")
+			app.Session.Remove(r.Context(), "creation-unknown-error")
+		}
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			backend_error = app.Session.GetString(r.Context(), "user-create-error")
+			app.Session.Remove(r.Context(), "user-create-error")
+		}
+		type PagePage struct {
+			Backend_error string
+			Unknown_error string
+		}
+		data := PagePage{backend_error, unknown_error}
 		files := []string{
 			app.Path + "admin/collection/new_collection.html",
 			//app.Path + "admin/template/navbar.html",
@@ -623,7 +1000,7 @@ func NewCollectionHandler(app *config.Env) http.HandlerFunc {
 			app.ErrorLog.Println(err.Error())
 			return
 		}
-		err = ts.Execute(w, nil)
+		err = ts.Execute(w, data)
 		if err != nil {
 			app.ErrorLog.Println(err.Error())
 		}
@@ -671,6 +1048,21 @@ func EditPlacesHandler(app *config.Env) http.HandlerFunc {
 
 func NewPlacesHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var unknown_error string
+		var backend_error string
+		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
+			unknown_error = app.Session.GetString(r.Context(), "creation-unknown-error")
+			app.Session.Remove(r.Context(), "creation-unknown-error")
+		}
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			backend_error = app.Session.GetString(r.Context(), "user-create-error")
+			app.Session.Remove(r.Context(), "user-create-error")
+		}
+		type PagePage struct {
+			Backend_error string
+			Unknown_error string
+		}
+		data := PagePage{backend_error, unknown_error}
 		files := []string{
 			app.Path + "admin/place/new_place.html",
 			//app.Path + "admin/template/navbar.html",
@@ -681,7 +1073,7 @@ func NewPlacesHandler(app *config.Env) http.HandlerFunc {
 			app.ErrorLog.Println(err.Error())
 			return
 		}
-		err = ts.Execute(w, nil)
+		err = ts.Execute(w, data)
 		if err != nil {
 			app.ErrorLog.Println(err.Error())
 		}
@@ -747,6 +1139,21 @@ func EditeProjectsHandler(app *config.Env) http.HandlerFunc {
 
 func NewProjectsHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var unknown_error string
+		var backend_error string
+		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
+			unknown_error = app.Session.GetString(r.Context(), "creation-unknown-error")
+			app.Session.Remove(r.Context(), "creation-unknown-error")
+		}
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			backend_error = app.Session.GetString(r.Context(), "user-create-error")
+			app.Session.Remove(r.Context(), "user-create-error")
+		}
+		type PagePage struct {
+			Backend_error string
+			Unknown_error string
+		}
+		data := PagePage{backend_error, unknown_error}
 		files := []string{
 			app.Path + "admin/project/new_project.html",
 			//app.Path + "admin/template/navbar.html",
@@ -757,7 +1164,7 @@ func NewProjectsHandler(app *config.Env) http.HandlerFunc {
 			app.ErrorLog.Println(err.Error())
 			return
 		}
-		err = ts.Execute(w, nil)
+		err = ts.Execute(w, data)
 		if err != nil {
 			app.ErrorLog.Println(err.Error())
 		}
@@ -804,6 +1211,16 @@ func EditEventsHandler(app *config.Env) http.HandlerFunc {
 
 func NewEventsHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var unknown_error string
+		var backend_error string
+		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
+			unknown_error = app.Session.GetString(r.Context(), "creation-unknown-error")
+			app.Session.Remove(r.Context(), "creation-unknown-error")
+		}
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			backend_error = app.Session.GetString(r.Context(), "user-create-error")
+			app.Session.Remove(r.Context(), "user-create-error")
+		}
 		//Reading all the Projects
 		projects, err := project_io.ReadProjects()
 		if err != nil {
@@ -814,10 +1231,12 @@ func NewEventsHandler(app *config.Env) http.HandlerFunc {
 			fmt.Println(err, " error reading all the partners")
 		}
 		type PageData struct {
-			Projects []project2.Project
-			Partners []partner2.Partner
+			Projects      []project2.Project
+			Partners      []partner2.Partner
+			Backend_error string
+			Unknown_error string
 		}
-		data := PageData{projects, partners}
+		data := PageData{projects, partners, backend_error, unknown_error}
 		files := []string{
 			app.Path + "admin/new_event.html",
 			//app.Path + "admin/template/navbar.html",
