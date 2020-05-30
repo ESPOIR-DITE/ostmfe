@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"ostmfe/config"
 	"ostmfe/controller/misc"
+	"ostmfe/domain/collection"
 	event2 "ostmfe/domain/event"
 	history2 "ostmfe/domain/history"
 	partner2 "ostmfe/domain/partner"
@@ -15,6 +16,7 @@ import (
 	place2 "ostmfe/domain/place"
 	project2 "ostmfe/domain/project"
 	user2 "ostmfe/domain/user"
+	"ostmfe/io/collection_io"
 	"ostmfe/io/event_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/partner_io"
@@ -65,6 +67,7 @@ func Home(app *config.Env) http.Handler {
 	r.Get("/collection", CollectionHandler(app))
 	r.Get("/collection/new", NewCollectionHandler(app))
 	r.Get("/collection/edit", EditCollectionHandler(app))
+	r.Post("/collection/create_stp1", CreateCollection1(app))
 
 	r.Get("/history", HistoryHandler(app))
 	r.Get("/history/new", NewHistoryHandler(app))
@@ -78,6 +81,58 @@ func Home(app *config.Env) http.Handler {
 	r.Post("/people/create_stp2", CreatePeopleStp2Handler(app))
 
 	return r
+}
+
+func CreateCollection1(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		collection_name := r.PostFormValue("collection_name")
+		collectionId := r.PostFormValue("collectionId")
+		brief := r.PostFormValue("brief")
+		history := r.PostFormValue("history")
+		if history != "" && collection_name != "" && collectionId != "" && brief != "" {
+			collectionObject := collection.Collection{"", collection_name, brief, history}
+			newCollection, err := collection_io.CreateCollection(collectionObject)
+			if err != nil {
+				fmt.Println(err, " error reading the collection")
+				if app.Session.GetString(r.Context(), "user-read-error") != "" {
+					app.Session.Remove(r.Context(), "user-read-error")
+				}
+				app.Session.Put(r.Context(), "user-read-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/collection/new", 301)
+				return
+			}
+
+			collectionTypeObject := collection.Collection_type{"", newCollection.Id, collectionId}
+			_, errr := collection_io.CreateCollection_Type(collectionTypeObject)
+			if errr != nil {
+				_, err := collection_io.DeleteCollection(newCollection.Id)
+				if err != nil {
+					fmt.Println(err, " error could not delete collection")
+				}
+				fmt.Println(err, " error reading the collection")
+				if app.Session.GetString(r.Context(), "user-read-error") != "" {
+					app.Session.Remove(r.Context(), "user-read-error")
+				}
+				app.Session.Put(r.Context(), "user-read-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/collection/new", 301)
+				return
+			}
+			//If creation successful
+			if newCollection.Id != "" {
+				http.Redirect(w, r, "/admin_user/collection/new2/"+newCollection.Id, 301)
+				return
+			}
+
+		}
+		fmt.Println("One of the field is missing")
+		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
+			app.Session.Remove(r.Context(), "creation-unknown-error")
+		}
+		app.Session.Put(r.Context(), "creation-unknown-error", "You have encountered an unknown error, please try again")
+		http.Redirect(w, r, "/admin_user/collection/new", 301)
+		return
+	}
 }
 
 func NewPeoplestp2Handler(app *config.Env) http.HandlerFunc {
@@ -975,6 +1030,7 @@ func EditCollectionHandler(app *config.Env) http.HandlerFunc {
 
 func NewCollectionHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var collectionType []collection.CollectionTypes
 		var unknown_error string
 		var backend_error string
 		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
@@ -985,11 +1041,16 @@ func NewCollectionHandler(app *config.Env) http.HandlerFunc {
 			backend_error = app.Session.GetString(r.Context(), "user-create-error")
 			app.Session.Remove(r.Context(), "user-create-error")
 		}
-		type PagePage struct {
-			Backend_error string
-			Unknown_error string
+		collectionType, err := collection_io.ReadCollectionTyupes()
+		if err != nil {
+			fmt.Println(err, " error reading Collections")
 		}
-		data := PagePage{backend_error, unknown_error}
+		type PagePage struct {
+			Backend_error  string
+			Unknown_error  string
+			CollectionType []collection.CollectionTypes
+		}
+		data := PagePage{backend_error, unknown_error, collectionType}
 		files := []string{
 			app.Path + "admin/collection/new_collection.html",
 			//app.Path + "admin/template/navbar.html",
