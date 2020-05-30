@@ -6,7 +6,7 @@ import (
 	"ostmfe/domain/collection"
 )
 
-const collectiontypeURL = api.BASE_URL + "collection_type/"
+const collectiontypeURL = api.BASE_URL + "collection_types/"
 
 func CreateCollectionTyupe(types collection.CollectionTypes) (collection.CollectionTypes, error) {
 	entity := collection.CollectionTypes{}

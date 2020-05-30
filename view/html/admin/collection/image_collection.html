@@ -10,7 +10,7 @@
   <meta name="author" content="">
 
   <title>SB Admin 2 - Register</title>
-
+  <base href="/">
   <!-- Custom fonts for this template-->
   <link href="../../assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
@@ -31,41 +31,43 @@
           <div class="col-lg-5 d-none d-lg-block bg-register-image"></div>
           <div class="col-lg-7">
             <div class="p-5">
+              {{if .Backend_error}}
+                <div class="text-center alert-warning">
+                  <a class="small" href="#">{{.Backend_error}}</a>
+                </div>
+              {{end}}
+              {{if .Unknown_error}}
+                <div class="text-center alert-warning">
+                  <a class="small" href="#">{{.Unknown_error}}</a>
+                </div>
+              {{end}}
               <div class="text-center">
-                <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
+                <h1 class="h4 text-gray-900 mb-4">Step 2 Of {{.Collection.Name}}</h1>
               </div>
-              <form class="user" method="post" action="/admin_user/collection/create_stp1">
-                <div class="form-group row">
-                  <div class="col-sm-6 mb-3 mb-sm-0">
-                    <label>Collection Name</label>
-                    <input type="text" class="form-control " id="exampleFirstName"name="collection_name" placeholder="">
-                  </div>
-                  <div class="col-sm-6">
-                    <label>Collection type</label>
-                    <select name="collectionId" class="browser-default custom-select">
-                      <option selected>Choose a partner</option>
-                      {{with .CollectionType}}
-                        {{range .}}
-                          <option value={{.Id}}>{{.Name}}</option>
-                        {{end}}
-                      {{end}}
-                    </select>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label>Collection bref</label>
-                  <textarea class="form-control " name="brief" placeholder="Location name"></textarea>
-                </div>
-                <div class="form-group">
-                  <label>Collection detaille/History</label>
-                  <textarea style="height: 200px" class="form-control " name="history" placeholder="Location name"></textarea>
+              <form class="user"method="post" action="/admin_user/collection/create_stp2" enctype="multipart/form-data">
+
+                <input type="hidden"name="collectionId" value="{{.Collection.Id}}" class="form-control " id="file" placeholder="Project Name" required>
+                <div class="form-group ">
+                  <label>collection profile Picture</label>
+                  <input type="file"name="file" class="form-control " id="file" placeholder="Project Name" required>
                 </div>
 
-                <button type="submit" class="btn btn-primary  btn-block">
-                  Register Account
+                <div class="form-group  row" id="filesArea"></div>
+                <div class="form-group row" >
+                  <div class="col-sm-6" >
+                    <button type="button" id="add_form_field" class="btn btn-primary btn-user btn-block">
+                      Add a picture
+                    </button>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                  Complete
                 </button>
                 <hr>
-                <a href="/admin_user" class="btn btn-google  btn-block">Cancel</a>
+                <a href="/admin_user/" class="btn btn-google btn-user btn-block">
+                  <i class="fab fa-google fa-fw"></i> Register with Google
+                </a>
               </form>
             </div>
           </div>
@@ -84,6 +86,7 @@
 
   <!-- Custom scripts for all pages-->
   <script src="../../assets/js/sb-admin-2.min.js"></script>
+<script src="../../assets/js/customer/myFileUpload.js"></script>
 
 </body>
 

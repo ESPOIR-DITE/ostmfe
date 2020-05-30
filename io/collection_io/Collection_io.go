@@ -6,7 +6,7 @@ import (
 	"ostmfe/domain/collection"
 )
 
-const collect = api.BASE_URL + "collect"
+const collect = api.BASE_URL + "collection/"
 
 func CreateCollection(C collection.Collection) (collection.Collection, error) {
 

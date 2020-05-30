@@ -22,3 +22,7 @@ type Collection_type struct {
 	CollectionId   string `json:"collectionId"`
 	CollectionType string `json:"collectionType"`
 }
+type CollectionImageHelper struct {
+	Collection_image Collection_image `json:"collection_image"`
+	Files            [][]byte         `json:"files"`
+}

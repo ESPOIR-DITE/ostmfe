@@ -8,7 +8,7 @@ import (
 
 const collectionImg = api.BASE_URL + "collectionImg"
 
-func CreateCollectionImg(image collection.Collection_image) (collection.Collection_image, error) {
+func CreateCollectionImg(image collection.CollectionImageHelper) (collection.Collection_image, error) {
 
 	entity := collection.Collection_image{}
 	resp, _ := api.Rest().SetBody(image).Post(collectionImg + "create")
