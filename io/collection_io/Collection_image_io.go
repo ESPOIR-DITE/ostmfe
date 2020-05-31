@@ -6,7 +6,7 @@ import (
 	"ostmfe/domain/collection"
 )
 
-const collectionImg = api.BASE_URL + "collectionImg"
+const collectionImg = api.BASE_URL + "collection_image/"
 
 func CreateCollectionImg(image collection.CollectionImageHelper) (collection.Collection_image, error) {
 

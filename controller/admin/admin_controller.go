@@ -78,13 +78,89 @@ func Home(app *config.Env) http.Handler {
 	r.Get("/history/edit", EditHistoryHandler(app))
 
 	r.Get("/people", PeopleHandler(app))
+	r.Get("/people_category/new", NewPeopleCategoryHandler(app))
 	r.Get("/people/new", NewPeopleHandler(app))
 	r.Get("/people/new-stp2/{peopleId}", NewPeoplestp2Handler(app))
 	r.Get("/people/edit", EditPeopleHandler(app))
 	r.Post("/people/create_stp1", CreatePeopleHandler(app))
 	r.Post("/people/create_stp2", CreatePeopleStp2Handler(app))
+	r.Post("/people_category/create", CreatePeopleCategoryHandler(app))
 
 	return r
+}
+
+func CreatePeopleCategoryHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		category := r.PostFormValue("category")
+		if category != "" {
+			people := people2.PeopleCategory{"", category}
+			peopleCategory, err := people_io.CreatePeopleCategory(people)
+
+			if err != nil {
+				fmt.Println(err, " error creating people Category")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/people_category/new", 301)
+				return
+			}
+			if app.Session.GetString(r.Context(), "creation-successful") != "" {
+				app.Session.Remove(r.Context(), "creation-successful")
+			}
+			app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new People Type : "+peopleCategory.Category)
+			http.Redirect(w, r, "/admin_user/people_category/new", 301)
+			return
+		}
+		fmt.Println("One of the field is missing")
+		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
+			app.Session.Remove(r.Context(), "creation-unknown-error")
+		}
+		app.Session.Put(r.Context(), "creation-unknown-error", "You have encountered an unknown error, please try again")
+		http.Redirect(w, r, "/admin_user/people_category/new", 301)
+		return
+	}
+}
+
+func NewPeopleCategoryHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var unknown_error string
+		var backend_error string
+		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
+			unknown_error = app.Session.GetString(r.Context(), "creation-unknown-error")
+			app.Session.Remove(r.Context(), "creation-unknown-error")
+		}
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			backend_error = app.Session.GetString(r.Context(), "user-create-error")
+			app.Session.Remove(r.Context(), "user-create-error")
+		}
+
+		peoples, err := people_io.ReadPeopleCategorys()
+		if err != nil {
+			fmt.Println(err, " There is an error when reading all the people category")
+		}
+		type PageData struct {
+			Peoples       []people2.PeopleCategory
+			Backend_error string
+			Unknown_error string
+		}
+		data := PageData{peoples, backend_error, unknown_error}
+		files := []string{
+			app.Path + "admin/people/peopleType_tables.html",
+			app.Path + "admin/template/navbar.html",
+			app.Path + "base_templates/footer.html",
+		}
+		ts, err := template.ParseFiles(files...)
+		if err != nil {
+			app.ErrorLog.Println(err.Error())
+			return
+		}
+		err = ts.Execute(w, data)
+		if err != nil {
+			app.ErrorLog.Println(err.Error())
+		}
+	}
 }
 
 func CreateCollectionType(app *config.Env) http.HandlerFunc {
@@ -180,6 +256,7 @@ func CreateCollection2(app *config.Env) http.HandlerFunc {
 		filesArray := []io.Reader{file, file2, file3, file4, file5, file6}
 		filesByteArray := misc.CheckFiles(filesArray)
 
+		fmt.Println(collectionId, " CollectionId")
 		collectionObject, err := collection_io.ReadCollection(collectionId)
 		if err != nil {
 			fmt.Println(err, " error reading Collection")
@@ -195,7 +272,7 @@ func CreateCollection2(app *config.Env) http.HandlerFunc {
 
 		_, errr := collection_io.CreateCollectionImg(CollectionImageHelper)
 		if errr != nil {
-			fmt.Println(errr, " error reading CollectionImage")
+			fmt.Println(errr, " error creating CollectionImage")
 			if app.Session.GetString(r.Context(), "user-create-error") != "" {
 				app.Session.Remove(r.Context(), "user-create-error")
 			}

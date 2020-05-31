@@ -1,10 +1,13 @@
 package people
 
 import (
+	"fmt"
 	"github.com/go-chi/chi"
 	"html/template"
 	"net/http"
 	"ostmfe/config"
+	"ostmfe/domain/people"
+	"ostmfe/io/people_io"
 )
 
 func Home(app *config.Env) http.Handler {
@@ -19,8 +22,16 @@ func Home(app *config.Env) http.Handler {
 
 func homeHanler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		peoples, err := people_io.ReadPeopleCategorys()
+		if err != nil {
+			fmt.Println(err, " There is an error when reading all the people category")
+		}
+		type PageData struct {
+			Peoples []people.PeopleCategory
+		}
+		data := PageData{peoples}
 		files := []string{
-			app.Path + "people.html",
+			app.Path + "people/people_home.html",
 			app.Path + "base_templates/navigator.html",
 			app.Path + "base_templates/footer.html",
 		}
@@ -29,7 +40,7 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 			app.ErrorLog.Println(err.Error())
 			return
 		}
-		err = ts.Execute(w, nil)
+		err = ts.Execute(w, data)
 		if err != nil {
 			app.ErrorLog.Println(err.Error())
 		}

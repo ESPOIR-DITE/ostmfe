@@ -20,7 +20,7 @@ func Home(app *config.Env) http.Handler {
 func homeHanler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		files := []string{
-			app.Path + "index.html",
+			app.Path + "collection.html",
 			app.Path + "base_templates/navigator.html",
 			app.Path + "base_templates/footer.html",
 		}
