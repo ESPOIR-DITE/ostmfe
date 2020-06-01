@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"net/http"
 	"ostmfe/config"
+	"ostmfe/controller/about_us"
 	"ostmfe/controller/admin"
 	"ostmfe/controller/collection"
 	"ostmfe/controller/event"
@@ -34,6 +35,7 @@ func Controllers(env *config.Env) http.Handler {
 	mux.Mount("/admin_user", admin.Home(env))
 	mux.Mount("/user", user.Home(env))
 	mux.Mount("/event", event.Home(env))
+	mux.Mount("/about_us", about_us.Home(env))
 
 	fileServer := http.FileServer(http.Dir("./view/assets/"))
 	// Use the mux.Handle() function to register the file server as the handler for
