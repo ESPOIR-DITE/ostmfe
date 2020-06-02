@@ -27,3 +27,8 @@ type ProjectImageHelper struct {
 	Files        [][]byte     `json:"files"`
 	ProjectImage ProjectImage `json:"projectImage"`
 }
+type ProjectHistory struct {
+	Id        string `json:"id"`
+	ProjectId string `json:"projectId"`
+	HistoryId string `json:"historyId"`
+}

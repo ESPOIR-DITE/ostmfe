@@ -5,7 +5,7 @@ import "time"
 type History struct {
 	Id          string    `json:"id"`
 	Description string    `json:"description"`
-	Content     string    `json:"content"`
+	Content     []byte    `json:"content"`
 	Date        time.Time `json:"date"`
 }
 

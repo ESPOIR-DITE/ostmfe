@@ -37,7 +37,6 @@ func updateProjectPartner(prjP project.ProjectPartner) (project.ProjectPartner, 
 
 }
 func ReadProjectPartner(id string) (project.ProjectPartner, error) {
-
 	entity := project.ProjectPartner{}
 	resp, _ := api.Rest().Get(prjPartner + "read?id" + id)
 	if resp.IsError() {
@@ -48,7 +47,18 @@ func ReadProjectPartner(id string) (project.ProjectPartner, error) {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
-
+}
+func ReadAllOfProjectPartner(id string) ([]project.ProjectPartner, error) {
+	entity := []project.ProjectPartner{}
+	resp, _ := api.Rest().Get(prjPartner + "readAllOf?id" + id)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
 }
 func DeleteProjectPartner(id string) (project.ProjectPartner, error) {
 

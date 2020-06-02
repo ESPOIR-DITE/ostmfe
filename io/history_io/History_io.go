@@ -6,12 +6,11 @@ import (
 	"ostmfe/domain/history"
 )
 
-const story = api.BASE_URL + "story"
+const historyURL = api.BASE_URL + "history"
 
 func CreateHistory(hist history.History) (history.History, error) {
-
 	entity := history.History{}
-	resp, _ := api.Rest().SetBody(hist).Post(story + "create")
+	resp, _ := api.Rest().SetBody(hist).Post(historyURL + "create")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -23,9 +22,8 @@ func CreateHistory(hist history.History) (history.History, error) {
 
 }
 func UpdateHistory(hist history.History) (history.History, error) {
-
 	entity := history.History{}
-	resp, _ := api.Rest().SetBody(hist).Post(story + "update")
+	resp, _ := api.Rest().SetBody(hist).Post(historyURL + "update")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -39,7 +37,7 @@ func UpdateHistory(hist history.History) (history.History, error) {
 func ReadHistory(id string) (history.History, error) {
 
 	entity := history.History{}
-	resp, _ := api.Rest().Get(story + "read?id" + id)
+	resp, _ := api.Rest().Get(historyURL + "read?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -53,7 +51,7 @@ func ReadHistory(id string) (history.History, error) {
 func DeleteHistory(id string) (history.History, error) {
 
 	entity := history.History{}
-	resp, _ := api.Rest().Get(story + "delete?id" + id)
+	resp, _ := api.Rest().Get(historyURL + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -67,7 +65,7 @@ func DeleteHistory(id string) (history.History, error) {
 func ReadHistorys() (history.History, error) {
 
 	entity := history.History{}
-	resp, _ := api.Rest().Get(story + "reads")
+	resp, _ := api.Rest().Get(historyURL + "reads")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}

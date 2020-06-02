@@ -6,12 +6,12 @@ import (
 	"ostmfe/domain/image"
 )
 
-const imG = api.BASE_URL + "imG"
+const imageURL = api.BASE_URL + "image/"
 
 func CreateImage(img image.Images) (image.Images, error) {
 
 	entity := image.Images{}
-	resp, _ := api.Rest().SetBody(img).Post(imG + "create")
+	resp, _ := api.Rest().SetBody(img).Post(imageURL + "create")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -25,7 +25,7 @@ func CreateImage(img image.Images) (image.Images, error) {
 func updateImage(img image.Images) (image.Images, error) {
 
 	entity := image.Images{}
-	resp, _ := api.Rest().SetBody(img).Post(imG + "update")
+	resp, _ := api.Rest().SetBody(img).Post(imageURL + "update")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -39,7 +39,7 @@ func updateImage(img image.Images) (image.Images, error) {
 func ReadImage(id string) (image.Images, error) {
 
 	entity := image.Images{}
-	resp, _ := api.Rest().Get(imG + "read?id" + id)
+	resp, _ := api.Rest().Get(imageURL + "read?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -53,7 +53,7 @@ func ReadImage(id string) (image.Images, error) {
 func DeleteImage(id string) (image.Images, error) {
 
 	entity := image.Images{}
-	resp, _ := api.Rest().Get(imG + "delete?id" + id)
+	resp, _ := api.Rest().Get(imageURL + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -67,7 +67,7 @@ func DeleteImage(id string) (image.Images, error) {
 func ReadImages() (image.Images, error) {
 
 	entity := image.Images{}
-	resp, _ := api.Rest().Get(imG + "reads")
+	resp, _ := api.Rest().Get(imageURL + "reads")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}

@@ -12,8 +12,10 @@ import (
 	"ostmfe/controller/event"
 	"ostmfe/controller/history"
 	"ostmfe/controller/home"
+	"ostmfe/controller/misc"
 	"ostmfe/controller/people"
 	"ostmfe/controller/place"
+	"ostmfe/controller/project"
 	"ostmfe/controller/user"
 	"ostmfe/controller/visit"
 )
@@ -36,6 +38,7 @@ func Controllers(env *config.Env) http.Handler {
 	mux.Mount("/user", user.Home(env))
 	mux.Mount("/event", event.Home(env))
 	mux.Mount("/about_us", about_us.Home(env))
+	mux.Mount("/project", project.Home(env))
 
 	fileServer := http.FileServer(http.Dir("./view/assets/"))
 	// Use the mux.Handle() function to register the file server as the handler for
@@ -47,6 +50,11 @@ func Controllers(env *config.Env) http.Handler {
 
 func homeHanler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		projects := misc.GetProjectContentsHomes()
+		type PageData struct {
+			Projects []misc.ProjectContentsHome
+		}
+		date := PageData{projects}
 		files := []string{
 			app.Path + "index.html",
 			app.Path + "base_templates/navigator.html",
@@ -57,7 +65,7 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 			app.ErrorLog.Println(err.Error())
 			return
 		}
-		err = ts.Execute(w, nil)
+		err = ts.Execute(w, date)
 		if err != nil {
 			app.ErrorLog.Println(err.Error())
 		}

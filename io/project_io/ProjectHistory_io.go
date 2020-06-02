@@ -6,12 +6,11 @@ import (
 	"ostmfe/domain/project"
 )
 
-const projMemb = api.BASE_URL + "projMemb"
+const projecthistoryURL = api.BASE_URL + "project_history/"
 
-func CreateProjectMember(pm project.ProjectMember) (project.ProjectMember, error) {
-
-	entity := project.ProjectMember{}
-	resp, _ := api.Rest().SetBody(pm).Post(projMemb + "create")
+func CreateProjectHistory(history project.ProjectHistory) (project.ProjectHistory, error) {
+	entity := project.ProjectHistory{}
+	resp, _ := api.Rest().SetBody(history).Post(projecthistoryURL + "create")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -21,10 +20,9 @@ func CreateProjectMember(pm project.ProjectMember) (project.ProjectMember, error
 	}
 	return entity, nil
 }
-func UpdateProjectMember(pm project.ProjectMember) (project.ProjectMember, error) {
-
-	entity := project.ProjectMember{}
-	resp, _ := api.Rest().SetBody(pm).Post(projMemb + "update")
+func UpdateProjectHistory(history project.ProjectHistory) (project.ProjectHistory, error) {
+	entity := project.ProjectHistory{}
+	resp, _ := api.Rest().SetBody(history).Post(projecthistoryURL + "update")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -34,10 +32,9 @@ func UpdateProjectMember(pm project.ProjectMember) (project.ProjectMember, error
 	}
 	return entity, nil
 }
-func ReadProjectMember(id string) (project.ProjectMember, error) {
-
-	entity := project.ProjectMember{}
-	resp, _ := api.Rest().Get(projMemb + "read?id" + id)
+func ReadProjectHistory(id string) (project.ProjectHistory, error) {
+	entity := project.ProjectHistory{}
+	resp, _ := api.Rest().Get(projecthistoryURL + "read?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -47,10 +44,9 @@ func ReadProjectMember(id string) (project.ProjectMember, error) {
 	}
 	return entity, nil
 }
-func DeleteProjectMember(id string) (project.ProjectMember, error) {
-
-	entity := project.ProjectMember{}
-	resp, _ := api.Rest().Get(projMemb + "delete?id" + id)
+func ReadProjectHistoryOf(id string) (project.ProjectHistory, error) {
+	entity := project.ProjectHistory{}
+	resp, _ := api.Rest().Get(projecthistoryURL + "readofproject?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -60,10 +56,9 @@ func DeleteProjectMember(id string) (project.ProjectMember, error) {
 	}
 	return entity, nil
 }
-func ReadProjectMembers() (project.ProjectMember, error) {
-
-	entity := project.ProjectMember{}
-	resp, _ := api.Rest().Get(projMemb + "reads")
+func DeleteProjectHistory(id string) (project.ProjectHistory, error) {
+	entity := project.ProjectHistory{}
+	resp, _ := api.Rest().Get(projecthistoryURL + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -73,9 +68,9 @@ func ReadProjectMembers() (project.ProjectMember, error) {
 	}
 	return entity, nil
 }
-func ReadAllOfProjectMembers(id string) ([]project.ProjectMember, error) {
-	entity := []project.ProjectMember{}
-	resp, _ := api.Rest().Get(projMemb + "readAllOf?id=" + id)
+func ReadProjectHistories() ([]project.ProjectHistory, error) {
+	entity := []project.ProjectHistory{}
+	resp, _ := api.Rest().Get(projecthistoryURL + "reads")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}

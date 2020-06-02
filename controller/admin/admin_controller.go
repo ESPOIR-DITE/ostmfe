@@ -48,8 +48,10 @@ func Home(app *config.Env) http.Handler {
 
 	r.Get("/project", ProjectsHandler(app))
 	r.Get("/project/new", NewProjectsHandler(app))
-	r.Get("/project/edit", EditeProjectsHandler(app))
+	r.Get("/project/new_history/{projectId}", NewProjectHistoryHandler(app))
+	r.Get("/project/edit/{projectId}", EditeProjectsHandler(app))
 	r.Post("/project/create", CreateProjectHandler(app))
+	r.Post("/project/create_project_history", CreateProjectHistoryHandler(app))
 	//r.Get("/projects/delete",DeleteProjectsHandler(app))
 
 	r.Get("/partner", PartenersHandler(app))
@@ -87,6 +89,115 @@ func Home(app *config.Env) http.Handler {
 	r.Post("/people_category/create", CreatePeopleCategoryHandler(app))
 
 	return r
+}
+
+func CreateProjectHistoryHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		projectId := r.PostFormValue("projectId")
+		history := r.PostFormValue("history")
+		description := r.PostFormValue("description")
+
+		if projectId != "" && history != "" {
+			project, err := project_io.ReadProject(projectId)
+			if err != nil {
+				fmt.Println(err, " error reading Project")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/project/new_history/"+projectId, 301)
+				return
+			}
+			historyByteArray := []byte(history)
+			historyObject := history2.History{"", description, historyByteArray, time.Now()}
+			history, err := history_io.CreateHistory(historyObject)
+			if err != nil {
+				fmt.Println(err, " error creating History")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/project/new_history/"+projectId, 301)
+				return
+			}
+			projectHistoryObject := project2.ProjectHistory{"", projectId, history.Id}
+			_, errr := project_io.CreateProjectHistory(projectHistoryObject)
+			if errr != nil {
+				_, err := history_io.DeleteHistory(history.Id)
+				if err != nil {
+					fmt.Println(err, " error Delete History")
+				}
+				fmt.Println(err, " error creating History")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/project/new_history/"+projectId, 301)
+				return
+			}
+			if app.Session.GetString(r.Context(), "creation-successful") != "" {
+				app.Session.Remove(r.Context(), "creation-successful")
+			}
+			app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new People Type : "+project.Title)
+			http.Redirect(w, r, "/admin_user", 301)
+			return
+		}
+		fmt.Println("One of the field is missing")
+		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
+			app.Session.Remove(r.Context(), "creation-unknown-error")
+		}
+		app.Session.Put(r.Context(), "creation-unknown-error", "You have encountered an unknown error, please try again")
+		http.Redirect(w, r, "/admin_user/project/new_history/"+projectId, 301)
+		return
+	}
+}
+
+func NewProjectHistoryHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var unknown_error string
+		var backend_error string
+		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
+			unknown_error = app.Session.GetString(r.Context(), "creation-unknown-error")
+			app.Session.Remove(r.Context(), "creation-unknown-error")
+		}
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			backend_error = app.Session.GetString(r.Context(), "user-create-error")
+			app.Session.Remove(r.Context(), "user-create-error")
+		}
+		projectId := chi.URLParam(r, "projectId")
+		project, err := project_io.ReadProject(projectId)
+		if err != nil {
+			fmt.Println(" error reading project")
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+			http.Redirect(w, r, "/admin_user/project/new", 301)
+			return
+		}
+
+		type PageData struct {
+			Project       project2.Project
+			Backend_error string
+			Unknown_error string
+		}
+		data := PageData{project, backend_error, unknown_error}
+		files := []string{
+			app.Path + "admin/project/new_project_history.html",
+			app.Path + "admin/template/navbar.html",
+			app.Path + "base_templates/footer.html",
+		}
+		ts, err := template.ParseFiles(files...)
+		if err != nil {
+			app.ErrorLog.Println(err.Error())
+			return
+		}
+		err = ts.Execute(w, data)
+		if err != nil {
+			app.ErrorLog.Println(err.Error())
+		}
+	}
 }
 
 func CreatePeopleCategoryHandler(app *config.Env) http.HandlerFunc {
@@ -442,7 +553,8 @@ func CreatePeopleStp2Handler(app *config.Env) http.HandlerFunc {
 		filesByteArray := misc.CheckFiles(filesArray)
 
 		if history != "" && peopleId != "" && title != "" && description != "" {
-			historyObejct := history2.History{"", description, history, date}
+			historyByteArray := []byte(history)
+			historyObejct := history2.History{"", description, historyByteArray, date}
 			historynew, Err := history_io.CreateHistory(historyObejct)
 			if Err != nil {
 				fmt.Println(err, " error creating a new history")
@@ -912,8 +1024,6 @@ func CreateProjectHandler(app *config.Env) http.HandlerFunc {
 	*/
 	return func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
-		//fileslist := r.Form["file"]
-
 		file, _, err := r.FormFile("file")
 		file2, _, err := r.FormFile("file2")
 		file3, _, err := r.FormFile("file3")
@@ -928,19 +1038,7 @@ func CreateProjectHandler(app *config.Env) http.HandlerFunc {
 
 		filesArray := []io.Reader{file, file2, file3, file4, file5, file6}
 		filesByteArray := misc.CheckFiles(filesArray)
-		//reader := bufio.NewReader(file)
-		//reader2 := bufio.NewReader(file2)
-		//reader3 := bufio.NewReader(file3)
-		//reader4 := bufio.NewReader(file4)
-		//reader5 := bufio.NewReader(file5)
-		//reader6 := bufio.NewReader(file6)
-		//
-		//content, _ := ioutil.ReadAll(reader)
-		//content2, _ := ioutil.ReadAll(reader2)
-		//content3, _ := ioutil.ReadAll(reader3)
-		//content4, _ := ioutil.ReadAll(reader4)
-		//content5, _ := ioutil.ReadAll(reader5)
-		//content6, _ := ioutil.ReadAll(reader6)
+
 		fmt.Println(project_name, "<<<Project Name|| description>>>", description)
 
 		if project_name != "" && description != "" {
@@ -955,8 +1053,6 @@ func CreateProjectHandler(app *config.Env) http.HandlerFunc {
 				http.Redirect(w, r, "/admin_user/project/new", 301)
 				return
 			}
-			//COnverting file(byte arrays) into Array of byte
-			//sliceOfImage := [][]byte{content, content2, content3, content4, content5, content6}
 
 			projectImage := project2.ProjectImage{"", new_project.Id, "", ""}
 			helper := project2.ProjectImageHelper{filesByteArray, projectImage}
@@ -978,7 +1074,7 @@ func CreateProjectHandler(app *config.Env) http.HandlerFunc {
 				app.Session.Remove(r.Context(), "creation-successful")
 			}
 			app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new project : "+project_name)
-			http.Redirect(w, r, "/admin_user", 301)
+			http.Redirect(w, r, "/admin_user/project/new_history/"+new_project.Id, 301)
 			return
 			//event_name := r.PostFormValue("event_name")
 		}
@@ -1429,8 +1525,14 @@ func DeleteProjectsHandler(app *config.Env) http.HandlerFunc {
 
 func EditeProjectsHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		projectId := chi.URLParam(r, "projectId")
+		selectedProjest := misc.GetProjectEditable(projectId)
+		type PageData struct {
+			Project misc.ProjectEditable
+		}
+		data := PageData{selectedProjest}
 		files := []string{
-			app.Path + "admin/project/project_tables.html",
+			app.Path + "admin/project/edite_project.html",
 			app.Path + "admin/template/navbar.html",
 			//app.Path + "base_templates/footer.html",
 		}
@@ -1439,7 +1541,7 @@ func EditeProjectsHandler(app *config.Env) http.HandlerFunc {
 			app.ErrorLog.Println(err.Error())
 			return
 		}
-		err = ts.Execute(w, nil)
+		err = ts.Execute(w, data)
 		if err != nil {
 			app.ErrorLog.Println(err.Error())
 		}

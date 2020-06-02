@@ -1,16 +1,16 @@
-package home
+package project
 
 import (
 	"github.com/go-chi/chi"
 	"html/template"
 	"net/http"
 	"ostmfe/config"
-	"ostmfe/controller/misc"
 )
 
 func Home(app *config.Env) http.Handler {
 	r := chi.NewRouter()
 	r.Get("/", homeHanler(app))
+	r.Get("/read_single", ReadSingleProjectHanler(app))
 	//r.Use(middleware.LoginSession{SessionManager: app.Session}.RequireAuthenticatedUser)
 	//r.Get("/home", indexHanler(app))
 	//r.Get("/homeError", indexErrorHanler(app))
@@ -18,15 +18,10 @@ func Home(app *config.Env) http.Handler {
 	return r
 }
 
-func homeHanler(app *config.Env) http.HandlerFunc {
+func ReadSingleProjectHanler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		projects := misc.GetProjectContentsHomes()
-		type PageData struct {
-			Projects []misc.ProjectContentsHome
-		}
-		date := PageData{projects}
 		files := []string{
-			app.Path + "index.html",
+			app.Path + "about_us/about_us.html",
 			app.Path + "base_templates/navigator.html",
 			app.Path + "base_templates/footer.html",
 		}
@@ -35,7 +30,26 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 			app.ErrorLog.Println(err.Error())
 			return
 		}
-		err = ts.Execute(w, date)
+		err = ts.Execute(w, nil)
+		if err != nil {
+			app.ErrorLog.Println(err.Error())
+		}
+	}
+}
+
+func homeHanler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		files := []string{
+			app.Path + "about_us/about_us.html",
+			app.Path + "base_templates/navigator.html",
+			app.Path + "base_templates/footer.html",
+		}
+		ts, err := template.ParseFiles(files...)
+		if err != nil {
+			app.ErrorLog.Println(err.Error())
+			return
+		}
+		err = ts.Execute(w, nil)
 		if err != nil {
 			app.ErrorLog.Println(err.Error())
 		}
