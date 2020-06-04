@@ -6,12 +6,12 @@ import (
 	"ostmfe/domain/project"
 )
 
-const prjPartner = api.BASE_URL + "prjPartner"
+const projectpartnerURL = api.BASE_URL + "place_partner/"
 
 func CreateProjectPartner(prjP project.ProjectPartner) (project.ProjectPartner, error) {
 
 	entity := project.ProjectPartner{}
-	resp, _ := api.Rest().SetBody(prjP).Post(prjPartner + "create")
+	resp, _ := api.Rest().SetBody(prjP).Post(projectpartnerURL + "create")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -25,7 +25,7 @@ func CreateProjectPartner(prjP project.ProjectPartner) (project.ProjectPartner, 
 func updateProjectPartner(prjP project.ProjectPartner) (project.ProjectPartner, error) {
 
 	entity := project.ProjectPartner{}
-	resp, _ := api.Rest().SetBody(prjP).Post(prjPartner + "update")
+	resp, _ := api.Rest().SetBody(prjP).Post(projectpartnerURL + "update")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -38,7 +38,7 @@ func updateProjectPartner(prjP project.ProjectPartner) (project.ProjectPartner, 
 }
 func ReadProjectPartner(id string) (project.ProjectPartner, error) {
 	entity := project.ProjectPartner{}
-	resp, _ := api.Rest().Get(prjPartner + "read?id" + id)
+	resp, _ := api.Rest().Get(projectpartnerURL + "read?id" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -50,7 +50,7 @@ func ReadProjectPartner(id string) (project.ProjectPartner, error) {
 }
 func ReadAllOfProjectPartner(id string) ([]project.ProjectPartner, error) {
 	entity := []project.ProjectPartner{}
-	resp, _ := api.Rest().Get(prjPartner + "readAllOf?id" + id)
+	resp, _ := api.Rest().Get(projectpartnerURL + "readAllOf?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -63,7 +63,7 @@ func ReadAllOfProjectPartner(id string) ([]project.ProjectPartner, error) {
 func DeleteProjectPartner(id string) (project.ProjectPartner, error) {
 
 	entity := project.ProjectPartner{}
-	resp, _ := api.Rest().Get(prjPartner + "delete?id" + id)
+	resp, _ := api.Rest().Get(projectpartnerURL + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -77,7 +77,7 @@ func DeleteProjectPartner(id string) (project.ProjectPartner, error) {
 func ReadProjectPartners() (project.ProjectPartner, error) {
 
 	entity := project.ProjectPartner{}
-	resp, _ := api.Rest().Get(prjPartner + "reads")
+	resp, _ := api.Rest().Get(projectpartnerURL + "reads")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}

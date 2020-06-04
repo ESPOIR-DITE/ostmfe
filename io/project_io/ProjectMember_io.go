@@ -6,12 +6,12 @@ import (
 	"ostmfe/domain/project"
 )
 
-const projMemb = api.BASE_URL + "projMemb"
+const projectmemberURL = api.BASE_URL + "project_member/"
 
 func CreateProjectMember(pm project.ProjectMember) (project.ProjectMember, error) {
 
 	entity := project.ProjectMember{}
-	resp, _ := api.Rest().SetBody(pm).Post(projMemb + "create")
+	resp, _ := api.Rest().SetBody(pm).Post(projectmemberURL + "create")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -24,7 +24,7 @@ func CreateProjectMember(pm project.ProjectMember) (project.ProjectMember, error
 func UpdateProjectMember(pm project.ProjectMember) (project.ProjectMember, error) {
 
 	entity := project.ProjectMember{}
-	resp, _ := api.Rest().SetBody(pm).Post(projMemb + "update")
+	resp, _ := api.Rest().SetBody(pm).Post(projectmemberURL + "update")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -37,7 +37,7 @@ func UpdateProjectMember(pm project.ProjectMember) (project.ProjectMember, error
 func ReadProjectMember(id string) (project.ProjectMember, error) {
 
 	entity := project.ProjectMember{}
-	resp, _ := api.Rest().Get(projMemb + "read?id" + id)
+	resp, _ := api.Rest().Get(projectmemberURL + "read?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -50,7 +50,7 @@ func ReadProjectMember(id string) (project.ProjectMember, error) {
 func DeleteProjectMember(id string) (project.ProjectMember, error) {
 
 	entity := project.ProjectMember{}
-	resp, _ := api.Rest().Get(projMemb + "delete?id" + id)
+	resp, _ := api.Rest().Get(projectmemberURL + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -63,7 +63,7 @@ func DeleteProjectMember(id string) (project.ProjectMember, error) {
 func ReadProjectMembers() (project.ProjectMember, error) {
 
 	entity := project.ProjectMember{}
-	resp, _ := api.Rest().Get(projMemb + "reads")
+	resp, _ := api.Rest().Get(projectmemberURL + "reads")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -75,7 +75,7 @@ func ReadProjectMembers() (project.ProjectMember, error) {
 }
 func ReadAllOfProjectMembers(id string) ([]project.ProjectMember, error) {
 	entity := []project.ProjectMember{}
-	resp, _ := api.Rest().Get(projMemb + "readAllOf?id=" + id)
+	resp, _ := api.Rest().Get(projectmemberURL + "readAllOf?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}

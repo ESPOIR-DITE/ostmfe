@@ -44,6 +44,18 @@ func ReadCollection_Type(id string) (collection.Collection_type, error) {
 	}
 	return entity, nil
 }
+func ReadWithCollectionId(id string) (collection.Collection_type, error) {
+	entity := collection.Collection_type{}
+	resp, _ := api.Rest().Get(collection_typeURL + "readWihtCollectionId?id=" + id)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
 func DeleteCollection_Type(id string) (collection.Collection_type, error) {
 	entity := collection.Collection_type{}
 	resp, _ := api.Rest().Get(collection_typeURL + "delete?id=" + id)

@@ -57,8 +57,8 @@ func DeleteCollection(id string) (collection.Collection, error) {
 	}
 	return entity, nil
 }
-func ReadCollections() (collection.Collection, error) {
-	entity := collection.Collection{}
+func ReadCollections() ([]collection.Collection, error) {
+	entity := []collection.Collection{}
 	resp, _ := api.Rest().Get(collect + "reads")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())

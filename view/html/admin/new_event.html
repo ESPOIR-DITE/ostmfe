@@ -42,12 +42,12 @@
         <!-- Nested Row within Card Body -->
         <div class="row">
 
-          <div class="col-lg-5 d-none d-lg-block ">
+          <div class="col-lg-7 d-none d-lg-block ">
             <div class="map-wrap" style="width:100%; height: 100%;" id="map"></div>
 
           </div>
 
-          <div class="col-lg-7">
+          <div class="col-lg-5">
             <div class="p-5">
               <div class="text-center">
                 <h1 class="h4 text-gray-900 mb-4">Create new Event</h1>
@@ -55,10 +55,10 @@
               <form class="user" method="post" action="/admin_user/event/create">
                 <div class="form-group row">
                   <div class="col-sm-6 mb-3 mb-sm-0">
-                    <input type="text" name="event_name" class="form-control form-control-user" id="exampleFirstName" placeholder="Event Name">
+                    <input type="text" name="event_name" class="form-control" id="exampleFirstName" placeholder="Event Name">
                   </div>
                   <div class="col-sm-6">
-                    <input type="date" name="date" class="form-control form-control-user" id="exampleLastName" placeholder="Event date">
+                    <input type="date" name="date" class="form-control" id="exampleLastName" placeholder="Event date">
                   </div>
                 </div>
                 <div class="form-group row">
@@ -69,7 +69,7 @@
                       {{range .}}
                         <option value={{.Id}}>{{.Title}}</option>
                       {{end}}
-                      {{end}}n>
+                      {{end}}
                     </select>
                   </div>
                   <div class="col-sm-6">
@@ -84,18 +84,18 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label>Lacation Cordinates <h6>click on the mape</h6></label>
-                  <input type="text" class="form-control form-control-user" name="latlng" id="exampleRepeatPassword" placeholder="Map coordinates">
+                  <input type="text" class="form-control" name="place" placeholder="Location name">
+                </div>
+                <div class="form-group">
+                  <label>Lacation Cordinates click on the mape</label>
+                  <input type="text" class="form-control" name="latlng" id="exampleRepeatPassword" placeholder="Map coordinates">
                 </div>
 
-                <div class="form-group">
-                    <input type="text" class="form-control form-control-user" name="place" placeholder="Location name">
-                </div>
-                <button type="submit" class="btn btn-primary btn-user btn-block">
+                <button type="submit" class="btn btn-primary btn-block">
                   Next
                 </button>
                 <hr>
-                <a href="/admin_user" class="btn btn-google btn-user btn-block">Cancel</a>
+                <a href="/admin_user" class="btn btn-google  btn-block">Cancel</a>
               </form>
             </div>
           </div>

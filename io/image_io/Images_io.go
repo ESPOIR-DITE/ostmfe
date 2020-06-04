@@ -22,7 +22,7 @@ func CreateImage(img image.Images) (image.Images, error) {
 	return entity, nil
 
 }
-func updateImage(img image.Images) (image.Images, error) {
+func UpdateImage(img image.Images) (image.Images, error) {
 
 	entity := image.Images{}
 	resp, _ := api.Rest().SetBody(img).Post(imageURL + "update")

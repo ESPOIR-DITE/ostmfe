@@ -44,6 +44,19 @@ func ReadCollectionTyupe(id string) (collection.CollectionTypes, error) {
 	}
 	return entity, nil
 }
+
+//func ReadWithCollectionId(id string) (collection.CollectionTypes, error) {
+//	entity := collection.CollectionTypes{}
+//	resp, _ := api.Rest().Get(collectiontypeURL + "readWithcollectionId?id=" + id)
+//	if resp.IsError() {
+//		return entity, errors.New(resp.Status())
+//	}
+//	err := api.JSON.Unmarshal(resp.Body(), &entity)
+//	if err != nil {
+//		return entity, errors.New(resp.Status())
+//	}
+//	return entity, nil
+//}
 func DeleteCollectionTyupe(id string) (collection.CollectionTypes, error) {
 	entity := collection.CollectionTypes{}
 	resp, _ := api.Rest().Get(collectiontypeURL + "delete?id=" + id)

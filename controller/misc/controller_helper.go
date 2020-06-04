@@ -5,10 +5,14 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"ostmfe/domain/collection"
+	history2 "ostmfe/domain/history"
 	image3 "ostmfe/domain/image"
 	"ostmfe/domain/member"
 	"ostmfe/domain/partner"
 	project2 "ostmfe/domain/project"
+	"ostmfe/io/collection_io"
+	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
 	"ostmfe/io/member_io"
 	"ostmfe/io/partner_io"
@@ -105,17 +109,18 @@ func GetProjectContentsHomes() []ProjectContentsHome {
 This struct will return all the picture
 */
 type ProjectEditable struct {
-	Project        project2.Project
-	Images         []image3.Images
-	ProjectHistory project2.ProjectHistory
-	Parteners      []partner.Partner
-	Member         []member.Member
+	Project  project2.Project
+	Images   []image3.Images
+	History  history2.History
+	Partners []partner.Partner
+	Members  []member.Member
 }
 
 func GetProjectEditable(projectId string) ProjectEditable {
 	var Images []image3.Images
 	var Parteners []partner.Partner
 	var Member []member.Member
+	var historyToreturn history2.History
 	projectEditable := ProjectEditable{}
 	projectObject, err := project_io.ReadProject(projectId)
 	if err != nil {
@@ -158,10 +163,48 @@ func GetProjectEditable(projectId string) ProjectEditable {
 		}
 		Member = append(Member, mamber)
 	}
-	history, err := project_io.ReadProjectHistoryOf(projectObject.Id)
+	projectHistory, err := project_io.ReadProjectHistoryOf(projectObject.Id)
 	if err != nil {
 		fmt.Println(err, " error read project History of id: ", projectObject.Id)
+	} else {
+		history, err := history_io.ReadHistory(projectHistory.HistoryId)
+		if err != nil {
+			fmt.Println(err, " error read history of id: ", projectHistory.HistoryId)
+		}
+		historyToreturn = history2.History{history.Id, history.Title, ConvertingToString(history.Content), history.Content, history.Date}
 	}
-	projectEditable = ProjectEditable{projectObject, Images, history, Parteners, Member}
+	projectEditable = ProjectEditable{projectObject, Images, historyToreturn, Parteners, Member}
 	return projectEditable
+}
+func ConvertingToString(byte []byte) string {
+	s := string(byte)
+	return s
+}
+
+//Help getting a collection Object that has collection Object and collection Type
+
+type CollectionBridge struct {
+	Collection     collection.Collection
+	CollectionType collection.CollectionTypes
+}
+
+func GetCollectionBridge() []CollectionBridge {
+	var collectionBridge []CollectionBridge
+	var collectionType collection.CollectionTypes
+	collections, err := collection_io.ReadCollections()
+	if err != nil {
+		fmt.Println(err, " error reading Collections")
+	}
+	for _, collection := range collections {
+		collection_type, err := collection_io.ReadWithCollectionId(collection.Id)
+		if err != nil {
+			fmt.Println(err, " error reading collection_type")
+		} else {
+			collectionType, err = collection_io.ReadCollectionTyupe(collection_type.CollectionType)
+		}
+		collectionBridgeObject := CollectionBridge{collection, collectionType}
+		collectionBridge = append(collectionBridge, collectionBridgeObject)
+		collectionBridgeObject = CollectionBridge{}
+	}
+	return collectionBridge
 }

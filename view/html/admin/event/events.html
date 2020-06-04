@@ -226,15 +226,15 @@
 
           <!-- Page Heading -->
 
-          <a href="/admin_user/people/new" class="btn btn-success btn-icon-split mb-4">
+          <a href="/admin_user/event/new" class="btn btn-success btn-icon-split mb-4">
                     <span class="icon text-white-50">
                       <i class="fas fa-check"></i>
                     </span>
-            <span class="text">Add New Person</span>
+            <span class="text">Add New Event</span>
           </a>
 
 
-
+          
           <!-- DataTales Example -->
           <div class="card shadow mb-4">
             <div class="card-header py-3">
@@ -246,9 +246,8 @@
                   <thead>
                     <tr>
                       <th>Nr</th>
-                      <th>Name</th>
-                      <th>User Surname</th>
-                      <th>User Email</th>
+                      <th>Event Name</th>
+                      <th>Event Date</th>
                       <th>Action</th>
                       <th>Action</th>
                     </tr>
@@ -256,26 +255,19 @@
                   <tfoot>
                     <tr>
                       <th>Nr</th>
-                      <th>Name</th>
-                      <th>User Surname</th>
-                      <th>Date of Birth</th>
-                      <th>Date of Death</th>
-                      <th>Origin</th>
-                      <th>Origin</th>
-                      <th>Profession</th>
+                      <th>Event Name</th>
+                      <th>Event Date</th>
+                      <th>Action</th>
+                      <th>Action</th>
                     </tr>
                   </tfoot>
                   <tbody>
-                  {{with .Peoples}}
+                  {{with .Events}}
                   {{range $i, $e := .}}
                     <tr>
                       <td>{{$i}}</td>
                       <td>{{.Name}}</td>
-                      <td>{{.Surname}}</td>
-                      <td>{{.BirthDate}}</td>
-                      <td>{{.DeathDate}}</td>
-                      <td>{{.Origine}}</td>
-                      <td>{{.Profession}}</td>
+                      <td>{{.Date}}</td>
                       <td><a href="/admin_user/user/edit/{{.Id}}" class="btn btn-primary btn-user btn-block">
                           Edit
                         </a>

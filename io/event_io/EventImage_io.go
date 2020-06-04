@@ -64,7 +64,6 @@ func DeleteEventImg(id string) (event.EventImage, error) {
 
 }
 func ReadEventmgs() ([]event.EventImage, error) {
-
 	entity := []event.EventImage{}
 	resp, _ := api.Rest().Get(eventimageURL + "reads")
 	if resp.IsError() {

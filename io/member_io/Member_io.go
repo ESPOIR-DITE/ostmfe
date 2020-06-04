@@ -6,11 +6,11 @@ import (
 	"ostmfe/domain/member"
 )
 
-const memb = api.BASE_URL + "memb"
+const memberURL = api.BASE_URL + "member/"
 
 func CreateMember(M member.Member) (member.Member, error) {
 	entity := member.Member{}
-	resp, _ := api.Rest().SetBody(M).Post(memb + "create")
+	resp, _ := api.Rest().SetBody(M).Post(memberURL + "create")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -23,7 +23,7 @@ func CreateMember(M member.Member) (member.Member, error) {
 }
 func UdateMember(M member.Member) (member.Member, error) {
 	entity := member.Member{}
-	resp, _ := api.Rest().SetBody(M).Post(memb + "update")
+	resp, _ := api.Rest().SetBody(M).Post(memberURL + "update")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -36,7 +36,7 @@ func UdateMember(M member.Member) (member.Member, error) {
 }
 func ReadMember(id string) (member.Member, error) {
 	entity := member.Member{}
-	resp, _ := api.Rest().Get(memb + "read?id" + id)
+	resp, _ := api.Rest().Get(memberURL + "read?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -49,7 +49,7 @@ func ReadMember(id string) (member.Member, error) {
 }
 func DeleteMember(id string) (member.Member, error) {
 	entity := member.Member{}
-	resp, _ := api.Rest().Get(memb + "delete?id" + id)
+	resp, _ := api.Rest().Get(memberURL + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -62,7 +62,7 @@ func DeleteMember(id string) (member.Member, error) {
 }
 func ReadMembers() (member.Member, error) {
 	entity := member.Member{}
-	resp, _ := api.Rest().Get(memb + "reads")
+	resp, _ := api.Rest().Get(memberURL + "reads")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}

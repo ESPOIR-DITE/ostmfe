@@ -226,11 +226,11 @@
 
           <!-- Page Heading -->
 
-          <a href="/admin_user/people/new" class="btn btn-success btn-icon-split mb-4">
+          <a href="/admin_user/users/new" class="btn btn-success btn-icon-split mb-4">
                     <span class="icon text-white-50">
                       <i class="fas fa-check"></i>
                     </span>
-            <span class="text">Add New Person</span>
+            <span class="text">Add New User</span>
           </a>
 
 
@@ -258,29 +258,24 @@
                       <th>Nr</th>
                       <th>Name</th>
                       <th>User Surname</th>
-                      <th>Date of Birth</th>
-                      <th>Date of Death</th>
-                      <th>Origin</th>
-                      <th>Origin</th>
-                      <th>Profession</th>
+                      <th>User Email</th>
+                      <th>Action</th>
+                      <th>Action</th>
                     </tr>
                   </tfoot>
                   <tbody>
-                  {{with .Peoples}}
+                  {{with .Users}}
                   {{range $i, $e := .}}
                     <tr>
                       <td>{{$i}}</td>
                       <td>{{.Name}}</td>
                       <td>{{.Surname}}</td>
-                      <td>{{.BirthDate}}</td>
-                      <td>{{.DeathDate}}</td>
-                      <td>{{.Origine}}</td>
-                      <td>{{.Profession}}</td>
-                      <td><a href="/admin_user/user/edit/{{.Id}}" class="btn btn-primary btn-user btn-block">
+                      <td>{{.Email}}</td>
+                      <td><a href="/admin_user/user/edit/{{.Email}}" class="btn btn-primary btn-user btn-block">
                           Edit
                         </a>
                       </td>
-                      <td><a href="/admin_user/user/delete/{{.Id}}" class="btn btn-google btn-user btn-block">
+                      <td><a href="/admin_user/user/delete/{{.Email}}" class="btn btn-google btn-user btn-block">
                           <i class="fab fa-fw"></i> Delete
                         </a>
                       </td>
