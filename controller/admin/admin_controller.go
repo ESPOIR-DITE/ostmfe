@@ -42,8 +42,9 @@ func Home(app *config.Env) http.Handler {
 
 	r.Get("/users", UserHandler(app))
 	r.Get("/users/new", NewUserHandler(app))
-	r.Get("/users/edit", EditUserHandler(app))
+	r.Get("/users/edit/{userId}", EditUserHandler(app))
 	r.Post("/users/create", CreateUserHandler(app))
+	r.Post("/users/update_user", UpdateUserHandler(app))
 
 	r.Get("/event", EventsHandler(app))
 	r.Get("/event/new", NewEventsHandler(app))
@@ -96,6 +97,61 @@ func Home(app *config.Env) http.Handler {
 	r.Post("/people_category/create", CreatePeopleCategoryHandler(app))
 
 	return r
+}
+
+func UpdateUserHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+
+		var userRoleObejct user2.UserRole
+		roleId := r.PostFormValue("roleId")
+		email := r.PostFormValue("email")
+		surname := r.PostFormValue("surname")
+		name := r.PostFormValue("name")
+
+		_, err := user_io.ReadUser(email)
+		if err != nil {
+			fmt.Println(err, " could not read user Line: 113")
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+			http.Redirect(w, r, "/admin_user/users/edit/"+email, 301)
+			return
+		}
+		newUserObejct := user2.Users{email, name, surname}
+		newUser, err := user_io.UpdateUser(newUserObejct)
+		if err != nil {
+			fmt.Println(err, " could not updating User Line: 124")
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+			http.Redirect(w, r, "/admin_user/users/edit/"+email, 301)
+			return
+		}
+		oldUserRole, err := user_io.ReadUserRoleWithEmail(email)
+		if err != nil {
+			fmt.Println(err, " user may not have a role yet or an error")
+			userRoleObejct = user2.UserRole{"", email, roleId}
+			_, err := user_io.CreateUserRole(userRoleObejct)
+			if err != nil {
+				fmt.Println(err, " Error creating user role ")
+			}
+		} else {
+			userRoleObejct = user2.UserRole{oldUserRole.RoleId, email, roleId}
+			_, err := user_io.UpdateUserRole(userRoleObejct)
+			if err != nil {
+				fmt.Println(err, " Error updating user role ")
+			}
+		}
+		if app.Session.GetString(r.Context(), "creation-successful") != "" {
+			app.Session.Remove(r.Context(), "creation-successful")
+		}
+		app.Session.Put(r.Context(), "creation-successful", "You have successfully updated the following User : "+newUser.Name)
+		http.Redirect(w, r, "/admin_user/users", 301)
+		return
+	}
 }
 
 func ProjectUpdatePictureHandler(app *config.Env) http.HandlerFunc {
@@ -1907,17 +1963,61 @@ func EventsHandler(app *config.Env) http.HandlerFunc {
 
 func EditUserHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		userId := chi.URLParam(r, "userId")
+		var role user2.Roles
+		user, err := user_io.ReadUser(userId)
+		if err != nil {
+			fmt.Println(err, "error reading user line: 1913")
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+			http.Redirect(w, r, "/admin_user/users", 301)
+			return
+		}
+		//userAccount, err := user_io.ReadUserAccountwithEmail(userId)
+		userRole, err := user_io.ReadUserRoleWithEmail(userId)
+		if err != nil {
+			fmt.Println(err, "error reading new userRole line: 1923")
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+			http.Redirect(w, r, "/admin_user/users", 301)
+			return
+		} else {
+			role, err = user_io.ReadRole(userRole.RoleId)
+			if err != nil {
+				fmt.Println(err, "error reading new userRole line: 1923")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/users", 301)
+				return
+			}
+		}
+		roles, err := user_io.ReadRoles()
+		if err != nil {
+			fmt.Println(err, " error reading roles")
+		}
+		type PageData struct {
+			User  user2.Users
+			Role  user2.Roles
+			Roles []user2.Roles
+		}
+		data := PageData{user, role, roles}
 		files := []string{
 			app.Path + "admin/edit_user.html",
-			//app.Path + "admin/template/navbar.html",
-			//app.Path + "base_templates/footer.html",
+			app.Path + "admin/template/navbar.html",
+			app.Path + "base_templates/footer.html",
 		}
 		ts, err := template.ParseFiles(files...)
 		if err != nil {
 			app.ErrorLog.Println(err.Error())
 			return
 		}
-		err = ts.Execute(w, nil)
+		err = ts.Execute(w, data)
 		if err != nil {
 			app.ErrorLog.Println(err.Error())
 		}

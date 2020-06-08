@@ -6,75 +6,81 @@ import (
 	user2 "ostmfe/domain/user"
 )
 
-const useraccountURL = api.BASE_URL + "user_account"
+const userroleURL = api.BASE_URL + "user_role/"
 
-func CreateUserAccount(account user2.UserAccount) (user2.UserAccount, error) {
-	var entity user2.UserAccount
-	resp, _ := api.Rest().SetBody(account).Post(useraccountURL + "create")
+func CreateUserRole(role user2.UserRole) (user2.UserRole, error) {
+	var entity user2.UserRole
+	resp, _ := api.Rest().SetBody(role).Post(userroleURL + "create")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
 	err := api.JSON.Unmarshal(resp.Body(), &entity)
+
 	if err != nil {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
 }
-func UpdateUserAccount(account user2.UserAccount) (user2.UserAccount, error) {
-	var entity user2.UserAccount
-	resp, _ := api.Rest().SetBody(account).Post(useraccountURL + "update")
+func UpdateUserRole(role user2.UserRole) (user2.UserRole, error) {
+	var entity user2.UserRole
+	resp, _ := api.Rest().SetBody(role).Post(userroleURL + "update")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
 	err := api.JSON.Unmarshal(resp.Body(), &entity)
+
 	if err != nil {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
 }
-func ReadUserAccount(id string) (user2.UserAccount, error) {
-	var entity user2.UserAccount
-	resp, _ := api.Rest().Get(useraccountURL + "read?id=" + id)
+func ReadUserRole(id string) (user2.UserRole, error) {
+	var entity user2.UserRole
+	resp, _ := api.Rest().Get(userroleURL + "read?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
 	err := api.JSON.Unmarshal(resp.Body(), &entity)
+
 	if err != nil {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
 }
-func ReadUserAccountwithEmail(id string) (user2.UserAccount, error) {
-	var entity user2.UserAccount
-	resp, _ := api.Rest().Get(useraccountURL + "readWithEmail?id=" + id)
+func ReadUserRoleWithEmail(id string) (user2.UserRole, error) {
+	var entity user2.UserRole
+	resp, _ := api.Rest().Get(userroleURL + "readWithemail?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
 	err := api.JSON.Unmarshal(resp.Body(), &entity)
+
 	if err != nil {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
 }
-func DeleteUserAccount(id string) (user2.UserAccount, error) {
-	var entity user2.UserAccount
-	resp, _ := api.Rest().Get(useraccountURL + "delete?id=" + id)
+func DeleteUserRole(id string) (user2.UserRole, error) {
+	var entity user2.UserRole
+	resp, _ := api.Rest().Get(userroleURL + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
 	err := api.JSON.Unmarshal(resp.Body(), &entity)
+
 	if err != nil {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
 }
-func ReadUserAccounts() ([]user2.UserAccount, error) {
-	var entity []user2.UserAccount
-	resp, _ := api.Rest().Get(useraccountURL + "reads")
+func ReadUserRoles(id string) (user2.UserRole, error) {
+	var entity user2.UserRole
+	resp, _ := api.Rest().Get(userroleURL + "reads")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
 	err := api.JSON.Unmarshal(resp.Body(), &entity)
+
 	if err != nil {
 		return entity, errors.New(resp.Status())
 	}

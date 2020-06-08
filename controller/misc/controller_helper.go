@@ -87,7 +87,7 @@ func GetProjectContentsHomes() []ProjectContentsHome {
 		return projectContentsHomeObject
 	}
 	for _, project := range projects {
-		fmt.Println(project.Title)
+		//fmt.Println(project.Title)
 		projectImage, err := project_io.ReadWithProjectIdProjectImage(project.Id)
 		if err != nil {
 			fmt.Println(err, " Can not find the following project in project image table: ", project.Title)
