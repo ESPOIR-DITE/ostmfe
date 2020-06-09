@@ -248,7 +248,10 @@
                       <th>Nr</th>
                       <th>Name</th>
                       <th>User Surname</th>
-                      <th>User Email</th>
+                      <th>Date of Birth</th>
+                      <th>Date of Death</th>
+                      <th>Origin</th>
+                      <th>Profession</th>
                       <th>Action</th>
                       <th>Action</th>
                     </tr>
@@ -261,8 +264,9 @@
                       <th>Date of Birth</th>
                       <th>Date of Death</th>
                       <th>Origin</th>
-                      <th>Origin</th>
                       <th>Profession</th>
+                      <th>Action</th>
+                      <th>Action</th>
                     </tr>
                   </tfoot>
                   <tbody>
@@ -276,14 +280,8 @@
                       <td>{{.DeathDate}}</td>
                       <td>{{.Origine}}</td>
                       <td>{{.Profession}}</td>
-                      <td><a href="/admin_user/user/edit/{{.Id}}" class="btn btn-primary btn-user btn-block">
-                          Edit
-                        </a>
-                      </td>
-                      <td><a href="/admin_user/user/delete/{{.Id}}" class="btn btn-google btn-user btn-block">
-                          <i class="fab fa-fw"></i> Delete
-                        </a>
-                      </td>
+                      <td><a href="/admin_user/user/edit/{{.Id}}" class="btn btn-primary btn-user btn-block">Edit</a></td>
+                      <td><a href="/admin_user/user/delete/{{.Id}}" class="btn btn-google btn-user btn-block">Delete</a></td>
                     </tr>
                   {{end}}
                   {{end}}

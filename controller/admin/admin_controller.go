@@ -42,14 +42,15 @@ func Home(app *config.Env) http.Handler {
 
 	r.Get("/users", UserHandler(app))
 	r.Get("/users/new", NewUserHandler(app))
-	r.Get("/users/edit/{userId}", EditUserHandler(app))
+	r.Get("/user/edit/{userId}", EditUserHandler(app))
 	r.Post("/users/create", CreateUserHandler(app))
 	r.Post("/users/update_user", UpdateUserHandler(app))
 
 	r.Get("/event", EventsHandler(app))
 	r.Get("/event/new", NewEventsHandler(app))
-	r.Get("/event/edite", EditEventsHandler(app))
+	r.Get("/event/edite/{eventId}", EditEventsHandler(app))
 	r.Post("/event/create", CreateEventHandler(app))
+	r.Post("/event/update", UpdateEventHandler(app))
 
 	r.Get("/project", ProjectsHandler(app))
 	r.Get("/project/new", NewProjectsHandler(app))
@@ -99,44 +100,95 @@ func Home(app *config.Env) http.Handler {
 	return r
 }
 
+func UpdateEventHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		id := r.PostFormValue("id")
+		name := r.PostFormValue("name")
+		date, _ := time.Parse(misc.YYYYMMDD_FORMAT, r.PostFormValue("date"))
+		event, err := event_io.ReadEvent(id)
+		if err != nil {
+			fmt.Println(err, " could not read event")
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+			http.Redirect(w, r, "/admin_user/event/edit/"+id, 301)
+			return
+		}
+		//we checking if there is a need of updating
+		if event.Name != name && event.Id != id && event.Date != date {
+			event := event2.Event{id, name, date}
+			eventAfterUpdate, err := event_io.UpdateEvent(event)
+			if err != nil {
+				fmt.Println(err, " could not update event")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/event/edit/"+id, 301)
+				return
+			} else {
+				if app.Session.GetString(r.Context(), "creation-successful") != "" {
+					app.Session.Remove(r.Context(), "creation-successful")
+				}
+				app.Session.Put(r.Context(), "creation-successful", "You have successfully updated the following User : "+eventAfterUpdate.Name)
+				http.Redirect(w, r, "/admin_user/event", 301)
+				return
+			}
+		}
+		fmt.Println(err, " No need for Update because you haven't made any change")
+		http.Redirect(w, r, "/admin_user/event", 301)
+
+	}
+}
+
 func UpdateUserHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 
 		var userRoleObejct user2.UserRole
+		var newUser user2.Users
 		roleId := r.PostFormValue("roleId")
 		email := r.PostFormValue("email")
 		surname := r.PostFormValue("surname")
 		name := r.PostFormValue("name")
 
-		_, err := user_io.ReadUser(email)
+		fmt.Println("email: " + email)
+		user, err := user_io.ReadUser(email)
 		if err != nil {
 			fmt.Println(err, " could not read user Line: 113")
 			if app.Session.GetString(r.Context(), "user-create-error") != "" {
 				app.Session.Remove(r.Context(), "user-create-error")
 			}
 			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-			http.Redirect(w, r, "/admin_user/users/edit/"+email, 301)
+			http.Redirect(w, r, "/admin_user/user/edit/"+email, 301)
 			return
 		}
-		newUserObejct := user2.Users{email, name, surname}
-		newUser, err := user_io.UpdateUser(newUserObejct)
-		if err != nil {
-			fmt.Println(err, " could not updating User Line: 124")
-			if app.Session.GetString(r.Context(), "user-create-error") != "" {
-				app.Session.Remove(r.Context(), "user-create-error")
+		//We need to check if the user object has changed.
+		if user.Name != name && user.Surname != surname && user.Email != email {
+			newUserObejct := user2.Users{email, name, surname}
+			newUser, err = user_io.UpdateUser(newUserObejct)
+			if err != nil {
+				fmt.Println(err, " could not updating User Line: 124")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/user/edit/"+email, 301)
+				return
 			}
-			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-			http.Redirect(w, r, "/admin_user/users/edit/"+email, 301)
-			return
 		}
+
 		oldUserRole, err := user_io.ReadUserRoleWithEmail(email)
 		if err != nil {
-			fmt.Println(err, " user may not have a role yet or an error")
+			fmt.Println(err, " user may not have a role yet or an error proceeding into creating one now")
 			userRoleObejct = user2.UserRole{"", email, roleId}
 			_, err := user_io.CreateUserRole(userRoleObejct)
 			if err != nil {
 				fmt.Println(err, " Error creating user role ")
+			} else {
+				fmt.Println(" Creation is completed")
 			}
 		} else {
 			userRoleObejct = user2.UserRole{oldUserRole.RoleId, email, roleId}
@@ -927,6 +979,14 @@ func NewPeopleHandler(app *config.Env) http.HandlerFunc {
 
 func PeopleHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		peoples, err := people_io.ReadPeoples()
+		if err != nil {
+			fmt.Println(err, "error reading peoples")
+		}
+		type PagePage struct {
+			Peoples []people2.People
+		}
+		data := PagePage{peoples}
 		files := []string{
 			app.Path + "admin/people/people.html",
 			app.Path + "admin/template/navbar.html",
@@ -937,7 +997,7 @@ func PeopleHandler(app *config.Env) http.HandlerFunc {
 			app.ErrorLog.Println(err.Error())
 			return
 		}
-		err = ts.Execute(w, nil)
+		err = ts.Execute(w, data)
 		if err != nil {
 			app.ErrorLog.Println(err.Error())
 		}
@@ -948,7 +1008,6 @@ func CreatePlaceStp2Handler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		//fileslist := r.Form["file"]
-
 		file, _, err := r.FormFile("file")
 		file2, _, err := r.FormFile("file2")
 		file3, _, err := r.FormFile("file3")
@@ -1860,17 +1919,32 @@ func ProjectsHandler(app *config.Env) http.HandlerFunc {
 
 func EditEventsHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		eventId := chi.URLParam(r, "eventId")
+		event, err := event_io.ReadEvent(eventId)
+		if err != nil {
+			fmt.Println(err, " error reading an event")
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+			http.Redirect(w, r, "/admin_user/event", 301)
+			return
+		}
+		type PageData struct {
+			Event event2.Event
+		}
+		date := PageData{event}
 		files := []string{
-			app.Path + "admin/edit_events.html",
-			//app.Path + "admin/template/navbar.html",
-			//app.Path + "base_templates/footer.html",
+			app.Path + "admin/edit_event.html",
+			app.Path + "admin/template/navbar.html",
+			app.Path + "base_templates/footer.html",
 		}
 		ts, err := template.ParseFiles(files...)
 		if err != nil {
 			app.ErrorLog.Println(err.Error())
 			return
 		}
-		err = ts.Execute(w, nil)
+		err = ts.Execute(w, date)
 		if err != nil {
 			app.ErrorLog.Println(err.Error())
 		}
@@ -1907,8 +1981,8 @@ func NewEventsHandler(app *config.Env) http.HandlerFunc {
 		data := PageData{projects, partners, backend_error, unknown_error}
 		files := []string{
 			app.Path + "admin/new_event.html",
-			//app.Path + "admin/template/navbar.html",
-			//app.Path + "base_templates/footer.html",
+			app.Path + "admin/template/navbar.html",
+			app.Path + "base_templates/footer.html",
 		}
 		ts, err := template.ParseFiles(files...)
 		if err != nil {
@@ -1978,23 +2052,23 @@ func EditUserHandler(app *config.Env) http.HandlerFunc {
 		//userAccount, err := user_io.ReadUserAccountwithEmail(userId)
 		userRole, err := user_io.ReadUserRoleWithEmail(userId)
 		if err != nil {
-			fmt.Println(err, "error reading new userRole line: 1923")
-			if app.Session.GetString(r.Context(), "user-create-error") != "" {
-				app.Session.Remove(r.Context(), "user-create-error")
-			}
-			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-			http.Redirect(w, r, "/admin_user/users", 301)
-			return
+			fmt.Println(err, "error reading new userRole line: 1981")
+			//if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			//	app.Session.Remove(r.Context(), "user-create-error")
+			//}
+			//app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+			//http.Redirect(w, r, "/admin_user/users", 301)
+			//return
 		} else {
 			role, err = user_io.ReadRole(userRole.RoleId)
 			if err != nil {
-				fmt.Println(err, "error reading new userRole line: 1923")
-				if app.Session.GetString(r.Context(), "user-create-error") != "" {
-					app.Session.Remove(r.Context(), "user-create-error")
-				}
-				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-				http.Redirect(w, r, "/admin_user/users", 301)
-				return
+				fmt.Println(err, "error reading new Role line: 1991")
+				//if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				//	app.Session.Remove(r.Context(), "user-create-error")
+				//}
+				//app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				//http.Redirect(w, r, "/admin_user/users", 301)
+				//return
 			}
 		}
 		roles, err := user_io.ReadRoles()
@@ -2036,14 +2110,11 @@ func UserHandler(app *config.Env) http.HandlerFunc {
 			backend_error = app.Session.GetString(r.Context(), "user-create-error")
 			app.Session.Remove(r.Context(), "user-create-error")
 		}
-		users, err := user_io.ReadUsers()
-		if err != nil {
-			fmt.Println(err, " error reading Users")
-		}
+		users := misc.GetUserAndRole()
 		type PagePage struct {
 			Backend_error string
 			Unknown_error string
-			Users         []user2.Users
+			Users         []misc.UsersAndRoles
 		}
 		data := PagePage{backend_error, unknown_error, users}
 		files := []string{

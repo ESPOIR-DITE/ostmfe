@@ -249,6 +249,7 @@
                       <th>Name</th>
                       <th>User Surname</th>
                       <th>User Email</th>
+                      <th>User Role</th>
                       <th>Action</th>
                       <th>Action</th>
                     </tr>
@@ -259,6 +260,7 @@
                       <th>Name</th>
                       <th>User Surname</th>
                       <th>User Email</th>
+                      <th>User Role</th>
                       <th>Action</th>
                       <th>Action</th>
                     </tr>
@@ -268,14 +270,15 @@
                   {{range $i, $e := .}}
                     <tr>
                       <td>{{$i}}</td>
-                      <td>{{.Name}}</td>
-                      <td>{{.Surname}}</td>
-                      <td>{{.Email}}</td>
-                      <td><a href="/admin_user/user/edit/{{.Email}}" class="btn btn-primary btn-user btn-block">
+                      <td>{{.User.Name}}</td>
+                      <td>{{.User.Surname}}</td>
+                      <td>{{.User.Email}}</td>
+                      <td>{{if .Role}}{{.Role}}{{else}}NONE{{end}}</td>
+                      <td><a href="/admin_user/user/edit/{{.User.Email}}" class="btn btn-primary btn-user btn-block">
                           Edit
                         </a>
                       </td>
-                      <td><a href="/admin_user/user/delete/{{.Email}}" class="btn btn-google btn-user btn-block">
+                      <td><a href="/admin_user/user/delete/{{.User.Email}}" class="btn btn-google btn-user btn-block">
                           <i class="fab fa-fw"></i> Delete
                         </a>
                       </td>

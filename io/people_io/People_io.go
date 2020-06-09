@@ -58,7 +58,7 @@ func DeletePeople(id string) (people.People, error) {
 }
 func ReadPeoples() ([]people.People, error) {
 	entity := []people.People{}
-	resp, _ := api.Rest().Get(pple + "Reads")
+	resp, _ := api.Rest().Get(pple + "reads")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}

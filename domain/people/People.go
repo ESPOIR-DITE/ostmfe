@@ -8,7 +8,7 @@ type People struct {
 	Surname    string    `json:"surname"`
 	BirthDate  time.Time `json:"birth_date"`
 	DeathDate  time.Time `json:"deathdate"`
-	Origine    string    `json:"origine"`
+	Origin     string    `json:"origin"`
 	Profession string    `json:"profession"`
 }
 

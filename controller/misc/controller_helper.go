@@ -11,12 +11,14 @@ import (
 	"ostmfe/domain/member"
 	"ostmfe/domain/partner"
 	project2 "ostmfe/domain/project"
+	user2 "ostmfe/domain/user"
 	"ostmfe/io/collection_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
 	"ostmfe/io/member_io"
 	"ostmfe/io/partner_io"
 	"ostmfe/io/project_io"
+	"ostmfe/io/user_io"
 	"strings"
 	"time"
 )
@@ -207,4 +209,34 @@ func GetCollectionBridge() []CollectionBridge {
 		collectionBridgeObject = CollectionBridge{}
 	}
 	return collectionBridge
+}
+
+//Users and thier Roles
+type UsersAndRoles struct {
+	User user2.Users
+	Role string
+}
+
+func GetUserAndRole() []UsersAndRoles {
+	var usersAndRoles []UsersAndRoles
+
+	users, err := user_io.ReadUsers()
+	if err != nil {
+		fmt.Println(err, " Error reading Users")
+		return usersAndRoles
+	}
+	for _, user := range users {
+		userRole, err := user_io.ReadUserRoleWithEmail(user.Email)
+		if err != nil {
+			fmt.Println(err, " error reading user role of: "+user.Email)
+		}
+		role, err := user_io.ReadRole(userRole.RoleId)
+		if err != nil {
+			fmt.Println(err, " error reading role of the following role: "+userRole.RoleId)
+		}
+		user_role := UsersAndRoles{user, role.Role}
+		usersAndRoles = append(usersAndRoles, user_role)
+		user_role = UsersAndRoles{}
+	}
+	return usersAndRoles
 }
