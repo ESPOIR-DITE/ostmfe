@@ -6,7 +6,7 @@ import (
 	"ostmfe/domain/people"
 )
 
-const ppleProf = api.BASE_URL + "ppleProf"
+const ppleProf = api.BASE_URL + "people_profession"
 
 func CreatePeopleProfession(pP people.People_profession) (people.People_profession, error) {
 
@@ -37,7 +37,20 @@ func UpdatePeopleProfession(pP people.People_profession) (people.People_professi
 func ReadPeopleProfession(id string) (people.People_profession, error) {
 
 	entity := people.People_profession{}
-	resp, _ := api.Rest().Get(ppleProf + "read?id" + id)
+	resp, _ := api.Rest().Get(ppleProf + "read?id=" + id)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
+func ReadPeopleProfessionWithPplId(peopleId string) ([]people.People_profession, error) {
+
+	entity := []people.People_profession{}
+	resp, _ := api.Rest().Get(ppleProf + "readWithPplId?id=" + peopleId)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -50,7 +63,7 @@ func ReadPeopleProfession(id string) (people.People_profession, error) {
 func DeletePeopleProfession(id string) (people.People_profession, error) {
 
 	entity := people.People_profession{}
-	resp, _ := api.Rest().Get(ppleProf + "delete?id" + id)
+	resp, _ := api.Rest().Get(ppleProf + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}

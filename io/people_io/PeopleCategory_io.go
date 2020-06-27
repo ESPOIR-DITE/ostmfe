@@ -44,6 +44,30 @@ func ReadPeopleCategory(id string) (people.PeopleCategory, error) {
 	}
 	return entity, nil
 }
+func ReadPeopleCategoryWithPplId(id string) ([]people.PeopleCategory, error) {
+	entity := []people.PeopleCategory{}
+	resp, _ := api.Rest().Get(peoplecategoryURL + "readWithPplId?id=" + id)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
+func ReadPeopleCategoryWithCategoryId(id string) ([]people.PeopleCategory, error) {
+	entity := []people.PeopleCategory{}
+	resp, _ := api.Rest().Get(peoplecategoryURL + "readWithCategoryId?id=" + id)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
 func DeletePeopleCategory(id string) (people.PeopleCategory, error) {
 	entity := people.PeopleCategory{}
 	resp, _ := api.Rest().Get(peoplecategoryURL + "delete?=" + id)

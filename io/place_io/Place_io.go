@@ -64,9 +64,9 @@ func DeletePlace(id string) (place.Place, error) {
 	return entity, nil
 
 }
-func ReadPlaces() (place.Place, error) {
+func ReadPlaces() ([]place.Place, error) {
 
-	entity := place.Place{}
+	entity := []place.Place{}
 	resp, _ := api.Rest().Get(places + "reads")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())

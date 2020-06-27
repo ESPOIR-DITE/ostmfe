@@ -1,10 +1,13 @@
 package place
 
 import (
+	"fmt"
 	"github.com/go-chi/chi"
 	"html/template"
 	"net/http"
 	"ostmfe/config"
+	"ostmfe/domain/place"
+	"ostmfe/io/place_io"
 )
 
 func Home(app *config.Env) http.Handler {
@@ -19,6 +22,14 @@ func Home(app *config.Env) http.Handler {
 
 func homeHanler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		places, err := place_io.ReadPlaces()
+		if err != nil {
+			fmt.Println(err, "Error reading places")
+		}
+		type PageData struct {
+			Places []place.Place
+		}
+		data := PageData{places}
 		files := []string{
 			app.Path + "places.html",
 			app.Path + "base_templates/navigator.html",
@@ -29,7 +40,7 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 			app.ErrorLog.Println(err.Error())
 			return
 		}
-		err = ts.Execute(w, nil)
+		err = ts.Execute(w, data)
 		if err != nil {
 			app.ErrorLog.Println(err.Error())
 		}

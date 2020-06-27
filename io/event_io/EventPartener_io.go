@@ -49,6 +49,20 @@ func ReadEventPartener(id string) (event2.EventPartener, error) {
 	return entity, nil
 
 }
+func ReadEventPartenerOf(id string) ([]event2.EventPartener, error) {
+
+	entity := []event2.EventPartener{}
+	resp, _ := api.Rest().Get(eventPrtnr + "readOf?id=" + id)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+
+}
 func DeleteEventPartener(id string) (event2.EventPartener, error) {
 
 	entity := event2.EventPartener{}

@@ -45,6 +45,18 @@ func ReadPeopleHistory(id string) (people.PeopleHistory, error) {
 	}
 	return entity, nil
 }
+func ReadPeopleHistoryWithPplId(id string) (people.PeopleHistory, error) {
+	entity := people.PeopleHistory{}
+	resp, _ := api.Rest().Get(peoplehistoryURL + "readWithPplId?id=" + id)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
 func DeletePeopleHistory(id string) (people.PeopleHistory, error) {
 	entity := people.PeopleHistory{}
 	resp, _ := api.Rest().Get(peoplehistoryURL + "delete?id=" + id)

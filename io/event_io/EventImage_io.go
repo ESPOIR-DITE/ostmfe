@@ -49,6 +49,20 @@ func ReadEventImg(id string) (event.EventImage, error) {
 	return entity, nil
 
 }
+func ReadEventImgOf(eventId string) ([]event.EventImage, error) {
+
+	entity := []event.EventImage{}
+	resp, _ := api.Rest().Get(eventimageURL + "readAllOf?id=" + eventId)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+
+}
 func DeleteEventImg(id string) (event.EventImage, error) {
 
 	entity := event.EventImage{}

@@ -38,7 +38,7 @@ func UpdatePartner(P partner.Partner) (partner.Partner, error) {
 func ReadPartner(id string) (partner.Partner, error) {
 
 	entity := partner.Partner{}
-	resp, _ := api.Rest().Get(partnerURL + "read?id" + id)
+	resp, _ := api.Rest().Get(partnerURL + "read?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -52,7 +52,7 @@ func ReadPartner(id string) (partner.Partner, error) {
 func DeletePartner(id string) (partner.Partner, error) {
 
 	entity := partner.Partner{}
-	resp, _ := api.Rest().Get(partnerURL + "delete?id" + id)
+	resp, _ := api.Rest().Get(partnerURL + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}

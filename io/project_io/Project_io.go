@@ -78,3 +78,18 @@ func ReadProjects() ([]project.Project, error) {
 	return entity, nil
 
 }
+
+//func ReadProjectsOf(ids []string) ([]project.Project, error) {
+//var Url =projectURL + "readsOf?id="
+//	entity := []project.Project{}
+//	resp, _ := api.Rest().Get(Url,ids)
+//	if resp.IsError() {
+//		return entity, errors.New(resp.Status())
+//	}
+//	err := api.JSON.Unmarshal(resp.Body(), &entity)
+//	if err != nil {
+//		return entity, errors.New(resp.Status())
+//	}
+//	return entity, nil
+//
+//}

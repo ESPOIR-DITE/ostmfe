@@ -47,6 +47,18 @@ func ReadCollectionImg(id string) (collection.Collection_image, error) {
 	}
 	return entity, nil
 }
+func ReadCollectionImgWithCollectionId(id string) (collection.Collection_image, error) {
+	entity := collection.Collection_image{}
+	resp, _ := api.Rest().Get(collectionImg + "readWith?id=" + id)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
 func DeleteCollectionImg(id string) (collection.Collection_image, error) {
 	entity := collection.Collection_image{}
 	resp, _ := api.Rest().Get(collectionImg + "delete?id=" + id)

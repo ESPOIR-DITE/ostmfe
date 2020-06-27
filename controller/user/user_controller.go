@@ -39,6 +39,7 @@ func BookHanler(app *config.Env) http.HandlerFunc {
 
 func homeHanler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+
 		files := []string{
 			app.Path + "index.html",
 			app.Path + "base_templates/navigator.html",

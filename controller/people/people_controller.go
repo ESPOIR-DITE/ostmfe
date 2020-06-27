@@ -22,12 +22,12 @@ func Home(app *config.Env) http.Handler {
 
 func homeHanler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		peoples, err := people_io.ReadPeopleCategorys()
+		peoples, err := people_io.ReadCategories()
 		if err != nil {
-			fmt.Println(err, " There is an error when reading all the people category")
+			fmt.Println(err, " There is an error when reading all the category")
 		}
 		type PageData struct {
-			Peoples []people.PeopleCategory
+			Peoples []people.Category
 		}
 		data := PageData{peoples}
 		files := []string{

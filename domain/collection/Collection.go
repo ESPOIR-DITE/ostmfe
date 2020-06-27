@@ -4,13 +4,14 @@ type Collection struct {
 	Id                 string `json:"id"`
 	Name               string `json:"name"`
 	ProfileDescription string `json:"profile_description"`
-	History            string `json:"history"`
+	History            []byte `json:"history"`
 }
 
 type Collection_image struct {
-	ImageId           string `json:"image_id"`
-	CollectionImageId string `json:"collection_image_id"`
-	Description       string `json:"description"`
+	Id           string `json:"id"`
+	ImageId      string `json:"image_id"`
+	CollectionId string `json:"collectionId"`
+	Description  string `json:"description"`
 }
 type CollectionTypes struct {
 	Id          string `json:"id"`

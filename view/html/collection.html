@@ -70,30 +70,19 @@
                         <small>OPTIONS</small>
                     </li>
                     <!-- /END Separator -->
-                    <a href="community-home.html" class="bg-dark list-group-item list-group-item-action">
-                        <div class="d-flex w-100 justify-content-start align-items-center">
-                            <span class="fa fa-calendar fa-fw mr-3"></span>
-                            <span class="menu-collapsed">Photo</span>
-                        </div>
-                    </a>
-                    <a href="community-home.html" class="bg-dark list-group-item list-group-item-action">
-                        <div class="d-flex w-100 justify-content-start align-items-center">
-                            <span class="fa fa-calendar fa-fw mr-3"></span>
-                            <span class="menu-collapsed">Interview</span>
-                        </div>
-                    </a>
-                    <a href="community-home.html" class="bg-dark list-group-item list-group-item-action">
-                        <div class="d-flex w-100 justify-content-start align-items-center">
-                            <span class="fa fa-calendar fa-fw mr-3"></span>
-                            <span class="menu-collapsed">Objects</span>
-                        </div>
-                    </a>
-                    <a href="community-home.html" class="bg-dark list-group-item list-group-item-action">
-                        <div class="d-flex w-100 justify-content-start align-items-center">
-                            <span class="fa fa-calendar fa-fw mr-3"></span>
-                            <span class="menu-collapsed">Places</span>
-                        </div>
-                    </a>
+                    {{if .CollectionTypes}}
+                        {{with .CollectionTypes}}
+                            {{range .}}
+                                <a href="community-home.html" class="bg-dark list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-start align-items-center">
+                                        <span class="fa fa-calendar fa-fw mr-3"></span>
+                                        <span class="menu-collapsed">{{.Name}}</span>
+                                    </div>
+                                </a>
+                    {{end}}
+                    {{end}}
+                    {{end}}
+
                     <a href="community-home.html" class="bg-dark list-group-item list-group-item-action">
                         <div class="d-flex w-100 justify-content-start align-items-center">
                             <span class="fa fa-envelope-o fa-fw mr-3"></span>
@@ -138,120 +127,25 @@
             </div>
             <div class="row">
                 <div class="active-exibition-carusel">
+                    {{with .Collections}}
+                    {{range .}}
                     <div class="single-exibition item">
-                        <img src="../assets/img/e1.jpg" alt="">
+                        <img  id='base64image'
+                                {{if .Image.Id}}
+                                    class="img-fluid" src='data:image/jpeg;base64,{{.Image.Id}}' alt=""
+                                {{end}} alt="">
                         <ul class="tags">
                             <li><a href="#">Travel</a></li>
                             <li><a href="#">Life style</a></li>
                         </ul>
-                        <a href="#"><h4>Portable latest blog for women</h4></a>
+                        <a href="#"><h4>{{.Collection.Name}}</h4></a>
                         <p>
-                            Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
+                            {{.Collection.ProfileDescription}}
                         </p>
                         <h6 class="date">31st January, 2018</h6>
                     </div>
-
-                    <div class="single-exibition item">
-                        <img src="../assets/img/e2.jpg" alt="">
-                        <ul class="tags">
-                            <li><a href="#">Travel</a></li>
-                            <li><a href="#">Life style</a></li>
-                        </ul>
-                        <a href="#"><h4>Portable latest blog for women</h4></a>
-                        <p>
-                            Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
-                        </p>
-                        <h6 class="date">31st January, 2018</h6>
-                    </div>
-
-                    <div class="single-exibition item">
-                        <img src="../assets/img/e3.jpg" alt="">
-                        <ul class="tags">
-                            <li><a href="#">Travel</a></li>
-                            <li><a href="#">Life style</a></li>
-                        </ul>
-                        <a href="#"><h4>Portable latest blog for women</h4></a>
-                        <p>
-                            Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
-                        </p>
-                        <h6 class="date">31st January, 2018</h6>
-                    </div>
-                    <div class="single-exibition item">
-                        <img src="../assets/img/e1.jpg" alt="">
-                        <ul class="tags">
-                            <li><a href="#">Travel</a></li>
-                            <li><a href="#">Life style</a></li>
-                        </ul>
-                        <a href="#"><h4>Portable latest blog for women</h4></a>
-                        <p>
-                            Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
-                        </p>
-                        <h6 class="date">31st January, 2018</h6>
-                    </div>
-
-                    <div class="single-exibition item">
-                        <img src="../assets/img/e2.jpg" alt="">
-                        <ul class="tags">
-                            <li><a href="#">Travel</a></li>
-                            <li><a href="#">Life style</a></li>
-                        </ul>
-                        <a href="#"><h4>Portable latest blog for women</h4></a>
-                        <p>
-                            Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
-                        </p>
-                        <h6 class="date">31st January, 2018</h6>
-                    </div>
-
-                    <div class="single-exibition item">
-                        <img src="../assets/img/e3.jpg" alt="">
-                        <ul class="tags">
-                            <li><a href="#">Travel</a></li>
-                            <li><a href="#">Life style</a></li>
-                        </ul>
-                        <a href="#"><h4>Portable latest blog for women</h4></a>
-                        <p>
-                            Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
-                        </p>
-                        <h6 class="date">31st January, 2018</h6>
-                    </div>
-                    <div class="single-exibition item">
-                        <img src="../assets/img/e1.jpg" alt="">
-                        <ul class="tags">
-                            <li><a href="#">Travel</a></li>
-                            <li><a href="#">Life style</a></li>
-                        </ul>
-                        <a href="#"><h4>Portable latest blog for women</h4></a>
-                        <p>
-                            Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
-                        </p>
-                        <h6 class="date">31st January, 2018</h6>
-                    </div>
-
-                    <div class="single-exibition item">
-                        <img class="img-fluid" src="../assets/img/e2.jpg" alt="">
-                        <ul class="tags">
-                            <li><a href="#">Travel</a></li>
-                            <li><a href="#">Life style</a></li>
-                        </ul>
-                        <a href="#"><h4>Portable latest blog for women</h4></a>
-                        <p>
-                            Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
-                        </p>
-                        <h6 class="date">31st January, 2018</h6>
-                    </div>
-
-                    <div class="single-exibition item">
-                        <img class="img-fluid" src="../assets/img/e3.jpg" alt="">
-                        <ul class="tags">
-                            <li><a href="#">Travel</a></li>
-                            <li><a href="#">Life style</a></li>
-                        </ul>
-                        <a href="#"><h4>Portable latest blog for women</h4></a>
-                        <p>
-                            Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
-                        </p>
-                        <h6 class="date">31st January, 2018</h6>
-                    </div>
+                    {{end}}
+                    {{end}}
                 </div>
             </div>
         </div>

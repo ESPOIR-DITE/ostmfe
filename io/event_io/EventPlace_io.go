@@ -47,6 +47,19 @@ func ReadEventPlace(id string) (event.EventPlace, error) {
 	}
 	return entity, nil
 }
+func ReadEventPlaceOf(eventId string) (event.EventPlace, error) {
+
+	entity := event.EventPlace{}
+	resp, _ := api.Rest().Get(eventplaceURL + "readOf?id=" + eventId)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
 func DeleteEventPlace(id string) (event.EventPlace, error) {
 
 	entity := event.EventPlace{}

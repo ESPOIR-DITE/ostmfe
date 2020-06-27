@@ -1,17 +1,16 @@
-package event_io
+package people_io
 
 import (
 	"errors"
 	"ostmfe/api"
-	"ostmfe/domain/event"
+	"ostmfe/domain/people"
 )
 
-const evenT = api.BASE_URL + "event/"
+const categoryURl = api.BASE_URL + "category"
 
-func CreateEvent(myEvent event.Event) (event.Event, error) {
-
-	entity := event.Event{}
-	resp, _ := api.Rest().SetBody(myEvent).Post(evenT + "create")
+func CreateCategory(history people.Category) (people.Category, error) {
+	entity := people.Category{}
+	resp, _ := api.Rest().SetBody(history).Post(categoryURl + "create")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -21,24 +20,9 @@ func CreateEvent(myEvent event.Event) (event.Event, error) {
 	}
 	return entity, nil
 }
-func UpdateEvent(myEvent event.Event) (event.Event, error) {
-
-	entity := event.Event{}
-	resp, _ := api.Rest().SetBody(myEvent).Post(evenT + "update")
-	if resp.IsError() {
-		return entity, errors.New(resp.Status())
-	}
-	err := api.JSON.Unmarshal(resp.Body(), &entity)
-	if err != nil {
-		return entity, errors.New(resp.Status())
-	}
-	return entity, nil
-
-}
-func ReadEvent(id string) (event.Event, error) {
-
-	entity := event.Event{}
-	resp, _ := api.Rest().Get(evenT + "read?id=" + id)
+func UpdateCategory(history people.Category) (people.Category, error) {
+	entity := people.Category{}
+	resp, _ := api.Rest().SetBody(history).Post(categoryURl + "update")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -48,11 +32,9 @@ func ReadEvent(id string) (event.Event, error) {
 	}
 	return entity, nil
 }
-
-func DeleteEvent(id string) (event.Event, error) {
-
-	entity := event.Event{}
-	resp, _ := api.Rest().Get(evenT + "delete?id=" + id)
+func ReadCategory(id string) (people.Category, error) {
+	entity := people.Category{}
+	resp, _ := api.Rest().Get(categoryURl + "read?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -62,9 +44,9 @@ func DeleteEvent(id string) (event.Event, error) {
 	}
 	return entity, nil
 }
-func ReadEvents() ([]event.Event, error) {
-	entity := []event.Event{}
-	resp, _ := api.Rest().Get(evenT + "reads")
+func DeleteCategory(id string) (people.Category, error) {
+	entity := people.Category{}
+	resp, _ := api.Rest().Get(categoryURl + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -73,5 +55,16 @@ func ReadEvents() ([]event.Event, error) {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
-
+}
+func ReadCategories() ([]people.Category, error) {
+	entity := []people.Category{}
+	resp, _ := api.Rest().Get(categoryURl + "reads")
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
 }

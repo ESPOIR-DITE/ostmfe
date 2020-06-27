@@ -50,6 +50,20 @@ func ReadPeopleImage(id string) (people.People_image, error) {
 	return entity, nil
 
 }
+func ReadPeopleImagewithPeopleId(id string) ([]people.People_image, error) {
+
+	entity := []people.People_image{}
+	resp, _ := api.Rest().Get(peopleImg + "read_people?id=" + id)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+
+}
 func DeletePeopleImage(id string) (people.People_image, error) {
 
 	entity := people.People_image{}

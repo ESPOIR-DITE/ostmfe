@@ -53,5 +53,10 @@ type PeopleHistory struct {
 }
 type PeopleCategory struct {
 	Id       string `json:"id"`
+	PeopleId string `json:"peopleid"`
+	Category string `json:"category"`
+}
+type Category struct {
+	Id       string `json:"id"`
 	Category string `json:"category"`
 }
