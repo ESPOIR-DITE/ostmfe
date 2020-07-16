@@ -29,7 +29,45 @@ func ProjectHome(app *config.Env) http.Handler {
 	r.Post("/create_project_history", CreateProjectHistoryHandler(app))
 	r.Post("/update_pictures", ProjectUpdatePicturesHandler(app))
 	r.Post("/update_picture", ProjectUpdatePictureHandler(app))
+	r.Post("/update_history", ProjectUpdateHistoryHandler(app))
 	return r
+}
+
+//TODO for now we are accepting mytextarea maybe empty.
+func ProjectUpdateHistoryHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		historyContent := r.PostFormValue("mytextarea")
+		projectId := r.PostFormValue("projectId")
+		historyId := r.PostFormValue("historyId")
+		//checking if the projectHistory exists
+		history, err := history_io.ReadHistory(historyId)
+		fmt.Println(historyId)
+		if err != nil {
+			//TODO need to create a new entity called Histories. will have to change the logic of history of each entity that is related to this class.
+			fmt.Println(err, " could not read history")
+			fmt.Println(err, " proceeding into creation of a project history.....")
+			history := history2.History{""}
+
+			http.Redirect(w, r, "/admin_user/project/edit/"+projectId, 301)
+			return
+		}
+		updatedProjectHistory := history2.History{history.Id, history.Title, history.Description, misc.ConvertToByteArray(historyContent), history.Date}
+		//Now Updating
+		_, errr := history_io.UpdateHistory(updatedProjectHistory)
+		if errr != nil {
+			fmt.Println(errr, " could not update history")
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+			http.Redirect(w, r, "/admin_user/project/edit/"+projectId, 301)
+			return
+		}
+		fmt.Println(" successfully updated")
+		http.Redirect(w, r, "/admin_user/project/edit/"+projectId, 301)
+		return
+	}
 }
 
 //Todo implement the HTML page to get these data
@@ -83,8 +121,9 @@ func NewProjectsHandler(app *config.Env) http.HandlerFunc {
 		data := PagePage{backend_error, unknown_error}
 		files := []string{
 			app.Path + "admin/project/new_project.html",
-			//app.Path + "admin/template/navbar.html",
-			//app.Path + "base_templates/footer.html",
+			app.Path + "admin/template/navbar.html",
+			app.Path + "admin/template/topbar.html",
+			app.Path + "base_templates/footer.html",
 		}
 		ts, err := template.ParseFiles(files...)
 		if err != nil {
@@ -124,7 +163,8 @@ func ProjectsHandler(app *config.Env) http.HandlerFunc {
 		files := []string{
 			app.Path + "admin/project/projects.html",
 			app.Path + "admin/template/navbar.html",
-			//app.Path + "base_templates/footer.html",
+			app.Path + "admin/template/topbar.html",
+			app.Path + "base_templates/footer.html",
 		}
 		ts, err := template.ParseFiles(files...)
 		if err != nil {
@@ -214,7 +254,7 @@ func CreateProjectHistoryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		projectId := r.PostFormValue("projectId")
-		history := r.PostFormValue("history")
+		history := r.PostFormValue("mytextarea")
 		description := r.PostFormValue("description")
 		title := r.PostFormValue("title")
 

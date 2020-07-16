@@ -10,6 +10,7 @@
   <meta name="author" content="">
 
   <title>SB Admin 2 - Tables</title>
+  <base href="/">
 
 
   <!-- Custom fonts for this template -->
@@ -223,37 +224,51 @@
 
         <!-- Begin Page Content -->
         <div class="container-fluid">
-          <div class="row ">
-          <div class="col-lg-12 ">
-            <div class="p-5 ">
-              {{if .Backend_error}}
-                <div class="text-center alert-warning">
-                  <a class="small" href="#">{{.Backend_error}}</a>
+
+          <div class="card shadow mb-4">
+            <!-- Card Header - Accordion -->
+            <a href="#collapseCardExample" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
+              <h6 class="m-0 font-weight-bold text-primary">Create a new role</h6>
+            </a>
+            <!-- Card Content - Collapse -->
+            <div class="collapse " id="collapseCardExample">
+              <div class="card-body p-0">
+                <!-- Nested Row within Card Body -->
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="p-5">
+                      {{if .Backend_error}}
+                        <div class="text-center alert-warning">
+                          <a class="small" href="#">{{.Backend_error}}</a>
+                        </div>
+                      {{end}}
+                      {{if .Unknown_error}}
+                        <div class="text-center alert-warning">
+                          <a class="small" href="#">{{.Unknown_error}}</a>
+                        </div>
+                      {{end}}
+                      <div class="text-center">
+                        <h1 class="h4 text-gray-900 mb-4">People Type Form</h1>
+                      </div>
+                      <form class="user"method="post" action="/admin_user/people/people_category/create">
+                        <div class="form-group ">
+                          <label>People Type name</label>
+                          <input type="text" name="category" class="form-control " id="file" placeholder="Project Name" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">
+                          Submit
+                        </button>
+                        <hr>
+                      </form>
+                      <hr>
+                    </div>
+                  </div>
                 </div>
-              {{end}}
-              {{if .Unknown_error}}
-                <div class="text-center alert-warning">
-                  <a class="small" href="#">{{.Unknown_error}}</a>
-                </div>
-              {{end}}
-              <div class="text-center">
-                <h1 class="h4 text-gray-900 mb-4">Collection Type Form</h1>
               </div>
-          <form class="user"method="post" action="/admin_user/people_category/create">
-            <div class="form-group ">
-              <label>People Type name</label>
-              <input type="text" name="category" class="form-control " id="file" placeholder="Project Name" required>
-            </div>
 
-
-            <button type="submit" class="btn btn-primary btn-block">
-              Submit
-            </button>
-            <hr>
-          </form>
             </div>
           </div>
-          </div>
+
           <!-- DataTales Example -->
           <div class="card shadow mb-4">
             <div class="card-header py-3">

@@ -268,14 +268,14 @@
                   {{range $i, $e := .}}
                     <tr>
                       <td>{{$i}}</td>
-                      <td>{{.Title}}</td>
-                      <td>{{.Description}}</td>
-                      <td>{{.Date}}</td>
-                      <td><a href="/admin_user/user/edit/{{.Email}}" class="btn btn-primary btn-user btn-block">
+                      <td>{{$e.Title}}</td>
+                      <td>{{$e.Description}}</td>
+                      <td>{{$e.Date}}</td>
+                      <td><a href="/admin_user/user/edit/{{$e.Email}}" class="btn btn-primary btn-user btn-block">
                           Edit
                         </a>
                       </td>
-                      <td><a href="/admin_user/user/delete/{{.Email}}" class="btn btn-google btn-user btn-block">
+                      <td><a href="/admin_user/user/delete/{{$e.Email}}" class="btn btn-google btn-user btn-block">
                           <i class="fab fa-fw"></i> Delete
                         </a>
                       </td>

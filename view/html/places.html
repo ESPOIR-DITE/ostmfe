@@ -77,10 +77,113 @@
 
     </a>
         <div class="container text-center">
-    <div class="map-wrap" style="width:100%; height: 545px; position: center" id="map" >
-<script>
-    initMap({{.Places}});
-</script>
+    <div class="map-wrap" style="width:100%; height: 545px; position: center"  id="mapCanvas" >
+<!--script>
+    var directionsDisplay,
+        directionsService,
+        map;
+    function initMap() {
+        var directionsService = new google.maps.DirectionsService();
+        directionsDisplay = new google.maps.DirectionsRenderer();
+        var PlaceList ={{.Places}};
+        console.log(PlaceList);
+        Object.keys(PlaceList).forEach((key, index) => {
+            //console.log(key ,PlaceList[key]);
+            var myLatLng = {lat: PlaceList[key].latitude, lng: PlaceList[key].longitude.trim()};
+
+            console.log(myLatLng);
+            alert(myLatLng);
+            var map = new google.maps.Map(document.getElementById('mymap'), {
+                zoom: 4,
+                center: myLatLng
+            });
+
+            var marker = new google.maps.Marker({
+                position: myLatLng,
+                map: map,
+                title: PlaceList[key].title
+            });
+        });
+        // for (var key in PlaceList) {
+        //     if (PlaceList.hasOwnProperty(key)) {
+        //         console.log(key + " -> " + PlaceList[key]);
+        //     }
+        // }
+
+    }
+</script-->
+
+        <script>
+            var markers = null;
+            var infoWindowContent = null
+            var myMarkerList = new Array();
+            var myInfoWindowList = new Array();
+            function initMap() {
+                var PlaceList ={{.Places}};
+                // Object.keys(PlaceList).forEach((key,index)=>{
+                //     //console.log(key,PlaceList[key])
+                //     markers = [[(PlaceList[key].title,PlaceList[key].latitude, PlaceList[key].longitude)]];
+                //     infoWindowContent =[[('<div class="info_content">' +
+                //         '<h3>Brooklyn Museum</h3>' +
+                //         '<p>The Brooklyn Museum is an art museum located in the New York City borough of Brooklyn.</p>' + '</div>')]];
+                // })
+               // console.log('myMarkerList :'+myMarkerList);
+                var map;
+                var bounds = new google.maps.LatLngBounds();
+                var mapOptions = {
+                    mapTypeId: 'roadmap'
+                };
+
+
+                // Display a map on the web page
+                map = new google.maps.Map(document.getElementById("mapCanvas"), mapOptions);
+                map.setTilt(50);
+
+                // Multiple markers location, latitude, and longitude
+                // markers = [myMarkerList];
+
+                // Info window content
+                //infoWindowContent = [myInfoWindowList];
+
+                // Add multiple markers to map
+                var infoWindow = new google.maps.InfoWindow(), marker, i;
+
+                // Place each marker on the map
+                for( i = 0; i < PlaceList.length; i++ ) {
+                    console.log('myMarkerList :'+PlaceList[i].description);
+                    var position = new google.maps.LatLng(PlaceList[i].latitude, PlaceList[i].longitude);
+                    bounds.extend(position);
+                    marker = new google.maps.Marker({
+                        position: position,
+                        map: map,
+                        title: PlaceList[i].title
+                    });
+
+                    // Add info window to marker PlaceList[i].description
+                    google.maps.event.addListener(marker, 'click', (function(marker, i) {
+                        return function() {
+                            infoWindow.setContent('<div class="info_content">' +
+                                     '<h3>'+PlaceList[i].title+'</h3>' +
+                                     '<p>'+PlaceList[i].description+'</p>' + '</div>');
+                            infoWindow.open(map, marker);
+                            infoWindow.size(10);
+                        }
+                    })(marker, i));
+
+                    // Center the map to fit all markers on the screen
+                    map.fitBounds(bounds);
+                }
+
+                // Set zoom level
+                var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
+                    this.setZoom(14);
+                    google.maps.event.removeListener(boundsListener);
+                });
+
+            }
+            // Load initialize function
+            google.maps.event.addDomListener(window, 'load', initMap);
+        </script>
     </div>
         </div>
     </div>
@@ -97,7 +200,7 @@
         integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
         crossorigin="anonymous"></script>
 <script src="../assets/js/vendor/bootstrap.min.js"></script>
-<script async defer
+<script
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA&callback=initMap">
 </script>
 <script src="../assets/js/easing.min.js"></script>

@@ -92,8 +92,9 @@ func NewEventsHandler(app *config.Env) http.HandlerFunc {
 		}
 		data := PageData{projects, partners, backend_error, unknown_error}
 		files := []string{
-			app.Path + "admin/new_event.html",
+			app.Path + "admin/event/new_event.html",
 			app.Path + "admin/template/navbar.html",
+			app.Path + "admin/template/topbar.html",
 			app.Path + "base_templates/footer.html",
 		}
 		ts, err := template.ParseFiles(files...)
@@ -124,16 +125,28 @@ func EventsHandler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			fmt.Println(err, " error reading Users")
 		}
-		type PagePage struct {
+		//Reading all the Projects
+		projects, err := project_io.ReadProjects()
+		if err != nil {
+			fmt.Println(err, " error reading all the projects")
+		}
+		partners, err := partner_io.ReadPartners()
+		if err != nil {
+			fmt.Println(err, " error reading all the partners")
+		}
+		type PageData struct {
+			Projects      []project2.Project
+			Partners      []partner2.Partner
 			Backend_error string
 			Unknown_error string
 			Events        []event2.Event
 		}
-		data := PagePage{backend_error, unknown_error, events}
+		data := PageData{projects, partners, backend_error, unknown_error, events}
 		files := []string{
 			app.Path + "admin/event/events.html",
 			app.Path + "admin/template/navbar.html",
-			//app.Path + "base_templates/footer.html",
+			app.Path + "admin/template/topbar.html",
+			app.Path + "base_templates/footer.html",
 		}
 		ts, err := template.ParseFiles(files...)
 		if err != nil {

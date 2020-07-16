@@ -6,8 +6,10 @@ import (
 	"html/template"
 	"net/http"
 	"ostmfe/config"
+	"ostmfe/controller/misc"
 	history2 "ostmfe/domain/history"
 	"ostmfe/io/history_io"
+	"time"
 )
 
 func HistoryHome(app *config.Env) http.Handler {
@@ -15,7 +17,38 @@ func HistoryHome(app *config.Env) http.Handler {
 	r.Get("/", HistoryHandler(app))
 	r.Get("/new", NewHistoryHandler(app))
 	r.Get("/edit", EditHistoryHandler(app))
+	r.Post("/create", CreateHistpory(app))
 	return r
+}
+
+func CreateHistpory(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		title := r.PostFormValue("title")
+		description := r.PostFormValue("description")
+		date, _ := time.Parse(misc.YYYYMMDD_FORMAT, r.PostFormValue("date"))
+		mytextarea := r.PostFormValue("mytextarea")
+		fmt.Println("Title: ", title,
+			"Date: ", date,
+			"description: ", description,
+			"mytextArea: ", mytextarea)
+		if title != "" && mytextarea != "" {
+			history := history2.History{"", title, description, misc.ConvertToByteArray(mytextarea), date}
+			createdHistory, err := history_io.CreateHistory(history)
+			if err != nil {
+				fmt.Println("error: ", err)
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/history/new", 301)
+				return
+			}
+			app.Session.Put(r.Context(), "creation-successful", "You have successfully created an new History : "+createdHistory.Title)
+			http.Redirect(w, r, "/admin_user", 301)
+			return
+		}
+	}
 }
 func EditHistoryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -55,9 +88,9 @@ func NewHistoryHandler(app *config.Env) http.HandlerFunc {
 		}
 		data := PagePage{backend_error, unknown_error}
 		files := []string{
-			app.Path + "admin/collection/new_history.html",
-			//app.Path + "admin/template/navbar.html",
-			//app.Path + "base_templates/footer.html",
+			app.Path + "admin/history/new_history.html",
+			app.Path + "admin/template/navbar.html",
+			app.Path + "base_templates/footer.html",
 		}
 		ts, err := template.ParseFiles(files...)
 		if err != nil {

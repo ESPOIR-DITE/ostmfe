@@ -48,6 +48,21 @@ func ReadPlaceHistpory(id string) (place2.PlaceHistory, error) {
 	}
 	return entity, nil
 }
+
+func ReadPlaceHistporyOf(placeId string) (place2.PlaceHistory, error) {
+	entity := place2.PlaceHistory{}
+
+	resp, _ := api.Rest().Get(placehistoryURl + "readOf?id=" + placeId)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
+
 func DeletePlaceHistpory(id string) (place2.PlaceHistory, error) {
 	entity := place2.PlaceHistory{}
 

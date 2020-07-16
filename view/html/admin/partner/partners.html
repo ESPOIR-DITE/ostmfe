@@ -233,6 +233,49 @@
             <span class="text">Add New Partner</span>
           </a>
 
+          <!-- New Partener-->
+          <div class="card shadow mb-4">
+            <!-- Card Header - Accordion -->
+            <a href="#collapseCardExample" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
+              <h6 class="m-0 font-weight-bold text-primary">Create a new role</h6>
+            </a>
+            <!-- Card Content - Collapse -->
+            <div class="collapse " id="collapseCardExample">
+              <div class="card-body p-0">
+                <!-- Nested Row within Card Body -->
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="p-5">
+                      <div class="text-center">
+                        <h1 class="h4 text-gray-900 mb-4">Create New Partner </h1>
+                      </div>
+                      <form class="user"method="post" action="/admin_user/partner/create">
+                        <div class="form-group">
+                          <label>Partner Name</label>
+                          <input type="text" name="partner_name" class="form-control " id="exampleFirstName" placeholder="CPUT" required>
+                        </div>
+                        <div class="form-group">
+                          <label>description</label>
+                          <input type="url" name="url" class="form-control " id="exampleInputEmail" placeholder="www.link.co.za" required>
+                        </div>
+                        <div class="form-group">
+                          <label>description</label>
+                          <textarea name="description" class="form-control " id="exampleInputEmail" placeholder="Email Address" required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">
+                          Submit
+                        </button>
+                      </form>
+                      <hr>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
 
 
           <!-- DataTales Example -->

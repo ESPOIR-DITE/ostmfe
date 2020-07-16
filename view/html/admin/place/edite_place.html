@@ -9,17 +9,14 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>SB Admin 2 - Tables</title>
-
-  <!-- Custom fonts for this template -->
+  <title>SB Admin 2 - Cards</title>
+  <base href="/">
+  <!-- Custom fonts for this template-->
   <link href="../../assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
-  <!-- Custom styles for this template -->
+  <!-- Custom styles for this template-->
   <link href="../../assets/css/sb-admin-2.min.css" rel="stylesheet">
-
-  <!-- Custom styles for this page -->
-  <link href="../../assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
 </head>
 
@@ -225,74 +222,136 @@
         <div class="container-fluid">
 
           <!-- Page Heading -->
+          {{template "cards" .}}
 
-          <a href="/admin_user/place/new" class="btn btn-success btn-icon-split mb-4">
-                    <span class="icon text-white-50">
-                      <i class="fas fa-check"></i>
-                    </span>
-            <span class="text">Add New Place</span>
-          </a>
+          <div class="row">
 
+            <div class="col-lg-6">
 
-          <h1 class="h3 mb-2 text-gray-800">Tables</h1>
-          <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below. For more information about DataTables, please visit the <a target="_blank" href="https://datatables.net">official DataTables documentation</a>.</p>
-
-          <!-- DataTales Example -->
-          <div class="card shadow mb-4">
-            <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
-            </div>
-            <div class="card-body">
-              <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                  <thead>
-                    <tr>
-                      <th>No</th>
-                      <th>Title</th>
-                      <th>Latitude</th>
-                      <th>Longitude</th>
-                      <th>description</th>
-                      <th>Action</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tfoot>
-                    <tr>
-                      <th>No</th>
-                      <th>Title</th>
-                      <th>Latitude</th>
-                      <th>Longitude</th>
-                      <th>description</th>
-                      <th>Action</th>
-                      <th>Action</th>
-                    </tr>
-                  </tfoot>
-                  <tbody>
-                  {{with .Places}}
-                  {{range $i, $e := .}}
-                    <tr>
-                      <td>{{$i}}</td>
-                      <td>{{.Title}}</td>
-                      <td>{{.Latitude}}</td>
-                      <td>{{.Longitude}}</td>
-                      <td>{{.Description}}</td>
-                      <td><a href="/admin_user/place/edit/{{.Id}}" class="btn btn-primary btn-user btn-block">
-                          Edit
-                        </a>
-                      </td>
-                      <td><a href="/admin_user/place/delete/{{.Id}}" class="btn btn-google btn-user btn-block">
-                          Delete
-                        </a>
-                      </td>
-                    </tr>
+              <!-- Default Card Example -->
+              {{if .PlaceData.Images}}
+              {{with .PlaceData.Images}}
+              {{range $i,$e :=.}}
+              <div class="card mb-4">
+                {{if eq $i 0 }}
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">First Project Image</h6>
+                </div>
+                  {{else}}
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Second Project Image</h6>
+                  </div>
                   {{end}}
-                  {{end}}
-                  </tbody>
-                </table>
+                <div class="card-body">
+                  {{if .Id}}
+                  <img class="card-img" style="width:100%;height:312px;"
+                       id='base64image'
+
+                            src='data:image/jpeg;base64,{{.Id}}' alt=""/>
+                            {{end}}
+                  <div class="text-center">
+                    <h1 class="h4 text-gray-900 mb-4">You can update this image here</h1>
+                  </div>
+                  <form class="user"method="post" id="" action="/admin_user/project/update_picture" enctype="multipart/form-data">
+                    <input type="hidden"name="imageId" value="{{.Image}}" class="form-control " >
+                    <input type="hidden"name="projectId" value="{{$.PlaceData.Place.Id}}" class="form-control " >
+                    <div class="form-group row">
+                      <div class="col-sm-6">
+                        <select name="decription" class="browser-default custom-select">
+                          <option selected>Picture type</option>
+                            <option value="1">Profile image</option>
+                            <option value="2">Secondary Image</option>
+                        </select>
+                      </div>
+                      <div class="col-sm-6">
+                      <input type="file"name="file" class="form-control " required>
+                      </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                      Complete
+                    </button>
+                  </form>
+                </div>
               </div>
+              {{end}}
+              {{end}}
+              {{else}}
+                <div class="text-center">
+                  <h1 class="h4 text-gray-900 mb-4">You have no pictures for this Project, Please Upload pictures</h1>
+                </div>
+                <form class="user"method="post" action="/admin_user/project/update_pictures" enctype="multipart/form-data">
+                  <input type="hidden"name="placeId" value="{{.PlaceData.Place.Id}}" class="form-control " id="file" placeholder="Project Name" required>
+                  <div class="form-group ">
+                    <label>Project profile Picture</label>
+                    <input type="file"name="file" class="form-control " id="file" placeholder="Project Name" required>
+                  </div>
+
+                  <div class="form-group  row" id="filesArea"></div>
+                  <div class="form-group row" >
+                    <div class="col-sm-6" >
+                      <button type="button" id="add_form_field" class="btn btn-primary btn-user btn-block">
+                        Add a picture
+                      </button>
+                    </div>
+                  </div>
+
+                  <button type="submit" class="btn btn-primary btn-block">
+                    Update
+                  </button>
+                </form>
+              {{end}}
+
+            </div>
+
+            <div class="col-lg-6">
+              <!-- Default Card Example -->
+                    <div class="card mb-4">
+                      <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Place Details</h6>
+                      </div>
+                      <div class="card-body">
+                        <form class="user"method="post" id="" action="/admin_user/place/update_picture">
+                          <div class="form-group ">
+                            <input type="text" class="form-control" value="{{.PlaceData.Place.Title}}" name="project_name" id="exampleFirstName" placeholder="Project Name">
+                          </div>
+                          <div class="form-group ">
+                            <input type="text" class="form-control" value="{{.PlaceData.Place.Latitude}}" name="project_name" id="exampleFirstName" placeholder="Project Name">
+                          </div>
+                          <div class="form-group ">
+                            <input type="text" class="form-control" value="{{.PlaceData.Place.Longitude}}" name="project_name" id="exampleFirstName" placeholder="Project Name">
+                          </div>
+                          <input type="hidden"name="projectId" value="{{.PlaceData.Place.Id}}" class="form-control " >
+                          <div class="form-group">
+                            <textarea  class="form-control " style="height: 250px" name="description" id="exampleLastName"  placeholder="Description">{{.PlaceData.Place.Description}}</textarea>
+                          </div>
+                          <input type="hidden"name="projectId" value="" class="form-control " >
+                          <button type="submit" class="btn btn-primary btn-block">
+                            Update
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+
+              <!-- Basic Card Example -->
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Place History</h6>
+                </div>
+                <div class="card-body">
+                  <form class="user"method="post" id="" action="/admin_user/project/update_picture">
+                    <input type="hidden"name="projectId" value="{{.History.Id}}" class="form-control " >
+                  <textarea  class="form-control " style="height: 550px" name="description" id="exampleLastName" placeholder="History">{{.History.Description}}</textarea>
+                    <button type="submit" class="btn btn-primary btn-block">
+                      Update
+                    </button>
+
+                  </form>
+                </div>
+              </div>
+
+
             </div>
           </div>
-
         </div>
         <!-- /.container-fluid -->
 
@@ -348,13 +407,6 @@
 
   <!-- Custom scripts for all pages-->
   <script src="../../assets/js/sb-admin-2.min.js"></script>
-
-  <!-- Page level plugins -->
-  <script src="../../assets/vendor/datatables/jquery.dataTables.min.js"></script>
-  <script src="../../assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
-
-  <!-- Page level custom scripts -->
-  <script src="../../assets/js/demo/datatables-demo.js"></script>
 
 </body>
 

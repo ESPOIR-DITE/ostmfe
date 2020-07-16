@@ -8,7 +8,11 @@ import (
 	"net/http"
 	"ostmfe/config"
 	"ostmfe/controller/misc"
+	history2 "ostmfe/domain/history"
+	image2 "ostmfe/domain/image"
 	place2 "ostmfe/domain/place"
+	"ostmfe/io/history_io"
+	"ostmfe/io/image_io"
 	"ostmfe/io/place_io"
 )
 
@@ -16,25 +20,53 @@ func PlaceHome(app *config.Env) http.Handler {
 	r := chi.NewRouter()
 	r.Get("/", PlacesHandler(app))
 	r.Get("/new", NewPlacesHandler(app))
-	r.Get("/edit", EditPlacesHandler(app))
+	r.Get("/edit/{placeId}", EditPlacesHandler(app))
+	r.Get("/delete/{placeId}", DeletePlacesHandler(app))
 	r.Post("/create_stp1", CreateStp1Handler(app))
 	r.Post("/create_stp2", CreatePlaceStp2Handler(app))
 	r.Get("/new_stp2/{placeId}", NewPlaceStp2Handler(app))
 	return r
 }
+
+func DeletePlacesHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		placeId := chi.URLParam(r, "placeId")
+		fmt.Println(placeId)
+		//result,report := deletePlaceData(placeId)
+	}
+}
+
 func EditPlacesHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+
+		placeId := chi.URLParam(r, "placeId")
+		var historyHelper history2.HistoryHelper
+		placeDate := getPlaceData(placeId)
+
+		history, err := history_io.ReadHistory(placeDate.History.Id)
+		if err != nil {
+			fmt.Println("error reading History")
+		} else {
+			historyHelper = history2.HistoryHelper{history.Id, history.Title, history.Description, misc.ConvertingToString(history.Content), history.Date}
+		}
+
+		type PageData struct {
+			PlaceData PlaceData
+			History   history2.HistoryHelper
+		}
+		data := PageData{placeDate, historyHelper}
 		files := []string{
-			app.Path + "admin/place/edit_places.html",
-			//app.Path + "admin/template/navbar.html",
-			//app.Path + "base_templates/footer.html",
+			app.Path + "admin/place/edite_place.html",
+			app.Path + "admin/template/navbar.html",
+			app.Path + "base_templates/footer.html",
+			app.Path + "admin/template/cards.html",
 		}
 		ts, err := template.ParseFiles(files...)
 		if err != nil {
 			app.ErrorLog.Println(err.Error())
 			return
 		}
-		err = ts.Execute(w, nil)
+		err = ts.Execute(w, data)
 		if err != nil {
 			app.ErrorLog.Println(err.Error())
 		}
@@ -77,17 +109,25 @@ func NewPlacesHandler(app *config.Env) http.HandlerFunc {
 
 func PlacesHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		places, err := place_io.ReadPlaces()
+		if err != nil {
+			app.InfoLog.Println("error reading Places: ", err)
+		}
+		type PageData struct {
+			Places []place2.Place
+		}
+		data := PageData{places}
 		files := []string{
 			app.Path + "admin/place/places.html",
 			app.Path + "admin/template/navbar.html",
-			//app.Path + "base_templates/footer.html",
+			app.Path + "base_templates/footer.html",
 		}
 		ts, err := template.ParseFiles(files...)
 		if err != nil {
 			app.ErrorLog.Println(err.Error())
 			return
 		}
-		err = ts.Execute(w, nil)
+		err = ts.Execute(w, data)
 		if err != nil {
 			app.ErrorLog.Println(err.Error())
 		}
@@ -228,4 +268,93 @@ func CreateStp1Handler(app *config.Env) http.HandlerFunc {
 		http.Redirect(w, r, "/admin_user/place/new", 301)
 		return
 	}
+}
+
+//Agreggeted Place Data
+type PlaceData struct {
+	Place   place2.Place
+	Images  []image2.Images
+	History history2.History
+}
+
+func getPlaceData(placeId string) PlaceData {
+	var placeDate PlaceData
+	var images []image2.Images
+	var history history2.History
+	place, err := place_io.ReadPlace(placeId)
+	if err != nil {
+		fmt.Println("error reading place data")
+		return placeDate
+	}
+	placeImages, err := place_io.ReadPlaceImageAllOf(placeId)
+	if err != nil {
+		fmt.Println("error reading placeImages")
+	} else {
+		for _, placeImage := range placeImages {
+			image, err := image_io.ReadImage(placeImage.ImageId)
+			if err != nil {
+				fmt.Println("error reading Images of the following placeId", placeImage.PlaceId)
+			} else {
+				images = append(images, image)
+			}
+		}
+	}
+	placeHistory, err := place_io.ReadPlaceHistporyOf(placeId)
+	if err != nil {
+		fmt.Println("error reading PlaceHistory")
+	} else {
+		history, err = history_io.ReadHistory(placeHistory.HistoryId)
+		if err != nil {
+			fmt.Println("error reading History of the following place", placeId)
+		}
+	}
+	placeDate = PlaceData{place, images, history}
+	return placeDate
+}
+
+//Todo The following method need to be double checked
+func deletePlaceData(placeId string) (bool, string) {
+	var stringToreturn string
+	_, err := place_io.ReadPlace(placeId)
+	if err != nil {
+		fmt.Println("error reading place data")
+		return false, "Error Place can not be find"
+	} else {
+		_, err := place_io.DeletePlace(placeId)
+		if err != nil {
+			fmt.Println("error reading place data")
+			return false, "Error Place can not be Deleted"
+		}
+	}
+	placeImages, err := place_io.ReadPlaceImageAllOf(placeId)
+	if err != nil {
+		fmt.Println("error reading placeImages")
+	} else {
+		for _, placeImage := range placeImages {
+			_, err := image_io.DeleteImage(placeImage.ImageId)
+			if err != nil {
+				fmt.Println("error Deleting Image of the following placeId", placeImage.PlaceId)
+			} else {
+				_, err := place_io.DeletePlaceImage(placeImage.Id)
+				if err != nil {
+					fmt.Println("error Deleting PlaceImage of the following placeId", placeImage.PlaceId)
+				}
+			}
+		}
+	}
+	placeHistory, err := place_io.ReadPlaceHistporyOf(placeId)
+	if err != nil {
+		fmt.Println("error reading PlaceHistory")
+	} else {
+		_, err := history_io.DeleteHistory(placeHistory.HistoryId)
+		if err != nil {
+			fmt.Println("error reading History of the following place", placeId)
+		} else {
+			_, err := place_io.DeletePlaceHistpory(placeHistory.Id)
+			if err != nil {
+				fmt.Println("error delete PlaceHistory of the following place", placeId)
+			}
+		}
+	}
+	return true, stringToreturn
 }

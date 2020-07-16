@@ -25,7 +25,6 @@ import (
 	"ostmfe/io/place_io"
 	"ostmfe/io/project_io"
 	"ostmfe/io/user_io"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -66,9 +65,9 @@ func ConvertingToString(bytes []byte) string {
 /***
 this method should separates longitude and latitude
 */
-func SeparateLatLng(latlng string) (float64, float64) {
-	var longitude float64
-	var latitude float64
+func SeparateLatLng(latlng string) (string, string) {
+	var longitude string
+	var latitude string
 	val := strings.TrimSuffix(latlng, ")")
 	val2 := strings.TrimPrefix(val, "(")
 	parts := strings.Split(val2, ",")
@@ -78,9 +77,9 @@ func SeparateLatLng(latlng string) (float64, float64) {
 	fmt.Println(parts)
 	latitudeString := parts[0]
 	longitudeString := parts[1]
-	latitude, _ = strconv.ParseFloat(latitudeString, 64)
-	longitude, _ = strconv.ParseFloat(longitudeString, 64)
-	return latitude, longitude
+	//latitude, _ = strconv.ParseFloat(latitudeString, 64)
+	//longitude, _ = strconv.ParseFloat(longitudeString, 64)
+	return latitudeString, longitudeString
 }
 
 func CheckFiles(files []io.Reader) [][]byte {

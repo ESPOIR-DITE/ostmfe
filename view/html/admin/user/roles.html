@@ -226,13 +226,7 @@
 
           <!-- Page Heading -->
 
-          <a href="/admin_user/users/new" class="btn btn-success btn-icon-split mb-4">
-                    <span class="icon text-white-50">
-                      <i class="fas fa-check"></i>
-                    </span>
-            <span class="text">Add New User</span>
-          </a>
-
+          <!-- Add new -->
           {{if .Backend_error}}
             <div class="text-center alert-warning">
               <a class="small" href="#">{{.Backend_error}}</a>
@@ -246,8 +240,8 @@
 
           <div class="card shadow mb-4">
             <!-- Card Header - Accordion -->
-            <a href="#collapseCardExample" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
-              <h6 class="m-0 font-weight-bold text-primary">Create a new role</h6>
+            <a href="#collapseCardExample" class="d-block card-header py-3 btn-success" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
+              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Create a new role</h6>
             </a>
             <!-- Card Content - Collapse -->
             <div class="collapse " id="collapseCardExample">
@@ -257,22 +251,22 @@
                       <div class="col-lg-12">
                         <div class="p-5">
                           <div class="text-center">
-                            <h1 class="h4 text-gray-900 mb-4">Create New User </h1>
+                            <h1 class="h4 text-gray-900 mb-4">New User </h1>
                           </div>
                           <form class="user" method="post" action="/admin_user/users/role_create">
                             <div class="form-group row">
                               <div class="col-sm-6 mb-3 mb-sm-0">
-                                <input type="text" class="form-control form-control-user" id="exampleFirstName" name="role" placeholder="Role">
+                                <input type="text" class="form-control " id="exampleFirstName" name="role" placeholder="Role">
                               </div>
                               <div class="col-sm-6">
-                                <input type="text" class="form-control form-control-user" id="exampleLastName"name="description" placeholder="Description">
+                                <input type="text" class="form-control " id="exampleLastName"name="description" placeholder="Description">
                               </div>
                             </div>
-                            <button type="submit" class="btn btn-primary btn-user btn-block">
-                              Register new role
+                            <button type="submit" class="btn btn-primary btn-block">
+                              Create new role
                             </button>
                             <hr>
-                            <a href="/admin_user" class="btn btn-google btn-user btn-block">
+                            <a href="/admin_user" class="btn btn-google btn-block">
                               <i class=""></i> Cancel
                             </a>
                           </form>

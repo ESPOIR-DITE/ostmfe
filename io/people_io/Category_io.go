@@ -6,7 +6,7 @@ import (
 	"ostmfe/domain/people"
 )
 
-const categoryURl = api.BASE_URL + "category"
+const categoryURl = api.BASE_URL + "category/"
 
 func CreateCategory(history people.Category) (people.Category, error) {
 	entity := people.Category{}

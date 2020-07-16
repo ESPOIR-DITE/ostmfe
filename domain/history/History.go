@@ -9,6 +9,13 @@ type History struct {
 	Content     []byte    `json:"content"`
 	Date        time.Time `json:"date"`
 }
+type HistoryHelper struct {
+	Id          string    `json:"id"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	Content     string    `json:"content"`
+	Date        time.Time `json:"date"`
+}
 
 type History_image struct {
 	ImageId       string `json:"image_id"`

@@ -45,8 +45,20 @@ func ReadHistoryImage(id string) (history.History_image, error) {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
-
 }
+
+//func ReadHistoryImage(id string) (history.History_image, error) {
+//	entity := history.History_image{}
+//	resp, _ := api.Rest().Get(historyImg + "read?id" + id)
+//	if resp.IsError() {
+//		return entity, errors.New(resp.Status())
+//	}
+//	err := api.JSON.Unmarshal(resp.Body(), &entity)
+//	if err != nil {
+//		return entity, errors.New(resp.Status())
+//	}
+//	return entity, nil
+//}
 func DeleteHistoryImage(id string) (history.History_image, error) {
 	entity := history.History_image{}
 	resp, _ := api.Rest().Get(historyImg + "delete?id" + id)

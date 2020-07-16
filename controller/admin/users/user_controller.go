@@ -141,7 +141,7 @@ func EditUserHandler(app *config.Env) http.HandlerFunc {
 		}
 		data := PageData{user, role, roles}
 		files := []string{
-			app.Path + "admin/edit_user.html",
+			app.Path + "admin/user/edit_user.html",
 			app.Path + "admin/template/navbar.html",
 			app.Path + "base_templates/footer.html",
 		}
@@ -170,12 +170,17 @@ func UserHandler(app *config.Env) http.HandlerFunc {
 			app.Session.Remove(r.Context(), "user-create-error")
 		}
 		users := misc.GetUserAndRole()
+		role, err := user_io.ReadRoles()
+		if err != nil {
+			fmt.Println("error: ", err)
+		}
 		type PagePage struct {
 			Backend_error string
 			Unknown_error string
 			Users         []misc.UsersAndRoles
+			Roles         []user2.Roles
 		}
-		data := PagePage{backend_error, unknown_error, users}
+		data := PagePage{backend_error, unknown_error, users, role}
 		files := []string{
 			app.Path + "admin/user/users.html",
 			app.Path + "admin/template/navbar.html",
