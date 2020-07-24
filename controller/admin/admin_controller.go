@@ -26,6 +26,7 @@ func Home(app *config.Env) http.Handler {
 	mux.Handle("/", homeHanler(app))
 
 	mux.Mount("/users", users.UserController(app))
+	mux.Mount("/role", users.RoleController(app))
 
 	mux.Mount("/event", event.EventHome(app))
 

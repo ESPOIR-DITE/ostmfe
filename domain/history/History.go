@@ -22,3 +22,11 @@ type History_image struct {
 	History_image string `json:"history_image"`
 	Description   string `json:"description"`
 }
+type Histories struct {
+	Id      string `json:"id"`
+	History []byte `json:"history"`
+}
+type HistoriesHelper struct {
+	Id      string `json:"id"`
+	History string `json:"history"`
+}

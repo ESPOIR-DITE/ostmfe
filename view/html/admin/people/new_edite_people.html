@@ -312,245 +312,191 @@
               </div>
             </div>
           </div>
-
-          <div class="row">
-
-            <div class="col-lg-6">
-
-              <!-- Default Card Example -->
-              {{if .Project.Images}}
-              {{with .Project.Images}}
-              {{range $i,$e :=.}}
-              <div class="card mb-4">
-                {{if eq $i 0 }}
-                <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">First Project Image</h6>
-                </div>
-                  {{else}}
-                  <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Second Project Image</h6>
-                  </div>
-                  {{end}}
-                <div class="card-body">
-                  {{if .Id}}
-                  <img class="card-img" style="width:100%;height:312px;"
-                       id='base64image'
-
-                            src='data:image/jpeg;base64,{{.Id}}' alt=""/>
-                            {{end}}
-                  <div class="text-center">
-                    <h1 class="h4 text-gray-900 mb-4">You can update this image here</h1>
-                  </div>
-                  <form class="user"method="post" id="" action="/admin_user/project/update_picture" enctype="multipart/form-data">
-                    <input type="hidden"name="imageId" value="{{.Image}}" class="form-control " >
-                    <input type="hidden"name="projectId" value="{{$.Project.Project.Id}}" class="form-control " >
-                    <div class="form-group row">
-                      <div class="col-sm-6">
-                        <select name="decription" class="browser-default custom-select">
-                          <option selected>Picture type</option>
-                            <option value="1">Profile image</option>
-                            <option value="2">Secondary Image</option>
-                        </select>
+          <!---People Images---->
+          <div class="card shadow mb-4">
+            <!-- Card Header - Accordion -->
+            <a href="#collapseCardImage" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+               role="button" aria-expanded="true" aria-controls="collapseCardExample">
+              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Step 2 Of {{.People.People.Name}} creation</h6>
+            </a>
+            <!-- Card Content - Collapse -->
+            <div class="collapse show" id="collapseCardImage">
+              <div class="card-body p-0">
+                <!-- Nested Row within Card Body -->
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="p-5">
+                      <div class="text-center">
+                        <h1 class="h4 text-gray-900 mb-4">People story and Picture </h1>
                       </div>
-                      <div class="col-sm-6">
-                      <input type="file"name="file" class="form-control " required>
-                      </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block">
-                      Complete
-                    </button>
-                  </form>
-                </div>
-              </div>
-              {{end}}
-              {{end}}
-              {{else}}
-                <div class="text-center">
-                  <h1 class="h4 text-gray-900 mb-4">You have no pictures for this Project, Please Upload pictures</h1>
-                </div>
-                <form class="user"method="post" action="/admin_user/project/update_pictures" enctype="multipart/form-data">
-                  <input type="hidden"name="placeId" value="{{.Project.Project.Id}}" class="form-control " id="file" placeholder="Project Name" required>
-                  <div class="form-group ">
-                    <label>Project profile Picture</label>
-                    <input type="file"name="file" class="form-control " id="file" placeholder="Project Name" required>
-                  </div>
+                      <div class="col-lg-6">
+                        <!-- Default Card Example -->
+                        {{if .People.Images}}
+                          {{with .People.Images}}
+                            {{range $i,$e :=.}}
+                              <div class="card mb-4">
+                                {{if eq $i 0 }}
+                                  <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">First Project Image</h6>
+                                  </div>
+                                {{else}}
+                                  <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Second Project Image</h6>
+                                  </div>
+                                {{end}}
+                                <div class="card-body">
+                                  {{if .Id}}
+                                    <img class="card-img" style="width:100%;height:312px;"
+                                         id='base64image'
 
-                  <div class="form-group  row" id="filesArea"></div>
-                  <div class="form-group row" >
-                    <div class="col-sm-6" >
-                      <button type="button" id="add_form_field" class="btn btn-primary btn-user btn-block">
-                        Add a picture
-                      </button>
-                    </div>
-                  </div>
-
-                  <button type="submit" class="btn btn-primary btn-block">
-                    Complete
-                  </button>
-                  <hr>
-                  <a href="/admin_user/" class="btn btn-google btn-user btn-block">
-                    <i class="fab fa-google fa-fw"></i> Register with Google
-                  </a>
-                </form>
-              {{end}}
-
-              <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Project Members</h6>
-                </div>
-                <div class="card-body">
-                  <!-- DataTales Example -->
-                  <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                      <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
-                    </div>
-                    <div class="card-body">
-                      <div class="table-responsive">
-                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                          <thead>
-                          <tr>
-                            <th>Nr</th>
-                            <th>Partner Name</th>
-                            <th>Link</th>
-                            <th>Action</th>
-                            <th>Action</th>
-                          </tr>
-                          </thead>
-                          <tfoot>
-                          <tr>
-                            <th>Nr</th>
-                            <th>Partner Name</th>
-                            <th>Link</th>
-                            <th>Action</th>
-                            <th>Action</th>
-                          </tr>
-                          </tfoot>
-                          <tbody>
-                          {{with .Project.Members}}
-                            {{range $i, $e := .}}
-                              <tr>
-                                <td>{{$i}}</td>
-                                <td>{{.Name}}</td>
-                                <td>{{.Surname}}</td>
-                                <td><a href="/admin_user/project/edit/{{.Id}}" class="btn btn-primary btn-user btn-block">
-                                    Edit
-                                  </a>
-                                </td>
-                                <td><a href="/admin_user/project/delete/{{.Id}}" class="btn btn-google btn-user btn-block">
-                                    <i class="fab fa-fw"></i> Delete
-                                  </a>
-                                </td>
-                              </tr>
+                                         src='data:image/jpeg;base64,{{.Id}}' alt=""/>
+                                  {{end}}
+                                  <div class="text-center">
+                                    <h1 class="h4 text-gray-900 mb-4">You can update this image here</h1>
+                                  </div>
+                                  <form class="user"method="post" id="" action="/admin_user/people/update_image" enctype="multipart/form-data">
+                                    <input type="hidden"name="imageId" value="{{.ImageId}}" class="form-control " >
+                                    <input type="hidden"name="peopleImageId" value="{{.PeopleImageId}}" class="form-control " >
+                                    <input type="hidden"name="peopleId" value="{{$.People.People.Id}}" class="form-control " >
+                                    <div class="form-group row">
+                                      <div class="col-sm-6">
+                                        <select name="imageType" class="browser-default custom-select" required>
+                                          <option selected>Picture type</option>
+                                          <option value="1">Profile image</option>
+                                          <option value="2">Secondary Image</option>
+                                        </select>
+                                      </div>
+                                      <div class="col-sm-6">
+                                        <input type="file"name="file" class="form-control " required>
+                                      </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-block">
+                                      Complete
+                                    </button>
+                                  </form>
+                                </div>
+                              </div>
                             {{end}}
                           {{end}}
-                          </tbody>
-                        </table>
+                        {{else}}
+                          <div class="text-center">
+                            <h1 class="h4 text-gray-900 mb-4">You have no pictures for this Project, Please Upload pictures</h1>
+                          </div>
+                          <form class="user"method="post" action="/admin_user/project/update_pictures" enctype="multipart/form-data">
+                            <input type="hidden"name="peopleId" value="{{.People.People.Id}}" required>
+                            <div class="form-group ">
+                              <label>Project profile Picture</label>
+                              <input type="file"name="file" class="form-control " id="file" placeholder="Project Name" required>
+                            </div>
+
+                            <div class="form-group  row" id="filesArea"></div>
+                            <div class="form-group row" >
+                              <div class="col-sm-6" >
+                                <button type="button" id="add_form_field" class="btn btn-primary btn-user btn-block">
+                                  Add a picture
+                                </button>
+                              </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-block">
+                              Complete
+                            </button>
+                            <hr>
+                            <a href="/admin_user/" class="btn btn-google btn-user btn-block">
+                              <i class="fab fa-google fa-fw"></i> Register with Google
+                            </a>
+                          </form>
+                        {{end}}
                       </div>
+                      <hr>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-
-            <div class="col-lg-6">
-              <!-- Default Card Example -->
-                    <div class="card mb-4">
-                      <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Project Details</h6>
-                      </div>
-                      <div class="card-body">
-                        <form class="user"method="post" id="" action="/admin_user/project/update_picture">
-                          <div class="form-group ">
-                            <input type="text" class="form-control" value="{{.Project.Project.Title}}" name="project_name" id="exampleFirstName" placeholder="Project Name">
-                          </div>
-
-                          <input type="hidden"name="projectId" value="{{.Project.Project.Id}}" class="form-control " >
-
-                          <div class="form-group">
-                            <textarea  class="form-control " style="height: 250px" name="description" id="exampleLastName"  placeholder="Description">{{.Project.Project.Description}}</textarea>
-                          </div>
-                          <input type="hidden"name="projectId" value="" class="form-control " >
-                          <button type="submit" class="btn btn-primary btn-block">
-                            Complete
-                          </button>
-                        </form>
-                      </div>
-                    </div>
-
-
-
-              <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Project Partners</h6>
-                </div>
-                <div class="card-body">
-                  <!-- DataTales Example -->
-                  <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                      <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
-                    </div>
-                    <div class="card-body">
-                      <div class="table-responsive">
-                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                          <thead>
-                          <tr>
-                            <th>Nr</th>
-                            <th>Partner Name</th>
-                            <th>Link</th>
-                            <th>Action</th>
-                            <th>Action</th>
-                          </tr>
-                          </thead>
-                          <tfoot>
-                          <tr>
-                            <th>Nr</th>
-                            <th>Partner Name</th>
-                            <th>Link</th>
-                            <th>Action</th>
-                            <th>Action</th>
-                          </tr>
-                          </tfoot>
-                          <tbody>
-                          {{with .Project.Partners}}
-                            {{range $i, $e := .}}
-                              <tr>
-                                <td>{{$i}}</td>
-                                <td>{{.Name}}</td>
-                                <td>{{.Link}}</td>
-                                <td><a href="/admin_user/project/edit/{{.Id}}" class="btn btn-primary btn-user btn-block">
-                                    Edit
-                                  </a>
-                                </td>
-                                <td><a href="/admin_user/project/delete/{{.Id}}" class="btn btn-google btn-user btn-block">
-                                    <i class="fab fa-fw"></i> Delete
-                                  </a>
-                                </td>
-                              </tr>
-                            {{end}}
-                          {{end}}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
             </div>
           </div>
-          <div class="row">
-            <!-- Basic Card Example -->
-            <div class="card shadow col-12">
-              <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Project History</h6>
-              </div>
-              <div class="card-body"  >
-                {{if not .Project.History.History}}
 
+          <!---People Detail---->
+          <div class="card shadow mb-4">
+            <!-- Card Header - Accordion -->
+            <a href="#collapseCardDetails" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+               role="button" aria-expanded="true" aria-controls="collapseCardExample">
+              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Step 2 Of {{.People.People.Name}} creation</h6>
+            </a>
+            <!-- Card Content - Collapse -->
+            <div class="collapse " id="collapseCardDetails">
+              <div class="card-body p-0">
+                <!-- Nested Row within Card Body -->
+                <div class="row">
+                      <div class="col-lg-12">
+                        <!-- Default Card Example -->
+                        <div class="card mb-4">
+                          <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">People Details</h6>
+                          </div>
+                          <div class="card-body">
+                            <form class="user"method="post" id="" action="/admin_user/project/update_details">
+
+                              <input type="hidden"name="peopleId" value="{{.People.People.Id}}" class="form-control " >
+
+                              <div class="form-group row">
+                                <div class="col-sm-6">
+                                  <label>Person Name</label>
+                                  <input type="text" name="name" class="form-control" value="{{.People.People.Name}}" required>
+                                </div>
+                                <div class="col-sm-6">
+                                  <label>Surname</label>
+                                  <input type="text" name="surname" class="form-control"  value="{{.People.People.Surname}}" required>
+                                </div>
+                              </div>
+                              <div class="form-group row">
+                                <div class="col-sm-6">
+                                  <label>Date Of Birth</label>
+                                  <input type="date" name="b_date" class="form-control"  value="{{.People.People.BirthDate}}" required>
+                                </div>
+                                <div class="col-sm-6">
+                                  <label>Date of Death</label>
+                                  <input type="date" name="d_date" class="form-control"  value="{{.People.People.DeathDate}}" required>
+                                </div>
+                              </div>
+                              <div class="form-group row">
+                                <div class="col-sm-6">
+                                  <label>Profession</label>
+                                  <input type="text" name="profession" class="form-control " value="{{.People.People.Profession}}" required>
+                                </div>
+                                <div class="col-sm-6">
+                                  <label>Origin</label>
+                                  <input type="text" name="origin" class="form-control " value="{{.People.People.Origin}}" required>
+                                </div>
+                              </div>
+                              <button type="submit" class="btn btn-primary btn-block">
+                                Complete
+                              </button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                      <hr>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!---People History---->
+          <div class="card shadow mb-4">
+            <!-- Card Header - Accordion -->
+            <a href="#collapseCardStep2" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+               role="button" aria-expanded="true" aria-controls="collapseCardExample">
+              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">People History</h6>
+            </a>
+            <!-- Card Content - Collapse -->
+            <div class="collapse " id="collapseCardStep2">
+              <div class="card-body"  >
+                {{if not .People.History.History}}
                   <form method="post" action="/admin_user/project/update_history">
                     <div class="form-group" >
-                      <input name="historyId" value="{{.Project.History.Id}}" hidden>
-                      <input name="projectId" value="{{.Project.Project.Id}}" hidden>
+                      <input name="historyId" value="{{.People.History.Id}}" hidden>
+                      <input name="peopleId" value="{{.People.People.Id}}" hidden>
                       <div class="form-group">
                         <label>Add History</label>
                         <textarea id="mytextare" class="form-control"  name="myArea"></textarea>
@@ -558,7 +504,7 @@
 
                     </div>
                     <div class="form-group text-center" >
-                      <button class="btn btn-info" id="formUpdateButton" type="submit" >update</button>
+                      <button class="btn btn-info" id="formUpdateButton" type="submit">update</button>
                     </div>
                   </form>
                 {{else}}
@@ -566,7 +512,7 @@
                   <div class="form-group " id="me" >
                     <script>
                       var div= document.getElementById('me');
-                      var myvalue = {{.Project.History.History}}
+                      var myvalue = {{.People.History.History}}
                               parseMe(myvalue);
                       function parseMe(value) {
                         div.innerHTML+=value;
@@ -577,8 +523,8 @@
                   <div class="form-group">
                     <form method="post" action="/admin_user/project/update_history">
                       <div class="form-group" >
-                        <input name="historyId" value="{{.Project.History.Id}}" hidden>
-                        <input name="projectId" value="{{.Project.Project.Id}}" hidden>
+                        <input name="historyId" value="{{.People.History.Id}}" hidden>
+                        <input name="projectId" value="{{.People.People.Id}}" hidden>
                         <div class="form-group" >
                           <label id="label" hidden style="color: steelblue">Add the new contents here<small> (You may copy from the previous. Remember this new content will override the previous)</small></label>
                           <textarea name="myArea" id="myArea" class="form-control" hidden>
@@ -593,12 +539,13 @@
                     </form>
                   </div>
                   <div class="form-group text-center">
-                    <button class="btn btn-info" id="updateButton" type="button" onclick="changeContents({{.Project.History.History}})" data-dismiss="modal">update</button>
+                    <button class="btn btn-info" id="updateButton" type="button" onclick="changeContents({{.People.History.History}})" data-dismiss="modal">update</button>
                   </div>
                 {{end}}
               </div>
             </div>
           </div>
+
         </div>
         <!-- /.container-fluid -->
 
@@ -609,7 +556,7 @@
       <footer class="sticky-footer bg-white">
         <div class="container my-auto">
           <div class="copyright text-center my-auto">
-            <span>Copyright &copy; Your Website 2019</span>
+            <span>Copyright &copy; OSTM 2019</span>
           </div>
         </div>
       </footer>

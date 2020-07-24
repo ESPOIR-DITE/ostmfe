@@ -14,85 +14,11 @@ import (
 func UserController(app *config.Env) http.Handler {
 	r := chi.NewRouter()
 	r.Get("/", UserHandler(app))
-	//r.Get("/users", UserHandler(app))
 	r.Get("/new", NewUserHandler(app))
-	r.Get("/role", RoleHandler(app))
 	r.Get("/edit/{userId}", EditUserHandler(app))
 	r.Post("/create", CreateUserHandler(app))
-	r.Post("/role_create", CreateUserRoleHandler(app))
 	r.Post("/update_user", UpdateUserHandler(app))
 	return r
-}
-
-func RoleHandler(app *config.Env) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var unknown_error string
-		var backend_error string
-		var Error string
-		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
-			unknown_error = app.Session.GetString(r.Context(), "creation-unknown-error")
-			app.Session.Remove(r.Context(), "creation-unknown-error")
-		}
-		if app.Session.GetString(r.Context(), "user-create-error") != "" {
-			backend_error = app.Session.GetString(r.Context(), "user-create-error")
-			app.Session.Remove(r.Context(), "user-create-error")
-		}
-		roles, err := user_io.ReadRoles()
-		if err != nil {
-			Error = "Internal error,Please try again later"
-			fmt.Println("error reading roles")
-		}
-		type PagePage struct {
-			Backend_error string
-			Unknown_error string
-			Error         string
-			RoleList      []user2.Roles
-		}
-		data := PagePage{backend_error, unknown_error, Error, roles}
-		files := []string{
-			app.Path + "admin/user/roles.html",
-			app.Path + "admin/template/navbar.html",
-			//app.Path + "base_templates/footer.html",
-		}
-		ts, err := template.ParseFiles(files...)
-		if err != nil {
-			app.ErrorLog.Println(err.Error())
-			return
-		}
-		err = ts.Execute(w, data)
-		if err != nil {
-			app.ErrorLog.Println(err.Error())
-		}
-	}
-}
-
-func CreateUserRoleHandler(app *config.Env) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		r.ParseForm()
-		role := r.PostFormValue("role")
-		description := r.PostFormValue("description")
-		if role != "" && description != "" {
-			roleObject := user2.Roles{"", role, description}
-			roleResult, err := user_io.CreateRole(roleObject)
-			if err != nil {
-				fmt.Println(err, "error creating new Role")
-				if app.Session.GetString(r.Context(), "user-create-error") != "" {
-					app.Session.Remove(r.Context(), "user-create-error")
-				}
-				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-				http.Redirect(w, r, "/admin_user/users/role", 301)
-				return
-			}
-			fmt.Println(err, "Creation of a new user successful")
-			if app.Session.GetString(r.Context(), "creation-successful") != "" {
-				app.Session.Remove(r.Context(), "creation-successful")
-			}
-			app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new Role : "+roleResult.Role)
-			http.Redirect(w, r, "/admin_user/users/role", 301)
-			return
-
-		}
-	}
 }
 func EditUserHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

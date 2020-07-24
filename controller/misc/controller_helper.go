@@ -32,6 +32,8 @@ import (
 const (
 	YYYYMMDD_FORMAT    = "2006-01-02"
 	YYYMMDDTIME_FORMAT = "2006-01-02 15:04:05"
+	layoutUS           = "January 2, 2006"
+	layoutISO          = "2006-01-02"
 )
 
 /**
@@ -47,6 +49,14 @@ format date in yyyy-MM-dd
 */
 func FormatDate(date time.Time) string {
 	return date.Format(YYYYMMDD_FORMAT)
+}
+
+/****
+formating date with month name
+*/
+func FormatingDateMonth(date string) string {
+	t, _ := time.Parse(YYYMMDDTIME_FORMAT, date)
+	return t.Format(layoutUS)
 }
 
 /***
@@ -135,7 +145,7 @@ This struct will return all the picture
 type ProjectEditable struct {
 	Project  project2.Project
 	Images   []image3.Images
-	History  history2.History
+	History  history2.HistoriesHelper
 	Partners []partner.Partner
 	Members  []member.Member
 }
@@ -144,8 +154,13 @@ func GetProjectEditable(projectId string) ProjectEditable {
 	var Images []image3.Images
 	var Parteners []partner.Partner
 	var Member []member.Member
-	var historyToreturn history2.History
+	var historyToreturn history2.HistoriesHelper
 	projectEditable := ProjectEditable{}
+	//Checking if the projectId is empty
+	if projectId != "" {
+		fmt.Println(" can not read this people, because the projectId is empty or null")
+		return projectEditable
+	}
 	projectObject, err := project_io.ReadProject(projectId)
 	if err != nil {
 		fmt.Println(err, " can not read project")
@@ -155,14 +170,16 @@ func GetProjectEditable(projectId string) ProjectEditable {
 	projectImage, err := project_io.ReadAllOfProjectImage(projectObject.Id)
 	if err != nil {
 		fmt.Println(err, " error read project Image")
-	}
-	for _, image := range projectImage {
-		ImageObejct, err := image_io.ReadImage(image.ImageId)
-		if err != nil {
-			fmt.Println(err, " error read Image")
+	} else {
+		for _, image := range projectImage {
+			ImageObejct, err := image_io.ReadImage(image.ImageId)
+			if err != nil {
+				fmt.Println(err, " error read Image")
+			}
+			Images = append(Images, ImageObejct)
 		}
-		Images = append(Images, ImageObejct)
 	}
+
 	//PARTNERS
 	projectPartener, err := project_io.ReadAllOfProjectPartner(projectObject.Id)
 	if err != nil {
@@ -187,15 +204,16 @@ func GetProjectEditable(projectId string) ProjectEditable {
 		}
 		Member = append(Member, mamber)
 	}
+	//History
 	projectHistory, err := project_io.ReadProjectHistoryOf(projectObject.Id)
 	if err != nil {
 		fmt.Println(err, " error read project History of id: ", projectObject.Id)
 	} else {
-		history, err := history_io.ReadHistory(projectHistory.HistoryId)
+		history, err := history_io.ReadHistorie(projectHistory.HistoryId)
 		if err != nil {
 			fmt.Println(err, " error read history of id: ", projectHistory.HistoryId)
 		}
-		historyToreturn = history2.History{history.Id, history.Title, ConvertingToString(history.Content), history.Content, history.Date}
+		historyToreturn = history2.HistoriesHelper{history.Id, ConvertingToString(history.History)}
 	}
 	projectEditable = ProjectEditable{projectObject, Images, historyToreturn, Parteners, Member}
 	return projectEditable

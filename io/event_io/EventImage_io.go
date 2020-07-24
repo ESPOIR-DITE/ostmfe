@@ -8,7 +8,7 @@ import (
 
 const eventimageURL = api.BASE_URL + "event_image/"
 
-func CreateEventImg(image event.EventImage) (event.EventImage, error) {
+func CreateEventImg(image event.EventImageHelper) (event.EventImage, error) {
 
 	entity := event.EventImage{}
 	resp, _ := api.Rest().SetBody(image).Post(eventimageURL + "create")

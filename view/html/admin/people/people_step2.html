@@ -10,6 +10,7 @@
   <meta name="author" content="">
 
   <title>SB Admin 2 - Tables</title>
+  <base href="/">
 
   <!-- Custom fonts for this template -->
   <link href="../../assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -20,6 +21,12 @@
 
   <!-- Custom styles for this page -->
   <link href="../../assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+  <script src="https://cdn.tiny.cloud/1/tmo7wwuvihuwqom08gjvonhdda8blx4on0n7jvm1i4pq2coh/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+  <script>
+    tinymce.init({
+      selector: '#mytextarea'
+    });
+  </script>
 
 </head>
 
@@ -233,20 +240,80 @@
             <span class="text">Add New Person</span>
           </a>
 
-          <!--Card for adding new person--->
+          <!--Card for adding new person's picture and history--->
 
           <div class="card shadow mb-4">
             <!-- Card Header - Accordion -->
-            <a href="#collapseCardExample" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+            <a href="#collapseCardStep2" class="d-block card-header py-3 btn-success" data-toggle="collapse"
                role="button" aria-expanded="true" aria-controls="collapseCardExample">
-              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Create a new Event</h6>
+              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Step 2 Of {{.People.Name}} creation</h6>
             </a>
             <!-- Card Content - Collapse -->
-            <div class="collapse " id="collapseCardExample">
+            <div class="collapse show" id="collapseCardStep2">
               <div class="card-body p-0">
                 <!-- Nested Row within Card Body -->
                 <div class="row">
                   <div class="col-lg-12">
+                    <div class="p-5">
+                      <div class="text-center">
+                        <h1 class="h4 text-gray-900 mb-4">People story and Picture </h1>
+                      </div>
+                      <form class="user"method="post" action="/admin_user/people/create_stp2" enctype="multipart/form-data">
+                        <input type="hidden"name="peopleId" value="{{.People.Id}}" class="form-control" required>
+
+                        <div class="form-group">
+                          <label>Event History</label>
+                          <textarea id="mytextarea" class="form-control"  name="history"></textarea>
+                        </div>
+
+                        <div class="form-group ">
+                          <label>People Picture</label>
+                          <input type="file"name="file" class="form-control " id="file" placeholder="Project Name" required>
+                        </div>
+
+                        <div class="form-group  row" id="filesArea"></div>
+                        <div class="form-group row" >
+                          <div class="col-sm-6" >
+                            <button type="button" id="add_form_field" class="btn btn-primary btn-user btn-block">
+                              Add a picture
+                            </button>
+                          </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">
+                          Complete
+                        </button>
+                        <hr>
+                        <a href="/admin_user/" class="btn btn-google btn-user btn-block">
+                          <i class="fab fa-fw"></i> Register with Google
+                        </a>
+                      </form>
+                      <hr>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!--Card for adding new person--->
+
+          <div class="card shadow mb-4">
+            <!-- Card Header - Accordion -->
+            <a href="#collapseCardNewPerson" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+               role="button" aria-expanded="true" aria-controls="collapseCardExample">
+              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Create a new People</h6>
+            </a>
+            <!-- Card Content - Collapse -->
+            <div class="collapse " id="collapseCardNewPerson">
+              <div class="card-body p-0">
+                <!-- Nested Row within Card Body -->
+                <div class="row">
+                  <div class="col-lg-7 d-none d-lg-block ">
+                    <div class="map-wrap" style="width:100%; height: 100%;" id="map"></div>
+                  </div>
+                  <div class="col-lg-5">
                     <div class="p-5">
                       {{if .Backend_error}}
                         <div class="text-center">
@@ -263,7 +330,6 @@
                         <h1 class="h4 text-gray-900 mb-4">Create People</h1>
                       </div>
                       <form class="user" method="post" action="/admin_user/people/create_stp1">
-
                         <div class="form-group row">
                           <div class="col-sm-6">
                             <label>Person Name</label>
@@ -294,17 +360,6 @@
                             <input type="text" name="origin" class="form-control " id="exampleFirstName" placeholder="South Afrincain" required>
                           </div>
                         </div>
-                        <div class="form-group">
-                          <label>Place <small>Please select a place that is related to this person</small> </label>
-                          <select name="placeId" class="browser-default custom-select" required>
-                            <option selected>Choose a Place</option>
-                            {{with .Places}}
-                              {{range .}}
-                                <option value={{.Id}}>{{.Title}}</option>
-                              {{end}}
-                            {{end}}
-                          </select>
-                        </div>
 
                         <button type="submit" class="btn btn-primary  btn-block">
                           Next
@@ -323,9 +378,17 @@
             </div>
           </div>
 
-
-
           <!-- DataTales Example -->
+
+          <div class="card shadow mb-4">
+            <!-- Card Header - Accordion -->
+            <a href="#collapseCardTable" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+               role="button" aria-expanded="true" aria-controls="collapseCardExample">
+              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">People Table</h6>
+            </a>
+            <!-- Card Content - Collapse -->
+            <div class="collapse" id="collapseCardTable">
+              <div class="card-body p-0">
           <div class="card shadow mb-4">
             <div class="card-header py-3">
               <h6 class="m-0 font-weight-bold text-primary">User Table</h6>
@@ -377,6 +440,9 @@
                   {{end}}
                   </tbody>
                 </table>
+              </div>
+            </div>
+          </div>
               </div>
             </div>
           </div>
@@ -440,14 +506,34 @@
   <!-- Page level plugins -->
   <script src="../../assets/vendor/datatables/jquery.dataTables.min.js"></script>
   <script src="../../assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
-  <script src="../../assets/js/customer/mymap.js"></script>
 
   <!-- Page level custom scripts -->
   <script src="../../assets/js/demo/datatables-demo.js"></script>
-  <script async defer
-          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA&callback=initMap">
-  </script>
 
 </body>
+<script>
+  var max_fields = 6;
+  var wrapper = document.getElementById("filesArea");
+  var add_button = document.getElementById("add_form_field");
+
+  var x = 1;
+  $(add_button).click(function(e) {
+
+    e.preventDefault();
+    if (x < max_fields) {
+      x++;
+      $(wrapper).append('<div class="col-sm-6"> <input type="file"name="file'+x+'" class="form-control " id="file" placeholder="Project Name" required> </div> <div class="col-sm-6"> <button type="button" id="add_form_field" class="btn btn-primary  btn-block">Delete </button> <hr></div> '); //add input box
+    } else {
+      alert('You Reached the limits')
+    }
+  });
+
+  $(wrapper).on("click", ".delete", function(e) {
+    e.preventDefault();
+    $(this).parent('div').remove();
+    x--;
+  });
+
+</script>
 
 </html>

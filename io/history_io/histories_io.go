@@ -1,16 +1,16 @@
-package people_io
+package history_io
 
 import (
 	"errors"
 	"ostmfe/api"
-	"ostmfe/domain/people"
+	"ostmfe/domain/history"
 )
 
-const pplPlace = api.BASE_URL + "people_place/"
+const historiesURL = api.BASE_URL + "histories/"
 
-func CreatePeoplePlace(pPl people.PeoplePlace) (people.PeoplePlace, error) {
-	entity := people.PeoplePlace{}
-	resp, _ := api.Rest().SetBody(pPl).Post(pplPlace + "create")
+func CreateHistorie(hist history.Histories) (history.Histories, error) {
+	entity := history.Histories{}
+	resp, _ := api.Rest().SetBody(hist).Post(historiesURL + "create")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -19,11 +19,11 @@ func CreatePeoplePlace(pPl people.PeoplePlace) (people.PeoplePlace, error) {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
-
 }
-func UpdatePeoplePlace(pPl people.PeoplePlace) (people.PeoplePlace, error) {
-	entity := people.PeoplePlace{}
-	resp, _ := api.Rest().SetBody(pPl).Post(pplPlace + "update")
+
+func UpdateHistorie(hist history.Histories) (history.Histories, error) {
+	entity := history.Histories{}
+	resp, _ := api.Rest().SetBody(hist).Post(historiesURL + "update")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -32,11 +32,11 @@ func UpdatePeoplePlace(pPl people.PeoplePlace) (people.PeoplePlace, error) {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
-
 }
-func ReadPeoplePlace(id string) (people.PeoplePlace, error) {
-	entity := people.PeoplePlace{}
-	resp, _ := api.Rest().Get(pplPlace + "read?id" + id)
+
+func ReadHistorie(id string) (history.Histories, error) {
+	entity := history.Histories{}
+	resp, _ := api.Rest().Get(historiesURL + "read?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -45,11 +45,11 @@ func ReadPeoplePlace(id string) (people.PeoplePlace, error) {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
-
 }
-func DeletePeoplePlace(id string) (people.PeoplePlace, error) {
-	entity := people.PeoplePlace{}
-	resp, _ := api.Rest().Get(pplPlace + "delete?id" + id)
+
+func DeleteHistorie(id string) (history.Histories, error) {
+	entity := history.Histories{}
+	resp, _ := api.Rest().Get(historiesURL + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -58,11 +58,11 @@ func DeletePeoplePlace(id string) (people.PeoplePlace, error) {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
-
 }
-func ReadPeoplePlaces() (people.PeoplePlace, error) {
-	entity := people.PeoplePlace{}
-	resp, _ := api.Rest().Get(pplPlace + "reads")
+
+func ReadHistories() ([]history.Histories, error) {
+	entity := []history.Histories{}
+	resp, _ := api.Rest().Get(historiesURL + "reads")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -71,5 +71,4 @@ func ReadPeoplePlaces() (people.PeoplePlace, error) {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
-
 }

@@ -253,7 +253,7 @@
                           <div class="text-center">
                             <h1 class="h4 text-gray-900 mb-4">New User </h1>
                           </div>
-                          <form class="user" method="post" action="/admin_user/users/role_create">
+                          <form class="user" method="post" action="/admin_user/role/create">
                             <div class="form-group row">
                               <div class="col-sm-6 mb-3 mb-sm-0">
                                 <input type="text" class="form-control " id="exampleFirstName" name="role" placeholder="Role">
@@ -316,12 +316,10 @@
                       <td>{{$i}}</td>
                       <td>{{$e.Role}}</td>
                       <td>{{$e.Description}}</td>
-                      <td><a href="/admin_user/users/edit/{{$e.Id}}" class="btn btn-primary btn-user btn-block">
-                          Edit
+                      <td><a href="/admin_user/role/edit/{{$e.Id}}" class="btn btn-primary btn-user btn-block">Edit
                         </a>
                       </td>
-                      <td><a href="/admin_user/users/delete/{{$e.Id}}" class="btn btn-google btn-user btn-block">
-                          <i class="fab fa-fw"></i> Delete
+                      <td><a href="/admin_user/role/delete/{{$e.Id}}" class="btn btn-google btn-user btn-block">Delete
                         </a>
                       </td>
                     </tr>

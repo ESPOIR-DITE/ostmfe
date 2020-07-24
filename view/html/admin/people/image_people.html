@@ -18,6 +18,13 @@
   <!-- Custom styles for this template-->
   <link href="../../assets/css/sb-admin-2.min.css" rel="stylesheet">
 
+  <script src="https://cdn.tiny.cloud/1/tmo7wwuvihuwqom08gjvonhdda8blx4on0n7jvm1i4pq2coh/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+  <script>
+    tinymce.init({
+      selector: '#mytextarea'
+    });
+  </script>
+
 </head>
 
 <body class="bg-gradient-primary">
@@ -35,13 +42,16 @@
                 <h1 class="h4 text-gray-900 mb-4">Step 2 Of {{.People.Name}}</h1>
               </div>
               <form class="user"method="post" action="/admin_user/people/create_stp2" enctype="multipart/form-data">
+                <input type="hidden"name="peopleId" value="{{.People.Id}}" class="form-control" required>
+
                 <div class="form-group">
-                  <label>Place History</label>
-                  <textarea style="height: 200px" name="history" class="form-control" id="exampleInputEmail" placeholder="History...."></textarea>
+                  <label>Event History</label>
+                  <textarea id="mytextarea" class="form-control"  name="history">
+                 </textarea>
                 </div>
-                <input type="hidden"name="peopleId" value="{{.People.Id}}" class="form-control " id="file" placeholder="Project Name" required>
+
                 <div class="form-group ">
-                  <label>Project profile Picture</label>
+                  <label>People Picture</label>
                   <input type="file"name="file" class="form-control " id="file" placeholder="Project Name" required>
                 </div>
 

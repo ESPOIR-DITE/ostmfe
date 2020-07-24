@@ -3,9 +3,10 @@ package event
 import "time"
 
 type Event struct {
-	Id   string    `json:"id"`
-	Name string    `json:"name"`
-	Date time.Time `json:"date"`
+	Id          string    `json:"id"`
+	Name        string    `json:"name"`
+	Date        time.Time `json:"date"`
+	Description string    `json:"description"`
 }
 
 type EventImage struct {
@@ -31,4 +32,13 @@ type EventProject struct {
 	ProjectId   string `json:"projectId"`
 	EventId     string `json:"eventId"`
 	Description string `json:"description"`
+}
+type EventHistory struct {
+	Id        string `json:"id"`
+	HistoryId string `json:"historyId"`
+	EventId   string `json:"eventId"`
+}
+type EventImageHelper struct {
+	EventImage EventImage `json:"eventImage"`
+	Files      [][]byte   `json:"files"`
 }

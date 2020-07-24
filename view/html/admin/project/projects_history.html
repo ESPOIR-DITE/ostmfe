@@ -10,6 +10,7 @@
   <meta name="author" content="">
 
   <title>SB Admin 2 - Tables</title>
+  <base href="/">
 
   <!-- Custom fonts for this template -->
   <link href="../../assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -64,7 +65,7 @@
               <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Create a new role</h6>
             </a>
             <!-- Card Content - Collapse -->
-            <div class="collapse " id="collapseCardExample">
+            <div class="collapse show" id="collapseCardExample">
               <div class="card-body p-0">
                 <!-- Nested Row within Card Body -->
                 <div class="row">
@@ -81,49 +82,26 @@
                         </div>
                       {{end}}
                       <div class="text-center">
-                        <h1 class="h4 text-gray-900 mb-4">Simon's Town Project</h1>
+                        <h1 class="h4 text-gray-900 mb-4">Simon's Town Project History</h1>
                       </div>
-                      <form class="user" id="myform" method="post" action="/admin_user/project/create" enctype="multipart/form-data">
-                        <div class="form-group ">
-                          <label>Project Name</label>
-                          <input type="text" class="form-control" name="project_name" id="exampleFirstName" placeholder="name">
-                        </div>
-                        <div class="form-group">
-                          <label>Project Description</label>
-                          <textarea  class="form-control " style="height: 100px" name="description" id="exampleLastName" placeholder="Description"></textarea>
-                        </div>
+                      <form class="user" id="myform" method="post" action="/admin_user/project/create_project_history">
+
+                        <input type="hidden" class="form-control form-control-user"value="{{.Project.Id}}" name="projectId" id="exampleFirstName" placeholder="Project Name">
+
                         <div class="form-group">
                           <label>Project History</label>
-                          <textarea id="mytextarea" class="form-control"  name="mytextarea"></textarea>
+                          <textarea id="mytextarea" class="form-control"  name="mytextarea">
+                 </textarea>
                         </div>
 
-                        <div class="form-group ">
-                          <label>Project profile Picture</label>
-                          <input type="file"name="file" class="form-control " id="file" required>
-                        </div>
-
-                        <div class="form-group  row" id="filesArea">
-
-
-                        </div>
-                        <div class="form-group row" >
-                          <div class="col-sm-6" >
-                            <button type="button" id="add_form_field" class="btn btn-primary btn-block">
-                              Add a picture
-                            </button>
-                          </div>
-
-                        </div>
-
-                        <button type="submit" class="btn btn-primary  btn-block">
+                        <button type="submit" class="btn btn-primary btn-user btn-block">
                           Submit
                         </button>
                         <hr>
-                        <a href="/admin_user" class="btn btn-google btn-block">
+                        <a href="/admin_user" class="btn btn-google btn-user btn-block">
                           <i class="fab"></i> Cancel
                         </a>
-                      </form>
-                      <hr>
+                      </form>                      <hr>
                     </div>
                   </div>
                 </div>
@@ -138,11 +116,16 @@
 
           <!-- DataTales Example -->
           <div class="card shadow mb-4">
-            <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
-            </div>
-            <div class="card-body">
+            <!-- Card Header - Accordion -->
+            <a href="#collapseCardTable" class="d-block card-header py-3 btn-success" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
+              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Create a new role</h6>
+            </a>
+            <!-- Card Content - Collapse -->
+            <div class="collapse " id="collapseCardTable">
+              <div class="card-body p-0">
               <div class="table-responsive">
+                <br/>
+                <div class="row">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                   <thead>
                     <tr>
@@ -182,9 +165,13 @@
                   {{end}}
                   </tbody>
                 </table>
+                </div>
+              </div>
               </div>
             </div>
+            </div>
           </div>
+      </div>
 
         </div>
         <!-- /.container-fluid -->

@@ -6,8 +6,8 @@ type People struct {
 	Id         string    `json:"id"`
 	Name       string    `json:"name"`
 	Surname    string    `json:"surname"`
-	BirthDate  time.Time `json:"birth_date"`
-	DeathDate  time.Time `json:"deathdate"`
+	BirthDate  time.Time `json:"birthDate"`
+	DeathDate  time.Time `json:"deathDate"`
 	Origin     string    `json:"origin"`
 	Profession string    `json:"profession"`
 }
@@ -24,15 +24,16 @@ type People_profession struct {
 	People_id   string `json:"people_id"`
 	Description string `json:"description"`
 }
-type PlaceImageHelper struct {
-	People_image People_image `json:"people_image"`
+type PeopleImageHelper struct {
+	People_image People_image `json:"peopleImage"`
 	Files        [][]byte     `json:"files"`
+	ImageId      string       `json:"imageId"` //this field will facilitate update process
 }
 
 type PeoplePlace struct {
 	Id       string `json:"id"`
-	PlaceId  string `json:"place_id"`
-	PeopleId string `json:"people_id"`
+	PlaceId  string `json:"placeId"`
+	PeopleId string `json:"peopleId"`
 }
 
 type Profession struct {
@@ -43,17 +44,17 @@ type Profession struct {
 
 type Profession_image struct {
 	ProfessionId string `json:"professionId"`
-	ImageId      string `json:"image_id"`
+	ImageId      string `json:"imageId"`
 	Description  string `json:"description"`
 }
 type PeopleHistory struct {
 	Id        string `json:"id"`
-	PeopleId  string `json:"people_id"`
-	HistoryId string `json:"history_id"`
+	PeopleId  string `json:"peopleId"`
+	HistoryId string `json:"historyId"`
 }
 type PeopleCategory struct {
 	Id       string `json:"id"`
-	PeopleId string `json:"peopleid"`
+	PeopleId string `json:"peopleId"`
 	Category string `json:"category"`
 }
 type Category struct {

@@ -6,7 +6,7 @@ import (
 	"ostmfe/domain/people"
 )
 
-const peoplehistoryURL = api.BASE_URL + "people_history"
+const peoplehistoryURL = api.BASE_URL + "people_history/"
 
 func CreatePeopleHistory(history people.PeopleHistory) (people.PeopleHistory, error) {
 	entity := people.PeopleHistory{}
@@ -69,7 +69,7 @@ func DeletePeopleHistory(id string) (people.PeopleHistory, error) {
 	}
 	return entity, nil
 }
-func ReadPeopleHistorys(id string) ([]people.PeopleHistory, error) {
+func ReadPeopleHistorys() ([]people.PeopleHistory, error) {
 	entity := []people.PeopleHistory{}
 	resp, _ := api.Rest().Get(peoplehistoryURL + "reads")
 	if resp.IsError() {

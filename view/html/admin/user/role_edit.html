@@ -9,7 +9,8 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>SB Admin 2 - Tables</title>
+  <title>OSTM Admin- Role</title>
+  <base href="/">
 
   <!-- Custom fonts for this template -->
   <link href="../../assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -226,122 +227,73 @@
 
           <!-- Page Heading -->
 
-          <a href="/admin_user/people/new" class="btn btn-success btn-icon-split mb-4">
-                    <span class="icon text-white-50">
-                      <i class="fas fa-check"></i>
-                    </span>
-            <span class="text">Add New Person</span>
-          </a>
+          <!-- Add new -->
 
-          <!--Card for adding new person--->
+
 
           <div class="card shadow mb-4">
             <!-- Card Header - Accordion -->
-            <a href="#collapseCardExample" class="d-block card-header py-3 btn-success" data-toggle="collapse"
-               role="button" aria-expanded="true" aria-controls="collapseCardExample">
-              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Create a new Event</h6>
+            <a href="#collapseCardExample" class="d-block card-header py-3 btn-success" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
+              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Create a new role</h6>
             </a>
             <!-- Card Content - Collapse -->
-            <div class="collapse " id="collapseCardExample">
-              <div class="card-body p-0">
-                <!-- Nested Row within Card Body -->
-                <div class="row">
-                  <div class="col-lg-12">
-                    <div class="p-5">
-                      {{if .Backend_error}}
-                        <div class="text-center">
-                          <h1 class="h4 text-gray-900 mb-4">{{.Backend_error}}</h1>
+            <div class="collapse show" id="collapseCardExample">
+                  <div class="card-body p-0">
+                    <!-- Nested Row within Card Body -->
+                    <div class="row">
+                      <div class="col-lg-12">
+                        <div class="p-5">
+                          <div class="text-center">
+                            <h1 class="h4 text-gray-900 mb-4">Update Role</h1>
+                          </div>
+                          <form class="user" method="post" action="/admin_user/role/update">
+                            <div class="form-group row">
+                              <div class="col-sm-6 mb-3 mb-sm-0">
+                                <input type="text" class="form-control" value="{{.Role.Role}}" id="exampleFirstName" name="role" placeholder="Role">
+                              </div>
+                              <div class="col-sm-6">
+                                <input type="text" class="form-control" value="{{.Role.Description}}" id="exampleLastName" name="description" placeholder="Description">
+                              </div>
+                            </div>
+                            <input type="hidden" name="roleId" value="{{.Role.Id}}">
+                            <button type="submit" class="btn btn-primary btn-block">
+                              Update role
+                            </button>
+                            <hr>
+                            <a href="/admin_user" class="btn btn-google btn-block">
+                              <i class=""></i> Cancel
+                            </a>
+                          </form>
+                          <hr>
                         </div>
-                      {{end}}
-
-                      {{if .Unknown_error}}
-                        <div class="text-center">
-                          <h1 class="h4 text-gray-900 mb-4">{{.Unknown_error}}</h1>
-                        </div>
-                      {{end}}
-                      <div class="text-center">
-                        <h1 class="h4 text-gray-900 mb-4">Create People</h1>
                       </div>
-                      <form class="user" method="post" action="/admin_user/people/create_stp1">
-
-                        <div class="form-group row">
-                          <div class="col-sm-6">
-                            <label>Person Name</label>
-                            <input type="text" name="name" class="form-control"placeholder="Noxolo" required>
-                          </div>
-                          <div class="col-sm-6">
-                            <label>Surname</label>
-                            <input type="text" name="surname" class="form-control"  placeholder="NCeba" required>
-                          </div>
-                        </div>
-                        <div class="form-group row">
-                          <div class="col-sm-6">
-                            <label>Date Of Birth</label>
-                            <input type="date" name="b_date" class="form-control"  placeholder="CPUT" required>
-                          </div>
-                          <div class="col-sm-6">
-                            <label>Date of Death</label>
-                            <input type="date" name="d_date" class="form-control"  placeholder="CPUT" required>
-                          </div>
-                        </div>
-                        <div class="form-group row">
-                          <div class="col-sm-6">
-                            <label>Profession</label>
-                            <input type="text" name="profession" class="form-control " id="exampleFirstName" placeholder="Art" required>
-                          </div>
-                          <div class="col-sm-6">
-                            <label>Origin</label>
-                            <input type="text" name="origin" class="form-control " id="exampleFirstName" placeholder="South Afrincain" required>
-                          </div>
-                        </div>
-                        <div class="form-group">
-                          <label>Place <small>Please select a place that is related to this person</small> </label>
-                          <select name="placeId" class="browser-default custom-select" required>
-                            <option selected>Choose a Place</option>
-                            {{with .Places}}
-                              {{range .}}
-                                <option value={{.Id}}>{{.Title}}</option>
-                              {{end}}
-                            {{end}}
-                          </select>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary  btn-block">
-                          Next
-                        </button>
-                        <hr>
-                        <a href="/admin_user" class="btn btn-google btn-block">
-                          <i class="fab fa-fw"></i> Cancel
-                        </a>
-                      </form>
-                      <hr>
                     </div>
                   </div>
-                </div>
-              </div>
 
             </div>
           </div>
 
 
 
+
+          <div class="card shadow mb-4">
+            <!-- Card Header - Accordion -->
+            <a href="#collapseCardExample" class="d-block card-header py-3 btn-success" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
+              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Role Table</h6>
+            </a>
+            <!-- Card Content - Collapse -->
+            <div class="collapse" id="collapseCardExample">
+              <div class="card-body p-0">
           <!-- DataTales Example -->
           <div class="card shadow mb-4">
-            <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">User Table</h6>
-            </div>
             <div class="card-body">
               <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                   <thead>
                     <tr>
                       <th>Nr</th>
-                      <th>Name</th>
-                      <th>User Surname</th>
-                      <th>Date of Birth</th>
-                      <th>Date of Death</th>
-                      <th>Origin</th>
-                      <th>Profession</th>
+                      <th>Role</th>
+                      <th>Description</th>
                       <th>Action</th>
                       <th>Action</th>
                     </tr>
@@ -349,34 +301,33 @@
                   <tfoot>
                     <tr>
                       <th>Nr</th>
-                      <th>Name</th>
-                      <th>User Surname</th>
-                      <th>Date of Birth</th>
-                      <th>Date of Death</th>
-                      <th>Origin</th>
-                      <th>Profession</th>
+                      <th>Role</th>
+                      <th>Description</th>
                       <th>Action</th>
                       <th>Action</th>
                     </tr>
                   </tfoot>
                   <tbody>
-                  {{with .Peoples}}
+                  {{with .Roles}}
                   {{range $i, $e := .}}
                     <tr>
                       <td>{{$i}}</td>
-                      <td>{{.Name}}</td>
-                      <td>{{.Surname}}</td>
-                      <td>{{.BirthDate}}</td>
-                      <td>{{.DeathDate}}</td>
-                      <td>{{.Origin}}</td>
-                      <td>{{.Profession}}</td>
-                      <td><a href="/admin_user/people/edit/{{.Id}}" class="btn btn-primary btn-user btn-block">Edit</a></td>
-                      <td><a href="/admin_user/user/delete/{{.Id}}" class="btn btn-google btn-user btn-block">Delete</a></td>
+                      <td>{{$e.Role}}</td>
+                      <td>{{$e.Description}}</td>
+                      <td><a href="/admin_user/role/edit/{{$e.Id}}" class="btn btn-primary btn-user btn-block" aria-disabled="true">Edit
+                        </a>
+                      </td>
+                      <td><a href="/admin_user/role/delete/{{$e.Id}}" class="btn btn-google btn-user btn-block">Delete
+                        </a>
+                      </td>
                     </tr>
                   {{end}}
                   {{end}}
                   </tbody>
                 </table>
+              </div>
+            </div>
+          </div>
               </div>
             </div>
           </div>
@@ -440,13 +391,9 @@
   <!-- Page level plugins -->
   <script src="../../assets/vendor/datatables/jquery.dataTables.min.js"></script>
   <script src="../../assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
-  <script src="../../assets/js/customer/mymap.js"></script>
 
   <!-- Page level custom scripts -->
   <script src="../../assets/js/demo/datatables-demo.js"></script>
-  <script async defer
-          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA&callback=initMap">
-  </script>
 
 </body>
 

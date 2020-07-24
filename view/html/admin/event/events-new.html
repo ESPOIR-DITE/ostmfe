@@ -2,14 +2,26 @@
 <html lang="en">
 
 <head>
-
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>SB Admin 2 - Tables</title>
+  <title>Admin OSTM</title>
+  <style>
+
+    .form-select .nice-select {
+      border: none;
+      border-radius: 0px;
+      height: 40px;
+      background: #f9f9ff;
+      padding-left: 45px;
+      padding-right: 40px;
+      width: 100%;
+    }
+
+  </style>
 
   <!-- Custom fonts for this template -->
   <link href="../../assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -20,12 +32,7 @@
 
   <!-- Custom styles for this page -->
   <link href="../../assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
-  <script src="https://cdn.tiny.cloud/1/tmo7wwuvihuwqom08gjvonhdda8blx4on0n7jvm1i4pq2coh/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
-  <script>
-    tinymce.init({
-      selector: '#mytextarea'
-    });
-  </script>
+
 </head>
 
 <body id="page-top">
@@ -52,76 +59,87 @@
 
           <!-- Page Heading -->
 
-          <a href="/admin_user/project/new" class="btn btn-success btn-icon-split mb-4">
+          <a href="/admin_user/event/new" class="btn btn-success btn-icon-split mb-4">
                     <span class="icon text-white-50">
                       <i class="fas fa-check"></i>
                     </span>
-            <span class="text">Add New User</span>
+            <span class="text">Add New Event</span>
           </a>
+
+          <!-- Add new -->
+          {{if .Backend_error}}
+            <div class="text-center alert-warning">
+              <a class="small" href="#">{{.Backend_error}}</a>
+            </div>
+          {{end}}
+          {{if .Unknown_error}}
+            <div class="text-center alert-warning">
+              <a class="small" href="#">{{.Unknown_error}}</a>
+            </div>
+          {{end}}
+
           <div class="card shadow mb-4">
             <!-- Card Header - Accordion -->
             <a href="#collapseCardExample" class="d-block card-header py-3 btn-success" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
-              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Create a new role</h6>
+              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Create a new Event</h6>
             </a>
             <!-- Card Content - Collapse -->
             <div class="collapse " id="collapseCardExample">
               <div class="card-body p-0">
                 <!-- Nested Row within Card Body -->
                 <div class="row">
-                  <div class="col-lg-12">
+                    <div class="col-lg-7 d-none d-lg-block ">
+                      <div class="map-wrap" style="width:100%; height: 100%;" id="map"></div>
+                    </div>
+                    <div class="col-lg-5">
                     <div class="p-5">
-                      {{if .Backend_error}}
-                        <div class="text-center alert-warning">
-                          <a class="small" href="#">{{.Backend_error}}</a>
-                        </div>
-                      {{end}}
-                      {{if .Unknown_error}}
-                        <div class="text-center alert-warning">
-                          <a class="small" href="#">{{.Unknown_error}}</a>
-                        </div>
-                      {{end}}
                       <div class="text-center">
-                        <h1 class="h4 text-gray-900 mb-4">Simon's Town Project</h1>
+                        <h1 class="h4 text-gray-900 mb-4">New Event </h1>
                       </div>
-                      <form class="user" id="myform" method="post" action="/admin_user/project/create" enctype="multipart/form-data">
-                        <div class="form-group ">
-                          <label>Project Name</label>
-                          <input type="text" class="form-control" name="project_name" id="exampleFirstName" placeholder="name">
-                        </div>
-                        <div class="form-group">
-                          <label>Project Description</label>
-                          <textarea  class="form-control " style="height: 100px" name="description" id="exampleLastName" placeholder="Description"></textarea>
-                        </div>
-                        <div class="form-group">
-                          <label>Project History</label>
-                          <textarea id="mytextarea" class="form-control"  name="mytextarea"></textarea>
-                        </div>
-
-                        <div class="form-group ">
-                          <label>Project profile Picture</label>
-                          <input type="file"name="file" class="form-control " id="file" required>
-                        </div>
-
-                        <div class="form-group  row" id="filesArea">
-
-
-                        </div>
-                        <div class="form-group row" >
-                          <div class="col-sm-6" >
-                            <button type="button" id="add_form_field" class="btn btn-primary btn-block">
-                              Add a picture
-                            </button>
+                      <form class="user" method="post" action="/admin_user/event/create">
+                        <div class="form-group row">
+                          <div class="col-sm-6 mb-3 mb-sm-0">
+                            <input type="text" name="event_name" class="form-control" id="exampleFirstName" placeholder="Event Name" required>
                           </div>
-
+                          <div class="col-sm-6">
+                            <input type="date" name="date" class="form-control" id="exampleLastName" placeholder="Event date" required>
+                          </div>
+                        </div>
+                        <div class="form-group row">
+                          <div class="col-sm-6">
+                            <select name="project" class="browser-default custom-select" required>
+                              <option selected>Choose a project</option>
+                              {{with .Projects}}
+                                {{range .}}
+                                  <option value={{.Id}}>{{.Title}}</option>
+                                {{end}}
+                              {{end}}
+                            </select>
+                          </div>
+                          <div class="col-sm-6">
+                            <select name="partner" class="browser-default custom-select" required>
+                              <option selected>Choose a partner</option>
+                              {{with .Partners}}
+                                {{range .}}
+                                  <option value={{.Id}}>{{.Name}}</option>
+                                {{end}}
+                              {{end}}
+                            </select>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <input type="text" class="form-control" name="place" placeholder="Location name" required>
+                        </div>
+                        <div class="form-group">
+                          <label>Lacation Cordinates<small> click on the map to get the coordinates</small> </label>
+                          <input type="text" class="form-control" name="latlng" id="exampleRepeatPassword" placeholder="Map coordinates" required>
                         </div>
 
-                        <button type="submit" class="btn btn-primary  btn-block">
-                          Submit
+                        <button type="submit" class="btn btn-primary btn-block">
+                          Next
                         </button>
                         <hr>
-                        <a href="/admin_user" class="btn btn-google btn-block">
-                          <i class="fab"></i> Cancel
-                        </a>
+                        <a href="/admin_user" class="btn btn-google  btn-block">Cancel</a>
                       </form>
                       <hr>
                     </div>
@@ -133,47 +151,45 @@
           </div>
 
 
-          <h1 class="h3 mb-2 text-gray-800">Tables</h1>
-          <p class="mb-4">Projects</p>
-
+          
           <!-- DataTales Example -->
           <div class="card shadow mb-4">
             <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+              <h6 class="m-0 font-weight-bold text-primary">User Table</h6>
             </div>
             <div class="card-body">
               <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                   <thead>
                     <tr>
-                      <th>Profile Image</th>
-                      <th>Project Name</th>
-                      <th>Description</th>
+                      <th>Nr</th>
+                      <th>Event Name</th>
+                      <th>Event Date</th>
                       <th>Action</th>
                       <th>Action</th>
                     </tr>
                   </thead>
                   <tfoot>
                     <tr>
-                      <th>Profile Image</th>
-                      <th>Project Name</th>
-                      <th>Description</th>
+                      <th>Nr</th>
+                      <th>Event Name</th>
+                      <th>Event Date</th>
                       <th>Action</th>
                       <th>Action</th>
                     </tr>
                   </tfoot>
                   <tbody>
-                  {{with .Projects}}
+                  {{with .Events}}
                   {{range $i, $e := .}}
                     <tr>
                       <td>{{$i}}</td>
-                      <td>{{.Title}}</td>
-                      <td>{{.Description}}</td>
-                      <td><a href="/admin_user/project/edit/{{.Id}}" class="btn btn-primary btn-user btn-block">
+                      <td>{{.Name}}</td>
+                      <td>{{.Date}}</td>
+                      <td><a href="/admin_user/event/edite/{{.Id}}" class="btn btn-primary btn-user btn-block">
                           Edit
                         </a>
                       </td>
-                      <td><a href="/admin_user/project/delete/{{.Id}}" class="btn btn-google btn-user btn-block">
+                      <td><a href="/admin_user/event/delete/{{.Id}}" class="btn btn-google btn-user btn-block">
                           <i class="fab fa-fw"></i> Delete
                         </a>
                       </td>
@@ -241,37 +257,19 @@
 
   <!-- Custom scripts for all pages-->
   <script src="../../assets/js/sb-admin-2.min.js"></script>
+  <script src="../../../assets/js/customer/mymap.js"></script>
 
   <!-- Page level plugins -->
   <script src="../../assets/vendor/datatables/jquery.dataTables.min.js"></script>
   <script src="../../assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+  <script async defer
+          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA&callback=initMap">
+  </script>
+  <script src="../../assets/js/customer/myFileHandling.js"></script>
 
   <!-- Page level custom scripts -->
   <script src="../../assets/js/demo/datatables-demo.js"></script>
-<script src="../../assets/js/customer/myFileHandling.js"></script>
 
 </body>
-<script>
-  var max_fields = 6;
-  var wrapper = document.getElementById("filesArea");
-  var add_button = document.getElementById("add_form_field");
 
-  var x = 1;
-  $(add_button).click(function(e) {
-
-    e.preventDefault();
-    if (x < max_fields) {
-      x++;
-      $(wrapper).append('<div class="col-sm-6"> <input type="file"name="file'+x+'" class="form-control " id="file" placeholder="Project Name" required> </div> <div class="col-sm-6"> <button type="button" id="add_form_field" class="btn btn-primary  btn-block">Delete </button> <hr></div> '); //add input box
-    } else {
-      alert('You Reached the limits')
-    }
-  });
-
-  $(wrapper).on("click", ".delete", function(e) {
-    e.preventDefault();
-    $(this).parent('div').remove();
-    x--;
-  });
-</script>
 </html>

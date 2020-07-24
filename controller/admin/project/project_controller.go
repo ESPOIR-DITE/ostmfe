@@ -16,7 +16,6 @@ import (
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
 	"ostmfe/io/project_io"
-	"time"
 )
 
 func ProjectHome(app *config.Env) http.Handler {
@@ -33,30 +32,61 @@ func ProjectHome(app *config.Env) http.Handler {
 	return r
 }
 
-//TODO for now we are accepting mytextarea maybe empty.
+//TODO for now we are accepting mytextarea maybe empty. but this will will need to be investigates
 func ProjectUpdateHistoryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
-		historyContent := r.PostFormValue("mytextarea")
+		historyContent := r.PostFormValue("myArea")
 		projectId := r.PostFormValue("projectId")
 		historyId := r.PostFormValue("historyId")
 		//checking if the projectHistory exists
-		history, err := history_io.ReadHistory(historyId)
-		fmt.Println(historyId)
+		_, err := history_io.ReadHistorie(historyId)
+		fmt.Println(historyContent)
 		if err != nil {
-			//TODO need to create a new entity called Histories. will have to change the logic of history of each entity that is related to this class.
 			fmt.Println(err, " could not read history")
-			fmt.Println(err, " proceeding into creation of a project history.....")
-			history := history2.History{""}
+			fmt.Println(" proceeding into creation of a history.....")
+			history := history2.Histories{"", misc.ConvertToByteArray(historyContent)}
 
+			fmt.Println("history Object: ", history)
+
+			newHistory, err := history_io.CreateHistorie(history)
+			if err != nil {
+				fmt.Println(err, " something went wrong! could not create history")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/project/edit/"+projectId, 301)
+				return
+			}
+			fmt.Println("History created successfully ..")
+			fmt.Println(" proceeding into creation of a project_history.....")
+			projectHistory := project2.ProjectHistory{"", projectId, newHistory.Id}
+			_, errr := project_io.CreateProjectHistory(projectHistory)
+			if errr != nil {
+				fmt.Println(err, " could not create ProjectHistory")
+				fmt.Println("RollBack ...")
+				fmt.Println("deleting history ...")
+				_, err := history_io.DeleteHistorie(newHistory.Id)
+				if err != nil {
+					fmt.Println("Error deleting history ...")
+				}
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/project/edit/"+projectId, 301)
+				return
+			}
+			fmt.Println(" successfully created")
 			http.Redirect(w, r, "/admin_user/project/edit/"+projectId, 301)
 			return
 		}
-		updatedProjectHistory := history2.History{history.Id, history.Title, history.Description, misc.ConvertToByteArray(historyContent), history.Date}
-		//Now Updating
-		_, errr := history_io.UpdateHistory(updatedProjectHistory)
+		histories := history2.Histories{historyId, misc.ConvertToByteArray(historyContent)}
+
+		_, errr := history_io.UpdateHistorie(histories)
 		if errr != nil {
-			fmt.Println(errr, " could not update history")
+			fmt.Println(err, " something went wrong! could not update history")
 			if app.Session.GetString(r.Context(), "user-create-error") != "" {
 				app.Session.Remove(r.Context(), "user-create-error")
 			}
@@ -64,7 +94,12 @@ func ProjectUpdateHistoryHandler(app *config.Env) http.HandlerFunc {
 			http.Redirect(w, r, "/admin_user/project/edit/"+projectId, 301)
 			return
 		}
+		project, errx := project_io.ReadProject(projectId)
+		if errx != nil {
+			fmt.Println("error reading project")
+		}
 		fmt.Println(" successfully updated")
+		app.Session.Put(r.Context(), "creation-successful", "You have successfully updating: "+project.Title+"  project. ")
 		http.Redirect(w, r, "/admin_user/project/edit/"+projectId, 301)
 		return
 	}
@@ -74,9 +109,9 @@ func ProjectUpdateHistoryHandler(app *config.Env) http.HandlerFunc {
 func EditeProjectsHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		projectId := chi.URLParam(r, "projectId")
+
 		selectedProjest := misc.GetProjectEditable(projectId)
 		projectDetails, err := project_io.ReadProject(projectId)
-
 		if err != nil {
 			fmt.Println(err, " Error reading project Details")
 		}
@@ -255,8 +290,8 @@ func CreateProjectHistoryHandler(app *config.Env) http.HandlerFunc {
 		r.ParseForm()
 		projectId := r.PostFormValue("projectId")
 		history := r.PostFormValue("mytextarea")
-		description := r.PostFormValue("description")
-		title := r.PostFormValue("title")
+		//description := r.PostFormValue("description")
+		//title := r.PostFormValue("title")
 
 		if projectId != "" && history != "" {
 			project, err := project_io.ReadProject(projectId)
@@ -270,8 +305,9 @@ func CreateProjectHistoryHandler(app *config.Env) http.HandlerFunc {
 				return
 			}
 			historyByteArray := []byte(history)
-			historyObject := history2.History{"", title, description, historyByteArray, time.Now()}
-			history, err := history_io.CreateHistory(historyObject)
+
+			historyObject := history2.Histories{"", historyByteArray}
+			history, err := history_io.CreateHistorie(historyObject)
 			if err != nil {
 				fmt.Println(err, " error creating History")
 				if app.Session.GetString(r.Context(), "user-create-error") != "" {
@@ -317,6 +353,10 @@ func NewProjectHistoryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var unknown_error string
 		var backend_error string
+		projects, err := project_io.ReadProjects()
+		if err != nil {
+			fmt.Println(err, " error reading projects")
+		}
 		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
 			unknown_error = app.Session.GetString(r.Context(), "creation-unknown-error")
 			app.Session.Remove(r.Context(), "creation-unknown-error")
@@ -339,12 +379,15 @@ func NewProjectHistoryHandler(app *config.Env) http.HandlerFunc {
 
 		type PageData struct {
 			Project       project2.Project
+			Projects      []project2.Project
 			Backend_error string
 			Unknown_error string
 		}
-		data := PageData{project, backend_error, unknown_error}
+		data := PageData{project, projects, backend_error, unknown_error}
 		files := []string{
-			app.Path + "admin/project/new_project_history.html",
+			//app.Path + "admin/project/new_project_history.html",
+			app.Path + "admin/project/projects_history.html",
+			app.Path + "admin/template/topbar.html",
 			app.Path + "admin/template/navbar.html",
 			app.Path + "base_templates/footer.html",
 		}
@@ -439,8 +482,11 @@ func ProjectUpdatePicturesHandler(app *config.Env) http.HandlerFunc {
 			return
 		}
 		filesArray := []io.Reader{file, file2, file3, file4, file5, file6}
+
 		filesByteArray := misc.CheckFiles(filesArray)
+
 		projectImage := project2.ProjectImage{"", new_project.Id, "", ""}
+
 		helper := project2.ProjectImageHelper{filesByteArray, projectImage}
 		_, errr := project_io.CreateProjectImage(helper)
 		if errr != nil {

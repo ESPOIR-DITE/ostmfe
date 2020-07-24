@@ -22,7 +22,7 @@ func CreatePeopleImage(pI people.PlaceImageHelper) (people.People_image, error) 
 	return entity, nil
 
 }
-func UpdatePeopleImage(pI people.People_image) (people.People_image, error) {
+func UpdatePeopleImage(pI people.PeopleImageHelper) (people.People_image, error) {
 
 	entity := people.People_image{}
 	resp, _ := api.Rest().SetBody(pI).Post(peopleImg + "update")
