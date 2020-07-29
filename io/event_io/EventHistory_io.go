@@ -48,6 +48,18 @@ func ReadEventHistory(id string) (event.EventHistory, error) {
 	}
 	return entity, nil
 }
+func ReadEventHistoryWithEventId(id string) (event.EventHistory, error) {
+	entity := event.EventHistory{}
+	resp, _ := api.Rest().Get(eventhistoryURL + "readWithEventId?id=" + id)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
 
 func DeleteEventHistory(id string) (event.EventHistory, error) {
 

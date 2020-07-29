@@ -10,6 +10,7 @@ type People struct {
 	DeathDate  time.Time `json:"deathDate"`
 	Origin     string    `json:"origin"`
 	Profession string    `json:"profession"`
+	Brief      string    `json:"brief"`
 }
 
 type People_image struct {

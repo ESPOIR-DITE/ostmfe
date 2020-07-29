@@ -8,7 +8,7 @@ import (
 
 const peopleImg = api.BASE_URL + "people_image/"
 
-func CreatePeopleImage(pI people.PlaceImageHelper) (people.People_image, error) {
+func CreatePeopleImage(pI people.PeopleImageHelper) (people.People_image, error) {
 
 	entity := people.People_image{}
 	resp, _ := api.Rest().SetBody(pI).Post(peopleImg + "create")
@@ -51,7 +51,6 @@ func ReadPeopleImage(id string) (people.People_image, error) {
 
 }
 func ReadPeopleImagewithPeopleId(id string) ([]people.People_image, error) {
-
 	entity := []people.People_image{}
 	resp, _ := api.Rest().Get(peopleImg + "read_people?id=" + id)
 	if resp.IsError() {
@@ -62,8 +61,20 @@ func ReadPeopleImagewithPeopleId(id string) ([]people.People_image, error) {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
-
 }
+func ReadPeopleImageWithPeopleId(id string) (people.People_image, error) {
+	entity := people.People_image{}
+	resp, _ := api.Rest().Get(peopleImg + "read_people_image?id=" + id)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
+
 func DeletePeopleImage(id string) (people.People_image, error) {
 
 	entity := people.People_image{}

@@ -12,6 +12,7 @@ import (
 	people2 "ostmfe/domain/people"
 	place2 "ostmfe/domain/place"
 	"ostmfe/io/history_io"
+	"ostmfe/io/image_io"
 	"ostmfe/io/people_io"
 	"ostmfe/io/place_io"
 	"time"
@@ -29,16 +30,14 @@ func PeopleHome(app *config.Env) http.Handler {
 	r.Post("/create_stp2", CreatePeopleStp2Handler(app))
 	r.Post("/people_category/create", CreatePeopleCategoryHandler(app))
 	r.Post("/update_image", UpdatePeopleImageHandler(app))
-	r.Post("/update/details", UpdatePeopleDetailHandler(app))
-	r.Post("/update/history", UpdatePeopleHistoryHandler(app))
+	r.Post("/update_details", UpdatePeopleDetailHandler(app))
+	r.Post("/update_history", UpdatePeopleHistoryHandler(app))
 	r.Post("/create_image", CreatePeopleImageHandler(app))
+	r.Post("/add_pictures", AddPeopleImageHandler(app))
 	return r
 }
 
-/****
-This method is requested when a people was created without an image now this method will help to create one.
-*/
-func CreatePeopleImageHandler(app *config.Env) http.HandlerFunc {
+func AddPeopleImageHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		file, _, err := r.FormFile("file")
@@ -84,6 +83,57 @@ func CreatePeopleImageHandler(app *config.Env) http.HandlerFunc {
 		http.Redirect(w, r, "/admin_user/people/people_category/new", 301)
 		return
 	}
+}
+
+/****
+This method is requested when a people was created without an image now this method will help to create one.
+*/
+func CreatePeopleImageHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		file, _, err := r.FormFile("file")
+		file2, _, err := r.FormFile("file2")
+		file3, _, err := r.FormFile("file3")
+		file4, _, err := r.FormFile("file4")
+		file5, _, err := r.FormFile("file5")
+		file6, _, err := r.FormFile("file6")
+		peopleId := r.PostFormValue("peopleId")
+		if err != nil {
+			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
+		}
+		filesArray := []io.Reader{file, file2, file3, file4, file5, file6}
+		filesByteArray := misc.CheckFiles(filesArray)
+
+		if peopleId != "" {
+
+			peopleImageObject := people2.People_image{"", peopleId, "", ""}
+			peopleImageHelper := people2.PeopleImageHelper{peopleImageObject, filesByteArray, ""}
+
+			_, errx := people_io.CreatePeopleImage(peopleImageHelper)
+			if errx != nil {
+				fmt.Println(errx, " error creating PeopleImage")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/people/edit/"+peopleId, 301)
+				return
+			}
+			if app.Session.GetString(r.Context(), "creation-successful") != "" {
+				app.Session.Remove(r.Context(), "creation-successful")
+			}
+			app.Session.Put(r.Context(), "creation-successful", "You have successfully updated a People Picture : ")
+			http.Redirect(w, r, "/admin_user/people/people/new", 301)
+			return
+		}
+		fmt.Println("One of the field is missing")
+		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
+			app.Session.Remove(r.Context(), "creation-unknown-error")
+		}
+		app.Session.Put(r.Context(), "creation-unknown-error", "You have encountered an unknown error, please try again")
+		http.Redirect(w, r, "/admin_user/people/people/new", 301)
+		return
+	}
 
 }
 
@@ -109,7 +159,7 @@ func UpdatePeopleHistoryHandler(app *config.Env) http.HandlerFunc {
 				app.Session.Remove(r.Context(), "creation-successful")
 			}
 			app.Session.Put(r.Context(), "creation-successful", "You have successfully updated a People History of : ")
-			http.Redirect(w, r, "/admin_user/people/people_category/new", 301)
+			http.Redirect(w, r, "/admin_user/people/edit/"+peopleId, 301)
 			return
 		}
 		fmt.Println("One of the field is missing")
@@ -117,7 +167,7 @@ func UpdatePeopleHistoryHandler(app *config.Env) http.HandlerFunc {
 			app.Session.Remove(r.Context(), "creation-unknown-error")
 		}
 		app.Session.Put(r.Context(), "creation-unknown-error", "You have encountered an unknown error, please try again")
-		http.Redirect(w, r, "/admin_user/people/people_category/new", 301)
+		http.Redirect(w, r, "/admin_user/people/people/new", 301)
 		return
 	}
 }
@@ -132,9 +182,10 @@ func UpdatePeopleDetailHandler(app *config.Env) http.HandlerFunc {
 		d_date, _ := time.Parse(misc.YYYMMDDTIME_FORMAT, r.PostFormValue("d_date"))
 		profession := r.PostFormValue("profession")
 		origin := r.PostFormValue("origin")
+		brief := r.PostFormValue("brief")
 		if name != "" && peopleId != "" && surname != "" && profession != "" && origin != "" {
 			//TODO need to learn how to check if a data time if nil or empty....
-			peopleObejct := people2.People{peopleId, name, surname, b_date, d_date, origin, profession}
+			peopleObejct := people2.People{peopleId, name, surname, b_date, d_date, origin, profession, brief}
 			people, err := people_io.CreatePeople(peopleObejct)
 			if err != nil {
 				fmt.Println(err, "updating people details")
@@ -149,7 +200,7 @@ func UpdatePeopleDetailHandler(app *config.Env) http.HandlerFunc {
 				app.Session.Remove(r.Context(), "creation-successful")
 			}
 			app.Session.Put(r.Context(), "creation-successful", "You have successfully updated a People Details of : "+people.Name)
-			http.Redirect(w, r, "/admin_user/people/people_category/new", 301)
+			http.Redirect(w, r, "/admin_user/people/edit/"+peopleId, 301)
 			return
 		}
 		fmt.Println("One of the field is missing")
@@ -157,7 +208,7 @@ func UpdatePeopleDetailHandler(app *config.Env) http.HandlerFunc {
 			app.Session.Remove(r.Context(), "creation-unknown-error")
 		}
 		app.Session.Put(r.Context(), "creation-unknown-error", "You have encountered an unknown error, please try again")
-		http.Redirect(w, r, "/admin_user/people/people_category/new", 301)
+		http.Redirect(w, r, "/admin_user/people/edit/"+peopleId, 301)
 		return
 	}
 }
@@ -193,7 +244,7 @@ func UpdatePeopleImageHandler(app *config.Env) http.HandlerFunc {
 				app.Session.Remove(r.Context(), "creation-successful")
 			}
 			app.Session.Put(r.Context(), "creation-successful", "You have successfully updated a People Picture : ")
-			http.Redirect(w, r, "/admin_user/people/people_category/new", 301)
+			http.Redirect(w, r, "/admin_user/people/edit/"+peopleId, 301)
 			return
 		}
 		fmt.Println("One of the field is missing")
@@ -201,7 +252,7 @@ func UpdatePeopleImageHandler(app *config.Env) http.HandlerFunc {
 			app.Session.Remove(r.Context(), "creation-unknown-error")
 		}
 		app.Session.Put(r.Context(), "creation-unknown-error", "You have encountered an unknown error, please try again")
-		http.Redirect(w, r, "/admin_user/people/people_category/new", 301)
+		http.Redirect(w, r, "/admin_user/people/edit/"+peopleId, 301)
 		return
 	}
 }
@@ -218,14 +269,14 @@ func CreatePeopleCategoryHandler(app *config.Env) http.HandlerFunc {
 					app.Session.Remove(r.Context(), "user-create-error")
 				}
 				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-				http.Redirect(w, r, "/admin_user/people/people_category/new", 301)
+				http.Redirect(w, r, "/admin_user/people/people/new", 301)
 				return
 			}
 			if app.Session.GetString(r.Context(), "creation-successful") != "" {
 				app.Session.Remove(r.Context(), "creation-successful")
 			}
 			app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new People Type : "+peopleCategory.Category)
-			http.Redirect(w, r, "/admin_user/people/people_category/new", 301)
+			http.Redirect(w, r, "/admin_user/people/people/new", 301)
 			return
 		}
 		fmt.Println("One of the field is missing")
@@ -233,7 +284,7 @@ func CreatePeopleCategoryHandler(app *config.Env) http.HandlerFunc {
 			app.Session.Remove(r.Context(), "creation-unknown-error")
 		}
 		app.Session.Put(r.Context(), "creation-unknown-error", "You have encountered an unknown error, please try again")
-		http.Redirect(w, r, "/admin_user/people/people_category/new", 301)
+		http.Redirect(w, r, "/admin_user/people/people/new", 301)
 		return
 	}
 }
@@ -482,8 +533,9 @@ func CreatePeopleHandler(app *config.Env) http.HandlerFunc {
 		b_date, _ := time.Parse(misc.YYYYMMDD_FORMAT, r.PostFormValue("b_date"))
 		d_date, _ := time.Parse(misc.YYYYMMDD_FORMAT, r.PostFormValue("d_date"))
 		origin := r.PostFormValue("origin")
+		brief := r.PostFormValue("brief")
 		if name != "" && surname != "" && profession != "" && origin != "" {
-			peopleObject := people2.People{"", name, surname, b_date, d_date, origin, profession}
+			peopleObject := people2.People{"", name, surname, b_date, d_date, origin, profession, brief}
 			people, err := people_io.CreatePeople(peopleObject)
 			if err != nil {
 				fmt.Println(err, " error creating a new people")
@@ -643,7 +695,7 @@ func PeopleHandler(app *config.Env) http.HandlerFunc {
 func DeletePeopleHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		peopleId := chi.URLParam(r, "peopleId")
-		people, err := people_io.DeletePeople(peopleId)
+		people, err := people_io.ReadPeople(peopleId)
 		if err != nil {
 			fmt.Println(err, "error reading people for the following people id: ", peopleId)
 			if app.Session.GetString(r.Context(), "user-create-error") != "" {
@@ -653,23 +705,56 @@ func DeletePeopleHandler(app *config.Env) http.HandlerFunc {
 			http.Redirect(w, r, "/admin_user/people", 301)
 			return
 		}
-		type PageDate struct {
-			People people2.People
-		}
-		data := PageDate{people}
-		files := []string{
-			app.Path + "admin/collection/edit_people.html",
-			//app.Path + "admin/template/navbar.html",
-			//app.Path + "base_templates/footer.html",
-		}
-		ts, err := template.ParseFiles(files...)
+		//Deleting people
+		_, err = people_io.DeletePeople(peopleId)
 		if err != nil {
-			app.ErrorLog.Println(err.Error())
+			fmt.Println(err, "error reading people for the following people id: ", peopleId)
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+			http.Redirect(w, r, "/admin_user/people", 301)
 			return
 		}
-		err = ts.Execute(w, data)
+		//History
+		peopleHistory, err := people_io.ReadPeopleHistoryWithPplId(peopleId)
 		if err != nil {
-			app.ErrorLog.Println(err.Error())
+			fmt.Println(err, " error reading peopleHistory")
+		} else {
+			_, err := people_io.DeletePeopleHistory(peopleHistory.Id)
+			if err != nil {
+				fmt.Println(err, " error deleting peopleHistory")
+			}
+			_, errx := history_io.DeleteHistorie(peopleHistory.HistoryId)
+			if errx != nil {
+				fmt.Println(errx, " error deleting peopleHistory")
+			}
 		}
+		//Image
+		peopleImages, err := people_io.ReadPeopleImageWithPeopleId(peopleId)
+		if err != nil {
+			fmt.Println(err, " error reading peopleImage")
+		} else {
+			_, err := people_io.DeletePeopleImage(peopleImages.Id)
+			if err != nil {
+				fmt.Println(err, " error deleting peopleImage")
+			}
+			_, errs := image_io.DeleteImage(peopleImages.ImageId)
+			if errs != nil {
+				fmt.Println(errs, " error deleting peopleImage")
+			}
+		}
+		if people.Id != "" {
+			if app.Session.GetString(r.Context(), "creation-successful") != "" {
+				app.Session.Remove(r.Context(), "creation-successful")
+			}
+			app.Session.Put(r.Context(), "creation-successful", "You have successfully deleted : "+people.Name)
+			http.Redirect(w, r, "/admin_user/people", 301)
+			return
+		}
+		//app.Session.Put(r.Context(), "creation-successful", "You have successfully deleted : "+people.Name)
+		http.Redirect(w, r, "/admin_user/people", 301)
+		return
+
 	}
 }

@@ -114,7 +114,7 @@ func RoleHandler(app *config.Env) http.HandlerFunc {
 		files := []string{
 			app.Path + "admin/user/roles.html",
 			app.Path + "admin/template/navbar.html",
-			//app.Path + "base_templates/footer.html",
+			app.Path + "admin/template/topbar.html",
 		}
 		ts, err := template.ParseFiles(files...)
 		if err != nil {

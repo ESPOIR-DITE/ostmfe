@@ -249,7 +249,7 @@
     e.preventDefault();
     if (x < max_fields) {
       x++;
-      $(wrapper).append('<div class="col-sm-6"> <input type="file"name="file'+x+'" class="form-control " id="file" placeholder="Project Name" required> </div> <div class="col-sm-6"> <button type="button" id="add_form_field" class="btn btn-primary  btn-block">Delete </button> <hr></div> '); //add input box
+      $(wrapper).append('<div class="col-sm-6"> <input type="file"name="file'+x+'" class="form-control " id="file'+x+'" placeholder="Project Name" required> </div> <div class="col-sm-6"> <button type="button" id="btn'+x+'" onclick="removeBTN()" class="btn btn-primary  btn-block">Delete </button> <hr></div> '); //add input box
     } else {
       alert('You Reached the limits')
     }
@@ -260,5 +260,8 @@
     $(this).parent('div').remove();
     x--;
   });
+  function removeBTN() {
+    alert(this.id);
+  }
 </script>
 </html>

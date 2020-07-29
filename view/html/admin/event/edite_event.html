@@ -324,6 +324,7 @@
                     <h6 class="m-0 font-weight-bold text-primary">Second Project Image</h6>
                   </div>
                   {{end}}
+
                 <div class="card-body">
                   {{if .Id}}
                   <img class="card-img" style="width:100%;height:312px;"
@@ -419,7 +420,7 @@
                           </tr>
                           </tfoot>
                           <tbody>
-                          {{with .EventData.Parteners}}
+                          {{with .EventData.Partners}}
                             {{range $i, $e := .}}
                               <tr>
                                 <td>{{$i}}</td>
@@ -456,7 +457,7 @@
                         <h6 class="m-0 font-weight-bold text-primary">Event Details</h6>
                       </div>
                       <div class="card-body">
-                        <form class="user"method="post" id="" action="/admin_user/project/update_picture">
+                        <form class="user"method="post" id="" action="/admin_user/event/update_details">
                           <div class="form-group ">
                             <input type="text" class="form-control" value="{{.EventData.Event.Name}}" name="event_name" id="exampleFirstName" placeholder="Project Name">
                           </div>

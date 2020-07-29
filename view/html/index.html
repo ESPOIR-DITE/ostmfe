@@ -166,6 +166,8 @@
 				</div>	
 			</section>
 			<!-- End quote Area -->
+
+			 <!-- start project Area -->
 			 <section class="blog-posts-area pt-100">
 				 <div class="container">
 					 <div class="title text-center">
@@ -180,8 +182,8 @@
 							 {{range .}}
 							 {{if .Picture}}
 							 <div class="single-post">
-								 <img class="card-img" style="width:670px;height:312px;"
-									  id='base64image'
+								 <img class="card-img"
+									  id='base64image' height="400px"
 										 {{if .Picture}}
 											 src='data:image/jpeg;base64,{{.Picture}}' alt=""
 										 {{end}}
@@ -192,7 +194,7 @@
 									 <li><a href="#">Technology, </a></li>
 									 <li><a href="#">Fashion</a></li>
 								 </ul>
-								 <a href="community-single.html">
+								 <a href="/event/{{.ProjectId}}">
 									 <h1>{{.Title}}</h1>
 								 </a>
 								 <p>{{.Description}}</p>
@@ -353,101 +355,6 @@
 								 </ul>
 							 </div>
 
-{{/*							 <div class="single-widget category-widget">*/}}
-{{/*								 <h4 class="title">Post Categories</h4>*/}}
-{{/*								 <ul>*/}}
-{{/*									 <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Techlology</h6> <span>37</span></a></li>*/}}
-{{/*									 <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Lifestyle</h6> <span>24</span></a></li>*/}}
-{{/*									 <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Fashion</h6> <span>59</span></a></li>*/}}
-{{/*									 <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Art</h6> <span>29</span></a></li>*/}}
-{{/*									 <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Food</h6> <span>15</span></a></li>*/}}
-{{/*									 <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Architecture</h6> <span>09</span></a></li>*/}}
-{{/*									 <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Adventure</h6> <span>44</span></a></li>*/}}
-{{/*								 </ul>*/}}
-{{/*							 </div>*/}}
-
-{{/*							 <div class="single-widget recent-posts-widget">*/}}
-{{/*								 <h4 class="title">Recent Posts</h4>*/}}
-{{/*								 <div class="blog-list ">*/}}
-{{/*									 <div class="single-recent-post d-flex flex-row">*/}}
-{{/*										 <div class="recent-thumb">*/}}
-{{/*											 <img class="img-fluid" src="../assets/img/blog/r1.jpg" alt="">*/}}
-{{/*										 </div>*/}}
-{{/*										 <div class="recent-details">*/}}
-{{/*											 <a href="blog-single.html">*/}}
-{{/*												 <h4>*/}}
-{{/*													 Home Audio Recording*/}}
-{{/*													 For Everyone*/}}
-{{/*												 </h4>*/}}
-{{/*											 </a>*/}}
-{{/*											 <p>*/}}
-{{/*												 02 hours ago*/}}
-{{/*											 </p>*/}}
-{{/*										 </div>*/}}
-{{/*									 </div>*/}}
-{{/*									 <div class="single-recent-post d-flex flex-row">*/}}
-{{/*										 <div class="recent-thumb">*/}}
-{{/*											 <img class="img-fluid" src="../assets/img/blog/r2.jpg" alt="">*/}}
-{{/*										 </div>*/}}
-{{/*										 <div class="recent-details">*/}}
-{{/*											 <a href="blog-single.html">*/}}
-{{/*												 <h4>*/}}
-{{/*													 Home Audio Recording*/}}
-{{/*													 For Everyone*/}}
-{{/*												 </h4>*/}}
-{{/*											 </a>*/}}
-{{/*											 <p>*/}}
-{{/*												 02 hours ago*/}}
-{{/*											 </p>*/}}
-{{/*										 </div>*/}}
-{{/*									 </div>*/}}
-{{/*									 <div class="single-recent-post d-flex flex-row">*/}}
-{{/*										 <div class="recent-thumb">*/}}
-{{/*											 <img class="img-fluid" src="../assets/img/blog/r3.jpg" alt="">*/}}
-{{/*										 </div>*/}}
-{{/*										 <div class="recent-details">*/}}
-{{/*											 <a href="blog-single.html">*/}}
-{{/*												 <h4>*/}}
-{{/*													 Home Audio Recording*/}}
-{{/*													 For Everyone*/}}
-{{/*												 </h4>*/}}
-{{/*											 </a>*/}}
-{{/*											 <p>*/}}
-{{/*												 02 hours ago*/}}
-{{/*											 </p>*/}}
-{{/*										 </div>*/}}
-{{/*									 </div>*/}}
-{{/*									 <div class="single-recent-post d-flex flex-row">*/}}
-{{/*										 <div class="recent-thumb">*/}}
-{{/*											 <img class="img-fluid" src="../assets/img/blog/r4.jpg" alt="">*/}}
-{{/*										 </div>*/}}
-{{/*										 <div class="recent-details">*/}}
-{{/*											 <a href="blog-single.html">*/}}
-{{/*												 <h4>*/}}
-{{/*													 Home Audio Recording*/}}
-{{/*													 For Everyone*/}}
-{{/*												 </h4>*/}}
-{{/*											 </a>*/}}
-{{/*											 <p>*/}}
-{{/*												 02 hours ago*/}}
-{{/*											 </p>*/}}
-{{/*										 </div>*/}}
-{{/*									 </div>*/}}
-{{/*								 </div>*/}}
-{{/*							 </div>*/}}
-
-{{/*							 <div class="single-widget category-widget">*/}}
-{{/*								 <h4 class="title">Post Archive</h4>*/}}
-{{/*								 <ul>*/}}
-{{/*									 <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Dec '17</h6> <span>37</span></a></li>*/}}
-{{/*									 <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Nov '17</h6> <span>24</span></a></li>*/}}
-{{/*									 <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Oct '17</h6> <span>59</span></a></li>*/}}
-{{/*									 <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Sep '17</h6> <span>29</span></a></li>*/}}
-{{/*									 <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Aug '17</h6> <span>15</span></a></li>*/}}
-{{/*									 <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Jul '17</h6> <span>09</span></a></li>*/}}
-{{/*									 <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Jun '17</h6> <span>44</span></a></li>*/}}
-{{/*								 </ul>*/}}
-{{/*							 </div>*/}}
 
 							 <div class="single-widget tags-widget">
 								 <h4 class="title">Tag Clouds</h4>
@@ -468,7 +375,7 @@
 					 </div>
 				 </div>
 			 </section>
-
+			 <!-- end project Area -->
 
 			 <!-- /.container -->
 		
@@ -482,7 +389,7 @@
 								<p>Who are in extremely love with eco friendly system.</p>
 							</div>
 						</div>
-					</div>						
+					</div>
 					<div class="row">
 						<div class="col-lg-6 event-left">
 							<div class="single-events">

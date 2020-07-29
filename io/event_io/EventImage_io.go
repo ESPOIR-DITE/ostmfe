@@ -50,7 +50,6 @@ func ReadEventImg(id string) (event.EventImage, error) {
 
 }
 func ReadEventImgOf(eventId string) ([]event.EventImage, error) {
-
 	entity := []event.EventImage{}
 	resp, _ := api.Rest().Get(eventimageURL + "readAllOf?id=" + eventId)
 	if resp.IsError() {

@@ -50,7 +50,6 @@ func ReadEventPartener(id string) (event2.EventPartener, error) {
 
 }
 func ReadEventPartenerOf(id string) ([]event2.EventPartener, error) {
-
 	entity := []event2.EventPartener{}
 	resp, _ := api.Rest().Get(eventPrtnr + "readOf?id=" + id)
 	if resp.IsError() {

@@ -31,7 +31,170 @@ func EventHome(app *config.Env) http.Handler {
 	r.Post("/create-history", CreateEventHistoryEventHandler(app))
 	r.Post("/update", UpdateEventHandler(app))
 	r.Get("/picture/{eventId}", EventPicture(app))
+
+	r.Post("/update_history", UpdateHistoryHandler(app))
+	r.Post("/update_place", UpdatePlaceHandler(app))
+	r.Post("/update_details", UpdateDetailsHandler(app))
 	return r
+}
+
+func UpdateDetailsHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		event_name := r.PostFormValue("event_name")
+		projectId := r.PostFormValue("projectId")
+		date := r.PostFormValue("date")
+		eventId := r.PostFormValue("eventId")
+		placeId := r.PostFormValue("PlaceId")
+
+		//Check the placeId
+		_, err := place_io.ReadPlace(placeId)
+		if err != nil {
+			fmt.Println("error reading Place")
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred due to selected Place, Please try again late")
+			http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
+			return
+		}
+		if description != "" && eventId != "" {
+			eventPlaceObject := event2.EventPlace{"", placeId, eventId, description}
+			_, err := event_io.CreateEventPlace(eventPlaceObject)
+			if err != nil {
+				fmt.Println(err, " error creating event place")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred due to selected Place, Please try again late")
+				http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
+				return
+			}
+			fmt.Println(" successfully updated")
+			app.Session.Put(r.Context(), "creation-successful", "You have successfully updating:  Event Place. ")
+			http.Redirect(w, r, "/admin_user/project", 301)
+			return
+		}
+		fmt.Println(" successfully updated")
+		app.Session.Put(r.Context(), "creation-successful", "You have successfully updating: Event Place. ")
+		http.Redirect(w, r, "/admin_user/project", 301)
+		return
+	}
+}
+
+func UpdatePlaceHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		description := r.PostFormValue("description")
+		eventId := r.PostFormValue("eventId")
+		placeId := r.PostFormValue("PlaceId")
+
+		//Check the placeId
+		_, err := place_io.ReadPlace(placeId)
+		if err != nil {
+			fmt.Println("error reading Place")
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred due to selected Place, Please try again late")
+			http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
+			return
+		}
+		if description != "" && eventId != "" {
+			eventPlaceObject := event2.EventPlace{"", placeId, eventId, description}
+			_, err := event_io.CreateEventPlace(eventPlaceObject)
+			if err != nil {
+				fmt.Println(err, " error creating event place")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred due to selected Place, Please try again late")
+				http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
+				return
+			}
+			fmt.Println(" successfully updated")
+			app.Session.Put(r.Context(), "creation-successful", "You have successfully updating:  Event Place. ")
+			http.Redirect(w, r, "/admin_user/project", 301)
+			return
+		}
+		fmt.Println(" successfully updated")
+		app.Session.Put(r.Context(), "creation-successful", "You have successfully updating: Event Place. ")
+		http.Redirect(w, r, "/admin_user/project", 301)
+		return
+	}
+}
+
+func UpdateHistoryHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		historyContent := r.PostFormValue("myArea")
+		eventId := r.PostFormValue("eventId")
+		historyId := r.PostFormValue("historyId")
+
+		//checking if the EventtHistory exists
+		_, err := history_io.ReadHistorie(historyId)
+		//fmt.Println(historyContent)
+		if err != nil {
+			fmt.Println(err, " could not read history")
+			fmt.Println(" proceeding into creation of a history.....")
+			history := history2.Histories{"", misc.ConvertToByteArray(historyContent)}
+
+			//fmt.Println("history Object: ", history)
+
+			newHistory, err := history_io.CreateHistorie(history)
+			if err != nil {
+				fmt.Println(err, " something went wrong! could not create history")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
+				return
+			}
+			fmt.Println("History created successfully ..")
+			fmt.Println(" proceeding into creation of a event_history.....")
+			eventHistory := event2.EventHistory{"", eventId, newHistory.Id}
+			_, errr := event_io.CreateEventHistory(eventHistory)
+			if errr != nil {
+				fmt.Println(err, " could not create eventHistory")
+				fmt.Println("RollBack ...")
+				fmt.Println("deleting history ...")
+				_, err := history_io.DeleteHistorie(newHistory.Id)
+				if err != nil {
+					fmt.Println("Error deleting history ...")
+				}
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/project/edit/"+eventId, 301)
+				return
+			}
+			fmt.Println(" successfully created")
+			http.Redirect(w, r, "/admin_user/project/edit/"+eventId, 301)
+			return
+		}
+		histories := history2.Histories{historyId, misc.ConvertToByteArray(historyContent)}
+
+		_, errr := history_io.UpdateHistorie(histories)
+		if errr != nil {
+			fmt.Println(err, " something went wrong! could not update history")
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+			http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
+			return
+		}
+		event, errx := event_io.ReadEvent(eventId)
+		if errx != nil {
+			fmt.Println("error reading project")
+		}
+		fmt.Println(" successfully updated")
+		app.Session.Put(r.Context(), "creation-successful", "You have successfully updating: "+event.Name+"  Event. ")
+		http.Redirect(w, r, "/admin_user/project", 301)
+		return
+	}
 }
 
 func CreateEventHistoryEventHandler(app *config.Env) http.HandlerFunc {
@@ -79,7 +242,7 @@ func CreateEventHistoryEventHandler(app *config.Env) http.HandlerFunc {
 		}
 
 		//creating EVentImage
-		eventImageObject := event2.EventImage{"", eventId, ""}
+		eventImageObject := event2.EventImage{"", eventId, "", ""}
 		eventImageHelperObject := event2.EventImageHelper{eventImageObject, filesByteArray}
 		_, errx := event_io.CreateEventImg(eventImageHelperObject)
 		/**
@@ -199,7 +362,7 @@ func EditEventsHandler(app *config.Env) http.HandlerFunc {
 		}
 		date := PageData{event, eventData}
 		files := []string{
-			app.Path + "admin/event/edite_event.html",
+			app.Path + "admin/event/new_edite_event.html",
 			app.Path + "admin/template/navbar.html",
 			app.Path + "base_templates/footer.html",
 		}
@@ -339,7 +502,7 @@ func CreateEventHandler(app *config.Env) http.HandlerFunc {
 					app.Session.Remove(r.Context(), "user-create-error")
 				}
 				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-				http.Redirect(w, r, "/admin_user/users/new", 301)
+				http.Redirect(w, r, "/admin_user/event/new", 301)
 				return
 			}
 			if partner != "" && newEvent.Id != "" {
@@ -350,6 +513,7 @@ func CreateEventHandler(app *config.Env) http.HandlerFunc {
 				}
 			}
 
+			//TODO will need to create EventProject description Field in HTML.
 			if project != "" && newEvent.Id != "" {
 				eventProject := event2.EventProject{project, newEvent.Id, ""}
 				_, err := event_io.CreateEventProject(eventProject)
@@ -382,7 +546,8 @@ func CreateEventHandler(app *config.Env) http.HandlerFunc {
 				//http.Redirect(w, r, "/admin_user/users/new", 301)
 				//return
 			} else {
-				eventPlace := event2.EventPlace{newPlace.Id, eventObject.Id, ""}
+				//TODO should create place description Field
+				eventPlace := event2.EventPlace{newPlace.Id, newEvent.Id, ""}
 				_, err := event_io.CreateEventPlace(eventPlace)
 				if err != nil {
 					//fmt.Println(err, " error when creating Event place")
@@ -423,7 +588,7 @@ func CreateEventHandler(app *config.Env) http.HandlerFunc {
 			return
 		}
 		app.Session.Put(r.Context(), "creation-unknown-error", "You have encountered an unknown error, please try again")
-		http.Redirect(w, r, "/admin_user/users/new", 301)
+		http.Redirect(w, r, "/admin_user/event/new", 301)
 		return
 	}
 }

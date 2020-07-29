@@ -536,19 +536,27 @@ func GetPeopleDataListOfCategory(category string) []PeopleData {
 
 //Event data type
 type EventData struct {
-	Event     event.Event
-	Images    []image3.Images
-	Parteners []partner.Partner
-	Projects  []project2.Project
-	Place     place.Place
+	Event    event.Event
+	Images   []EventImageHelperEditable
+	Partners []partner.Partner
+	Projects []project2.Project
+	Place    place.Place
+	History  history2.HistoriesHelper
+}
+type EventImageHelperEditable struct {
+	Id           string
+	ImageId      string
+	EventImageId string
 }
 
 func GetEventDate(eventId string) EventData {
 	var eventData EventData
-	var images []image3.Images
+	//var images []image3.Images
 	var partners []partner.Partner
 	var projects []project2.Project
 	var place place.Place
+	var imageHelper []EventImageHelperEditable
+	var historyHelper history2.HistoriesHelper
 
 	event, err := event_io.ReadEvent(eventId)
 	if err != nil {
@@ -566,7 +574,8 @@ func GetEventDate(eventId string) EventData {
 				if err != nil {
 					fmt.Println(err, "error reading Images for eventImageId: ", eventImage.ImageId)
 				} else {
-					images = append(images, image)
+					imageHelperObject := EventImageHelperEditable{image.Id, ConvertingToString(image.Image), eventImage.Id}
+					imageHelper = append(imageHelper, imageHelperObject)
 				}
 			}
 		}
@@ -607,10 +616,20 @@ func GetEventDate(eventId string) EventData {
 		} else {
 			place, err = place_io.ReadPlace(eventplace.PlaceId)
 			if err != nil {
-				fmt.Println(err, "error reading Place EventPlaceId : ", eventplace.PlaceId)
+				fmt.Println(err, "error reading Place EventPlaceId : ")
 			}
 		}
+		eventHistory, err := event_io.ReadEventHistoryWithEventId(eventId)
+		if err != nil {
+			fmt.Println(err, "error reading eventHistory ")
+		} else {
+			history, err := history_io.ReadHistorie(eventHistory.HistoryId)
+			if err != nil {
+				fmt.Println(err, "error reading History")
+			}
+			historyHelper = history2.HistoriesHelper{history.Id, ConvertingToString(history.History)}
+		}
 	}
-	eventDataObject := EventData{event, images, partners, projects, place}
+	eventDataObject := EventData{event, imageHelper, partners, projects, place, historyHelper}
 	return eventDataObject
 }

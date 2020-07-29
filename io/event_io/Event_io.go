@@ -9,7 +9,6 @@ import (
 const evenT = api.BASE_URL + "event/"
 
 func CreateEvent(myEvent event.Event) (event.Event, error) {
-
 	entity := event.Event{}
 	resp, _ := api.Rest().SetBody(myEvent).Post(evenT + "create")
 	if resp.IsError() {
@@ -22,7 +21,6 @@ func CreateEvent(myEvent event.Event) (event.Event, error) {
 	return entity, nil
 }
 func UpdateEvent(myEvent event.Event) (event.Event, error) {
-
 	entity := event.Event{}
 	resp, _ := api.Rest().SetBody(myEvent).Post(evenT + "update")
 	if resp.IsError() {
@@ -36,7 +34,6 @@ func UpdateEvent(myEvent event.Event) (event.Event, error) {
 
 }
 func ReadEvent(id string) (event.Event, error) {
-
 	entity := event.Event{}
 	resp, _ := api.Rest().Get(evenT + "read?id=" + id)
 	if resp.IsError() {
@@ -50,7 +47,6 @@ func ReadEvent(id string) (event.Event, error) {
 }
 
 func DeleteEvent(id string) (event.Event, error) {
-
 	entity := event.Event{}
 	resp, _ := api.Rest().Get(evenT + "delete?id=" + id)
 	if resp.IsError() {

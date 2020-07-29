@@ -10,14 +10,20 @@ import (
 func Home(app *config.Env) http.Handler {
 	r := chi.NewRouter()
 	r.Get("/", homeHanler(app))
-	r.Get("/event", EventHanler(app)) //todo should change this metho to r.Get("/{id}", EventHanler(app))
+	r.Get("/{eventId}", EventHanler(app))
 	return r
 }
 
 func EventHanler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		eventId := chi.URLParam(r, "eventId")
+		eventdata := GetEventData(eventId)
+		type PageData struct {
+			EventData EventData
+		}
+		data := PageData{eventdata}
 		files := []string{
-			app.Path + "events-single.html",
+			app.Path + "event/events-single.html",
 			app.Path + "base_templates/navigator.html",
 			app.Path + "base_templates/footer.html",
 		}
@@ -26,7 +32,7 @@ func EventHanler(app *config.Env) http.HandlerFunc {
 			app.ErrorLog.Println(err.Error())
 			return
 		}
-		err = ts.Execute(w, nil)
+		err = ts.Execute(w, data)
 		if err != nil {
 			app.ErrorLog.Println(err.Error())
 		}
