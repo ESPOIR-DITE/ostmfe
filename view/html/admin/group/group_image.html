@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Admin OSTM</title>
+  <style>
+
+    .form-select .nice-select {
+      border: none;
+      border-radius: 0px;
+      height: 40px;
+      background: #f9f9ff;
+      padding-left: 45px;
+      padding-right: 40px;
+      width: 100%;
+    }
+
+  </style>
+
+  <!-- Custom fonts for this template-->
+  <link href="../../../assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+  <!-- Custom styles for this template-->
+  <link href="../../../assets/css/sb-admin-2.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../../../assets/css/main.css">
+
+  <script src="https://cdn.tiny.cloud/1/tmo7wwuvihuwqom08gjvonhdda8blx4on0n7jvm1i4pq2coh/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+  <script>
+    tinymce.init({
+      selector: '#mytextarea'
+    });
+  </script>
+</head>
+
+<body class="bg-gradient-primary">
+
+  <div class="container">
+
+    <div class="card o-hidden border-0 shadow-lg my-5">
+      <div class="card-body p-0">
+        <!-- Nested Row within Card Body -->
+        <div class="row">
+
+
+          <div class="col-lg-12">
+            <div class="p-5">
+              <div class="text-center">
+                <h1 class="h4 text-gray-900 mb-4">Create new Event</h1>
+              </div>
+              <form class="user" method="post" action="/admin_user/group/create_history" enctype="multipart/form-data">
+                <input type="hidden" name="group" value="{{.group.Id}}">
+                <div class="form-group">
+                  <label>Group History</label>
+                  <textarea id="mytextarea" class="form-control"  name="mytextarea">
+                 </textarea>
+                </div>
+                <div class="form-group ">
+                  <label>Project profile Picture</label>
+                  <input type="file"name="file" class="form-control " id="file" placeholder="Project Name" required>
+                </div>
+
+                <div class="form-group  row" id="filesArea">
+
+
+                </div>
+                <div class="form-group row" >
+                  <div class="col-sm-6" >
+                    <button type="button" id="add_form_field" class="btn btn-primary btn-user btn-block">
+                      Add a picture
+                    </button>
+                  </div>
+
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                  Complete
+                </button>
+                <hr>
+                <a href="/admin_user" class="btn btn-google  btn-block">Cancel</a>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bootstrap core JavaScript-->
+  <script src="../../../assets/vendor/jquery/jquery.min.js"></script>
+  <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <!-- Core plugin JavaScript-->
+  <script src="../../../assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+  <!-- Custom map-->
+<script src="../../../assets/js/customer/mymap.js"></script>
+  <!-- Custom scripts for all pages-->
+  <script src="../../../assets/js/sb-admin-2.min.js"></script>
+  <script async defer
+          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA&callback=initMap">
+  </script>
+  <!--script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA"></script-->
+
+</body>
+<script>
+  var max_fields = 6;
+  var wrapper = document.getElementById("filesArea");
+  var add_button = document.getElementById("add_form_field");
+
+  var x = 1;
+  $(add_button).click(function(e) {
+
+    e.preventDefault();
+    if (x < max_fields) {
+      x++;
+      $(wrapper).append('<div class="col-sm-6"> <input type="file"name="file'+x+'" class="form-control " id="file" placeholder="Project Name" required> </div> <div class="col-sm-6"> <button type="button" id="add_form_field" class="btn btn-primary  btn-block">Delete </button> <hr></div> '); //add input box
+    } else {
+      alert('You Reached the limits')
+    }
+  });
+
+  $(wrapper).on("click", ".delete", function(e) {
+    e.preventDefault();
+    $(this).parent('div').remove();
+    x--;
+  });
+
+</script>
+
+</html>

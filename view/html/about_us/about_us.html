@@ -61,110 +61,72 @@
 
 
 			<!-- Start Align Area -->
-			<div class="whole-wrap">
+			<div class="whole-wrap section-gap">
 				<div class="container">
-					<div class="section-top-border" >
-						<h3 class="mb-30">Left Aligned</h3>
-						<div class="row">
-							<div class="col-md-5">
-								<img src="../../assets/img/elements/d.jpg" alt="" class="img-fluid">
-							</div>
-							<div class="col-md-7 mt-sm-20">
-								<p >Recently, the US Federal government banned online casinos from operating in America by making it illegal to transfer money to them through any US bank or payment system. As a result of this law, most of the popular online casino networks such as Party Gaming and PlayTech left the United States. Overnight, online casino players found themselves being chased by the Federal government. But, after a fortnight, the online casino industry came up with a solution and new online casinos started taking root. These began to operate under a different business umbrella, and by doing that, rendered the transfer of money to and from them legal. A major part of this was enlisting electronic banking systems that would accept this new clarification and start doing business with me. Listed in this article are the electronic banking systems that accept players from the United States that wish to play in online casinos.</p>
-							</div>
-						</div>
+
+					{{if .Groups}}<!-- Checking if the slice has data! if there is no data this block wont display-->
+					<div class="title text-center">
+						<h1 class="mb-10">Become A Member</h1>
+						<p>Who are in extremely love with Simon's Town</p>
+						<br/>
 					</div>
 
-					<div class="section-top-border">
-						<h3 class="mb-30">Definition</h3>
-						<div class="row">
-							<div class="col-md-4">
-								<div class="single-defination">
-									<h4 class="mb-20">Definition 01</h4>
-									<p>Recently, the US Federal government banned online casinos from operating in America by making it illegal to transfer money to them through any US bank or payment system. As a result of this law, most of the popular online casino networks</p>
-								</div>
-							</div>
-							<div class="col-md-4">
-								<div class="single-defination">
-									<h4 class="mb-20">Definition 02</h4>
-									<p>Recently, the US Federal government banned online casinos from operating in America by making it illegal to transfer money to them through any US bank or payment system. As a result of this law, most of the popular online casino networks</p>
-								</div>
-							</div>
-							<div class="col-md-4">
-								<div class="single-defination">
-									<h4 class="mb-20">Definition 03</h4>
-									<p>Recently, the US Federal government banned online casinos from operating in America by making it illegal to transfer money to them through any US bank or payment system. As a result of this law, most of the popular online casino networks</p>
-								</div>
-							</div>
+					{{with .Groups}}
+						{{range .}}<!-- start looping the Groups slice-->
+					<h3 class="mb-30"><a href="/group/{{.Group.Id}}">{{.Group.Name}}</a></h3>
+					<div class="row">
+						<div class="col-md-3">
+							<a href="/group/{{.Group.Id}}"><img class="card-img"
+								 id='base64image' height="300px"
+									{{if .Image}}
+										src='data:image/jpeg;base64,{{.Image.Id}}' alt=""
+										{{end}}/></a>
+						</div>
+						<div class="col-md-9 mt-sm-20">
+							<p>{{.Group.Description}}</p>
 						</div>
 					</div>
+					<hr/>
+							{{end}}{{end}}<!-- End looping Groups slice-->
+					{{end}}<!-- End Checking the slice-->
 
-					<section class="contact-page-area ">
+					<section class="section-gap info-area" id="about">
 						<div class="container">
-							<div class="row">
-								<div class="map-wrap" style="width:100%; height: 445px;" id="map"></div>
-								<div class="col-lg-4 d-flex flex-column address-wrap">
-									<div class="single-contact-address d-flex flex-row">
-										<div class="icon">
-											<span class="lnr lnr-home"></span>
-										</div>
-										<div class="contact-details">
-											<h5>Dhaka, Bangladesh</h5>
-											<p>56/8, West Panthapath</p>
-										</div>
-									</div>
-									<div class="single-contact-address d-flex flex-row">
-										<div class="icon">
-											<span class="lnr lnr-phone-handset"></span>
-										</div>
-										<div class="contact-details">
-											<h5>00 (880) 9865 562</h5>
-											<p>Mon to Fri 9am to 6 pm</p>
-										</div>
-									</div>
-									<div class="single-contact-address d-flex flex-row">
-										<div class="icon">
-											<span class="lnr lnr-envelope"></span>
-										</div>
-										<div class="contact-details">
-											<h5>support@codethemes.com</h5>
-											<p>Send us your query anytime!</p>
-										</div>
+							<div class="row d-flex justify-content-center">
+								<div class="menu-content pb-40 col-lg-8">
+									<div class="title text-center">
+										<h1 class="mb-10">Few words about our Museum</h1>
+										<p>Who are in extremely love with eco friendly system.</p>
 									</div>
 								</div>
-								<div class="col-lg-8">
-									<form class="form-area " id="myForm" action="mail.php" method="post" class="contact-form text-right">
-										<div class="row">
-											<div class="col-lg-6 form-group">
-												<input name="name" placeholder="Enter your name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your name'" class="common-input mb-20 form-control" required="" type="text">
-
-												<input name="email" placeholder="Enter email address" pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{1,63}$" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter email address'" class="common-input mb-20 form-control" required="" type="email">
-
-												<input name="subject" placeholder="Enter your subject" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your subject'" class="common-input mb-20 form-control" required="" type="text">
-												<div class="mt-20 alert-msg" style="text-align: left;"></div>
-											</div>
-											<div class="col-lg-6 form-group">
-												<textarea class="common-textarea form-control" name="message" placeholder="Messege" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Messege'" required=""></textarea>
-												<button class="primary-btn mt-20 text-white" style="float: right;">Send Message</button>
-
-											</div>
-										</div>
-									</form>
+							</div>
+							<div class="single-info row mt-40">
+								<div class="col-lg-6 col-md-12 mt-120 text-center no-padding info-left">
+									<div class="info-thumb">
+										<img src="../assets/img/pages/about-img.jpg" class="img-fluid" alt="">
+									</div>
+								</div>
+								<div class="col-lg-6 col-md-12 no-padding info-rigth">
+									<div class="info-content">
+										<h2 class="pb-30">We Realize that <br>
+											there are reduced <br>
+											Wastege Stand out</h2>
+										<p>
+											inappropriate behavior is often laughed off as “boys will be boys,” women face higher conduct standards – especially in the workplace. That’s why it’s crucial that, as women.
+										</p>
+										<br>
+										<p>
+											inappropriate behavior is often laughed off as “boys will be boys,” women face higher conduct standards – especially in the workplace. That’s why it’s crucial that, as women. inappropriate behavior is often laughed off as “boys will be boys,” women face higher conduct standards – especially in the workplace. That’s why it’s crucial that, as women.
+										</p>
+										<br>
+										<p>
+											inappropriate behavior is often laughed off as “boys will be boys,” women face higher conduct standards – especially in the workplace. That’s why it’s crucial that, as women.
+										</p>
+									</div>
 								</div>
 							</div>
 						</div>
 					</section>
-
-					<div class="section-top-border">
-						<h3 class="mb-30">Block Quotes</h3>
-						<div class="row">
-							<div class="col-lg-12">
-								<blockquote class="generic-blockquote">
-									“Recently, the US Federal government banned online casinos from operating in America by making it illegal to transfer money to them through any US bank or payment system. As a result of this law, most of the popular online casino networks such as Party Gaming and PlayTech left the United States. Overnight, online casino players found themselves being chased by the Federal government. But, after a fortnight, the online casino industry came up with a solution and new online casinos started taking root. These began to operate under a different business umbrella, and by doing that, rendered the transfer of money to and from them legal. A major part of this was enlisting electronic banking systems that would accept this new clarification and start doing business with me. Listed in this article are the electronic banking” 
-								</blockquote>
-							</div>
-						</div>
-					</div>
 
 					<div class="section-top-border">
 						<h3>Image Gallery</h3>
@@ -199,13 +161,15 @@
 					</div>
 				</div>
 			</div>
+		<!-- End Align Area -->
 
+		<!-- Start about info Area -->
 
-			<!-- End Align Area -->
+		<!-- End about info Area -->
 
 			<!-- start footer Area -->
 		{{template "footer" .}}
-			<!-- End footer Area -->	
+			<!-- End footer Area -->
 
 
 			<script src="../../assets/js/vendor/jquery-2.2.4.min.js"></script>

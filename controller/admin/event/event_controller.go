@@ -42,27 +42,18 @@ func UpdateDetailsHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		event_name := r.PostFormValue("event_name")
-		projectId := r.PostFormValue("projectId")
-		date := r.PostFormValue("date")
 		eventId := r.PostFormValue("eventId")
-		placeId := r.PostFormValue("PlaceId")
+		date, _ := time.Parse(misc.YYYYMMDD_FORMAT, r.PostFormValue("date"))
+		description := r.PostFormValue("description")
 
-		//Check the placeId
-		_, err := place_io.ReadPlace(placeId)
+		_, err := event_io.ReadEvent(eventId)
 		if err != nil {
-			fmt.Println("error reading Place")
-			if app.Session.GetString(r.Context(), "user-create-error") != "" {
-				app.Session.Remove(r.Context(), "user-create-error")
-			}
-			app.Session.Put(r.Context(), "user-create-error", "An error has occurred due to selected Place, Please try again late")
-			http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
-			return
-		}
-		if description != "" && eventId != "" {
-			eventPlaceObject := event2.EventPlace{"", placeId, eventId, description}
-			_, err := event_io.CreateEventPlace(eventPlaceObject)
+			fmt.Println("error reading Event")
+		} else if description != "" && eventId != "" && event_name != "" {
+			eventObject := event2.Event{"", event_name, date, description}
+			_, err := event_io.CreateEvent(eventObject)
 			if err != nil {
-				fmt.Println(err, " error creating event place")
+				fmt.Println(err, " error creating event")
 				if app.Session.GetString(r.Context(), "user-create-error") != "" {
 					app.Session.Remove(r.Context(), "user-create-error")
 				}
@@ -75,8 +66,26 @@ func UpdateDetailsHandler(app *config.Env) http.HandlerFunc {
 			http.Redirect(w, r, "/admin_user/project", 301)
 			return
 		}
+		fmt.Println(" error creating event One field missing")
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			app.Session.Remove(r.Context(), "user-create-error")
+		}
+
+		//If the event already exist, this time we need to update.
+		eventObject := event2.Event{eventId, event_name, date, description}
+		_, errs := event_io.UpdateEvent(eventObject)
+		if errs != nil {
+			fmt.Println("error reading Event")
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred due to selected Place, Please try again late")
+			http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
+			return
+		}
+
 		fmt.Println(" successfully updated")
-		app.Session.Put(r.Context(), "creation-successful", "You have successfully updating: Event Place. ")
+		app.Session.Put(r.Context(), "creation-successful", "You have successfully updating: Event Details. ")
 		http.Redirect(w, r, "/admin_user/project", 301)
 		return
 	}
@@ -355,12 +364,22 @@ func EditEventsHandler(app *config.Env) http.HandlerFunc {
 			http.Redirect(w, r, "/admin_user/event", 301)
 			return
 		}
+		projects, err := project_io.ReadProjects()
+		if err != nil {
+			fmt.Println(err, " error reading projects")
+		}
+		partners, err := partner_io.ReadPartners()
+		if err != nil {
+			fmt.Println(err, " error reading partener")
+		}
 		eventData := misc.GetEventDate(eventId)
 		type PageData struct {
 			Event     event2.Event
 			EventData misc.EventData
+			Projects  []project2.Project
+			Partners  []partner2.Partner
 		}
-		date := PageData{event, eventData}
+		date := PageData{event, eventData, projects, partners}
 		files := []string{
 			app.Path + "admin/event/new_edite_event.html",
 			app.Path + "admin/template/navbar.html",
@@ -475,11 +494,10 @@ func EventsHandler(app *config.Env) http.HandlerFunc {
 	}
 }
 
+/***
+Here we create a new event
+*/
 func CreateEventHandler(app *config.Env) http.HandlerFunc {
-	/***
-	Here we create a new event
-
-	*/
 	return func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 
@@ -527,52 +545,12 @@ func CreateEventHandler(app *config.Env) http.HandlerFunc {
 			newPlace, err := place_io.CreatePlace(place)
 			if err != nil {
 				fmt.Println(err, " error when creating a new place")
-				//_, errr := event_io.DeleteEventPartener(eventPartner.PartenerId)
-				//if errr != nil {
-				//	fmt.Println(errr, " error when deleting event partner in rolling back action")
-				//}
-				//_, err := event_io.DeleteEvent(newEvent.Id)
-				//if err != nil {
-				//	fmt.Println(err, " error when deleting event in rolling back action")
-				//}
-				//_, errrr := event_io.DeleteEventProject(eventProject.EventId)
-				//if errrr != nil {
-				//	fmt.Println(err, " error when deleting Project in rolling back action")
-				//}
-				//if app.Session.GetString(r.Context(), "user-create-error") != "" {
-				//	app.Session.Remove(r.Context(), "user-create-error")
-				//}
-				//app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-				//http.Redirect(w, r, "/admin_user/users/new", 301)
-				//return
 			} else {
 				//TODO should create place description Field
-				eventPlace := event2.EventPlace{newPlace.Id, newEvent.Id, ""}
+				eventPlace := event2.EventPlace{"", newPlace.Id, newEvent.Id, ""}
 				_, err := event_io.CreateEventPlace(eventPlace)
 				if err != nil {
-					//fmt.Println(err, " error when creating Event place")
-					//_, errr := event_io.DeleteEventPartener(eventPartner.PartenerId)
-					//if errr != nil {
-					//	fmt.Println(errr, " error when deleting event partner in rolling back action")
-					//}
-					//_, err := event_io.DeleteEvent(newEvent.Id)
-					//if err != nil {
-					//	fmt.Println(err, " error when deleting event in rolling back action")
-					//}
-					//_, errrr := event_io.DeleteEventProject(eventProject.EventId)
-					//if errrr != nil {
-					//	fmt.Println(err, " error when deleting event Project in rolling back action")
-					//}
-					//_, errrrr := place_io.DeletePlace(newPlace.Id)
-					//if errrrr != nil {
-					//	fmt.Println(err, " error when deleting place in rolling back action")
-					//}
-					//if app.Session.GetString(r.Context(), "user-create-error") != "" {
-					//	app.Session.Remove(r.Context(), "user-create-error")
-					//}
-					//app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-					//http.Redirect(w, r, "/admin_user/users/new", 301)
-					//return
+					fmt.Println(err, " error when creating Event place")
 				}
 			}
 			if app.Session.GetString(r.Context(), "creation-successful") != "" {

@@ -1,17 +1,16 @@
-package event_io
+package group_io
 
 import (
 	"errors"
 	"ostmfe/api"
-	event2 "ostmfe/domain/event"
+	"ostmfe/domain/group"
 )
 
-const eventPrtnr = api.BASE_URL + "event_partner/"
+const groupimageURL = api.BASE_URL + "group_image/"
 
-func CreateEventPartener(prtnr event2.EventPartener) (event2.EventPartener, error) {
-
-	entity := event2.EventPartener{}
-	resp, _ := api.Rest().SetBody(prtnr).Post(eventPrtnr + "create")
+func CreateGroupImage(myEvent group.GroupImageHelper) (group.GroupImage, error) {
+	entity := group.GroupImage{}
+	resp, _ := api.Rest().SetBody(myEvent).Post(grouphistoryURL + "create")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -21,24 +20,9 @@ func CreateEventPartener(prtnr event2.EventPartener) (event2.EventPartener, erro
 	}
 	return entity, nil
 }
-func UpdateEventPartener(prtnr event2.EventPartener) (event2.EventPartener, error) {
-
-	entity := event2.EventPartener{}
-	resp, _ := api.Rest().SetBody(prtnr).Post(eventPrtnr + "update")
-	if resp.IsError() {
-		return entity, errors.New(resp.Status())
-	}
-	err := api.JSON.Unmarshal(resp.Body(), &entity)
-	if err != nil {
-		return entity, errors.New(resp.Status())
-	}
-	return entity, nil
-
-}
-func ReadEventPartener(id string) (event2.EventPartener, error) {
-
-	entity := event2.EventPartener{}
-	resp, _ := api.Rest().Get(eventPrtnr + "read?id=" + id)
+func UpdateGroupImage(myEvent group.GroupImage) (group.GroupImage, error) {
+	entity := group.GroupImage{}
+	resp, _ := api.Rest().SetBody(myEvent).Post(grouphistoryURL + "update")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -49,9 +33,9 @@ func ReadEventPartener(id string) (event2.EventPartener, error) {
 	return entity, nil
 
 }
-func ReadEventPartenerOf(id string) ([]event2.EventPartener, error) {
-	entity := []event2.EventPartener{}
-	resp, _ := api.Rest().Get(eventPrtnr + "readOf?id=" + id)
+func ReadGroupImage(id string) (group.GroupImage, error) {
+	entity := group.GroupImage{}
+	resp, _ := api.Rest().Get(grouphistoryURL + "read?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -60,12 +44,10 @@ func ReadEventPartenerOf(id string) ([]event2.EventPartener, error) {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
-
 }
-func DeleteEventPartener(id string) (event2.EventPartener, error) {
-
-	entity := event2.EventPartener{}
-	resp, _ := api.Rest().Get(eventPrtnr + "delete?id=" + id)
+func ReadGroupImageWithGroupId(groupId string) (group.GroupImage, error) {
+	entity := group.GroupImage{}
+	resp, _ := api.Rest().Get(grouphistoryURL + "readWith?id=" + groupId)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -74,12 +56,23 @@ func DeleteEventPartener(id string) (event2.EventPartener, error) {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
-
 }
-func ReadEventParteners() ([]event2.EventPartener, error) {
 
-	entity := []event2.EventPartener{}
-	resp, _ := api.Rest().Get(eventPrtnr + "reads")
+func DeleteGroupImage(id string) (group.GroupImage, error) {
+	entity := group.GroupImage{}
+	resp, _ := api.Rest().Get(grouphistoryURL + "delete?id=" + id)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
+func ReadGroupImages() ([]group.GroupImage, error) {
+	entity := []group.GroupImage{}
+	resp, _ := api.Rest().Get(grouphistoryURL + "reads")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
