@@ -89,15 +89,15 @@
 							  <h4>Openning Hours</h4>
 							  <p>
 							  	Mon - Fri: 10.00am to 05.00pm
-								Sat: 12.00pm to 03.00 pm
-								Sunday Closed
+								Sat: 10.00pm to 01.00 pm
+								Sundays & Public holidays: Closed
 							  </p>						 	
 							  <div class="overlay">
 							    <div class="text">
 							    	<p>
-							    		Here, I focus on a range of items and features that we use in life Here, I focus on a range of items and features that we use in life Here, I focus on a range of items and features.that we use in life
+										If you have any queries or information on any of the Museum's research projects, please email the Museum at cathy@simonstownmuseum.co.za or education@simonstownmuseum.co.za.
 							    	</p>
-							    	<a href="#" class="text-uppercase primary-btn">Buy ticket</a>
+							    	<a href="#" data-toggle="modal" class="text-uppercase primary-btn" data-target="#bookingModel">Visit</a>
 							    </div>
 							  </div>
 							</div>							
@@ -106,18 +106,19 @@
 						<div class="col-lg-4">
 							<div class="single-service">
 							  <span class="lnr lnr-rocket"></span>
-							  <h4>Ongoing Exhibitions</h4>
+							  <h4>Book a Tour</h4>
 							  <p>
-							  	Mon - Fri: 10.00am to 05.00pm
-								Sat: 12.00pm to 03.00 pm
-								Sunday Closed
+							  	Visiting simon's town is an easy
+								process that you can complete in
+								a minute. We offer tours facility
+								for individual and groups.
 							  </p>						 	
 							  <div class="overlay">
 							    <div class="text">
 							    	<p>
 							    		Here, I focus on a range of items and features that we use in life Here, I focus on a range of items and features that we use in life Here, I focus on a range of items and features.that we use in life
 							    	</p>
-							    	<a href="#" class="text-uppercase primary-btn">Buy ticket</a>
+							    	<a href="#" data-toggle="modal" class="text-uppercase primary-btn" data-target="#bookingModel">Book</a>
 							    </div>
 							  </div>
 							</div>							
@@ -125,18 +126,18 @@
 						<div class="col-lg-4">
 							<div class="single-service">
 							  <span class="lnr lnr-briefcase"></span>
-							  <h4>Openning Events</h4>
+							  <h4>Donate</h4>
 							  <p>
-							  	Mon - Fri: 10.00am to 05.00pm
-								Sat: 12.00pm to 03.00 pm
-								Sunday Closed
+							  	Support and assist the spread
+								and the learning of simon's town
+								exciting history.
 							  </p>						 	
 							  <div class="overlay">
 							    <div class="text">
 							    	<p>
 							    		Here, I focus on a range of items and features that we use in life Here, I focus on a range of items and features that we use in life Here, I focus on a range of items and features.that we use in life
 							    	</p>
-							    	<a href="/event" class="text-uppercase primary-btn">Check our events</a>
+							    	<a href="#" class="text-uppercase primary-btn">Donate</a>
 							    </div>
 							  </div>
 							</div>							
@@ -182,19 +183,14 @@
 							 {{range .}}
 							 {{if .Picture}}
 							 <div class="single-post">
+								 <a href="/project/read_single/{{.ProjectId}}">
 								 <img class="card-img"
 									  id='base64image' height="400px"
 										 {{if .Picture}}
 											 src='data:image/jpeg;base64,{{.Picture}}' alt=""
-										 {{end}}
-								 />
-{{/*								 <img class="img-fluid" src="../assets/img/blog/p1.jpg" alt="">*/}}
-								 <ul class="tags">
-									 <li><a href="#">Art, </a></li>
-									 <li><a href="#">Technology, </a></li>
-									 <li><a href="#">Fashion</a></li>
-								 </ul>
-								 <a href="/event/{{.ProjectId}}">
+										 {{end}}/></a>
+
+								 <a href="/project/read_single/{{.ProjectId}}">
 									 <h1>{{.Title}}</h1>
 								 </a>
 								 <p>{{.Description}}</p>
@@ -213,7 +209,6 @@
 												 <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
 												 <li><a href="#"><i class="fa fa-behance"></i></a></li>
 											 </ul>
-
 										 </div>
 									 </div>
 								 </div>
@@ -222,6 +217,10 @@
 							 {{end}}
 							 {{end}}
 
+							 <hr>
+							 <div class="col-md-12 text-center">
+								 <a href="/project" class="primary-btn text-uppercase text-center">View All The Projects</a>
+							 </div>
 						 </div>
 
 						 <div class="col-lg-4 sidebar">
@@ -233,13 +232,13 @@
 							 </div>
 
 							 <div class="single-widget protfolio-widget">
-								 <img src="../assets/img/blog/user2.jpg" alt="">
-								 <a href="#"><h4>Adele Gonzalez</h4></a>
-								 <p>
+								 <img width="70%" src="../assets/img/share_your_story.jpg" alt="">
+								 <a href="#"><h4>Share Your Story Here.</h4></a>
+								 <!---p>
 									 MCSE boot camps have its supporters and
 									 its detractors. Some people do not understand why you should have to spend money
 									 on boot camp when you can get.
-								 </p>
+								 </p--->
 								 <ul>
 									 <li><a href="#"><i class="fa fa-facebook"></i></a></li>
 									 <li><a href="#"><i class="fa fa-twitter"></i></a></li>
@@ -250,17 +249,13 @@
 
 
 							 <div class="single-widget tags-widget">
-								 <h4 class="title">Tag Clouds</h4>
+								 <h4 class="title">Other Project</h4>
 								 <ul>
-									 <li><a href="#">Lifestyle</a></li>
-									 <li><a href="#">Art</a></li>
-									 <li><a href="#">Adventure</a></li>
-									 <li><a href="#">Food</a></li>
-									 <li><a href="#">Techlology</a></li>
-									 <li><a href="#">Fashion</a></li>
-									 <li><a href="#">Architecture</a></li>
-									 <li><a href="#">Food</a></li>
-									 <li><a href="#">Technology</a></li>
+									 {{with .AllProjects}}
+									 {{range .}}
+									 <li><a href="/project/read_single/{{.Id}}">{{.Title}}</a></li>
+									 {{end}}
+									 {{end}}
 								 </ul>
 							 </div>
 
@@ -273,61 +268,53 @@
 			 <!-- /.container -->
 		
 			<!-- Start upcoming-event Area -->
+			 {{if .EventDataList}}
 			<section class="upcoming-event-area section-gap" id="events">
 				<div class="container">
 					<div class="row d-flex justify-content-center">
 						<div class="menu-content pb-60 col-lg-10">
 							<div class="title text-center">
 								<h1 class="mb-10">Checkout our Upcoming Events</h1>
-								<p>Who are in extremely love with eco friendly system.</p>
+								<p>Simon's town museum organizes events around each project.</p>
 							</div>
 						</div>
 					</div>
-					<div class="row">
-						<div class="col-lg-6 event-left">
-							<div class="single-events">
-								<img class="img-fluid" src="../assets/img/u1.jpg" alt="">
-								<a href="#"><h4>Event on the rock solid carbon</h4></a>
-								<h6><span>21st February</span> at Central government museum</h6>
-								<p>
-									inappropriate behavior is often laughed off as “boys will be boys,” women face higher conduct standards especially.
-								</p>
-								<a href="#" class="primary-btn text-uppercase">View Details</a>
+
+
+							<div class="row">
+								{{with .EventDataList}}
+								{{range .}}
+								<div class="col-lg-6 event-left">
+
+									<div class="single-post">
+										<img class="img-fluid" id='base64image' width="400px" src='data:image/jpeg;base64,{{.ProfileImage.Id}}' alt="">
+									</div>
+
+								</div >
+								<div class="col-lg-6 event-right">
+									<a href="/event/single/{{.Event.Id}}"><h4>{{.Event.Name}}</h4></a>
+									<br>
+									<br>
+									<h6><span>{{.Event.Date}}</span> at Central government museum</h6>
+									<p>
+										{{.Event.Description}}
+									</p>
+									<a href="/event/single/{{.Event.Id}}" class="primary-btn text-uppercase">View Details</a>
+
+								</div>
+								{{end}}
+								{{end}}
+								<hr>
+								<div class="col-md-12 text-center">
+									<a href="/event" class="primary-btn text-uppercase text-center">View All The Events</a>
+								</div>
 							</div>
-							<div class="single-events">
-								<img class="img-fluid" src="../assets/img/u3.jpg" alt="">
-								<a href="#"><h4>Event on the rock solid carbon</h4></a>
-								<h6><span>21st February</span> at Central government museum</h6>
-								<p>
-									inappropriate behavior is often laughed off as “boys will be boys,” women face higher conduct standards especially.
-								</p>
-								<a href="#" class="primary-btn text-uppercase">View Details</a>
-							</div>							
-						</div>
-						<div class="col-lg-6 event-right">
-							<div class="single-events">
-								<a href="#"><h4>Event on the rock solid carbon</h4></a>
-								<h6><span>21st February</span> at Central government museum</h6>
-								<p>
-									inappropriate behavior is often laughed off as “boys will be boys,” women face higher conduct standards especially.
-								</p>
-								<a href="#" class="primary-btn text-uppercase">View Details</a>
-								<img class="img-fluid" src="../assets/img/u2.jpg" alt="">
-							</div>
-							<div class="single-events">
-								
-								<a href="#"><h4>Event on the rock solid carbon</h4></a>
-								<h6><span>21st February</span> at Central government museum</h6>
-								<p>
-									inappropriate behavior is often laughed off as “boys will be boys,” women face higher conduct standards especially.
-								</p>
-								<a href="#" class="primary-btn text-uppercase">View Details</a>
-								<img class="img-fluid" src="../assets/img/u4.jpg" alt="">
-							</div>							
-						</div>
-					</div>
-				</div>	
+
+
+				</div>
 			</section>
+			 {{end}}
+
 			<!-- End upcoming-event Area -->
 			
 			<!-- Start blog Area -->
@@ -437,6 +424,107 @@
 				</div>	
 			</section>
 			<!-- End gallery Area -->
+			 <!-- Logout Modal-->
+			 <div class="modal fade" id="bookingModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+				  aria-hidden="true">
+				 <div class="modal-dialog" role="document">
+					 <div class="modal-content">
+						 <div class="modal-header">
+
+							 <form action="/visit/book" method="post"class="col-12">
+								 <h5 class="modal-title" id="exampleModalLabel">Book a Tour</h5>
+								 <div class="mt-10">
+									 <input type="text" name="name" placeholder="name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'First Name'" required class="single-input">
+								 </div>
+
+								 <div class="mt-10">
+									 <input type="text" name="phoneNumber" placeholder="Phone Number" onfocus="this.placeholder = ''" onblur="this.placeholder = 'First Name'" required class="single-input">
+								 </div>
+
+								 <div class="mt-10">
+									 <input type="text" name="fax" placeholder="fax Number" onfocus="this.placeholder = ''" onblur="this.placeholder = 'First Name'" required class="single-input">
+								 </div>
+
+								 <div class="mt-10">
+									 <input type="email" name="email" placeholder="Email address" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email address'" required class="single-input">
+								 </div>
+
+								 <div class="mt-10">
+									 <input type="date" name="date" placeholder="Date" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email address'" required class="single-input">
+								 </div>
+
+								 <br>
+								 <div class="input-group-icon mt-10">
+									 <label>Booking Type</label>
+									 <div class="form-select" id="default-select">
+										 <select>
+											 <option value="1">Private</option>
+											 <option value="2">School Tour</option>
+											 <option value="3">Group Tour</option>
+										 </select>
+									 </div>
+								 </div>
+
+								 <br>
+								 <div class="input-group-icon mt-10">
+									 <label>Grade or Age</label>
+									 <div class="form-select" id="default-select">
+										 <select>
+											 <option value="1">1</option>
+											 <option value="2">2</option>
+											 <option value="3">3</option>
+											 <option value="4">4</option>
+											 <option value="5">5</option>
+											 <option value="6">6</option>
+											 <option value="7">7</option>
+										 </select>
+									 </div>
+								 </div>
+
+								 <br>
+								 <div class="input-group-icon mt-10">
+									 <label>Number of People</label>
+									 <div class="form-select" id="default-select">
+										 <select>
+											 <option value="1">1-5</option>
+											 <option value="2">5-10</option>
+											 <option value="3">10-15</option>
+											 <option value="4">15-20</option>
+											 <option value="5">20-25</option>
+											 <option value="6">25-30</option>
+										 </select>
+									 </div>
+								 </div>
+
+								 <br>
+								 <div class="input-group-icon mt-10">
+									 <label>Language</label>
+									 <div class="form-select" id="default-select">
+										 <select>
+											 <option value="1">English</option>
+											 <option value="2">French</option>
+											 <option value="3">Zulu</option>
+											 <option value="4">Xhosa</option>
+										 </select>
+									 </div>
+								 </div>
+
+
+								 <div class="mt-10">
+									 <textarea class="single-textarea" placeholder="Message" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Message'" required></textarea>
+								 </div>
+
+								 <button class="primary-btn mt-20 text-white" style="float: right;">Submit</button>
+
+							 </form>
+						 </div>
+						 <div class="modal-footer">
+							 <!--button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+							 <a class="btn btn-primary" href="#">Logout</a-->
+						 </div>
+					 </div>
+				 </div>
+			 </div>
 			
 
 			<!-- start footer Area -->

@@ -89,7 +89,7 @@ func GetPeopleDataHistory(id string) PeopleDataHistory {
 		}
 		images = append(images, image)
 	}
-	//History
+	//HistoryId
 	peopleHistory, err := people_io.ReadPeopleHistoryWithPplId(id)
 	if err != nil {
 		fmt.Println("could not read people history")

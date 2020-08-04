@@ -158,7 +158,7 @@ func UpdatePeopleHistoryHandler(app *config.Env) http.HandlerFunc {
 			if app.Session.GetString(r.Context(), "creation-successful") != "" {
 				app.Session.Remove(r.Context(), "creation-successful")
 			}
-			app.Session.Put(r.Context(), "creation-successful", "You have successfully updated a People History of : ")
+			app.Session.Put(r.Context(), "creation-successful", "You have successfully updated a People HistoryId of : ")
 			http.Redirect(w, r, "/admin_user/people/edit/"+peopleId, 301)
 			return
 		}
@@ -403,7 +403,7 @@ func CreatePeopleStp2Handler(app *config.Env) http.HandlerFunc {
 		filesByteArray := misc.CheckFiles(filesArray)
 
 		if history != "" && peopleId != "" {
-			fmt.Println(history, " History || PeopleId >>>>", peopleId)
+			fmt.Println(history, " HistoryId || PeopleId >>>>", peopleId)
 			historyObejct := history2.Histories{"", misc.ConvertToByteArray(history)}
 			historynew, err = history_io.CreateHistorie(historyObejct)
 			if err != nil {
@@ -486,11 +486,11 @@ func CreatePeopleStp2Handler(app *config.Env) http.HandlerFunc {
 						fmt.Println(err, " Deleted")
 					}
 				}
-				//Now deleting People History
+				//Now deleting People HistoryId
 				if peopleHistoryNew.Id != "" {
 					_, errx := people_io.DeletePeopleHistory(peopleHistoryNew.Id)
 					if errx != nil {
-						fmt.Println(err, " error could not delete people History")
+						fmt.Println(err, " error could not delete people HistoryId")
 					} else {
 						fmt.Println(err, " Deleted")
 					}
@@ -716,7 +716,7 @@ func DeletePeopleHandler(app *config.Env) http.HandlerFunc {
 			http.Redirect(w, r, "/admin_user/people", 301)
 			return
 		}
-		//History
+		//HistoryId
 		peopleHistory, err := people_io.ReadPeopleHistoryWithPplId(peopleId)
 		if err != nil {
 			fmt.Println(err, " error reading peopleHistory")

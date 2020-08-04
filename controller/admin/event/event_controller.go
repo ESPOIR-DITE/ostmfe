@@ -63,7 +63,7 @@ func UpdateDetailsHandler(app *config.Env) http.HandlerFunc {
 			}
 			fmt.Println(" successfully updated")
 			app.Session.Put(r.Context(), "creation-successful", "You have successfully updating:  Event Place. ")
-			http.Redirect(w, r, "/admin_user/project", 301)
+			http.Redirect(w, r, "/admin_user/event", 301)
 			return
 		}
 		fmt.Println(" error creating event One field missing")
@@ -86,7 +86,7 @@ func UpdateDetailsHandler(app *config.Env) http.HandlerFunc {
 
 		fmt.Println(" successfully updated")
 		app.Session.Put(r.Context(), "creation-successful", "You have successfully updating: Event Details. ")
-		http.Redirect(w, r, "/admin_user/project", 301)
+		http.Redirect(w, r, "/admin_user/event", 301)
 		return
 	}
 }
@@ -123,12 +123,12 @@ func UpdatePlaceHandler(app *config.Env) http.HandlerFunc {
 			}
 			fmt.Println(" successfully updated")
 			app.Session.Put(r.Context(), "creation-successful", "You have successfully updating:  Event Place. ")
-			http.Redirect(w, r, "/admin_user/project", 301)
+			http.Redirect(w, r, "/admin_user/event", 301)
 			return
 		}
 		fmt.Println(" successfully updated")
 		app.Session.Put(r.Context(), "creation-successful", "You have successfully updating: Event Place. ")
-		http.Redirect(w, r, "/admin_user/project", 301)
+		http.Redirect(w, r, "/admin_user/event", 301)
 		return
 	}
 }
@@ -160,7 +160,7 @@ func UpdateHistoryHandler(app *config.Env) http.HandlerFunc {
 				http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
 				return
 			}
-			fmt.Println("History created successfully ..")
+			fmt.Println("HistoryId created successfully ..")
 			fmt.Println(" proceeding into creation of a event_history.....")
 			eventHistory := event2.EventHistory{"", eventId, newHistory.Id}
 			_, errr := event_io.CreateEventHistory(eventHistory)
@@ -176,11 +176,11 @@ func UpdateHistoryHandler(app *config.Env) http.HandlerFunc {
 					app.Session.Remove(r.Context(), "user-create-error")
 				}
 				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-				http.Redirect(w, r, "/admin_user/project/edit/"+eventId, 301)
+				http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
 				return
 			}
 			fmt.Println(" successfully created")
-			http.Redirect(w, r, "/admin_user/project/edit/"+eventId, 301)
+			http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
 			return
 		}
 		histories := history2.Histories{historyId, misc.ConvertToByteArray(historyContent)}
@@ -201,7 +201,7 @@ func UpdateHistoryHandler(app *config.Env) http.HandlerFunc {
 		}
 		fmt.Println(" successfully updated")
 		app.Session.Put(r.Context(), "creation-successful", "You have successfully updating: "+event.Name+"  Event. ")
-		http.Redirect(w, r, "/admin_user/project", 301)
+		http.Redirect(w, r, "/admin_user/event", 301)
 		return
 	}
 }
@@ -227,7 +227,7 @@ func CreateEventHistoryEventHandler(app *config.Env) http.HandlerFunc {
 		filesArray := []io.Reader{file, file2, file3, file4, file5, file6}
 		filesByteArray := misc.CheckFiles(filesArray)
 
-		//Creating EventHistory and History
+		//Creating EventHistory and HistoryId
 		fmt.Println("eventIed: ", eventId, " test>>>>", mytextarea)
 		if eventId != "" && mytextarea != "" {
 			//Creating Histories Object
@@ -236,7 +236,7 @@ func CreateEventHistoryEventHandler(app *config.Env) http.HandlerFunc {
 			if err != nil {
 				fmt.Println("could not create history and wont create Event history")
 			} else {
-				//creating Event History
+				//creating Event HistoryId
 				evenHistory := event2.EventHistory{"", histories.Id, eventId}
 				eventHistory, err = event_io.CreateEventHistory(evenHistory)
 				if err != nil {

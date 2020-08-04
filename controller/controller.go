@@ -21,8 +21,10 @@ import (
 	"ostmfe/controller/visit"
 	event2 "ostmfe/domain/event"
 	image3 "ostmfe/domain/image"
+	project2 "ostmfe/domain/project"
 	"ostmfe/io/event_io"
 	"ostmfe/io/image_io"
+	"ostmfe/io/project_io"
 )
 
 func Controllers(env *config.Env) http.Handler {
@@ -53,7 +55,7 @@ func Controllers(env *config.Env) http.Handler {
 	return mux
 }
 
-type EventData struct {
+type SimpleEventData struct {
 	Event        event2.Event
 	ProfileImage image3.Images
 	Images       []image3.Images
@@ -65,7 +67,9 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 		projects := misc.GetProjectContentsHomes()
 		var images []image3.Images
 		var profileImage image3.Images
-		var eventDataList []EventData
+		var eventDataList []SimpleEventData
+		//var eventDataListLeft []EventData
+		//var eventDataListRight []EventData
 
 		//Here we are reading all the events
 		events, err := event_io.ReadEvents()
@@ -99,21 +103,29 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 				}
 				//we need to make sure that profileImage is not empty
 				if profileImage.Id != "" {
-					fmt.Println(" profileImage.Id: ", profileImage.Id)
-					eventData := EventData{event, profileImage, images}
+					//fmt.Println(" profileImage.Id: ", profileImage.Id)
+					eventData := SimpleEventData{event, profileImage, images}
 					eventDataList = append(eventDataList, eventData)
-					eventData = EventData{}
+					eventData = SimpleEventData{}
+
+					//adding data to the correct list
+					//if CheckEventAndOdd(index)
 				}
 				fmt.Println("This error may occur if there is no events created error:  profileImage is empty")
 
 			}
 
 		}
+		allProjects, err := project_io.ReadProjects()
+		if err != nil {
+			fmt.Println(err, " error reading all the project")
+		}
 		type PageData struct {
 			Projects      []misc.ProjectContentsHome
-			EventDataList []EventData
+			EventDataList []SimpleEventData
+			AllProjects   []project2.Project
 		}
-		date := PageData{projects, eventDataList}
+		date := PageData{projects, eventDataList, allProjects}
 		files := []string{
 			app.Path + "index.html",
 			app.Path + "base_templates/navigator.html",
@@ -128,5 +140,12 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			app.ErrorLog.Println(err.Error())
 		}
+	}
+}
+func CheckEventAndOdd(index int) bool {
+	if index%2 == 0 {
+		return true
+	} else {
+		return false
 	}
 }

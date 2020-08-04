@@ -204,10 +204,10 @@ func GetProjectEditable(projectId string) ProjectEditable {
 		}
 		Member = append(Member, mamber)
 	}
-	//History
+	//HistoryId
 	projectHistory, err := project_io.ReadProjectHistoryOf(projectObject.Id)
 	if err != nil {
-		fmt.Println(err, " error read project History of id: ", projectObject.Id)
+		fmt.Println(err, " error read project HistoryId of id: ", projectObject.Id)
 	} else {
 		history, err := history_io.ReadHistorie(projectHistory.HistoryId)
 		if err != nil {
@@ -539,7 +539,7 @@ type EventData struct {
 	Event    event.Event
 	Images   []EventImageHelperEditable
 	Partners []partner.Partner
-	Projects []project2.Project
+	Projects project2.Project
 	Place    place.Place
 	History  history2.HistoriesHelper
 }
@@ -553,7 +553,7 @@ func GetEventDate(eventId string) EventData {
 	var eventData EventData
 	//var images []image3.Images
 	var partners []partner.Partner
-	var projects []project2.Project
+	var project project2.Project
 	var place place.Place
 	var imageHelper []EventImageHelperEditable
 	var historyHelper history2.HistoriesHelper
@@ -596,17 +596,13 @@ func GetEventDate(eventId string) EventData {
 		}
 
 		//thirdly, Projects
-		eventProjects, err := event_io.ReadEventProjectOf(event.Id)
+		eventProject, err := event_io.ReadEventProjectWithEventId(event.Id)
 		if err != nil {
 			fmt.Println(err, "error reading eventProjects: ", eventId)
 		} else {
-			for _, eventProject := range eventProjects {
-				project, err := project_io.ReadProject(eventProject.ProjectId)
-				if err != nil {
-					fmt.Println(err, "error reading Projects: ", eventId)
-				} else {
-					projects = append(projects, project)
-				}
+			project, err = project_io.ReadProject(eventProject.ProjectId)
+			if err != nil {
+				fmt.Println(err, "error reading Projects: ", eventId)
 			}
 		}
 		//Fourth, Places
@@ -625,11 +621,76 @@ func GetEventDate(eventId string) EventData {
 		} else {
 			history, err := history_io.ReadHistorie(eventHistory.HistoryId)
 			if err != nil {
-				fmt.Println(err, "error reading History")
+				fmt.Println(err, "error reading HistoryId")
 			}
 			historyHelper = history2.HistoriesHelper{history.Id, ConvertingToString(history.History)}
 		}
 	}
-	eventDataObject := EventData{event, imageHelper, partners, projects, place, historyHelper}
+	eventDataObject := EventData{event, imageHelper, partners, project, place, historyHelper}
 	return eventDataObject
+}
+
+//Client Events
+type SimpleEventData struct {
+	Event        event.Event
+	ProfileImage image3.Images
+	Images       []image3.Images
+	//Location string
+}
+
+func GetSimpleEventData(limit int) []SimpleEventData {
+	var images []image3.Images
+	var profileImage image3.Images
+	var eventDataList []SimpleEventData
+
+	//Here we are reading all the events
+	events, err := event_io.ReadEvents()
+	if err != nil {
+		fmt.Println(err, " error reading events")
+	} else {
+		for index, eventEntity := range events {
+			eventImages, err := event_io.ReadEventImgOf(eventEntity.Id)
+			if err != nil {
+				fmt.Println(err, " error reading events Images")
+			} else {
+				fmt.Println(" Looping eventImages")
+				for _, eventImage := range eventImages {
+
+					fmt.Println(" eventImage.Description: ", eventImage.Description)
+					if eventImage.Description == "1" || eventImage.Description == "profile" {
+						fmt.Println(" We have a profile Image")
+						profileImage, err = image_io.ReadImage(eventImage.ImageId)
+						if err != nil {
+							fmt.Println(err, " error reading profile event image")
+						}
+					}
+					fmt.Println(" eventImage.ImageId: ", eventImage.ImageId)
+					image, err := image_io.ReadImage(eventImage.ImageId)
+					if err != nil {
+						fmt.Println(err, " error reading image")
+					}
+					images = append(images, image)
+				}
+				//eventLocation,err:= ReadEvent
+			}
+			//we need to make sure that profileImage is not empty
+			if profileImage.Id != "" {
+				//fmt.Println(" profileImage.Id: ", profileImage.Id)
+				eventData := SimpleEventData{eventEntity, profileImage, images}
+				eventDataList = append(eventDataList, eventData)
+				eventData = SimpleEventData{}
+
+				//adding data to the correct list
+				//if CheckEventAndOdd(index)
+			}
+			fmt.Println("This error may occur if there is no events created error:  profileImage is empty")
+
+			// we are putting limit here so that the loop should exit if the index reach the limited number
+			if index == limit {
+				break
+			}
+		}
+
+	}
+	return eventDataList
 }

@@ -44,7 +44,7 @@ func CreateHistpory(app *config.Env) http.HandlerFunc {
 				http.Redirect(w, r, "/admin_user/history/new", 301)
 				return
 			}
-			app.Session.Put(r.Context(), "creation-successful", "You have successfully created an new History : "+createdHistory.Title)
+			app.Session.Put(r.Context(), "creation-successful", "You have successfully created an new HistoryId : "+createdHistory.Title)
 			http.Redirect(w, r, "/admin_user", 301)
 			return
 		}

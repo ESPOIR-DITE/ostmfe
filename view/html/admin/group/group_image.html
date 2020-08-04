@@ -56,7 +56,7 @@
                 <h1 class="h4 text-gray-900 mb-4">Create new Event</h1>
               </div>
               <form class="user" method="post" action="/admin_user/group/create_history" enctype="multipart/form-data">
-                <input type="hidden" name="group" value="{{.group.Id}}">
+                <input type="hidden" name="group" value="{{.Group.Id}}">
                 <div class="form-group">
                   <label>Group History</label>
                   <textarea id="mytextarea" class="form-control"  name="mytextarea">

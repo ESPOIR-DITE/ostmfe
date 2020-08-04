@@ -7,6 +7,7 @@ import (
 	"ostmfe/config"
 	collection2 "ostmfe/controller/admin/collection"
 	"ostmfe/controller/admin/event"
+	"ostmfe/controller/admin/group"
 	"ostmfe/controller/admin/histories"
 	"ostmfe/controller/admin/parteners"
 	"ostmfe/controller/admin/peoples"
@@ -26,6 +27,7 @@ func Home(app *config.Env) http.Handler {
 	mux.Handle("/", homeHanler(app))
 
 	mux.Mount("/users", users.UserController(app))
+
 	mux.Mount("/role", users.RoleController(app))
 
 	mux.Mount("/event", event.EventHome(app))
@@ -41,6 +43,8 @@ func Home(app *config.Env) http.Handler {
 	mux.Mount("/history", histories.HistoryHome(app))
 
 	mux.Mount("/people", peoples.PeopleHome(app))
+
+	mux.Mount("/group", group.GroupHome(app))
 
 	return mux
 }

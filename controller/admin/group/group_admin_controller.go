@@ -19,7 +19,7 @@ import (
 	"ostmfe/io/project_io"
 )
 
-func EventHome(app *config.Env) http.Handler {
+func GroupHome(app *config.Env) http.Handler {
 	r := chi.NewRouter()
 	r.Get("/", GroupsHandler(app))
 	r.Post("/create", CreateGroupsHandler(app))
@@ -49,7 +49,7 @@ func CreateHistory_ImageHandler(app *config.Env) http.HandlerFunc {
 		filesArray := []io.Reader{file, file2, file3, file4, file5, file6}
 		filesByteArray := misc.CheckFiles(filesArray)
 
-		//Creating EventHistory and History
+		//Creating EventHistory and HistoryId
 		//fmt.Println("eventIed: ", groupId, " test>>>>", mytextarea)
 		if groupId != "" && mytextarea != "" {
 
@@ -66,8 +66,8 @@ func CreateHistory_ImageHandler(app *config.Env) http.HandlerFunc {
 				return
 			}
 
-			//creating Event History
-			groupHistoryObject := group.GroupHistory{"", histories.Id, groupId}
+			//creating Event HistoryId
+			groupHistoryObject := group.GroupHistory{"", groupId, histories.Id}
 			groupHistory, err = group_io.CreateGroupHistory(groupHistoryObject)
 			if err != nil {
 				fmt.Println("could not create group history")
@@ -94,7 +94,7 @@ func CreateHistory_ImageHandler(app *config.Env) http.HandlerFunc {
 		}
 
 		//creating EventImage
-		groupImageObejct := group.GroupImage{"", groupId, "", ""}
+		groupImageObejct := group.GroupImage{"", "", groupId, ""}
 		groupImageHelper := group.GroupImageHelper{groupImageObejct, filesByteArray}
 		_, errx := group_io.CreateGroupImage(groupImageHelper)
 		/**
@@ -130,7 +130,7 @@ func CreateHistory_ImageHandler(app *config.Env) http.HandlerFunc {
 		if app.Session.GetString(r.Context(), "creation-successful") != "" {
 			app.Session.Remove(r.Context(), "creation-successful")
 		}
-		app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new Event : ")
+		app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new Group : ")
 		http.Redirect(w, r, "/admin_user", 301)
 		return
 	}
@@ -172,13 +172,13 @@ func GroupPictureHandler(app *config.Env) http.HandlerFunc {
 		type PageData struct {
 			Projects      []project2.Project
 			Partners      []partner2.Partner
-			Group         group.Group
+			Group         group.Groups
 			Backend_error string
 			Unknown_error string
 		}
 		data := PageData{projects, partners, groupObject, backend_error, unknown_error}
 		files := []string{
-			app.Path + "admin/event/group_image.html",
+			app.Path + "admin/group/group_image.html",
 			app.Path + "admin/template/navbar.html",
 			app.Path + "admin/template/topbar.html",
 			app.Path + "base_templates/footer.html",
@@ -198,14 +198,14 @@ func GroupPictureHandler(app *config.Env) http.HandlerFunc {
 func CreateGroupsHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
-		var newGroup group.Group
+		var newGroup group.Groups
 		groupName := r.PostFormValue("name")
 		project := r.PostFormValue("project")
 		description := r.PostFormValue("description")
 		partner := r.PostFormValue("partner")
 
 		if groupName != "" && description != "" {
-			groupObject := group.Group{"", groupName, description}
+			groupObject := group.Groups{"", groupName, description}
 			errs := errors.New("")
 			newGroup, errs = group_io.CreateGroup(groupObject)
 			if errs != nil {
@@ -237,7 +237,7 @@ func CreateGroupsHandler(app *config.Env) http.HandlerFunc {
 			if app.Session.GetString(r.Context(), "creation-successful") != "" {
 				app.Session.Remove(r.Context(), "creation-successful")
 			}
-			app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new Group : "+groupName)
+			app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new Groups : "+groupName)
 			http.Redirect(w, r, "/admin_user/group/picture/"+newGroup.Id, 301)
 			return
 		}
@@ -282,11 +282,11 @@ func GroupsHandler(app *config.Env) http.HandlerFunc {
 			Partners      []partner2.Partner
 			Backend_error string
 			Unknown_error string
-			Events        []group.Group
+			Groups        []group.Groups
 		}
 		data := PageData{projects, partners, backend_error, unknown_error, groups}
 		files := []string{
-			app.Path + "admin/event/groups.html",
+			app.Path + "admin/group/groups.html",
 			app.Path + "admin/template/navbar.html",
 			app.Path + "admin/template/topbar.html",
 			//app.Path + "base_templates/footer.html",

@@ -68,6 +68,18 @@ func ReadWithProjectIdProjectImage(id string) (project.ProjectImage, error) {
 	}
 	return entity, nil
 }
+func ReadWithProjectIdProjectImages(id string) ([]project.ProjectImage, error) {
+	entity := []project.ProjectImage{}
+	resp, _ := api.Rest().Get(projectimageURL + "readAllwithproject?id=" + id)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
 func ReadProjectImages(id string) ([]project.ProjectImage, error) {
 	entity := []project.ProjectImage{}
 	resp, _ := api.Rest().Get(projectimageURL + "read?id=" + id)

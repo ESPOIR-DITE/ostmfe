@@ -11,7 +11,7 @@ import (
 )
 
 /****
-This struct will return all the picture and History objects of a person
+This struct will return all the picture and HistoryId objects of a person
 */
 type PeopleEditable struct {
 	People  people.People
@@ -49,7 +49,7 @@ func GetPeopleEditable(peopleId string) PeopleEditable {
 			Images = append(Images, imageObject)
 		}
 	}
-	//History
+	//HistoryId
 	peopleHistory, err := people_io.ReadPeopleHistoryWithPplId(peopleId)
 	if err != nil {
 		fmt.Println(err, "  error reading peopleHistory")

@@ -482,7 +482,7 @@
                                     <option selected>Choose a project</option>
                                     {{with .Projects}}
                                       {{range .}}
-                                        <option value="{{.Id}}" {{if eq $.EventData.Projects.Id .id}}selected{{end}}>{{.Title}}</option>
+                                        <option value="{{.Id}}" {{if eq $.EventData.Projects.Id .Id}}selected{{end}}>{{.Title}}</option>
                                       {{end}}
                                     {{end}}
                                   </select>
@@ -511,7 +511,7 @@
                             <form class="user"method="post" id="" action="/admin_user/event/update_place">
 
                               <input type="hidden"name="eventId" value="{{.EventData.Event.Id}}" class="form-control">
-                              <input type="hidden"name="PlaceId" value="{{..EventData.Place.Id}}" class="form-control">
+                              <input type="hidden"name="PlaceId" value="{{.EventData.Place.Id}}" class="form-control">
                               <div class="form-group">
                                 <label>Lacation Cordinates</label>
                                 <input type="text" class="form-control" name="description" placeholder="Location name" required>

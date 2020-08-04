@@ -56,6 +56,18 @@ func ReadEventProjectOf(id string) ([]event.EventProject, error) {
 	}
 	return entity, nil
 }
+func ReadEventProjectWithEventId(id string) (event.EventProject, error) {
+	entity := event.EventProject{}
+	resp, _ := api.Rest().Get(eventprojectURL + "readWithEventID?id=" + id)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
 func DeleteEventProject(id string) (event.EventProject, error) {
 	entity := event.EventProject{}
 	resp, _ := api.Rest().Get(eventprojectURL + "delete?id=" + id)

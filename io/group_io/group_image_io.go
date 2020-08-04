@@ -10,7 +10,7 @@ const groupimageURL = api.BASE_URL + "group_image/"
 
 func CreateGroupImage(myEvent group.GroupImageHelper) (group.GroupImage, error) {
 	entity := group.GroupImage{}
-	resp, _ := api.Rest().SetBody(myEvent).Post(grouphistoryURL + "create")
+	resp, _ := api.Rest().SetBody(myEvent).Post(groupimageURL + "create")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -22,7 +22,7 @@ func CreateGroupImage(myEvent group.GroupImageHelper) (group.GroupImage, error) 
 }
 func UpdateGroupImage(myEvent group.GroupImage) (group.GroupImage, error) {
 	entity := group.GroupImage{}
-	resp, _ := api.Rest().SetBody(myEvent).Post(grouphistoryURL + "update")
+	resp, _ := api.Rest().SetBody(myEvent).Post(groupimageURL + "update")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -35,7 +35,7 @@ func UpdateGroupImage(myEvent group.GroupImage) (group.GroupImage, error) {
 }
 func ReadGroupImage(id string) (group.GroupImage, error) {
 	entity := group.GroupImage{}
-	resp, _ := api.Rest().Get(grouphistoryURL + "read?id=" + id)
+	resp, _ := api.Rest().Get(groupimageURL + "read?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -47,7 +47,19 @@ func ReadGroupImage(id string) (group.GroupImage, error) {
 }
 func ReadGroupImageWithGroupId(groupId string) (group.GroupImage, error) {
 	entity := group.GroupImage{}
-	resp, _ := api.Rest().Get(grouphistoryURL + "readWith?id=" + groupId)
+	resp, _ := api.Rest().Get(groupimageURL + "readWith?id=" + groupId)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
+func ReadGroupImagesWithGroupId(groupId string) ([]group.GroupImage, error) {
+	entity := []group.GroupImage{}
+	resp, _ := api.Rest().Get(groupimageURL + "readAllWith?id=" + groupId)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -60,7 +72,7 @@ func ReadGroupImageWithGroupId(groupId string) (group.GroupImage, error) {
 
 func DeleteGroupImage(id string) (group.GroupImage, error) {
 	entity := group.GroupImage{}
-	resp, _ := api.Rest().Get(grouphistoryURL + "delete?id=" + id)
+	resp, _ := api.Rest().Get(groupimageURL + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -72,7 +84,7 @@ func DeleteGroupImage(id string) (group.GroupImage, error) {
 }
 func ReadGroupImages() ([]group.GroupImage, error) {
 	entity := []group.GroupImage{}
-	resp, _ := api.Rest().Get(grouphistoryURL + "reads")
+	resp, _ := api.Rest().Get(groupimageURL + "reads")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}

@@ -4,7 +4,7 @@
         <!-- Mobile Specific Meta -->
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <!-- Favicon-->
-        <link rel="shortcut icon" href="../../assets/img/fav.png">
+        <link rel="shortcut icon" href="../../assets/img/fev.png">
         <!-- Author Meta -->
         <meta name="author" content="codepixer">
         <!-- Meta Description -->
@@ -31,67 +31,7 @@
         </head>
         <body>
 
-              <header id="header" id="home">
-                <div class="container header-top">
-                    <div class="row">
-                        <div class="col-6 top-head-left">
-                            <ul>
-                                <li><a href="#">Visit Us</a></li>
-                                <li><a href="#">Buy Ticket</a></li>
-                            </ul>
-                        </div>
-                        <div class="col-6 top-head-right">
-                            <ul>
-                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-                                <li><a href="#"><i class="fa fa-behance"></i></a></li>
-                            </ul>
-                        </div>                      
-                    </div>
-                </div>
-                <hr>
-                  <div class="container">
-                      <div class="row align-items-center justify-content-between d-flex">
-                          <div id="logo">
-                              <a href="index.html"><img src="../../assets/img/logo.png" alt="" title="" /></a>
-                          </div>
-                          <nav id="nav-menu-container">
-                              <ul class="nav-menu">
-                                  <li class="menu-has-children"><a href="index.html">Home</a>
-                                      <ul>
-                                          <li><a href="about.html">About Us</a></li>
-                                          <li><a href="events.html">Event</a></li>
-                                          <li><a href="events.html">Projects</a></li>
-                                          <li><a href="booking.html">Membership</a></li>
-                                      </ul>
-                                  </li>
-
-                                  <li class=""><a href="visit.html">Visit</a>
-                                  </li>
-
-                                  <li class=""><a href="history.html">History</a>
-                                  </li>
-
-
-                                  <li class="menu-has-children"><a href="">People</a>
-                                      <ul>
-                                          <li><a href="#">Artist</a></li>
-                                          <li><a href="community-home.html">Politician</a></li>
-                                          <li><a href="#">Slave</a></li>
-                                      </ul>
-                                  </li>
-
-                                  <li><a href="places.html">Place</a></li>
-
-                                  <li class=""><a href="collection.html">Collections</a></li>
-
-                              </ul>
-                          </nav><!-- #nav-menu-container -->
-                      </div>
-                  </div>
-              </header><!-- #header -->
-
+        {{template "navigator" .}}
 
             <!-- start banner Area -->
             <section class="banner-area relative" id="home">    
@@ -100,9 +40,9 @@
                     <div class="row d-flex align-items-center justify-content-center">
                         <div class="about-content col-lg-12">
                             <h1 class="text-white">
-                                Simon's Town History
+                                {{.GroupDataHistory.Group.Name}}
                             </h1>   
-                            <p class="text-white link-nav"><a href="index.html">Home </a>  <span class="lnr lnr-arrow-right"></span>  <a href="blog-single.html"> Simon's Town History</a></p>
+                            <p class="text-white link-nav"><a href="/">Home </a>  <span class="lnr lnr-arrow-right"></span>  <a href="#"> Groups</a></p>
                         </div>                                          
                     </div>
                 </div>
@@ -110,46 +50,29 @@
             <!-- End banner Area -->    
 			
 			<!-- Start blog-posts Area -->
-			<section class="blog-posts-area section-gap">
+        <hr>
+			<section class="blog-posts-area section">
 				<div class="container">
 					<div class="row">
 						<div class="col-lg-8 post-list blog-post-list">
 							<div class="single-post">
-								<img class="img-fluid" src="../../assets/img/blog/p1.jpg" alt="">
-								<ul class="tags">
-									<li><a href="#">Art</a></li>
-									<li><a href="#">Technology</a></li>
-									<li><a href="#">Fashion</a></li>
-								</ul>
-								<a href="#">
-									<h1>
-										Cartridge Is Better Than Ever
-										A Discount Toner
-									</h1>
-								</a>
-								<div class="content-wrap">
-									<p>
-										MCSE boot camps have its supporters and its detractors. Some people do not understand why you should have to spend money on boot camp when you can get the MCSE study materials yourself at a fraction of the camp price. However, who has the willpower to actually sit through a self-imposed MCSE training. who has the willpower to actually sit through a self-imposed MCSE training.
-									</p>
-
-									<p>
-										MCSE boot camps have its supporters and its detractors. Some people do not understand why you should have to spend money on boot camp when you can get the MCSE study materials yourself at a fraction of the camp price. However, who has the willpower to actually sit through a self-imposed MCSE training. who has the willpower to actually sit through a self-imposed MCSE training.
-									</p>
-
-									<blockquote class="generic-blockquote">
-										“Recently, the US Federal government banned online casinos from operating in America by making it illegal to transfer money to them through any US bank or payment system. As a result of this law, most of the popular online casino networks such as Party Gaming and PlayTech left the United States. Overnight, online casino players found themselves being chased by the Federal government.banking” 
-									</blockquote>
-									
-									<p>
-										MCSE boot camps have its supporters and its detractors. Some people do not understand why you should have to spend money on boot camp when you can get the MCSE study materials yourself at a fraction of the camp price. However, who has the willpower to actually sit through a self-imposed MCSE training. who has the willpower to actually sit through a self-imposed MCSE training.
-									</p>
-
-									<p>
-										MCSE boot camps have its supporters and its detractors. Some people do not understand why you should have to spend money on boot camp when you can get the MCSE study materials yourself at a fraction of the camp price. However, who has the willpower to actually sit through a self-imposed MCSE training. who has the willpower to actually sit through a self-imposed MCSE training.
-									</p>									
-
+                                <img id='base64image' height="400px" src='data:image/jpeg;base64,{{.GroupDataHistory.ProfileImage.Id}}' alt="">
+                                <hr>
+                                <br>
+                                    <h2>{{.GroupDataHistory.Group.Name}}</h2>
+                                <br>
+								<div class="content-wrap" id="me">
+                                    <script>
+                                        var div= document.getElementById('me');
+                                        var myvalue = {{.GroupDataHistory.History.History}}
+                                            parseMe(myvalue);
+                                        function parseMe(value) {
+                                            div.innerHTML+=value;
+                                        }
+                                    </script>
 
 								</div>
+                                <hr>
 								<div class="bottom-meta">
 									<div class="user-details row align-items-center">
 										<div class="comment-wrap col-lg-6 col-sm-6">
@@ -170,32 +93,6 @@
 									</div>
 								</div>
 
-                            <!-- Start nav Area -->
-                            <section class="nav-area pt-50 pb-100">
-                                <div class="container">
-                                    <div class="row justify-content-between">
-                                        <div class="col-sm-6 nav-left justify-content-start d-flex">
-                                            <div class="thumb">
-                                                <img src="../../assets/img/blog/prev.jpg" alt="">
-                                            </div>
-                                            <div class="post-details">
-                                                <p>Prev Post</p>
-                                                <h4 class="text-uppercase"><a href="#">A Discount Toner</a></h4>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6 nav-right justify-content-end d-flex">
-                                            <div class="post-details">
-                                                <p>Prev Post</p>
-                                                <h4 class="text-uppercase"><a href="#">A Discount Toner</a></h4>
-                                            </div>             
-                                            <div class="thumb">
-                                                <img src="../../assets/img/blog/next.jpg" alt="">
-                                            </div>                         
-                                        </div>
-                                    </div>
-                                </div>    
-                            </section>
-                            <!-- End nav Area -->
 
                             <!-- Start comment-sec Area -->
                             <section class="comment-sec-area pt-80 pb-80">
@@ -334,13 +231,13 @@
 								</form>								
 							</div>
 
+                            {{with .GroupDataHistory.Images}}
+                            {{range .}}
 							<div class="single-widget protfolio-widget">
-								<img src="../../assets/img/blog/user2.jpg" alt="">
-								<a href="#"><h4>Adele Gonzalez</h4></a>
+                                <img id='base64image' height="200px" src='data:image/jpeg;base64,{{.Id}}' alt="">
+								<a href="#"><h4>{{$.GroupDataHistory.Group.Name}}</h4></a>
 								<p>
-									MCSE boot camps have its supporters and
-									its detractors. Some people do not understand why you should have to spend money
-									on boot camp when you can get.
+									{{$.GroupDataHistory.Group.Description}}
 								</p>
 								<ul>
 									<li><a href="#"><i class="fa fa-facebook"></i></a></li>
@@ -349,118 +246,8 @@
 									<li><a href="#"><i class="fa fa-behance"></i></a></li>
 								</ul>								
 							</div>
-
-							<div class="single-widget category-widget">
-								<h4 class="title">Post Categories</h4>
-								<ul>
-									<li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Techlology</h6> <span>37</span></a></li>
-									<li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Lifestyle</h6> <span>24</span></a></li>
-									<li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Fashion</h6> <span>59</span></a></li>
-									<li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Art</h6> <span>29</span></a></li>
-									<li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Food</h6> <span>15</span></a></li>
-									<li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Architecture</h6> <span>09</span></a></li>
-									<li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Adventure</h6> <span>44</span></a></li>
-								</ul>
-							</div>
-
-                            <div class="single-widget recent-posts-widget">
-                                <h4 class="title">Recent Posts</h4>
-                                <div class="blog-list ">
-                                    <div class="single-recent-post d-flex flex-row">
-                                        <div class="recent-thumb">
-                                            <img class="img-fluid" src="../../assets/img/blog/r1.jpg" alt="">
-                                        </div>
-                                        <div class="recent-details">
-                                            <a href="blog-single.html">
-                                                <h4>
-                                                    Home Audio Recording
-                                                    For Everyone
-                                                </h4>
-                                            </a>
-                                            <p>
-                                                02 hours ago
-                                            </p>
-                                        </div>
-                                    </div>  
-                                    <div class="single-recent-post d-flex flex-row">
-                                        <div class="recent-thumb">
-                                            <img class="img-fluid" src="../../assets/img/blog/r2.jpg" alt="">
-                                        </div>
-                                        <div class="recent-details">
-                                            <a href="blog-single.html">
-                                                <h4>
-                                                    Home Audio Recording
-                                                    For Everyone
-                                                </h4>
-                                            </a>
-                                            <p>
-                                                02 hours ago
-                                            </p>
-                                        </div>
-                                    </div>  
-                                    <div class="single-recent-post d-flex flex-row">
-                                        <div class="recent-thumb">
-                                            <img class="img-fluid" src="../../assets/img/blog/r3.jpg" alt="">
-                                        </div>
-                                        <div class="recent-details">
-                                            <a href="blog-single.html">
-                                                <h4>
-                                                    Home Audio Recording
-                                                    For Everyone
-                                                </h4>
-                                            </a>
-                                            <p>
-                                                02 hours ago
-                                            </p>
-                                        </div>
-                                    </div>  
-                                    <div class="single-recent-post d-flex flex-row">
-                                        <div class="recent-thumb">
-                                            <img class="img-fluid" src="../../assets/img/blog/r4.jpg" alt="">
-                                        </div>
-                                        <div class="recent-details">
-                                            <a href="blog-single.html">
-                                                <h4>
-                                                    Home Audio Recording
-                                                    For Everyone
-                                                </h4>
-                                            </a>
-                                            <p>
-                                                02 hours ago
-                                            </p>
-                                        </div>
-                                    </div>                                                                                                                                                  
-                                </div>                              
-                            </div>
-
-							<div class="single-widget category-widget">
-								<h4 class="title">Post Archive</h4>
-								<ul>
-									<li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Dec '17</h6> <span>37</span></a></li>
-									<li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Nov '17</h6> <span>24</span></a></li>
-									<li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Oct '17</h6> <span>59</span></a></li>
-									<li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Sep '17</h6> <span>29</span></a></li>
-									<li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Aug '17</h6> <span>15</span></a></li>
-									<li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Jul '17</h6> <span>09</span></a></li>
-									<li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Jun '17</h6> <span>44</span></a></li>
-								</ul>
-							</div>			
-
-							<div class="single-widget tags-widget">
-								<h4 class="title">Tag Clouds</h4>
-								 <ul>
-								 	<li><a href="#">Lifestyle</a></li>
-								 	<li><a href="#">Art</a></li>
-								 	<li><a href="#">Adventure</a></li>
-								 	<li><a href="#">Food</a></li>
-								 	<li><a href="#">Techlology</a></li>
-								 	<li><a href="#">Fashion</a></li>
-								 	<li><a href="#">Architecture</a></li>
-								 	<li><a href="#">Food</a></li>
-								 	<li><a href="#">Technology</a></li>
-								 </ul>
-							</div>				
-
+                            {{end}}
+                            {{end}}
 						</div>
 					</div>
 				</div>	

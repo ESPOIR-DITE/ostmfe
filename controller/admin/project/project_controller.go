@@ -59,7 +59,7 @@ func ProjectUpdateHistoryHandler(app *config.Env) http.HandlerFunc {
 				http.Redirect(w, r, "/admin_user/project/edit/"+projectId, 301)
 				return
 			}
-			fmt.Println("History created successfully ..")
+			fmt.Println("HistoryId created successfully ..")
 			fmt.Println(" proceeding into creation of a project_history.....")
 			projectHistory := project2.ProjectHistory{"", projectId, newHistory.Id}
 			_, errr := project_io.CreateProjectHistory(projectHistory)
@@ -309,7 +309,7 @@ func CreateProjectHistoryHandler(app *config.Env) http.HandlerFunc {
 			historyObject := history2.Histories{"", historyByteArray}
 			history, err := history_io.CreateHistorie(historyObject)
 			if err != nil {
-				fmt.Println(err, " error creating History")
+				fmt.Println(err, " error creating HistoryId")
 				if app.Session.GetString(r.Context(), "user-create-error") != "" {
 					app.Session.Remove(r.Context(), "user-create-error")
 				}
@@ -322,9 +322,9 @@ func CreateProjectHistoryHandler(app *config.Env) http.HandlerFunc {
 			if errr != nil {
 				_, err := history_io.DeleteHistory(history.Id)
 				if err != nil {
-					fmt.Println(err, " error Delete History")
+					fmt.Println(err, " error Delete HistoryId")
 				}
-				fmt.Println(err, " error creating History")
+				fmt.Println(err, " error creating HistoryId")
 				if app.Session.GetString(r.Context(), "user-create-error") != "" {
 					app.Session.Remove(r.Context(), "user-create-error")
 				}

@@ -46,14 +46,14 @@ func GetEventData(eventId string) EventData {
 		} else {
 			images = append(images, image)
 		}
-		//History
+		//HistoryId
 		eventHistory, err := event_io.ReadEventHistoryWithEventId(eventId)
 		if err != nil {
-			fmt.Println(err, " error reading event History")
+			fmt.Println(err, " error reading event HistoryId")
 		} else {
 			histor, err := history_io.ReadHistorie(eventHistory.HistoryId)
 			if err != nil {
-				fmt.Println(err, " error reading  History")
+				fmt.Println(err, " error reading  HistoryId")
 			} else {
 				history = history2.HistoriesHelper{histor.Id, misc.ConvertingToString(histor.History)}
 			}

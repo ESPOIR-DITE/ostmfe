@@ -8,8 +8,8 @@ import (
 
 const groupURL = api.BASE_URL + "group/"
 
-func CreateGroup(myEvent group.Group) (group.Group, error) {
-	entity := group.Group{}
+func CreateGroup(myEvent group.Groups) (group.Groups, error) {
+	entity := group.Groups{}
 	resp, _ := api.Rest().SetBody(myEvent).Post(groupURL + "create")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
@@ -20,8 +20,8 @@ func CreateGroup(myEvent group.Group) (group.Group, error) {
 	}
 	return entity, nil
 }
-func UpdateGroup(myEvent group.Group) (group.Group, error) {
-	entity := group.Group{}
+func UpdateGroup(myEvent group.Groups) (group.Groups, error) {
+	entity := group.Groups{}
 	resp, _ := api.Rest().SetBody(myEvent).Post(groupURL + "update")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
@@ -33,8 +33,8 @@ func UpdateGroup(myEvent group.Group) (group.Group, error) {
 	return entity, nil
 
 }
-func ReadGroup(id string) (group.Group, error) {
-	entity := group.Group{}
+func ReadGroup(id string) (group.Groups, error) {
+	entity := group.Groups{}
 	resp, _ := api.Rest().Get(groupURL + "read?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
@@ -46,8 +46,8 @@ func ReadGroup(id string) (group.Group, error) {
 	return entity, nil
 }
 
-func DeleteGroup(id string) (group.Group, error) {
-	entity := group.Group{}
+func DeleteGroup(id string) (group.Groups, error) {
+	entity := group.Groups{}
 	resp, _ := api.Rest().Get(groupURL + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
@@ -58,8 +58,8 @@ func DeleteGroup(id string) (group.Group, error) {
 	}
 	return entity, nil
 }
-func ReadGroups() ([]group.Group, error) {
-	entity := []group.Group{}
+func ReadGroups() ([]group.Groups, error) {
+	entity := []group.Groups{}
 	resp, _ := api.Rest().Get(groupURL + "reads")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())

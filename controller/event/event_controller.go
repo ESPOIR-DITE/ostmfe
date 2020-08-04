@@ -5,12 +5,13 @@ import (
 	"html/template"
 	"net/http"
 	"ostmfe/config"
+	"ostmfe/controller/misc"
 )
 
 func Home(app *config.Env) http.Handler {
 	r := chi.NewRouter()
 	r.Get("/", homeHanler(app))
-	r.Get("/{eventId}", EventHanler(app))
+	r.Get("/single/{eventId}", EventHanler(app))
 	return r
 }
 
@@ -23,9 +24,10 @@ func EventHanler(app *config.Env) http.HandlerFunc {
 		}
 		data := PageData{eventdata}
 		files := []string{
-			app.Path + "event/events-single.html",
+			app.Path + "event/event_single.html",
 			app.Path + "base_templates/navigator.html",
 			app.Path + "base_templates/footer.html",
+			app.Path + "base_templates/comments.html",
 		}
 		ts, err := template.ParseFiles(files...)
 		if err != nil {
@@ -41,8 +43,13 @@ func EventHanler(app *config.Env) http.HandlerFunc {
 
 func homeHanler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		events := misc.GetSimpleEventData(10)
+		type PageData struct {
+			Events []misc.SimpleEventData
+		}
+		data := PageData{events}
 		files := []string{
-			app.Path + "events-home.html",
+			app.Path + "event/events.html",
 			app.Path + "base_templates/navigator.html",
 			app.Path + "base_templates/footer.html",
 		}
@@ -51,7 +58,7 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 			app.ErrorLog.Println(err.Error())
 			return
 		}
-		err = ts.Execute(w, nil)
+		err = ts.Execute(w, data)
 		if err != nil {
 			app.ErrorLog.Println(err.Error())
 		}

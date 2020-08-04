@@ -45,7 +45,7 @@ func EditPlacesHandler(app *config.Env) http.HandlerFunc {
 
 		history, err := history_io.ReadHistory(placeDate.History.Id)
 		if err != nil {
-			fmt.Println("error reading History")
+			fmt.Println("error reading HistoryId")
 		} else {
 			historyHelper = history2.HistoryHelper{history.Id, history.Title, history.Description, misc.ConvertingToString(history.Content), history.Date}
 		}
@@ -171,7 +171,7 @@ func CreatePlaceStp2Handler(app *config.Env) http.HandlerFunc {
 			fmt.Println(errr, " error creating projectImage")
 			_, err := place_io.DeletePlaceHistpory(placeHistory.Id)
 			if err != nil {
-				fmt.Println(err, " error deleting Place History")
+				fmt.Println(err, " error deleting Place HistoryId")
 			}
 			if app.Session.GetString(r.Context(), "user-create-error") != "" {
 				app.Session.Remove(r.Context(), "user-create-error")
@@ -305,7 +305,7 @@ func getPlaceData(placeId string) PlaceData {
 	} else {
 		history, err = history_io.ReadHistory(placeHistory.HistoryId)
 		if err != nil {
-			fmt.Println("error reading History of the following place", placeId)
+			fmt.Println("error reading HistoryId of the following place", placeId)
 		}
 	}
 	placeDate = PlaceData{place, images, history}
@@ -348,7 +348,7 @@ func deletePlaceData(placeId string) (bool, string) {
 	} else {
 		_, err := history_io.DeleteHistory(placeHistory.HistoryId)
 		if err != nil {
-			fmt.Println("error reading History of the following place", placeId)
+			fmt.Println("error reading HistoryId of the following place", placeId)
 		} else {
 			_, err := place_io.DeletePlaceHistpory(placeHistory.Id)
 			if err != nil {
