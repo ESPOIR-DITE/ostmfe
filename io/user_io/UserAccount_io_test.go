@@ -5,6 +5,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	user2 "ostmfe/domain/user"
 	"testing"
+	"time"
 )
 
 /***
@@ -15,7 +16,7 @@ And make sure that the file you are testing and the test file should be in the f
 
 func TestCreateUserAccount(t *testing.T) {
 	// Creating an Object of type UserAccount
-	useAccountObject := user2.UserAccount{"espoirditekemena@gmail.com", "admin", "xxxyyy"}
+	useAccountObject := user2.UserAccount{"espoirditekemena@gmail.com", time.Now(), "xxxyyy"}
 	/***
 	Sending the Object to the back end
 	if err is not nil, that means something is wrong. the test should fail.
@@ -47,7 +48,7 @@ func TestReadUserAccounts(t *testing.T) {
 }
 
 func TestUpdateUserAccount(t *testing.T) {
-	useAccountObject := user2.UserAccount{"espoirditekemena@gmail.com", "admin", "xxxyyy"}
+	useAccountObject := user2.UserAccount{"espoirditekemena@gmail.com", time.Now(), "xxxyyy"}
 	result, err := UpdateUserAccount(useAccountObject)
 	assert.Nil(t, err)
 	fmt.Println("Result :", result)

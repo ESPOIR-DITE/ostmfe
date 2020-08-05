@@ -21,7 +21,7 @@ func CreateEventImg(image event.EventImageHelper) (event.EventImage, error) {
 	}
 	return entity, nil
 }
-func UpdateEventImg(image event.EventImage) (event.EventImage, error) {
+func UpdateEventImg(image event.EventImageHelper) (event.EventImage, error) {
 
 	entity := event.EventImage{}
 	resp, _ := api.Rest().SetBody(image).Post(eventimageURL + "update")

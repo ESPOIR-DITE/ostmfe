@@ -6,7 +6,7 @@ import (
 	user2 "ostmfe/domain/user"
 )
 
-const useraccountURL = api.BASE_URL + "user_account"
+const useraccountURL = api.BASE_URL + "user_account/"
 
 func CreateUserAccount(account user2.UserAccount) (user2.UserAccount, error) {
 	var entity user2.UserAccount

@@ -28,27 +28,45 @@
           <div class="col-lg-5 d-none d-lg-block bg-register-image"></div>
           <div class="col-lg-7">
             <div class="p-5">
+              {{if .Backend_error}}
+                <div class="text-center alert-warning">
+                  <a class="small" href="#">{{.Backend_error}}</a>
+                </div>
+              {{end}}
+              {{if .Unknown_error}}
+                <div class="text-center alert-warning">
+                  <a class="small" href="#">{{.Unknown_error}}</a>
+                </div>
+              {{end}}
               <div class="text-center">
                 <h1 class="h4 text-gray-900 mb-4">Edit User</h1>
               </div>
               <form class="user" method="post" action="/admin_user/users/update_user">
                 <div class="form-group row">
                   <div class="col-sm-6 mb-3 mb-sm-0">
-                    <input type="text" class="form-control"name="name" value="{{.User.Name}}" id="exampleFirstName" placeholder="First Name" required>
+                    <label>Name</label>
+                    <input type="text" class="form-control"name="name" value="{{.User.Name}}"  required>
                   </div>
                   <div class="col-sm-6">
-                    <input type="text" class="form-control"name="surname" value="{{.User.Surname}}" id="exampleLastName" placeholder="Last Name" required>
+                    <label>Surname</label>
+                    <input type="text" class="form-control"name="surname" value="{{.User.Surname}}" required>
                   </div>
                 </div>
                 <div class="form-group">
-                  <input type="email" class="form-control " name="email" value="{{.User.Email}}" id="exampleInputEmail" placeholder="Email Address" required>
+                  <label>email</label>
+                  <input type="email" class="form-control " name="email" value="{{.User.Email}}" required>
+                </div>
+                <div class="form-group">
+                  <label>Password</label>
+                  <input type="text" class="form-control"name="password" value="{{.UserAccount.Password}}" required>
                 </div>
                 <div class="form-group ">
-                    <select name="roleId" class="browser-default custom-select" required>
+                  <label>Role</label>
+                    <select id="roleSelect" name="roleId" class="browser-default custom-select" onchange="checkSelectedRole({{.Role.Id}})" required>
                       <option selected>User Role</option>
                       {{with .Roles}}
                         {{range .}}
-                          <option value={{.Id}}>{{.Role}}</option>
+                          <option value="{{.Id}}" {{if eq $.Role.Id .Id}}selected{{end}}>{{.Role}}</option>
                         {{end}}
                       {{end}}
                     </select>
@@ -57,7 +75,7 @@
                   Update
                 </button>
                 <hr>
-                <a href="/admin_user" class="btn btn-google  btn-block">Cancel</a>
+                <a href="/admin_user/users" class="btn btn-google  btn-block">Cancel</a>
               </form>
             </div>
           </div>
@@ -78,5 +96,13 @@
   <script src="../../../assets/js/sb-admin-2.min.js"></script>
 
 </body>
+<script>
+
+  let checkSelectedRole = function(initialApplicantType) {
+    const selectedRole = $("#roleSelect").val();
+    $("#updateApplicantTypeBtn").hide();
+    initialApplicantType.localeCompare(selectedRole);
+  };
+</script>
 
 </html>

@@ -26,13 +26,15 @@ func PeopleHome(app *config.Env) http.Handler {
 	r.Get("/new_stp2/{peopleId}", NewPeoplestp2Handler(app))
 	r.Get("/edit/{peopleId}", EditPeopleHandler(app))
 	r.Get("/delete/{peopleId}", DeletePeopleHandler(app))
+
 	r.Post("/create_stp1", CreatePeopleHandler(app))
 	r.Post("/create_stp2", CreatePeopleStp2Handler(app))
+	r.Post("/create_image", CreatePeopleImageHandler(app))
+
 	r.Post("/people_category/create", CreatePeopleCategoryHandler(app))
 	r.Post("/update_image", UpdatePeopleImageHandler(app))
 	r.Post("/update_details", UpdatePeopleDetailHandler(app))
 	r.Post("/update_history", UpdatePeopleHistoryHandler(app))
-	r.Post("/create_image", CreatePeopleImageHandler(app))
 	r.Post("/add_pictures", AddPeopleImageHandler(app))
 	return r
 }
@@ -123,7 +125,7 @@ func CreatePeopleImageHandler(app *config.Env) http.HandlerFunc {
 				app.Session.Remove(r.Context(), "creation-successful")
 			}
 			app.Session.Put(r.Context(), "creation-successful", "You have successfully updated a People Picture : ")
-			http.Redirect(w, r, "/admin_user/people/people/new", 301)
+			http.Redirect(w, r, "/admin_user/people/", 301)
 			return
 		}
 		fmt.Println("One of the field is missing")
@@ -131,7 +133,7 @@ func CreatePeopleImageHandler(app *config.Env) http.HandlerFunc {
 			app.Session.Remove(r.Context(), "creation-unknown-error")
 		}
 		app.Session.Put(r.Context(), "creation-unknown-error", "You have encountered an unknown error, please try again")
-		http.Redirect(w, r, "/admin_user/people/people/new", 301)
+		http.Redirect(w, r, "/admin_user/people", 301)
 		return
 	}
 

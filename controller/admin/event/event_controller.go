@@ -26,16 +26,158 @@ func EventHome(app *config.Env) http.Handler {
 	r := chi.NewRouter()
 	r.Get("/", EventsHandler(app))
 	r.Get("/new", NewEventsHandler(app))
-	r.Get("/edite/{eventId}", EditEventsHandler(app))
+	r.Get("/edit/{eventId}", EditEventsHandler(app))
 	r.Post("/create", CreateEventHandler(app))
 	r.Post("/create-history", CreateEventHistoryEventHandler(app))
+	r.Post("/create-pictures", CreateEventPictureEventHandler(app))
 	r.Post("/update", UpdateEventHandler(app))
 	r.Get("/picture/{eventId}", EventPicture(app))
 
 	r.Post("/update_history", UpdateHistoryHandler(app))
 	r.Post("/update_place", UpdatePlaceHandler(app))
 	r.Post("/update_details", UpdateDetailsHandler(app))
+	r.Post("/update_pictures", UpdatePicturesHandler(app))
+	r.Post("/add_pictures", AddPictureHandler(app))
 	return r
+}
+
+func CreateEventPictureEventHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		file, _, err := r.FormFile("file")
+		file2, _, err := r.FormFile("file2")
+		file3, _, err := r.FormFile("file3")
+		file4, _, err := r.FormFile("file4")
+		file5, _, err := r.FormFile("file5")
+		file6, _, err := r.FormFile("file6")
+		eventId := r.PostFormValue("eventId")
+		if err != nil {
+			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
+		}
+		filesArray := []io.Reader{file, file2, file3, file4, file5, file6}
+		filesByteArray := misc.CheckFiles(filesArray)
+
+		if eventId != "" {
+
+			eventImageObject := event2.EventImage{"", eventId, "", ""}
+			eventImageHelper := event2.EventImageHelper{eventImageObject, filesByteArray}
+
+			_, errx := event_io.CreateEventImg(eventImageHelper)
+			if errx != nil {
+				fmt.Println(errx, " error creating Event Image")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
+				return
+			}
+			if app.Session.GetString(r.Context(), "creation-successful") != "" {
+				app.Session.Remove(r.Context(), "creation-successful")
+			}
+			app.Session.Put(r.Context(), "creation-successful", "You have successfully updated a People Picture : ")
+			http.Redirect(w, r, "/admin_user/event/", 301)
+			return
+		}
+		fmt.Println("One of the field is missing")
+		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
+			app.Session.Remove(r.Context(), "creation-unknown-error")
+		}
+		app.Session.Put(r.Context(), "creation-unknown-error", "You have encountered an unknown error, please try again")
+		http.Redirect(w, r, "/admin_user/event", 301)
+		return
+	}
+}
+
+func UpdatePicturesHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		file, _, err := r.FormFile("file")
+		imageId := r.PostFormValue("imageId")
+		eventId := r.PostFormValue("eventId")
+		eventImageId := r.PostFormValue("eventImageId")
+		imageType := r.PostFormValue("imageType")
+		if err != nil {
+			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
+		}
+		filesArray := []io.Reader{file}
+		filesByteArray := misc.CheckFiles(filesArray)
+
+		if eventId != "" && imageId != "" && imageType != "" && eventImageId != "" {
+			eventImage := event2.EventImage{eventImageId, imageId, eventId, imageType}
+			eventImageHelper := event2.EventImageHelper{eventImage, filesByteArray}
+			_, err := event_io.UpdateEventImg(eventImageHelper)
+			if err != nil {
+				fmt.Println(err, " error updating eventImage Helper")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
+				return
+			}
+			if app.Session.GetString(r.Context(), "creation-successful") != "" {
+				app.Session.Remove(r.Context(), "creation-successful")
+			}
+			app.Session.Put(r.Context(), "creation-successful", "You have successfully updated a People Picture : ")
+			http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
+			return
+		}
+		fmt.Println("One of the field is missing")
+		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
+			app.Session.Remove(r.Context(), "creation-unknown-error")
+		}
+		app.Session.Put(r.Context(), "creation-unknown-error", "You have encountered an unknown error, please try again")
+		http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
+		return
+	}
+}
+
+func AddPictureHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		file, _, err := r.FormFile("file")
+		file2, _, err := r.FormFile("file2")
+		file3, _, err := r.FormFile("file3")
+		file4, _, err := r.FormFile("file4")
+		file5, _, err := r.FormFile("file5")
+		file6, _, err := r.FormFile("file6")
+		eventId := r.PostFormValue("eventId")
+		if err != nil {
+			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
+		}
+		filesArray := []io.Reader{file, file2, file3, file4, file5, file6}
+		filesByteArray := misc.CheckFiles(filesArray)
+
+		if eventId != "" {
+			eventImageObject := event2.EventImage{"", "", eventId, ""}
+			eventImageHelper := event2.EventImageHelper{eventImageObject, filesByteArray}
+
+			_, errx := event_io.CreateEventImg(eventImageHelper)
+			if errx != nil {
+				fmt.Println(errx, " error creating PeopleImage")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
+				return
+			}
+			if app.Session.GetString(r.Context(), "creation-successful") != "" {
+				app.Session.Remove(r.Context(), "creation-successful")
+			}
+			app.Session.Put(r.Context(), "creation-successful", "You have successfully updated a People Picture : ")
+			http.Redirect(w, r, "/admin_user/event", 301)
+			return
+		}
+		fmt.Println("One of the field is missing")
+		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
+			app.Session.Remove(r.Context(), "creation-unknown-error")
+		}
+		app.Session.Put(r.Context(), "creation-unknown-error", "You have encountered an unknown error, please try again")
+		http.Redirect(w, r, "/admin_user/event", 301)
+		return
+	}
 }
 
 func UpdateDetailsHandler(app *config.Env) http.HandlerFunc {
@@ -351,6 +493,7 @@ func EventPicture(app *config.Env) http.HandlerFunc {
 		}
 	}
 }
+
 func EditEventsHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		eventId := chi.URLParam(r, "eventId")
@@ -397,6 +540,7 @@ func EditEventsHandler(app *config.Env) http.HandlerFunc {
 	}
 }
 
+//Not in user anymore
 func NewEventsHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var unknown_error string

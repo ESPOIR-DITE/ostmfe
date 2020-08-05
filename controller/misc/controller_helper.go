@@ -144,20 +144,25 @@ This struct will return all the picture
 */
 type ProjectEditable struct {
 	Project  project2.Project
-	Images   []image3.Images
+	Images   []ProjectImageHelperEditable
 	History  history2.HistoriesHelper
 	Partners []partner.Partner
 	Members  []member.Member
 }
+type ProjectImageHelperEditable struct {
+	Id             string
+	ImageId        string
+	ProjectImageId string
+}
 
 func GetProjectEditable(projectId string) ProjectEditable {
-	var Images []image3.Images
+	var Images []ProjectImageHelperEditable
 	var Parteners []partner.Partner
 	var Member []member.Member
 	var historyToreturn history2.HistoriesHelper
 	projectEditable := ProjectEditable{}
-	//Checking if the projectId is empty
-	if projectId != "" {
+	//Checking if the projectId is empty we should't event border to read....
+	if projectId == "" {
 		fmt.Println(" can not read this people, because the projectId is empty or null")
 		return projectEditable
 	}
@@ -176,7 +181,10 @@ func GetProjectEditable(projectId string) ProjectEditable {
 			if err != nil {
 				fmt.Println(err, " error read Image")
 			}
-			Images = append(Images, ImageObejct)
+			//Placing project image in image object at the place of description
+			imageMakeUpObejct := ProjectImageHelperEditable{ImageObejct.Id, ConvertingToString(ImageObejct.Image), image.Id}
+			Images = append(Images, imageMakeUpObejct)
+			imageMakeUpObejct = ProjectImageHelperEditable{}
 		}
 	}
 
@@ -615,6 +623,7 @@ func GetEventDate(eventId string) EventData {
 				fmt.Println(err, "error reading Place EventPlaceId : ")
 			}
 		}
+		//History
 		eventHistory, err := event_io.ReadEventHistoryWithEventId(eventId)
 		if err != nil {
 			fmt.Println(err, "error reading eventHistory ")
@@ -640,6 +649,7 @@ type SimpleEventData struct {
 
 func GetSimpleEventData(limit int) []SimpleEventData {
 	var images []image3.Images
+	var image image3.Images
 	var profileImage image3.Images
 	var eventDataList []SimpleEventData
 
@@ -665,11 +675,12 @@ func GetSimpleEventData(limit int) []SimpleEventData {
 						}
 					}
 					fmt.Println(" eventImage.ImageId: ", eventImage.ImageId)
-					image, err := image_io.ReadImage(eventImage.ImageId)
+					image, err = image_io.ReadImage(eventImage.ImageId)
 					if err != nil {
 						fmt.Println(err, " error reading image")
 					}
 					images = append(images, image)
+					image = image3.Images{}
 				}
 				//eventLocation,err:= ReadEvent
 			}

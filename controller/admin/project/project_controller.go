@@ -105,7 +105,6 @@ func ProjectUpdateHistoryHandler(app *config.Env) http.HandlerFunc {
 	}
 }
 
-//Todo implement the HTML page to get these data
 func EditeProjectsHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		projectId := chi.URLParam(r, "projectId")
@@ -123,6 +122,8 @@ func EditeProjectsHandler(app *config.Env) http.HandlerFunc {
 		files := []string{
 			app.Path + "admin/project/edite_project.html",
 			app.Path + "admin/template/navbar.html",
+			app.Path + "admin/template/cards.html",
+			app.Path + "admin/template/topbar.html",
 			//app.Path + "base_templates/footer.html",
 		}
 		ts, err := template.ParseFiles(files...)
