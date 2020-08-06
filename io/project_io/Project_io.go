@@ -22,7 +22,7 @@ func CreateProject(P project.Project) (project.Project, error) {
 	return entity, nil
 
 }
-func updateProject(P project.Project) (project.Project, error) {
+func UpdateProject(P project.Project) (project.Project, error) {
 
 	entity := project.Project{}
 	resp, _ := api.Rest().SetBody(P).Post(projectURL + "update")

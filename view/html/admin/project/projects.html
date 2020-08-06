@@ -175,8 +175,8 @@
                           Edit
                         </a>
                       </td>
-                      <td><a href="/admin_user/project/delete/{{.Id}}" class="btn btn-google btn-user btn-block">
-                          <i class="fab fa-fw"></i> Delete
+                      <td><a class="btn btn-google btn-user btn-block" data-toggle="modal" onclick="deleteProjectBTN({{.Id}},{{.Title}})"  data-target="#exampleModalProject">
+                          Delete
                         </a>
                       </td>
                     </tr>
@@ -234,6 +234,29 @@
     </div>
   </div>
 
+  <!--Delete warning Modal -->
+  <div class="modal fade" id="exampleModalProject" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-danger" id="exampleModalLongTitle">Warning</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h3 class="text-danger text-center"> About to delete the record of:</h3>
+          <h4 id="value" class="text-center"></h4>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-danger" id=""><a id="deleteBtn">Delete</a></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
   <!-- Bootstrap core JavaScript-->
   <script src="../../assets/vendor/jquery/jquery.min.js"></script>
   <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -284,5 +307,11 @@
   $(document).ready(function() {
     $('#mytextarea').summernote();
   });
+</script>
+<script>
+  function deleteProjectBTN(id,name) {
+    $("#deleteBtn").attr('href','/admin_user/project/delete_project/'+id);
+    $("#value").text(name);
+  }
 </script>
 </html>

@@ -8,8 +8,8 @@ import (
 )
 
 func TestCreatePlace(t *testing.T) {
-	long := -47.0983474323422
-	lat := -47.0983474323422
+	long := "-47.0983474323422"
+	lat := "-47.0983474323422"
 	placeObeject := place2.Place{"", "example", long, lat, "test1"}
 	place, err := CreatePlace(placeObeject)
 	assert.Nil(t, err)

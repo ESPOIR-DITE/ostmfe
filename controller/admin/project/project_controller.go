@@ -29,25 +29,154 @@ func ProjectHome(app *config.Env) http.Handler {
 	r.Post("/update_pictures", ProjectUpdatePicturesHandler(app))
 	r.Post("/update_picture", ProjectUpdatePictureHandler(app))
 	r.Post("/update_history", ProjectUpdateHistoryHandler(app))
+	r.Post("/update_details", ProjectUpdateDetails(app))
+
+	r.Post("/create_history", ProjectCreateHistoryHandler(app))
+
+	r.Get("/delete_project/{projectId}", DeleteProjectHandler(app))
 	return r
 }
 
-//TODO for now we are accepting mytextarea maybe empty. but this will will need to be investigates
-func ProjectUpdateHistoryHandler(app *config.Env) http.HandlerFunc {
+func DeleteProjectHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		projectId := chi.URLParam(r, "projectId")
+
+		//Reading the project
+		project, err := project_io.ReadProject(projectId)
+		if err != nil {
+			fmt.Println("error reading project")
+			fmt.Println(err, " error creating Project")
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred due to selected Place, Please try again late")
+			http.Redirect(w, r, "/admin_user/project", 301)
+			return
+		}
+		//Deleting project
+		_, err = project_io.DeleteProject(project.Id)
+		if err != nil {
+			fmt.Println("error deleting project")
+		}
+
+		//Reading Project Image
+		projectImage, err := project_io.ReadWithProjectIdProjectImage(projectId)
+		if err != nil {
+			fmt.Println("error deleting projectImage. this project may not have an image")
+		} else {
+			_, err = project_io.DeleteProjectImage(projectImage.Id)
+			if err != nil {
+				fmt.Println("error deleting project Image")
+			} else {
+				_, err = image_io.DeleteImage(projectImage.Id)
+				if err != nil {
+					fmt.Println("error deleting image")
+				}
+			}
+		}
+
+		//Reading History
+		projectHistory, err := project_io.ReadProjectHistoryOf(projectId)
+		if err != nil {
+			fmt.Println("error reading projectHistory. this project may not have History")
+		} else {
+			_, err = history_io.DeleteHistorie(projectHistory.HistoryId)
+			if err != nil {
+				fmt.Println("error deleting history. this project may not have an history")
+			}
+			_, err := project_io.DeleteProjectHistory(projectHistory.Id)
+			if err != nil {
+				fmt.Println("error deleting projectHistory")
+			}
+		}
+
+		//Reading ProjectMembers
+		projectMembers, err := project_io.ReadAllOfProjectMembers(projectId)
+		if err != nil {
+			fmt.Println("error reading projectMembers. this project may not have an Members")
+		} else {
+			for _, projectMember := range projectMembers {
+				_, err = project_io.DeleteProjectMember(projectMember.Id)
+				if err != nil {
+					fmt.Println("error deleting project Member for the following projectMemberId: ", projectMember.Id)
+				}
+			}
+		}
+		//Reading ProjectPartners
+		ProjectPartners, err := project_io.ReadAllOfProjectPartner(projectId)
+		if err != nil {
+			fmt.Println("error reading Project Partners. this project may not have an Partners")
+		} else {
+			for _, projectPartner := range ProjectPartners {
+				_, err = project_io.DeleteProjectMember(projectPartner.Id)
+				if err != nil {
+					fmt.Println("error deleting project Partner for the following projectPartnerId: ", projectPartner.Id)
+				}
+			}
+		}
+
+		fmt.Println(" successful deletion.")
+		app.Session.Put(r.Context(), "creation-successful", "You have successfully updating: Project Details. ")
+		http.Redirect(w, r, "/admin_user/project", 301)
+		return
+	}
+}
+
+func ProjectUpdateDetails(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		projectTitle := r.PostFormValue("projectTitle")
+		projectId := r.PostFormValue("projectId")
+		description := r.PostFormValue("description")
+
+		_, err := project_io.ReadProject(projectId)
+		if err != nil {
+			fmt.Println("error reading project")
+			fmt.Println(err, " error creating Project")
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred due to selected Place, Please try again late")
+			http.Redirect(w, r, "/admin_user/project/edit/"+projectId, 301)
+			return
+		}
+		if projectId != "" && projectTitle != "" && description != "" {
+			projectObject := project2.Project{projectId, projectTitle, description}
+			_, errs := project_io.UpdateProject(projectObject)
+			if errs != nil {
+				fmt.Println("error updating project")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred due to selected Place, Please try again late")
+				http.Redirect(w, r, "/admin_user/project/edit/"+projectId, 301)
+				return
+			}
+
+			fmt.Println(" successfully updated")
+			app.Session.Put(r.Context(), "creation-successful", "You have successfully updating: Project Details. ")
+			http.Redirect(w, r, "/admin_user/project", 301)
+			return
+		}
+		fmt.Println(" error creating project One field missing")
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			app.Session.Remove(r.Context(), "user-create-error")
+		}
+		app.Session.Put(r.Context(), "user-create-error", "An error has occurred due to selected Place, Please try again late")
+		http.Redirect(w, r, "/admin_user/project/edit/"+projectId, 301)
+		return
+
+	}
+}
+
+func ProjectCreateHistoryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		historyContent := r.PostFormValue("myArea")
 		projectId := r.PostFormValue("projectId")
-		historyId := r.PostFormValue("historyId")
-		//checking if the projectHistory exists
-		_, err := history_io.ReadHistorie(historyId)
-		fmt.Println(historyContent)
-		if err != nil {
-			fmt.Println(err, " could not read history")
-			fmt.Println(" proceeding into creation of a history.....")
+		//checking if there is contents in the variables
+		if historyContent != "" && projectId != "" {
 			history := history2.Histories{"", misc.ConvertToByteArray(historyContent)}
-
-			fmt.Println("history Object: ", history)
 
 			newHistory, err := history_io.CreateHistorie(history)
 			if err != nil {
@@ -79,6 +208,36 @@ func ProjectUpdateHistoryHandler(app *config.Env) http.HandlerFunc {
 				return
 			}
 			fmt.Println(" successfully created")
+			http.Redirect(w, r, "/admin_user/project/edit/"+projectId, 301)
+			return
+		}
+		fmt.Println("one or more fields missing")
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			app.Session.Remove(r.Context(), "user-create-error")
+		}
+		app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+		http.Redirect(w, r, "/admin_user/project/edit/"+projectId, 301)
+		return
+
+	}
+}
+
+//TODO for now we are accepting mytextarea maybe empty. but this will will need to be investigates
+func ProjectUpdateHistoryHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		historyContent := r.PostFormValue("myArea")
+		projectId := r.PostFormValue("projectId")
+		historyId := r.PostFormValue("historyId")
+		//checking if the projectHistory exists
+		_, err := history_io.ReadHistorie(historyId)
+		fmt.Println(historyContent)
+		if err != nil {
+			fmt.Println(err, " something went wrong! could not read history")
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
 			http.Redirect(w, r, "/admin_user/project/edit/"+projectId, 301)
 			return
 		}
@@ -460,50 +619,48 @@ func ProjectUpdatePictureHandler(app *config.Env) http.HandlerFunc {
 func ProjectUpdatePicturesHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
-		//fileslist := r.Form["file"]
 
 		file, _, err := r.FormFile("file")
-		file2, _, err := r.FormFile("file2")
-		file3, _, err := r.FormFile("file3")
-		file4, _, err := r.FormFile("file4")
-		file5, _, err := r.FormFile("file5")
-		file6, _, err := r.FormFile("file6")
 		projectId := r.PostFormValue("projectId")
+		imageId := r.PostFormValue("imageId")
+		projectImageId := r.PostFormValue("projectImageId")
+		imageType := r.PostFormValue("imageType")
 		if err != nil {
 			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
 		}
-		new_project, err := project_io.ReadProject(projectId)
+		project, err := project_io.ReadProject(projectId)
 		if err != nil {
 			fmt.Println(err, " could not read project Line: 113")
 			if app.Session.GetString(r.Context(), "user-create-error") != "" {
 				app.Session.Remove(r.Context(), "user-create-error")
 			}
 			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-			http.Redirect(w, r, "/admin_user/project/new", 301)
+			http.Redirect(w, r, "/admin_user/project", 301)
 			return
 		}
-		filesArray := []io.Reader{file, file2, file3, file4, file5, file6}
+		if imageId != "" && imageType != "" && projectImageId != "" {
+			filesArray := []io.Reader{file}
+			filesByteArray := misc.CheckFiles(filesArray)
+			projectImage := project2.ProjectImage{projectImageId, project.Id, imageId, imageType}
 
-		filesByteArray := misc.CheckFiles(filesArray)
-
-		projectImage := project2.ProjectImage{"", new_project.Id, "", ""}
-
-		helper := project2.ProjectImageHelper{filesByteArray, projectImage}
-		_, errr := project_io.CreateProjectImage(helper)
-		if errr != nil {
-			fmt.Println(errr, " error creating projectImage")
-			if app.Session.GetString(r.Context(), "user-create-error") != "" {
-				app.Session.Remove(r.Context(), "user-create-error")
+			helper := project2.ProjectImageHelper{filesByteArray, projectImage}
+			_, errr := project_io.UpdateProjectImage(helper)
+			if errr != nil {
+				fmt.Println(errr, " error creating projectImage")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/project/edit/"+project.Id, 301)
+				return
 			}
-			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-			http.Redirect(w, r, "/admin_user/project/edit/"+new_project.Id, 301)
+			if app.Session.GetString(r.Context(), "creation-successful") != "" {
+				app.Session.Remove(r.Context(), "creation-successful")
+			}
+			app.Session.Put(r.Context(), "creation-successful", "You have successfully updated the following project : "+project.Title)
+			http.Redirect(w, r, "/admin_user/project/"+project.Id, 301)
 			return
 		}
-		if app.Session.GetString(r.Context(), "creation-successful") != "" {
-			app.Session.Remove(r.Context(), "creation-successful")
-		}
-		app.Session.Put(r.Context(), "creation-successful", "You have successfully updated the following project : "+new_project.Title)
-		http.Redirect(w, r, "/admin_user/project/new_history/"+new_project.Id, 301)
-		return
+
 	}
 }

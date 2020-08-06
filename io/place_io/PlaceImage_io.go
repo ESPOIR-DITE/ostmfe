@@ -21,7 +21,7 @@ func CreatePlaceImage(helper place2.PlaceImageHelper) (place2.PlaceImage, error)
 	}
 	return entity, nil
 }
-func UpdatePlaceImage(image place2.PlaceImage) (place2.PlaceImage, error) {
+func UpdatePlaceImage(image place2.PlaceImageHelper) (place2.PlaceImage, error) {
 	entity := place2.PlaceImage{}
 
 	resp, _ := api.Rest().SetBody(image).Post(placeimageURL + "update")
@@ -47,9 +47,22 @@ func ReadPlaceImage(id string) (place2.PlaceImage, error) {
 	}
 	return entity, nil
 }
+
+func ReadPlaceImageWithImageId(id string) (place2.PlaceImage, error) {
+	entity := place2.PlaceImage{}
+
+	resp, _ := api.Rest().Get(placeimageURL + "readWithImageId?id=" + id)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
 func ReadPlaceImageAllOf(placeId string) ([]place2.PlaceImage, error) {
 	entity := []place2.PlaceImage{}
-
 	resp, _ := api.Rest().Get(placeimageURL + "readAllOf?id=" + placeId)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
@@ -62,7 +75,6 @@ func ReadPlaceImageAllOf(placeId string) ([]place2.PlaceImage, error) {
 }
 func DeletePlaceImage(id string) (place2.PlaceImage, error) {
 	entity := place2.PlaceImage{}
-
 	resp, _ := api.Rest().Get(placeimageURL + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
@@ -75,7 +87,6 @@ func DeletePlaceImage(id string) (place2.PlaceImage, error) {
 }
 func ReadPlaceImages() ([]place2.PlaceImage, error) {
 	entity := []place2.PlaceImage{}
-
 	resp, _ := api.Rest().Get(placeimageURL + "reads")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())

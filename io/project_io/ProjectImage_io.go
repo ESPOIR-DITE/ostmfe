@@ -20,7 +20,7 @@ func CreateProjectImage(helper project.ProjectImageHelper) (project.ProjectImage
 	}
 	return entity, nil
 }
-func UpdateProjectImage(helper project.ProjectImage) (project.ProjectImage, error) {
+func UpdateProjectImage(helper project.ProjectImageHelper) (project.ProjectImage, error) {
 	entity := project.ProjectImage{}
 	resp, _ := api.Rest().SetBody(helper).Post(projectimageURL + "update")
 	if resp.IsError() {

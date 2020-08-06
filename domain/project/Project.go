@@ -7,6 +7,7 @@ type Project struct {
 }
 
 type ProjectMember struct {
+	Id          string `json:"id"`
 	ProjectId   string `json:"project_id"`
 	MemberId    string `json:"member_id"`
 	Description string `json:"description"`
@@ -19,6 +20,7 @@ type ProjectImage struct {
 }
 
 type ProjectPartner struct {
+	Id          string `json:"id"`
 	ProjectId   string `json:"projectId"`
 	PartenerID  string `json:"partenerId"`
 	Description string `json:"description"`

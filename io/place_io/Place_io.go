@@ -53,7 +53,7 @@ func ReadPlace(id string) (place.Place, error) {
 func DeletePlace(id string) (place.Place, error) {
 
 	entity := place.Place{}
-	resp, _ := api.Rest().Get(places + "delte?id=" + id)
+	resp, _ := api.Rest().Get(places + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}

@@ -339,8 +339,8 @@
                 </div>
                 <div class="card-body">
                   <form class="user"method="post" id="" action="/admin_user/project/update_picture">
-                    <input type="hidden"name="projectId" value="{{.History.Id}}" class="form-control " >
-                  <textarea  class="form-control " style="height: 550px" name="description" id="exampleLastName" placeholder="History">{{.History.Description}}</textarea>
+                    <input type="hidden"name="projectId" value="{{.PlaceData.History.Id}}" class="form-control " >
+                  <textarea  class="form-control " style="height: 550px" name="description" id="exampleLastName" placeholder="History">{{.PlaceData.History.Description}}</textarea>
                     <button type="submit" class="btn btn-primary btn-block">
                       Update
                     </button>
