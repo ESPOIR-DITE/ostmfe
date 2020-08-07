@@ -81,7 +81,7 @@
                                   <img class="card-img" style="width:100%;height:312px;"
                                        id='base64image'
                                        src='data:image/jpeg;base64,{{.Id}}' alt=""/>
-                                  <a href="/admin_user/collection/delete_image/{{.ImageId}}/{{$.CollectionData.Collection.Id}}" id="{{.ImageId}}" class="btn btn-google btn-user btn-block">
+                                  <a href="/admin_user/collection/delete_picture/{{.ImageId}}/{{$.CollectionData.Collection.Id}}" id="{{.ImageId}}" class="btn btn-google btn-user btn-block">
                                     Delete
                                   </a>
 
@@ -89,7 +89,7 @@
                                   <div class="text-center">
                                     <h1 class="h4 text-gray-900 mb-4">You can update this image here</h1>
                                   </div>
-                                  <form class="user"method="post" id="" action="/admin_user/place/update_pictures" enctype="multipart/form-data">
+                                  <form class="user"method="post" id="" action="/admin_user/collection/update_image" enctype="multipart/form-data">
                                     <input type="hidden"name="imageId" value="{{.ImageId}}" class="form-control " >
                                     <input type="hidden"name="collectionImageId" value="{{.BridgeId}}" class="form-control " >
                                     <input type="hidden"name="collectionId" value="{{$.CollectionData.Collection.Id}}" class="form-control " >
@@ -161,7 +161,7 @@
           <!-- Card Header - Accordion -->
           <a href="#collapseCardDetails" class="d-block card-header py-3 btn-success" data-toggle="collapse"
              role="button" aria-expanded="true" aria-controls="collapseCardExample">
-            <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">COllection Details</h6>
+            <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Collection Details</h6>
           </a>
           <!-- Card Content - Collapse -->
           <div class="collapse " id="collapseCardDetails">
@@ -176,11 +176,11 @@
                     </div>
                     <div class="card-body">
                       <form class="user"method="post" id="" action="/admin_user/collection/update_details">
-                        <input type="hidden"name="placeId" value="{{.CollectionData.Collection.Id}}" class="form-control " >
+                        <input type="hidden"name="collectionId" value="{{.CollectionData.Collection.Id}}" class="form-control " >
 
                         <div class="form-group ">
                           <label>Name</label>
-                          <input type="text" class="form-control" value="{{.CollectionData.Collection.Name}}" name="placeTitle" >
+                          <input type="text" class="form-control" value="{{.CollectionData.Collection.Name}}" name="collectionName" >
                         </div>
 
                         <div class="form-group ">
@@ -238,9 +238,9 @@
                 </div>
                 <hr>
                 <div class="form-group">
-                  <form method="post" action="/admin_user/collection/update_history">
+                  <form method="post" action="/admin_user/collection/create_history">
                     <div class="form-group" >
-                      <input name="collection" value="{{.CollectionData.Collection.Id}}" hidden>
+                      <input name="collectionId" value="{{.CollectionData.Collection.Id}}" hidden>
                       <div class="form-group" >
                         <label id="label" hidden style="color: steelblue">Add the new contents here<small> (You may copy from the previous. Remember this new content will override the previous)</small></label>
                         <textarea name="myArea" id="myArea" class="form-control" hidden>

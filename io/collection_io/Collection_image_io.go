@@ -21,7 +21,7 @@ func CreateCollectionImg(image collection.CollectionImageHelper) (collection.Col
 	}
 	return entity, nil
 }
-func UpdateCollectionImg(image collection.Collection_image) (collection.Collection_image, error) {
+func UpdateCollectionImg(image collection.CollectionImageHelper) (collection.Collection_image, error) {
 	entity := collection.Collection_image{}
 	resp, _ := api.Rest().SetBody(image).Post(collectionImg + "update")
 	if resp.IsError() {

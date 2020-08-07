@@ -93,9 +93,9 @@
                             </select>
                           </div>
                         </div>
-                        <div class="form-group">
-                          <label>Collection bref</label>
-                          <textarea class="form-control " name="brief" placeholder="Location name"></textarea>
+                        <div class="form-group ">
+                          <label>Description <small> Only 150 characters </small></label>
+                          <textarea class="form-control" name="brief" maxlength="200"></textarea>
                         </div>
                         <div class="form-group">
                           <label>Collection detaille/History</label>
@@ -156,8 +156,7 @@
                           Edit
                         </a>
                       </td>
-                      <td><a href="/admin_user/user/delete/{{.Collection.Id}}" class="btn btn-google btn-user btn-block">
-                          <i class="fab fa-fw"></i> Delete
+                      <td><a class="btn btn-danger btn-block" data-toggle="modal" onclick="deleteCollectionBTN({{.Collection.Id}},{{.Collection.Name}})" data-target="#exampleModalDeleteCollection">Delete
                         </a>
                       </td>
                     </tr>
@@ -215,6 +214,30 @@
     </div>
   </div>
 
+  <!--Delete warning Modal -->
+  <div class="modal fade" id="exampleModalDeleteCollection" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-danger" id="exampleModalLongTitle">Warning</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p  class="text-center text-warning">Be careful when deleting collection types There maybe some collection linked to this type! </p>
+          <h3 class="text-danger text-center"> About to delete the record of:</h3>
+          <h2 id="deleteValue" class="text-center text-info"></h2>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+          <a class="btn btn-danger" id="deleteBtn">Delete</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Bootstrap core JavaScript-->
   <script src="../../assets/vendor/jquery/jquery.min.js"></script>
   <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -239,5 +262,9 @@
   $(document).ready(function() {
     $('#mytextare').summernote();
   });
+  function deleteCollectionBTN(id,name) {
+    $("#deleteBtn").attr('href','/admin_user/collection/delete/collection/'+id);
+    $("#deleteValue").text(name);
+  }
   </script>
 </html>

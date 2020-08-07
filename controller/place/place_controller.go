@@ -41,6 +41,7 @@ func SinglePlaceHanler(app *config.Env) http.HandlerFunc {
 		files := []string{
 			app.Path + "place/place_single.html",
 			app.Path + "base_templates/navigator.html",
+			app.Path + "base_templates/comments.html",
 			app.Path + "base_templates/footer.html",
 		}
 		ts, err := template.ParseFiles(files...)

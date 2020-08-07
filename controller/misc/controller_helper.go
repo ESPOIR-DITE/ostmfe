@@ -241,16 +241,17 @@ func GetCollectionBridge() []CollectionBridge {
 	if err != nil {
 		fmt.Println(err, " error reading Collections")
 	}
-	for _, collection := range collections {
-		collection_type, err := collection_io.ReadWithCollectionId(collection.Id)
+	for _, collectio := range collections {
+		collection_type, err := collection_io.ReadWithCollectionId(collectio.Id)
 		if err != nil {
 			fmt.Println(err, " error reading collection_type")
 		} else {
 			collectionType, err = collection_io.ReadCollectionTyupe(collection_type.CollectionType)
 		}
-		collectionBridgeObject := CollectionBridge{collection, collectionType}
+		collectionBridgeObject := CollectionBridge{collectio, collectionType}
 		collectionBridge = append(collectionBridge, collectionBridgeObject)
 		collectionBridgeObject = CollectionBridge{}
+		collectionType = collection.CollectionTypes{}
 	}
 	return collectionBridge
 }
