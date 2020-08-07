@@ -40,7 +40,7 @@
                     <div class="row d-flex align-items-center justify-content-center">
                         <div class="about-content col-lg-12">
                             <h1 class="text-white">
-                                {{.PeopleDataHistory.People.Name}} &nbsp; {{.PeopleDataHistory.People.Surname}}
+                                {{.PlaceData.Place.Title}}
                             </h1>   
                             <p class="text-white link-nav"><a href="/">Home </a>  <span class="lnr lnr-arrow-right"></span>  <a href="#"> community</a></p>
                         </div>                                          
@@ -56,35 +56,17 @@
 					<div class="row">
 						<div class="col-lg-8 post-list blog-post-list">
 							<div class="single-post">
-                                <img id='base64image' height="400px" src='data:image/jpeg;base64,{{.PeopleDataHistory.ProfileImage.Id}}' alt="">
+                                <img id='base64image' height="400px" src='data:image/jpeg;base64,{{.PlaceData.ProfileImage.Id}}' alt="">
                                 <hr>
-                                <a href="#">
-                                    {{if .PeopleDataHistory.People.Profession}}
-                                        <h3>
-                                          Profession: <small> {{.PeopleDataHistory.People.Profession}}</small>
-                                        </h3>
-                                    {{end}}
-                                </a>
-								<ul class="tags">
-                                    {{if .PeopleDataHistory.People.BirthDate}}
-									<li><a href="#">Birth Date: {{.PeopleDataHistory.People.BirthDate}}</a></li>
-                                    {{end}}
-                                    <br>
-                                    {{if .PeopleDataHistory.People.DeathDate}}
-                                        <li><a href="#">Death Date: {{.PeopleDataHistory.People.DeathDate}}</a></li>
-                                    {{end}}
-                                    <br>
-                                    {{if .PeopleDataHistory.People.BirthDate}}
-                                        <li><a href="#">Origin: {{.PeopleDataHistory.People.Origin}}</a></li>
-                                    {{end}}
-								</ul>
+
+
                                 <br>
-                                    <h2>{{.PeopleDataHistory.People.Surname}}</h2>
+                                    <h2>{{.PlaceData.Place.Title}}</h2>
                                 <br>
 								<div class="content-wrap" id="me">
                                     <script>
                                         var div= document.getElementById('me');
-                                        var myvalue = {{.PeopleDataHistory.History.History}}
+                                        var myvalue = {{.PlaceData.History.History}}
                                             parseMe(myvalue);
                                         function parseMe(value) {
                                             div.innerHTML+=value;
@@ -251,25 +233,17 @@
 								</form>								
 							</div>
 
-                            {{with .PeopleDataHistory.Images}}
-                            {{range .}}
-							<div class="single-widget protfolio-widget">
-                                <img id='base64image' height="200px" src='data:image/jpeg;base64,{{.Id}}' alt="">
-								<a href="#"><h4>Adele Gonzalez</h4></a>
-								<p>
-									MCSE boot camps have its supporters and
-									its detractors. Some people do not understand why you should have to spend money
-									on boot camp when you can get.
-								</p>
-								<ul>
-									<li><a href="#"><i class="fa fa-facebook"></i></a></li>
-									<li><a href="#"><i class="fa fa-twitter"></i></a></li>
-									<li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-									<li><a href="#"><i class="fa fa-behance"></i></a></li>
-								</ul>								
-							</div>
-                            {{end}}
-                            {{end}}
+                            <div class="single-widget tags-widget">
+                                <h4 class="title">Other Project</h4>
+                                <ul>
+                                    {{with .Places}}
+                                        {{range .}}
+                                            <li><a href="/place/{{.Id}}">{{.Title}}</a></li>
+                                        {{end}}
+                                    {{end}}
+                                </ul>
+                            </div>
+
 						</div>
 					</div>
 				</div>	

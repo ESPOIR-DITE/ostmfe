@@ -9,8 +9,8 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>SB Admin 2 - Register</title>
-
+  <title>OSTM - Collection | Edit</title>
+  <base href="/">
   <!-- Custom fonts for this template-->
   <link href="../../assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
@@ -18,78 +18,332 @@
   <!-- Custom styles for this template-->
   <link href="../../assets/css/sb-admin-2.min.css" rel="stylesheet">
 
+  <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet"><script>
+
+    tinymce.init({
+      selector: '#mytextare'
+    });
+  </script>
+
 </head>
 
-<body class="bg-gradient-primary">
+<body id="page-top">
 
-  <div class="container">
+<!-- Page Wrapper -->
+<div id="wrapper">
 
-    <div class="card o-hidden border-0 shadow-lg my-5">
-      <div class="card-body p-0">
-        <!-- Nested Row within Card Body -->
-        <div class="row">
-          <div class="col-lg-5 d-none d-lg-block bg-register-image"></div>
-          <div class="col-lg-7">
-            <div class="p-5">
-              <div class="text-center">
-                <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
-              </div>
-              <form class="user">
-                <div class="form-group row">
-                  <div class="col-sm-6 mb-3 mb-sm-0">
-                    <input type="text" class="form-control form-control-user" id="exampleFirstName" placeholder="First Name">
-                  </div>
-                  <div class="col-sm-6">
-                    <input type="text" class="form-control form-control-user" id="exampleLastName" placeholder="Last Name">
+  <!-- Sidebar -->
+  {{template "navbar" .}}
+  <!-- End of Sidebar -->
+
+  <!-- Content Wrapper -->
+  <div id="content-wrapper" class="d-flex flex-column">
+
+    <!-- Main Content -->
+    <div id="content">
+
+      <!-- Topbar -->
+      {{template "topbar" .}}
+      <!-- End of Topbar -->
+
+      <!-- Begin Page Content -->
+      <div class="container-fluid">
+
+        <!-- Page Heading -->
+        {{template "cards" .}}
+
+        <!---Project Images---->
+
+        <div class="card shadow mb-4">
+          <!-- Card Header - Accordion -->
+          <a href="#collapseCardImage" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+             role="button" aria-expanded="true" aria-controls="collapseCardExample">
+            <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Event Image</h6>
+          </a>
+          <!-- Card Content - Collapse -->
+          <div class="collapse " id="collapseCardImage">
+            <div class="card-body p-0">
+              <!-- Nested Row within Card Body -->
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="p-5">
+                    <div class="text-center">
+                      <h1 class="h4 text-gray-900 mb-4">Collection Picture </h1>
+                    </div>
+                    <div class="col-lg-12 row">
+                      <!-- Default Card Example -->
+                      {{if .CollectionData.Images}}
+                        {{with .CollectionData.Images}}
+                          {{range $i,$e :=.}}
+                            <div class="card mb-4">
+                              <div class="card-body">
+                                {{if .Id}}
+                                  <img class="card-img" style="width:100%;height:312px;"
+                                       id='base64image'
+                                       src='data:image/jpeg;base64,{{.Id}}' alt=""/>
+                                  <a href="/admin_user/collection/delete_image/{{.ImageId}}/{{$.CollectionData.Collection.Id}}" id="{{.ImageId}}" class="btn btn-google btn-user btn-block">
+                                    Delete
+                                  </a>
+
+
+                                  <div class="text-center">
+                                    <h1 class="h4 text-gray-900 mb-4">You can update this image here</h1>
+                                  </div>
+                                  <form class="user"method="post" id="" action="/admin_user/place/update_pictures" enctype="multipart/form-data">
+                                    <input type="hidden"name="imageId" value="{{.ImageId}}" class="form-control " >
+                                    <input type="hidden"name="collectionImageId" value="{{.BridgeId}}" class="form-control " >
+                                    <input type="hidden"name="collectionId" value="{{$.CollectionData.Collection.Id}}" class="form-control " >
+                                    <div class="form-group row">
+                                      <div class="col-sm-6">
+                                        <select name="imageType" class="browser-default custom-select" required>
+                                          <option selected>Picture type</option>
+                                          <option value="1">Profile image</option>
+                                          <option value="2">Secondary Image</option>
+                                        </select>
+                                      </div>
+                                      <div class="col-sm-6">
+                                        <input type="file"name="file" class="form-control" id="fileInput" onchange="collectionFileToUpdate()" required>
+                                      </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-block" id="completeBTN" hidden>Update</button>
+                                  </form>
+                                {{end}}
+                              </div>
+
+                            </div>
+                          {{end}}
+                        {{end}}
+                      {{else}}
+                        <div class="text-center">
+                          <h1 class="h4 text-gray-900 mb-4">You have no pictures for this Collection, Please Upload pictures</h1>
+                        </div>
+                        <form class="user"method="post" action="/admin_user/collection/create_image" enctype="multipart/form-data">
+                          <input type="hidden"name="collectionId" value="{{.CollectionData.Collection.Id}}" required>
+                          <div class="form-group ">
+                            <label>Collection profile Picture</label>
+                            <input type="file"name="file" class="form-control " id="file" placeholder="Project Name" required>
+                          </div>
+
+                          <div class="form-group  row" id="filesArea"></div>
+                          <div class="form-group row" >
+                            <div class="col-sm-6" >
+                              <button type="button" id="add_form_field" class="btn btn-primary  btn-block">
+                                Add a picture
+                              </button>
+                            </div>
+                          </div>
+
+                          <div class="form-group">
+                            <select name="imageType" class="browser-default custom-select" required>
+                              <option selected>Picture type</option>
+                              <option value="1">Profile image</option>
+                              <option value="2">Secondary Image</option>
+                            </select>
+                          </div>
+
+                          <button type="submit" class="btn btn-primary btn-block">
+                            Add
+                          </button>
+                        </form>
+                      {{end}}
+                    </div>
+                    <hr>
                   </div>
                 </div>
-                <div class="form-group">
-                  <input type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Email Address">
-                </div>
-                <div class="form-group row">
-                  <div class="col-sm-6 mb-3 mb-sm-0">
-                    <input type="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Password">
-                  </div>
-                  <div class="col-sm-6">
-                    <input type="password" class="form-control form-control-user" id="exampleRepeatPassword" placeholder="Repeat Password">
-                  </div>
-                </div>
-                <a href="login.html" class="btn btn-primary btn-user btn-block">
-                  Register Account
-                </a>
-                <hr>
-                <a href="index.html" class="btn btn-google btn-user btn-block">
-                  <i class="fab fa-google fa-fw"></i> Register with Google
-                </a>
-                <a href="index.html" class="btn btn-facebook btn-user btn-block">
-                  <i class="fab fa-facebook-f fa-fw"></i> Register with Facebook
-                </a>
-              </form>
-              <hr>
-              <div class="text-center">
-                <a class="small" href="forgot-password.html">Forgot Password?</a>
-              </div>
-              <div class="text-center">
-                <a class="small" href="login.html">Already have an account? Login!</a>
+
               </div>
             </div>
           </div>
         </div>
+
+        <!---Project Detail---->
+        <div class="card shadow mb-4">
+          <!-- Card Header - Accordion -->
+          <a href="#collapseCardDetails" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+             role="button" aria-expanded="true" aria-controls="collapseCardExample">
+            <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">COllection Details</h6>
+          </a>
+          <!-- Card Content - Collapse -->
+          <div class="collapse " id="collapseCardDetails">
+            <div class="card-body p-0">
+              <!-- Nested Row within Card Body -->
+              <div class="row">
+                <div class="col-lg-12">
+                  <!-- Default Card Example -->
+                  <div class="card mb-4">
+                    <div class="card-header py-3">
+                      <h6 class="m-0 font-weight-bold text-primary"> Details</h6>
+                    </div>
+                    <div class="card-body">
+                      <form class="user"method="post" id="" action="/admin_user/collection/update_details">
+                        <input type="hidden"name="placeId" value="{{.CollectionData.Collection.Id}}" class="form-control " >
+
+                        <div class="form-group ">
+                          <label>Name</label>
+                          <input type="text" class="form-control" value="{{.CollectionData.Collection.Name}}" name="placeTitle" >
+                        </div>
+
+                        <div class="form-group ">
+                          <label>Description <small> Only 150 characters </small></label>
+                          <textarea class="form-control" name="description" maxlength="200">{{.CollectionData.Collection.ProfileDescription}}</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block" >
+                          Update
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                <hr>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!---Project History---->
+        <div class="card shadow mb-4">
+          <!-- Card Header - Accordion -->
+          <a href="#collapseCardStep2" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+             role="button" aria-expanded="true" aria-controls="collapseCardExample">
+            <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Place History</h6>
+          </a>
+          <!-- Card Content - Collapse -->
+          <div class="collapse " id="collapseCardStep2">
+            <div class="card-body"  >
+              {{if not .CollectionData.Collection.History}}
+                <form method="post" action="/admin_user/collection/create_history">
+                  <div class="form-group" >
+                    <input name="PlaceId" value="{{.CollectionData.Collection.Id}}" hidden>
+                    <div class="form-group">
+                      <label>Add History</label>
+                      <textarea id="mytextare" class="form-control"  name="myArea"></textarea>
+                    </div>
+
+                  </div>
+                  <div class="form-group text-center" >
+                    <button class="btn btn-info" id="formUpdateButton" type="submit">submit</button>
+                  </div>
+                </form>
+              {{else}}
+                <div class="form-group " id="two" ></div>
+                <div class="form-group " id="me" >
+                  <script>
+                    var div= document.getElementById('me');
+                    var myvalue = {{.CollectionData.Collection.History}}
+                            parseMe(myvalue);
+                    function parseMe(value) {
+                      div.innerHTML+=value;
+                    }
+                  </script>
+                </div>
+                <hr>
+                <div class="form-group">
+                  <form method="post" action="/admin_user/collection/update_history">
+                    <div class="form-group" >
+                      <input name="collection" value="{{.CollectionData.Collection.Id}}" hidden>
+                      <div class="form-group" >
+                        <label id="label" hidden style="color: steelblue">Add the new contents here<small> (You may copy from the previous. Remember this new content will override the previous)</small></label>
+                        <textarea name="myArea" id="myArea" class="form-control" hidden>
+
+                          </textarea>
+                      </div>
+
+                    </div>
+                    <div class="form-group text-center" >
+                      <button class="btn btn-warning" id="formUpdateButton" type="submit" hidden>update</button>
+                    </div>
+                  </form>
+                </div>
+                <div class="form-group text-center">
+                  <button class="btn btn-info" id="updateButton" type="button" onclick="changePlaceContents({{.CollectionData.Collection.History}})" data-dismiss="modal">update</button>
+                </div>
+              {{end}}
+            </div>
+          </div>
+        </div>
+
       </div>
+      <!-- /.container-fluid -->
+
     </div>
+    <!-- End of Main Content -->
+
+    <!-- Footer -->
+    <footer class="sticky-footer bg-white">
+      <div class="container my-auto">
+        <div class="copyright text-center my-auto">
+          <span>Copyright &copy; Your Website 2019</span>
+        </div>
+      </div>
+    </footer>
+    <!-- End of Footer -->
 
   </div>
+  <!-- End of Content Wrapper -->
 
-  <!-- Bootstrap core JavaScript-->
-  <script src="../../assets/vendor/jquery/jquery.min.js"></script>
-  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</div>
+<!-- End of Page Wrapper -->
 
-  <!-- Core plugin JavaScript-->
-  <script src="../../assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+  <i class="fas fa-angle-up"></i>
+</a>
 
-  <!-- Custom scripts for all pages-->
-  <script src="../../assets/js/sb-admin-2.min.js"></script>
+<!-- Logout Modal-->
+<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+        <a class="btn btn-primary" href="login.html">Logout</a>
+      </div>
+    </div>
+  </div>
+</div>
 
+<!-- Bootstrap core JavaScript-->
+<script src="../../assets/vendor/jquery/jquery.min.js"></script>
+<script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="../../assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="../../assets/js/sb-admin-2.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 </body>
+<script>
+  function showAddPictureForm() {
+    $('#addPicture').removeAttr('hidden');
+    $('#toAdd').attr('hidden','hidden')
+  }
+  function changePlaceContents(content) {
+    $('#myArea').summernote();
+
+    $('#updateButton').attr('hidden','hidden');
+    $('#formUpdateButton').removeAttr('hidden');
+    $('#myArea').removeAttr('hidden');
+    $('#label').removeAttr('hidden');
+  }
+
+
+</script>
+<script>
+  $(document).ready(function() {
+    $('#mytextare').summernote();
+  });
+  let collectionFileToUpdate = function () {
+    //$('#completeBTN').attr();
+    $('#completeBTN').removeAttr('hidden');
+  }
+</script>
 
 </html>

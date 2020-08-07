@@ -18,10 +18,11 @@ func CollectionHome(app *config.Env) http.Handler {
 	r.Get("/new", NewCollectionHandler(app))
 	r.Get("/collection_type/new", NewCollectionTypeHandler(app))
 	r.Get("/new_stp/{collectionId}", NewCollection2Handler(app))
-	r.Get("/edit", EditCollectionHandler(app))
+	r.Get("/edit/{collectionId}", EditCollectionHandler(app))
 	r.Post("/create_stp1", CreateCollection1(app))
 	r.Post("/create_stp2", CreateCollection2(app))
 	r.Post("/collection_type/create", CreateCollectionType(app))
+
 	return r
 }
 func CreateCollectionType(app *config.Env) http.HandlerFunc {
@@ -110,7 +111,7 @@ func CreateCollection2(app *config.Env) http.HandlerFunc {
 		file5, _, err := r.FormFile("file5")
 		file6, _, err := r.FormFile("file6")
 		collectionId := r.PostFormValue("collectionId")
-		description := r.PostFormValue("description")
+
 		if err != nil {
 			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
 		}
@@ -129,7 +130,7 @@ func CreateCollection2(app *config.Env) http.HandlerFunc {
 			http.Redirect(w, r, "/admin_user/collection/new_stp2/"+collectionId, 301)
 			return
 		}
-		collectionImage := collection.Collection_image{"", collectionObject.Id, collectionId, description}
+		collectionImage := collection.Collection_image{"", collectionObject.Id, collectionId, ""}
 		CollectionImageHelper := collection.CollectionImageHelper{collectionImage, filesByteArray}
 
 		_, errr := collection_io.CreateCollectionImg(CollectionImageHelper)
@@ -147,7 +148,7 @@ func CreateCollection2(app *config.Env) http.HandlerFunc {
 			app.Session.Remove(r.Context(), "creation-successful")
 		}
 		app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new project : "+collectionObject.Name)
-		http.Redirect(w, r, "/admin_user", 301)
+		http.Redirect(w, r, "/admin_user/place", 301)
 		return
 	}
 }
@@ -248,17 +249,24 @@ func CreateCollection1(app *config.Env) http.HandlerFunc {
 
 func EditCollectionHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		collectionId := chi.URLParam(r, "collectionId")
+
+		type DataPage struct {
+			CollectionData CollectionData
+		}
+		data := DataPage{GetCollectionData(collectionId)}
 		files := []string{
 			app.Path + "admin/collection/edit_collection.html",
-			//app.Path + "admin/template/navbar.html",
-			//app.Path + "base_templates/footer.html",
+			app.Path + "admin/template/navbar.html",
+			app.Path + "admin/template/cards.html",
+			app.Path + "admin/template/topbar.html",
 		}
 		ts, err := template.ParseFiles(files...)
 		if err != nil {
 			app.ErrorLog.Println(err.Error())
 			return
 		}
-		err = ts.Execute(w, nil)
+		err = ts.Execute(w, data)
 		if err != nil {
 			app.ErrorLog.Println(err.Error())
 		}
@@ -319,16 +327,22 @@ func CollectionHandler(app *config.Env) http.HandlerFunc {
 		}
 		collections := misc.GetCollectionBridge()
 
-		type PagePage struct {
-			Backend_error string
-			Unknown_error string
-			Collections   []misc.CollectionBridge
+		collectionType, err := collection_io.ReadCollectionTyupes()
+		if err != nil {
+			fmt.Println(err, " error reading collections")
 		}
-		data := PagePage{backend_error, unknown_error, collections}
+
+		type PagePage struct {
+			Backend_error  string
+			Unknown_error  string
+			Collections    []misc.CollectionBridge
+			CollectionType []collection.CollectionTypes
+		}
+		data := PagePage{backend_error, unknown_error, collections, collectionType}
 		files := []string{
 			app.Path + "admin/collection/collections.html",
 			app.Path + "admin/template/navbar.html",
-			//app.Path + "base_templates/footer.html",
+			app.Path + "admin/template/topbar.html",
 		}
 		ts, err := template.ParseFiles(files...)
 		if err != nil {

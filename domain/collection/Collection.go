@@ -6,6 +6,12 @@ type Collection struct {
 	ProfileDescription string `json:"profile_description"`
 	History            []byte `json:"history"`
 }
+type CollectionHelper struct {
+	Id                 string `json:"id"`
+	Name               string `json:"name"`
+	ProfileDescription string `json:"profile_description"`
+	History            string `json:"history"`
+}
 
 type Collection_image struct {
 	Id           string `json:"id"`
@@ -26,4 +32,10 @@ type Collection_type struct {
 type CollectionImageHelper struct {
 	Collection_image Collection_image `json:"collection_image"`
 	Files            [][]byte         `json:"files"`
+}
+
+type CollectionHistory struct {
+	Id           string `json:"id"`
+	CollectionId string `json:"collectionId"`
+	HistoryId    string `json:"historyId"`
 }

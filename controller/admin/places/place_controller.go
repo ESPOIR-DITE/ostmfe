@@ -462,14 +462,26 @@ func NewPlacesHandler(app *config.Env) http.HandlerFunc {
 
 func PlacesHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var unknown_error string
+		var backend_error string
+		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
+			unknown_error = app.Session.GetString(r.Context(), "creation-unknown-error")
+			app.Session.Remove(r.Context(), "creation-unknown-error")
+		}
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			backend_error = app.Session.GetString(r.Context(), "user-create-error")
+			app.Session.Remove(r.Context(), "user-create-error")
+		}
 		places, err := place_io.ReadPlaces()
 		if err != nil {
 			app.InfoLog.Println("error reading Places: ", err)
 		}
 		type PageData struct {
-			Places []place2.Place
+			Backend_error string
+			Unknown_error string
+			Places        []place2.Place
 		}
-		data := PageData{places}
+		data := PageData{backend_error, unknown_error, places}
 		files := []string{
 			app.Path + "admin/place/places.html",
 			app.Path + "admin/template/navbar.html",
