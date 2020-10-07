@@ -12,6 +12,11 @@ func TestReadUserRoles(t *testing.T) {
 	assert.Nil(t, err)
 	fmt.Println("result", result)
 }
+func TestReadUserRoleAllOf(t *testing.T) {
+	result, err := ReadUserRoleAllOf("RF-b22e1da0-9b90-4267-a3bc-8cffe27a943a")
+	assert.Nil(t, err)
+	fmt.Println("result", result)
+}
 func TestCreateUserRole(t *testing.T) {
 	object := user2.RoleOfUser{"URF-af345a91-35a7-4244-8f95-a8b3ebc31eeb", "espoirditekemena@gmail.com", "RF-d8bfa4aa-8281-4f63-9e4b-5a9b635db6f0"}
 	result, err := CreateUserRole(object)

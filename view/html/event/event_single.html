@@ -14,7 +14,7 @@
         <!-- meta character set -->
         <meta charset="UTF-8">
         <!-- Site Title -->
-        <title>Art Museum</title>
+        <title>Simon's Town Museum</title>
 
         <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700" rel="stylesheet"> 
             <!--
@@ -147,7 +147,7 @@
                             {{range .}}
 							<div class="single-widget protfolio-widget">
                                 <img id='base64image' height="200px" src='data:image/jpeg;base64,{{.Id}}' alt="">
-								<a href="#"><h4>Adele Gonzalez</h4></a>
+								<a href="#"><h4>Introduction</h4></a>
 								<p>
 									{{$.EventData.Event.Description}}
 								</p>
@@ -160,6 +160,80 @@
 							</div>
                             {{end}}
                             {{end}}
+
+                            {{if .Place.Id}}
+                            <div class="single-widget category-widget">
+                                <h4 class="title">Event Place</h4>
+                                <ul>
+                                    <li><a href="/place/{{.Place.Id}}" class="justify-content-between align-items-center d-flex"><h6>{{.Place.Title}}</h6></a></li>
+                                </ul>
+                            </div>
+                            {{end}}
+
+                            {{if .Peoples}}
+                            <div class="single-widget recent-posts-widget">
+                                <h4 class="title">Peoples</h4>
+                                <div class="blog-list ">
+                                    {{with .Peoples}}
+                                        {{range .}}
+                                    <div class="single-recent-post d-flex flex-row">
+                                        <div class="recent-thumb">
+                                            <img class="img-fluid" id='base64image' width="70px" src='data:image/jpeg;base64,{{.DeathDate}}' alt="">
+                                        </div>
+                                        <div class="recent-details">
+                                            <a href="/people/{{.Id}}">
+                                                <h4>
+                                                    {{.Name}}
+                                                    {{.Surname}}
+                                                </h4>
+                                            </a>
+                                            <p>
+                                                {{.BirthDate}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    {{end}}
+                                    {{end}}
+                                </div>
+                            </div>
+                            {{end}}
+
+                            {{if .GroupData}}
+                                <div class="single-widget recent-posts-widget">
+                                    <h4 class="title">Groups related to this event</h4>
+                                    <div class="blog-list ">
+                                        {{with .GroupData}}
+                                            {{range .}}
+                                                <div class="single-recent-post d-flex flex-row">
+                                                    <div class="recent-thumb">
+                                                        <img class="img-fluid" id='base64image' width="70px" src='data:image/jpeg;base64,{{.Image.Id}}' alt="">
+                                                    </div>
+                                                    <div class="recent-details">
+                                                        <a href="/about_us/single/{{.Group.Id}}">
+                                                            <h4>
+                                                                {{.Group.Name}}
+                                                            </h4>
+                                                        </a>
+                                                        <p class="text-sm-center">
+                                                            {{.Group.Description}}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            {{end}}
+                                        {{end}}
+                                    </div>
+                                </div>
+                            {{end}}
+
+                            {{if .Project.Id}}
+                                <div class="single-widget category-widget">
+                                    <h4 class="title">Event Project</h4>
+                                    <ul>
+                                        <li><a href="/place/{{.Id}}" class="justify-content-between align-items-center d-flex"><h6>{{.Title}}</h6></a></li>
+                                    </ul>
+                                </div>
+                            {{end}}
+
 						</div>
 					</div>
 				</div>	

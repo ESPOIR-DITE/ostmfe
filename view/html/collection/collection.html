@@ -4,7 +4,7 @@
     <!-- Mobile Specific Meta -->
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <!-- Favicon-->
-    <link rel="shortcut icon" href="assets/img/elements/fav.png">
+    <link rel="shortcut icon" href="../../assets/img/elements/fav.png">
     <!-- Author Meta -->
     <meta name="author" content="colorlib">
     <!-- Meta Description -->
@@ -20,14 +20,14 @@
     <!--
     CSS
     ============================================= -->
-    <link rel="stylesheet" href="../assets/css/linearicons.css">
-    <link rel="stylesheet" href="../assets/css/owl.carousel.css">
-    <link rel="stylesheet" href="../assets/css/font-awesome.min.css">
-    <link rel="stylesheet" href="../assets/css/nice-select.css">
-    <link rel="stylesheet" href="../assets/css/magnific-popup.css">
-    <link rel="stylesheet" href="../assets/css/bootstrap.css">
-    <link rel="stylesheet" href="../assets/css/main.css">
-    <link rel="stylesheet" href="../assets/css/customer/mySidebar.css">
+    <link rel="stylesheet" href="../../assets/css/linearicons.css">
+    <link rel="stylesheet" href="../../assets/css/owl.carousel.css">
+    <link rel="stylesheet" href="../../assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../assets/css/nice-select.css">
+    <link rel="stylesheet" href="../../assets/css/magnific-popup.css">
+    <link rel="stylesheet" href="../../assets/css/bootstrap.css">
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/customer/mySidebar.css">
 </head>
 <body>
 
@@ -42,7 +42,7 @@
                 <h1 class="text-white">
                     Collection
                 </h1>
-                <p class="text-white link-nav"><a href="index.html">Home </a>  <span class="lnr lnr-arrow-right"></span>  <a href="collection.html"> Collection</a></p>
+                <p class="text-white link-nav"><a href="../index.html">Home </a>  <span class="lnr lnr-arrow-right"></span>  <a href="collection.html"> Collection</a></p>
             </div>
         </div>
     </div>
@@ -73,7 +73,7 @@
                     {{if .CollectionTypes}}
                         {{with .CollectionTypes}}
                             {{range .}}
-                                <a href="community-home.html" class="bg-dark list-group-item list-group-item-action">
+                                <a href="../community-home.html" class="bg-dark list-group-item list-group-item-action">
                                     <div class="d-flex w-100 justify-content-start align-items-center">
                                         <span class="fa fa-calendar fa-fw mr-3"></span>
                                         <span class="menu-collapsed">{{.Name}}</span>
@@ -83,7 +83,7 @@
                     {{end}}
                     {{end}}
 
-                    <a href="community-home.html" class="bg-dark list-group-item list-group-item-action">
+                    <a href="../community-home.html" class="bg-dark list-group-item list-group-item-action">
                         <div class="d-flex w-100 justify-content-start align-items-center">
                             <span class="fa fa-envelope-o fa-fw mr-3"></span>
                             <span class="menu-collapsed">All Collection <span class="badge badge-pill badge-primary ml-2">5</span></span>
@@ -120,6 +120,7 @@
             <div class="row d-flex justify-content-center">
                 <div class="menu-content pb-60 col-lg-10">
                     <div class="title text-center">
+                        <br>
                         <h1 class="mb-10">Simon's Town Museum Collections</h1>
                         <p>We have more then what we have exhibit on this page.</p>
                     </div>
@@ -130,15 +131,17 @@
                     {{with .Collections}}
                     {{range .}}
                     <div class="single-exibition item">
+                        <a href="/single_collection/{{.Collection.Id}}">
                         <img  id='base64image'
                                 {{if .Image.Id}}
                                     class="img-fluid" src='data:image/jpeg;base64,{{.Image.Id}}' alt=""
-                                {{end}} alt="">
+                                {{end}} alt=""></a>
+
                         <ul class="tags">
                             <li><a href="#">Travel</a></li>
                             <li><a href="#">Life style</a></li>
                         </ul>
-                        <a href="#"><h4>{{.Collection.Name}}</h4></a>
+                        <a class="tags" href="collection/single_collection/{{.Collection.Id}}"><h4>{{.Collection.Name}}</h4></a>
                         <p>
                             {{.Collection.ProfileDescription}}
                         </p>
@@ -160,21 +163,21 @@
 <!-- End footer Area -->
 
 
-<script src="../assets/js/vendor/jquery-2.2.4.min.js"></script>
+<script src="../../assets/js/vendor/jquery-2.2.4.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="../assets/js/vendor/bootstrap.min.js"></script>
+<script src="../../assets/js/vendor/bootstrap.min.js"></script>
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA"></script>
-<script src="../assets/js/easing.min.js"></script>
-<script src="../assets/js/hoverIntent.js"></script>
-<script src="../assets/js/superfish.min.js"></script>
-<script src="../assets/js/jquery.ajaxchimp.min.js"></script>
-<script src="../assets/js/jquery.magnific-popup.min.js"></script>
-<script src="../assets/js/owl.carousel.min.js"></script>
-<script src="../assets/js/jquery.sticky.js"></script>
-<script src="../assets/js/jquery.nice-select.min.js"></script>
-<script src="../assets/js/parallax.min.js"></script>
-<script src="../assets/js/mail-script.js"></script>
-<script src="../assets/js/main.js"></script>
-<script src="../assets/js/customer/mysidebar.js"></script>
+<script src="../../assets/js/easing.min.js"></script>
+<script src="../../assets/js/hoverIntent.js"></script>
+<script src="../../assets/js/superfish.min.js"></script>
+<script src="../../assets/js/jquery.ajaxchimp.min.js"></script>
+<script src="../../assets/js/jquery.magnific-popup.min.js"></script>
+<script src="../../assets/js/owl.carousel.min.js"></script>
+<script src="../../assets/js/jquery.sticky.js"></script>
+<script src="../../assets/js/jquery.nice-select.min.js"></script>
+<script src="../../assets/js/parallax.min.js"></script>
+<script src="../../assets/js/mail-script.js"></script>
+<script src="../../assets/js/main.js"></script>
+<script src="../../assets/js/customer/mysidebar.js"></script>
 </body>
 </html>

@@ -81,7 +81,7 @@
                                 <br>
                                     <h2>{{.PeopleDataHistory.People.Surname}}</h2>
                                 <br>
-								<div class="content-wrap" id="me">
+								<div class="col-md-12" id="me">
                                     <script>
                                         var div= document.getElementById('me');
                                         var myvalue = {{.PeopleDataHistory.History.History}}
@@ -90,7 +90,6 @@
                                             div.innerHTML+=value;
                                         }
                                     </script>
-
 								</div>
                                 <hr>
 								<div class="bottom-meta">
@@ -255,11 +254,9 @@
                             {{range .}}
 							<div class="single-widget protfolio-widget">
                                 <img id='base64image' height="200px" src='data:image/jpeg;base64,{{.Id}}' alt="">
-								<a href="#"><h4>Adele Gonzalez</h4></a>
+								<a href="#"><h4></h4></a>
 								<p>
-									MCSE boot camps have its supporters and
-									its detractors. Some people do not understand why you should have to spend money
-									on boot camp when you can get.
+
 								</p>
 								<ul>
 									<li><a href="#"><i class="fa fa-facebook"></i></a></li>

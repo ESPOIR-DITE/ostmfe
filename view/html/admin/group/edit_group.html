@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>OSTM - Group | Edit</title>
+  <base href="/">
+  <!-- Custom fonts for this template-->
+  <link href="../../assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+  <!-- Custom styles for this template-->
+  <link href="../../assets/css/sb-admin-2.min.css" rel="stylesheet">
+
+  <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet"><script>
+
+  tinymce.init({
+    selector: '#mytextare'
+  });
+</script>
+
+</head>
+
+<body id="page-top">
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <!-- Sidebar -->
+    {{template "navbar" .}}
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+      <!-- Main Content -->
+      <div id="content">
+
+        <!-- Topbar -->
+        {{template "topbar" .}}
+        <!-- End of Topbar -->
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+
+          <!-- Page Heading -->
+          {{template "cards" .}}
+
+          <!---Project Images---->
+
+          <div class="card shadow mb-4">
+            <!-- Card Header - Accordion -->
+            <a href="#collapseCardImage" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+               role="button" aria-expanded="true" aria-controls="collapseCardExample">
+              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Group Image</h6>
+            </a>
+            <!-- Card Content - Collapse -->
+            <div class="collapse " id="collapseCardImage">
+              <div class="card-body p-0">
+                <!-- Nested Row within Card Body -->
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="p-5">
+                      <div class="text-center">
+                        <h1 class="h4 text-gray-900 mb-4">Group Picture </h1>
+                      </div>
+                      <div class="col-lg-12 row">
+                        <!-- Default Card Example -->
+                        {{if .Groups.Images}}
+                          {{with .Groups.Images}}
+                            {{range $i,$e :=.}}
+                              <div class="card mb-4">
+                                <div class="card-body">
+                                  {{if .Id}}
+                                    <img class="card-img" style="width:100%;height:312px;"
+                                         id='base64image'
+                                         src='data:image/jpeg;base64,{{.Id}}' alt=""/>
+                                    <a class="btn btn-google btn-user btn-block" data-toggle="modal" onclick="deleteGroupImageBTN({{.ImageId}},{{$.Groups.Group.Id}},{{.ImageId}})"  data-target="#exampleModalGroup" hidden>
+                                      Delete
+                                    </a>
+
+
+                                  <div class="text-center">
+                                    <h1 class="h4 text-gray-900 mb-4">You can update this image here</h1>
+                                  </div>
+                                  <form class="user"method="post" id="" action="/admin_user/group/update_pictures" enctype="multipart/form-data">
+                                    <input type="hidden"name="imageId" value="{{.ImageId}}" class="form-control " >
+                                    <input type="hidden"name="groupImageId" value="{{.BridgeId}}" class="form-control " >
+                                    <input type="hidden"name="groupId" value="{{$.Groups.Group.Id}}" class="form-control " >
+                                    <div class="form-group row">
+                                      <div class="col-sm-6">
+                                        <select name="imageType" class="browser-default custom-select" required>
+                                          <option selected>Picture type</option>
+                                          <option value="1">Profile image</option>
+                                          <option value="2">Secondary Image</option>
+                                        </select>
+                                      </div>
+                                      <div class="col-sm-6">
+                                        <input type="file"name="file" class="form-control" id="fileInput" onchange="projectFileToUpdate()" required>
+                                      </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-block" id="completeBTN" hidden>Update</button>
+                                  </form>
+                                  {{end}}
+                                </div>
+
+                              </div>
+                            {{end}}
+                          {{end}}
+                        {{else}}
+                          <div class="text-center">
+                            <h1 class="h4 text-gray-900 mb-4">You have no pictures for this Group, Please Upload pictures</h1>
+                          </div>
+                          <form class="user"method="post" action="/admin_user/group/create_image" enctype="multipart/form-data">
+                            <input type="hidden"name="groupId" value="{{.Groups.Group.Id}}" required>
+                            <div class="form-group ">
+                              <label>Place profile Picture</label>
+                              <input type="file"name="file" class="form-control " id="file" placeholder="Project Name" required>
+                            </div>
+
+                            <div class="form-group">
+                              <select name="imageType" class="browser-default custom-select" required>
+                                <option selected>Picture type</option>
+                                <option value="1">Profile image</option>
+                                <option value="2">Secondary Image</option>
+                              </select>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-block">
+                              Add
+                            </button>
+                          </form>
+                        {{end}}
+                      </div>
+                      <hr>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!---Project Detail---->
+          <div class="card shadow mb-4">
+            <!-- Card Header - Accordion -->
+            <a href="#collapseCardDetails" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+               role="button" aria-expanded="true" aria-controls="collapseCardExample">
+              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Group Details</h6>
+            </a>
+            <!-- Card Content - Collapse -->
+            <div class="collapse " id="collapseCardDetails">
+              <div class="card-body p-0">
+                <!-- Nested Row within Card Body -->
+                <div class="row">
+                  <div class="col-lg-12">
+                    <!-- Default Card Example -->
+                    <div class="card mb-4">
+                      <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary"> Details</h6>
+                      </div>
+                      <div class="card-body">
+                        <form class="user"method="post" id="" action="/admin_user/place/update_details">
+                          <input type="hidden"name="groupId" value="{{.Groups.Group.Id}}" class="form-control " >
+
+                          <div class="form-group ">
+                            <input type="text" class="form-control" value="{{.Groups.Group.Name}}" name="groupName" >
+                          </div>
+
+                          <div class="form-group ">
+                            <label>Description <small> Only 150 characters </small></label>
+                            <textarea class="form-control" name="description" maxlength="200">{{.Groups.Group.Description}}</textarea>
+                          </div>
+                          <button type="submit" class="btn btn-primary btn-block" >
+                            Update
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                  <hr>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!---Project History---->
+          <div class="card shadow mb-4">
+            <!-- Card Header - Accordion -->
+            <a href="#collapseCardStep2" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+               role="button" aria-expanded="true" aria-controls="collapseCardExample">
+              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Group History</h6>
+            </a>
+            <!-- Card Content - Collapse -->
+            <div class="collapse " id="collapseCardStep2">
+              <div class="card-body"  >
+                {{if not .Groups.History.History}}
+                  <form method="post" action="/admin_user/group/create_history">
+                    <div class="form-group" >
+                      <input name="groupId" value="{{.Groups.Group.Id}}" hidden>
+                      <div class="form-group">
+                        <label>Add History</label>
+                        <textarea id="mytextare" class="form-control"  name="myArea"></textarea>
+                      </div>
+
+                    </div>
+                    <div class="form-group text-center" >
+                      <button class="btn btn-info" id="formUpdateButton" type="submit">submit</button>
+                    </div>
+                  </form>
+                {{else}}
+                  <div class="form-group " id="two" ></div>
+                  <div class="form-group " id="me" >
+                    <script>
+                      var div= document.getElementById('me');
+                      var myvalue = {{.Groups.History.History}}
+                              parseMe(myvalue);
+                      function parseMe(value) {
+                        div.innerHTML+=value;
+                      }
+                    </script>
+                  </div>
+                  <hr>
+                  <div class="form-group">
+                    <form method="post" action="/admin_user/group/update_history">
+                      <div class="form-group" >
+                        <input name="historyId" value="{{.Groups.History.Id}}" hidden>
+                        <input name="groupId" value="{{.Groups.Group.Id}}" hidden>
+                        <div class="form-group">
+                          <label id="label" hidden style="color: steelblue">Add the new contents here<small> (You may copy from the previous. Remember this new content will override the previous)</small></label>
+                          <textarea name="myArea" id="myArea" class="form-control" hidden>
+
+                          </textarea>
+                        </div>
+
+                      </div>
+                      <div class="form-group text-center" >
+                        <button class="btn btn-warning" id="formUpdateButton" type="submit" hidden>update</button>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="form-group text-center">
+                    <button class="btn btn-info" id="updateButton" type="button" onclick="changePlaceContents({{.Groups.History.History}})" data-dismiss="modal">update</button>
+                  </div>
+                {{end}}
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <!-- /.container-fluid -->
+
+      </div>
+      <!-- End of Main Content -->
+
+      <!-- Footer -->
+      <footer class="sticky-footer bg-white">
+        <div class="container my-auto">
+          <div class="copyright text-center my-auto">
+            <span>Copyright &copy; Your Website 2019</span>
+          </div>
+        </div>
+      </footer>
+      <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+  <!-- Logout Modal-->
+  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+          <a class="btn btn-primary" href="../login/login.html">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--Delete warning Modal -->
+  <div class="modal fade" id="exampleModalGroup" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-danger" id="exampleModalLongTitle">Warning</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h3 class="text-danger text-center"> About to delete The Image</h3>
+          <img class="card-img" style="width:100%;height:312px;"
+               id='base64image1'
+               alt=""/>
+          <h4 id="value" class="text-center"></h4>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-danger" id=""><a id="deleteBtn">Delete</a></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap core JavaScript-->
+  <script src="../../assets/vendor/jquery/jquery.min.js"></script>
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="../../assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Custom scripts for all pages-->
+  <script src="../../assets/js/sb-admin-2.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+</body>
+<script>
+  function showAddPictureForm() {
+    $('#addPicture').removeAttr('hidden');
+    $('#toAdd').attr('hidden','hidden')
+  }
+  function changePlaceContents(content) {
+    $('#myArea').summernote();
+
+    $('#updateButton').attr('hidden','hidden');
+    $('#formUpdateButton').removeAttr('hidden');
+    $('#myArea').removeAttr('hidden');
+    $('#label').removeAttr('hidden');
+  }
+
+
+</script>
+<script>
+  $(document).ready(function() {
+    $('#mytextare').summernote();
+  });
+  let projectFileToUpdate = function () {
+    //$('#completeBTN').attr();
+    $('#completeBTN').removeAttr('hidden');
+  }
+  function deleteGroupImageBTN(id,name) {
+   // $("#deleteBtn").attr('href','/admin_user/project/delete_project/'+id);
+   // $("#value").text(name);
+  }
+</script>
+
+</html>

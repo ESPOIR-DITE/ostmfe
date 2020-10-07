@@ -1,26 +1,37 @@
 package history
 
-import "time"
-
 type History struct {
-	Id          string    `json:"id"`
-	Title       string    `json:"title"`
-	Description string    `json:"description"`
-	Content     []byte    `json:"content"`
-	Date        time.Time `json:"date"`
+	Id          string `json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Date        string `json:"date"`
 }
 type HistoryHelper struct {
-	Id          string    `json:"id"`
-	Title       string    `json:"title"`
-	Description string    `json:"description"`
-	Content     string    `json:"content"`
-	Date        time.Time `json:"date"`
+	Id          string `json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Date        string `json:"date"`
+}
+type HistoryImage struct {
+	Id          string `json:"id"`
+	ImageId     string `json:"imageId"`
+	HistoryId   string `json:"historyId"`
+	Description string `json:"description"`
+}
+type HistoryHistories struct {
+	Id          string `json:"id"`
+	HistoryId   string `json:"historyId"`
+	HistoriesId string `json:"historiesId"`
+}
+type HistoryImageHelper struct {
+	HistoryImage HistoryImage `json:"historyImage"`
+	Files        [][]byte     `json:"files"`
 }
 
-type History_image struct {
-	ImageId       string `json:"image_id"`
-	History_image string `json:"history_image"`
-	Description   string `json:"description"`
+type HistoryPeople struct {
+	Id        string `json:"id"`
+	HistoryId string `json:"historyId"`
+	PeopleId  string `json:"peopleId"`
 }
 type Histories struct {
 	Id      string `json:"id"`

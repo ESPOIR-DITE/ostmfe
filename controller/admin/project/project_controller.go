@@ -257,6 +257,9 @@ func ProjectUpdateHistoryHandler(app *config.Env) http.HandlerFunc {
 		if errx != nil {
 			fmt.Println("error reading project")
 		}
+		if app.Session.GetString(r.Context(), "creation-successful") != "" {
+			app.Session.Remove(r.Context(), "creation-successful")
+		}
 		fmt.Println(" successfully updated")
 		app.Session.Put(r.Context(), "creation-successful", "You have successfully updating: "+project.Title+"  project. ")
 		http.Redirect(w, r, "/admin_user/project/edit/"+projectId, 301)
@@ -276,8 +279,9 @@ func EditeProjectsHandler(app *config.Env) http.HandlerFunc {
 		type PageData struct {
 			Project        misc.ProjectEditable
 			ProjectDetails project2.Project
+			SidebarData    misc.SidebarData
 		}
-		data := PageData{selectedProjest, projectDetails}
+		data := PageData{selectedProjest, projectDetails, misc.GetSideBarData("project", "")}
 		files := []string{
 			app.Path + "admin/project/edite_project.html",
 			app.Path + "admin/template/navbar.html",
@@ -352,14 +356,16 @@ func ProjectsHandler(app *config.Env) http.HandlerFunc {
 			Backend_error string
 			Unknown_error string
 			Projects      []project2.Project
+			SidebarData   misc.SidebarData
 		}
-		data := PagePage{backend_error, unknown_error, projects}
+		data := PagePage{backend_error, unknown_error, projects, misc.GetSideBarData("project", "")}
 
 		files := []string{
 			app.Path + "admin/project/projects.html",
 			app.Path + "admin/template/navbar.html",
 			app.Path + "admin/template/topbar.html",
 			app.Path + "base_templates/footer.html",
+			app.Path + "admin/template/cards.html",
 		}
 		ts, err := template.ParseFiles(files...)
 		if err != nil {

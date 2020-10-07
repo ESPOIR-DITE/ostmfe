@@ -1,12 +1,11 @@
 package event
 
-import "time"
-
 type Event struct {
-	Id          string    `json:"id"`
-	Name        string    `json:"name"`
-	Date        time.Time `json:"date"`
-	Description string    `json:"description"`
+	Id          string `json:"id"`
+	Name        string `json:"name"`
+	Date        string `json:"date"`
+	IsPast      string `json:"isPast"`
+	Description string `json:"description"`
 }
 
 type EventImage struct {
@@ -31,6 +30,7 @@ type EventPlace struct {
 }
 
 type EventProject struct {
+	Id          string `json:"id"`
 	ProjectId   string `json:"projectId"`
 	EventId     string `json:"eventId"`
 	Description string `json:"description"`
@@ -43,4 +43,19 @@ type EventHistory struct {
 type EventImageHelper struct {
 	EventImage EventImage `json:"eventImage"`
 	Files      [][]byte   `json:"files"`
+}
+type EventPeople struct {
+	Id       string `json:"id"`
+	EventId  string `json:"eventId"`
+	PeopleId string `json:"peopleId"`
+}
+type EventYear struct {
+	Id      string `json:"id"`
+	EventId string `json:"eventId"`
+	YearId  string `json:"yearId"`
+}
+type EventGroup struct {
+	Id      string `json:"id"`
+	EventId string `json:"eventId"`
+	GroupId string `json:"groupId"`
 }

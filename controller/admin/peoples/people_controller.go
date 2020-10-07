@@ -15,7 +15,6 @@ import (
 	"ostmfe/io/image_io"
 	"ostmfe/io/people_io"
 	"ostmfe/io/place_io"
-	"time"
 )
 
 func PeopleHome(app *config.Env) http.Handler {
@@ -180,15 +179,15 @@ func UpdatePeopleDetailHandler(app *config.Env) http.HandlerFunc {
 		name := r.PostFormValue("name")
 		peopleId := r.PostFormValue("peopleId")
 		surname := r.PostFormValue("surname")
-		b_date, _ := time.Parse(misc.YYYMMDDTIME_FORMAT, r.PostFormValue("b_date"))
-		d_date, _ := time.Parse(misc.YYYMMDDTIME_FORMAT, r.PostFormValue("d_date"))
+		b_date := r.PostFormValue("b_date")
+		d_date := r.PostFormValue("d_date")
 		profession := r.PostFormValue("profession")
 		origin := r.PostFormValue("origin")
 		brief := r.PostFormValue("brief")
 		if name != "" && peopleId != "" && surname != "" && profession != "" && origin != "" {
 			//TODO need to learn how to check if a data time if nil or empty....
 			peopleObejct := people2.People{peopleId, name, surname, b_date, d_date, origin, profession, brief}
-			people, err := people_io.CreatePeople(peopleObejct)
+			people, err := people_io.UpdatePeople(peopleObejct)
 			if err != nil {
 				fmt.Println(err, "updating people details")
 				if app.Session.GetString(r.Context(), "user-create-error") != "" {
@@ -312,10 +311,11 @@ func NewPeopleCategoryHandler(app *config.Env) http.HandlerFunc {
 			Peoples       []people2.PeopleCategory
 			Backend_error string
 			Unknown_error string
+			SidebarData   misc.SidebarData
 		}
-		data := PageData{peoples, backend_error, unknown_error}
+		data := PageData{peoples, backend_error, unknown_error, misc.GetSideBarData("people", "people_category")}
 		files := []string{
-			app.Path + "admin/people/peopleType_tables.html",
+			app.Path + "admin/people/peopleCategory.html",
 			app.Path + "admin/template/navbar.html",
 			app.Path + "base_templates/footer.html",
 		}
@@ -361,8 +361,9 @@ func NewPeoplestp2Handler(app *config.Env) http.HandlerFunc {
 			Backend_error string
 			Unknown_error string
 			Peoples       []misc.PeopleWithStringdate
+			SidebarData   misc.SidebarData
 		}
-		data := PageData{people, backend_error, unknown_error, peoples}
+		data := PageData{people, backend_error, unknown_error, peoples, misc.GetSideBarData("people", "people")}
 		files := []string{
 			app.Path + "admin/people/people_step2.html",
 			app.Path + "admin/template/navbar.html",
@@ -532,8 +533,8 @@ func CreatePeopleHandler(app *config.Env) http.HandlerFunc {
 		name := r.PostFormValue("name")
 		surname := r.PostFormValue("surname")
 		profession := r.PostFormValue("profession")
-		b_date, _ := time.Parse(misc.YYYYMMDD_FORMAT, r.PostFormValue("b_date"))
-		d_date, _ := time.Parse(misc.YYYYMMDD_FORMAT, r.PostFormValue("d_date"))
+		b_date := r.PostFormValue("b_date")
+		d_date := r.PostFormValue("d_date")
 		origin := r.PostFormValue("origin")
 		brief := r.PostFormValue("brief")
 		if name != "" && surname != "" && profession != "" && origin != "" {
@@ -594,8 +595,9 @@ func EditPeopleHandler(app *config.Env) http.HandlerFunc {
 		type PageDate struct {
 			PeopleDetails people2.People
 			People        PeopleEditable
+			SidebarData   misc.SidebarData
 		}
-		data := PageDate{people, peopleEditable}
+		data := PageDate{people, peopleEditable, misc.GetSideBarData("people", "people")}
 		files := []string{
 			app.Path + "admin/people/new_edite_people.html",
 			app.Path + "admin/template/navbar.html",
@@ -675,12 +677,14 @@ func PeopleHandler(app *config.Env) http.HandlerFunc {
 			Backend_error string
 			Unknown_error string
 			Peoples       []misc.PeopleWithStringdate
+			SidebarData   misc.SidebarData
 		}
-		data := PagePage{places, backend_error, unknown_error, peoples}
+		data := PagePage{places, backend_error, unknown_error, peoples, misc.GetSideBarData("people", "people")}
 		files := []string{
 			app.Path + "admin/people/people.html",
 			app.Path + "admin/template/navbar.html",
-			//app.Path + "base_templates/footer.html",
+			app.Path + "admin/template/topbar.html",
+			app.Path + "admin/template/cards.html",
 		}
 		ts, err := template.ParseFiles(files...)
 		if err != nil {

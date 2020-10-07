@@ -1,194 +1,320 @@
-	<!DOCTYPE html>
-	<html lang="zxx" class="no-js">
-	<head>
-		<!-- Mobile Specific Meta -->
-		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		<!-- Favicon-->
-		<link rel="shortcut icon" href="../../assets/img/elements/fev.png">
-		<!-- Author Meta -->
-		<meta name="author" content="colorlib">
-		<!-- Meta Description -->
-		<meta name="description" content="">
-		<!-- Meta Keyword -->
-		<meta name="keywords" content="">
-		<!-- meta character set -->
-		<meta charset="UTF-8">
-		<!-- Site Title -->
-		<title>Simon's Town Museum</title>
+<!DOCTYPE html>
+<html lang="zxx" class="no-js">
+<head>
+    <!-- Mobile Specific Meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Favicon-->
+    <link rel="shortcut icon" href="../../assets/img/elements/fev.png">
+    <!-- Author Meta -->
+    <meta name="author" content="colorlib">
+    <!-- Meta Description -->
+    <meta name="description" content="">
+    <!-- Meta Keyword -->
+    <meta name="keywords" content="">
+    <!-- meta character set -->
+    <meta charset="UTF-8">
+    <!-- Site Title -->
+    <title>Simon's Town Museum</title>
 
-		<link href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700" rel="stylesheet"> 
-			<!--
-			CSS
-			============================================= -->
-			<link rel="stylesheet" href="../../assets/css/linearicons.css">
-			<link rel="stylesheet" href="../../assets/css/owl.carousel.css">
-			<link rel="stylesheet" href="../../assets/css/font-awesome.min.css">
-			<link rel="stylesheet" href="../../assets/css/nice-select.css">
-			<link rel="stylesheet" href="../../assets/css/magnific-popup.css">
-			<link rel="stylesheet" href="../../assets/css/bootstrap.css">
-			<link rel="stylesheet" href="../../assets/css/main.css">
-		</head>
-		<body>
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700" rel="stylesheet">
+    <!--
+    CSS
+    ============================================= -->
+    <link rel="stylesheet" href="../../assets/css/linearicons.css">
+    <link rel="stylesheet" href="../../assets/css/owl.carousel.css">
+    <link rel="stylesheet" href="../../assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../assets/css/nice-select.css">
+    <link rel="stylesheet" href="../../assets/css/magnific-popup.css">
+    <link rel="stylesheet" href="../../assets/css/bootstrap.css">
+    <link rel="stylesheet" href="../../assets/css/main.css">
+</head>
+<body>
 
-		{{template "navigator" .}}
+{{template "navigator" .}}
 
-			<!-- start banner Area -->
-			<section class="banner-area relative" id="home">	
-				<div class="overlay overlay-bg"></div>
-				<div class="container">
-					<div class="row d-flex align-items-center justify-content-center">
-						<div class="about-content col-lg-12">
-							<h1 class="text-white">
-								About Us
-							</h1>	
-							<p class="text-white link-nav"><a href="/">Home </a>  <span class="lnr lnr-arrow-right"></span>  <a href="/about_us"> Elements</a></p>
-						</div>											
-					</div>
-				</div>
-			</section>
-			<!-- End banner Area -->	
-
-
-			<!-- Start Sample Area -->
-			<section class="sample-text-area">
-				<div class="container">
-					<h3 class="text-heading">Simon's Town Museum</h3>
-					<p class="sample-text">
-						Every avid independent filmmaker has <b>Bold</b> about making that <i>Italic</i> interest documentary, or short film to show off their creative prowess. Many have great ideas and want to “wow” the<sup>Superscript</sup> scene, or video renters with their big project.  But once you have the<sub>Subscript</sub> “in the can” (no easy feat), how do you move from a <del>Strike</del> through of master DVDs with the <u>“Underline”</u> marked hand-written title inside a secondhand CD case, to a pile of cardboard boxes full of shiny new, retail-ready DVDs, with UPC barcodes and polywrap sitting on your doorstep?  You need to create eye-popping artwork and have your project replicated. Using a reputable full service DVD Replication company like PacificDisc, Inc. to partner with is certainly a helpful option to ensure a professional end result, but to help with your DVD replication project, here are 4 easy steps to follow for good DVD replication results:
-					</p>
-				</div>
-			</section>
+<!-- start banner Area -->
+<section class="banner-area relative" id="home">
+    <div class="overlay overlay-bg"></div>
+    <div class="container">
+        <div class="row d-flex align-items-center justify-content-center">
+            <div class="about-content col-lg-12">
+                <h1 class="text-white">
+                    About Us
+                </h1>
+                <p class="text-white link-nav"><a href="/">Home </a> <span class="lnr lnr-arrow-right"></span> <a
+                            href="/about_us"> Elements</a></p>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- End banner Area -->
 
 
-			<!-- Start Align Area -->
-			<div class="whole-wrap section-gap">
-				<div class="container">
+<!-- Start Sample Area -->
+<section class="sample-text-area">
+    <div class="container">
+        {{if .PageSections.Introduction}}
+        <div class="title text-center" id="Introduction">
+            <script>
+                var div= document.getElementById('Introduction');
+                var myvalue = {{.PageSections.Introduction}}
+                    parseMe(myvalue);
+                function parseMe(value) {
+                    div.innerHTML+=value;
+                }
+            </script>
+        </div>
+        {{else}}
+        <h3 class="text-heading">Simon's Town Museum</h3>
+        <p class="sample-text">
+            Every avid independent filmmaker has <b>Bold</b> about making that <i>Italic</i> interest documentary, or
+            short film to show off their creative prowess. Many have great ideas and want to “wow”
+            the<sup>Superscript</sup> scene, or video renters with their big project. But once you have the<sub>Subscript</sub>
+            “in the can” (no easy feat), how do you move from a
+            <del>Strike</del>
+            through of master DVDs with the <u>“Underline”</u> marked hand-written title inside a secondhand CD case, to
+            a pile of cardboard boxes full of shiny new, retail-ready DVDs, with UPC barcodes and polywrap sitting on
+            your doorstep? You need to create eye-popping artwork and have your project replicated. Using a reputable
+            full service DVD Replication company like PacificDisc, Inc. to partner with is certainly a helpful option to
+            ensure a professional end result, but to help with your DVD replication project, here are 4 easy steps to
+            follow for good DVD replication results:
+        </p>
+        {{end}}
+    </div>
+</section>
 
-					{{if .Groups}}<!-- Checking if the slice has data! if there is no data this block wont display-->
-					<div class="title text-center">
-						<h1 class="mb-10">Become A Member</h1>
-						<p>Who are in extremely love with Simon's Town</p>
-						<br/>
-					</div>
+{{if .Staffs}}
+<section class="section-gap info-area" id="about">
+    <div class="container">
+        <div class="row d-flex justify-content-center">
+            <div class="menu-content pb-40 col-lg-8">
+                {{if .PageSections.StaffIntroTitle}}
+                <div class="title text-center" id="StaffIntroTitle">
+                    <script>
+                        var div= document.getElementById('StaffIntroTitle');
+                        var myvalue = {{.PageSections.StaffIntroTitle}}
+                            parseMe(myvalue);
+                        function parseMe(value) {
+                            div.innerHTML+=value;
+                        }
+                    </script>
+                </div>
+                {{else}}
+                <div class="title text-center">
+                    <h1 class="mb-10">Meet Simons's Town Staff</h1>
+                    <p>Who are in extremely love with eco friendly system.</p>
+                </div>
+                {{end}}
+            </div>
+        </div>
 
-					{{with .Groups}}
-						{{range .}}<!-- start looping the Groups slice-->
-					<h3 class="mb-30"><a href="/about_us/single/{{.Group.Id}}">{{.Group.Name}}</a></h3>
-					<div class="row">
-						<div class="col-md-3">
-							<a href="/about_us/single/{{.Group.Id}}"><img class="card-img"
-								 id='base64image' height="200px"
-									{{if .Image}}
-										src='data:image/jpeg;base64,{{.Image.Id}}' alt=""
-										{{end}}/></a>
-						</div>
-						<div class="col-md-9 mt-sm-20">
-							<p>{{.Group.Description}}</p>
-						</div>
-					</div>
-					<hr/>
-							{{end}}{{end}}<!-- End looping Groups slice-->
-					{{end}}<!-- End Checking the slice-->
+		{{with .Staffs}}
+        {{range . }}
+        <div class="single-info row mt-40" >
+            <div class="col-lg-6 col-md-12 mt-120 text-center no-padding info-left">
+                <div class="info-thumb">
+                    <img width="250px" src='data:image/jpeg;base64,{{.Image.Id}}' class="img-fluid" alt="">
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-12 no-padding info-rigth" >
+                <div class="info-content">
+                    <h2 class="pb-30">{{.User.Name}} <br>
+                        {{.User.Surname}} <br>
+                        </h2>
 
-					<section class="section-gap info-area" id="about">
-						<div class="container">
-							<div class="row d-flex justify-content-center">
-								<div class="menu-content pb-40 col-lg-8">
-									<div class="title text-center">
-										<h1 class="mb-10">Few words about our Museum</h1>
-										<p>Who are in extremely love with eco friendly system.</p>
-									</div>
-								</div>
-							</div>
-							<div class="single-info row mt-40">
-								<div class="col-lg-6 col-md-12 mt-120 text-center no-padding info-left">
-									<div class="info-thumb">
-										<img src="../assets/img/pages/about-img.jpg" class="img-fluid" alt="">
-									</div>
-								</div>
-								<div class="col-lg-6 col-md-12 no-padding info-rigth">
-									<div class="info-content">
-										<h2 class="pb-30">We Realize that <br>
-											there are reduced <br>
-											Wastege Stand out</h2>
-										<p>
-											inappropriate behavior is often laughed off as “boys will be boys,” women face higher conduct standards – especially in the workplace. That’s why it’s crucial that, as women.
-										</p>
-										<br>
-										<p>
-											inappropriate behavior is often laughed off as “boys will be boys,” women face higher conduct standards – especially in the workplace. That’s why it’s crucial that, as women. inappropriate behavior is often laughed off as “boys will be boys,” women face higher conduct standards – especially in the workplace. That’s why it’s crucial that, as women.
-										</p>
-										<br>
-										<p>
-											inappropriate behavior is often laughed off as “boys will be boys,” women face higher conduct standards – especially in the workplace. That’s why it’s crucial that, as women.
-										</p>
-									</div>
-								</div>
-							</div>
-						</div>
-					</section>
+                    <br>
+                    <div class="form-group " id="{{.User.Email}}" ></div>
+                        <script>
+                            var div= document.getElementById({{.User.Email}});
+                            var myvalue = {{.History.History}}
+                                parseMe(myvalue);
+                            function parseMe(value) {
+                                div.innerHTML+=value;
+                            }
+                        </script>
+                </div>
+            </div>
+        </div>
+        {{end}}
+        {{end}}
+    </div>
 
-					<div class="section-top-border">
-						<h3>Image Gallery</h3>
-						<div class="row gallery-item">
-							<div class="col-md-4">
-								<a href="../../assets/img/elements/g1.jpg" class="img-pop-up"><div class="single-gallery-image" style="background: url(../../assets/img/elements/g1.jpg);"></div></a>
-							</div>
-							<div class="col-md-4">
-								<a href="../../assets/img/elements/g2.jpg" class="img-pop-up"><div class="single-gallery-image" style="background: url(../../assets/img/elements/g2.jpg);"></div></a>
-							</div>
-							<div class="col-md-4">
-								<a href="../../assets/img/elements/g3.jpg" class="img-pop-up"><div class="single-gallery-image" style="background: url(../../assets/img/elements/g3.jpg);"></div></a>
-							</div>
-							<div class="col-md-6">
-								<a href="../../assets/img/elements/g4.jpg" class="img-pop-up"><div class="single-gallery-image" style="background: url(../../assets/img/elements/g4.jpg);"></div></a>
-							</div>
-							<div class="col-md-6">
-								<a href="../../assets/img/elements/g5.jpg" class="img-pop-up"><div class="single-gallery-image" style="background: url(../../assets/img/elements/g5.jpg);"></div></a>
-							</div>
-							<div class="col-md-4">
-								<a href="../../assets/img/elements/g6.jpg" class="img-pop-up"><div class="single-gallery-image" style="background: url(../../assets/img/elements/g6.jpg);"></div></a>
-							</div>
-							<div class="col-md-4">
-								<a href="../../assets/img/elements/g7.jpg" class="img-pop-up"><div class="single-gallery-image" style="background: url(../../assets/img/elements/g7.jpg);"></div></a>
-							</div>
-							<div class="col-md-4">
-								<a href="../../assets/img/elements/g8.jpg" class="img-pop-up"><div class="single-gallery-image" style="background: url(../../assets/img/elements/g8.jpg);"></div></a>
-							</div>
-						</div>
-					</div>
+</section>
+{{end}}
 
-					</div>
-				</div>
-			</div>
-		<!-- End Align Area -->
+<!-- Start Align Area -->
+<div class="whole-wrap section-gap">
+    <div class="container">
 
-		<!-- Start about info Area -->
+        {{if .Groups}}<!-- Checking if the slice has data! if there is no data this block wont display-->
+        {{if .PageSections.MemberIntroTitle}}
+        <div class="title text-center" id="MemberIntroTitle">
+            <script>
+                var div= document.getElementById('MemberIntroTitle');
+                var myvalue = {{.PageSections.MemberIntroTitle}}
+                    parseMe(myvalue);
+                function parseMe(value) {
+                    div.innerHTML+=value;
+                }
+            </script>
+        </div>
+        {{else}}
+        <div class="title text-center">
+            <h1 class="mb-10">Become A Member</h1>
+            <p>Who are in extremely love with Simon's Town</p>
+            <br/>
+        </div>
+        {{end}}
 
-		<!-- End about info Area -->
+        {{with .Groups}}
+        {{range .}}<!-- start looping the Groups slice-->
+        <h3 class="mb-30"><a href="/about_us/single/{{.Group.Id}}">{{.Group.Name}}</a></h3>
+        <div class="row">
+            <div class="col-md-3">
+                <a href="/about_us/single/{{.Group.Id}}"><img class="card-img"
+                                                              id='base64image' height="200px"
+                            {{if .Image}}
+                        src='data:image/jpeg;base64,{{.Image.Id}}' alt=""
+                            {{end}}/></a>
+            </div>
+            <div class="col-md-9 mt-sm-20">
+                <p>{{.Group.Description}}</p>
+            </div>
+        </div>
+        <hr/>
+        {{end}}{{end}}<!-- End looping Groups slice-->
+        {{end}}<!-- End Checking the slice-->
 
-			<!-- start footer Area -->
-		{{template "footer" .}}
-			<!-- End footer Area -->
+        <section class="section-gap info-area" id="about">
+            <div class="container">
+                <div class="row d-flex justify-content-center">
+                    <div class="menu-content pb-40 col-lg-8">
+                        <div class="title text-center">
+                            <h1 class="mb-10">Few words about our Museum</h1>
+                            <p>Who are in extremely love with eco friendly system.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="single-info row mt-40">
+                    <div class="col-lg-6 col-md-12 mt-120 text-center no-padding info-left">
+                        <div class="info-thumb">
+                            <img src="../assets/img/pages/about-img.jpg" class="img-fluid" alt="">
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-12 no-padding info-rigth">
+                        <div class="info-content">
+                            <h2 class="pb-30">We Realize that <br>
+                                there are reduced <br>
+                                Wastege Stand out</h2>
+                            <p>
+                                inappropriate behavior is often laughed off as “boys will be boys,” women face higher
+                                conduct standards – especially in the workplace. That’s why it’s crucial that, as women.
+                            </p>
+                            <br>
+                            <p>
+                                inappropriate behavior is often laughed off as “boys will be boys,” women face higher
+                                conduct standards – especially in the workplace. That’s why it’s crucial that, as women.
+                                inappropriate behavior is often laughed off as “boys will be boys,” women face higher
+                                conduct standards – especially in the workplace. That’s why it’s crucial that, as women.
+                            </p>
+                            <br>
+                            <p>
+                                inappropriate behavior is often laughed off as “boys will be boys,” women face higher
+                                conduct standards – especially in the workplace. That’s why it’s crucial that, as women.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-top-border">
+            <h3>Groups Gallery</h3>
+            <div class="row gallery-item">
+                <div class="col-md-4">
+                    <a href="../../assets/img/elements/g1.jpg" class="img-pop-up">
+                        <div class="single-gallery-image"
+                             style="background: url(../../assets/img/elements/g1.jpg);"></div>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="../../assets/img/elements/g2.jpg" class="img-pop-up">
+                        <div class="single-gallery-image"
+                             style="background: url(../../assets/img/elements/g2.jpg);"></div>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="../../assets/img/elements/g3.jpg" class="img-pop-up">
+                        <div class="single-gallery-image"
+                             style="background: url(../../assets/img/elements/g3.jpg);"></div>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a href="../../assets/img/elements/g4.jpg" class="img-pop-up">
+                        <div class="single-gallery-image"
+                             style="background: url(../../assets/img/elements/g4.jpg);"></div>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a href="../../assets/img/elements/g5.jpg" class="img-pop-up">
+                        <div class="single-gallery-image"
+                             style="background: url(../../assets/img/elements/g5.jpg);"></div>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="../../assets/img/elements/g6.jpg" class="img-pop-up">
+                        <div class="single-gallery-image"
+                             style="background: url(../../assets/img/elements/g6.jpg);"></div>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="../../assets/img/elements/g7.jpg" class="img-pop-up">
+                        <div class="single-gallery-image"
+                             style="background: url(../../assets/img/elements/g7.jpg);"></div>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="../../assets/img/elements/g8.jpg" class="img-pop-up">
+                        <div class="single-gallery-image"
+                             style="background: url(../../assets/img/elements/g8.jpg);"></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</div>
+<!-- End Align Area -->
+
+<!-- Start about info Area -->
+
+<!-- End about info Area -->
+
+<!-- start footer Area -->
+{{template "footer" .}}
+<!-- End footer Area -->
 
 
-			<script src="../../assets/js/vendor/jquery-2.2.4.min.js"></script>
-			<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-			<script src="../../assets/js/vendor/bootstrap.min.js"></script>
-		<script async defer
-				src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA&callback=initMap">
-		</script>
-  			<script src="../../assets/js/easing.min.js"></script>
-			<script src="../../assets/js/hoverIntent.js"></script>
-			<script src="../../assets/js/superfish.min.js"></script>
-			<script src="../../assets/js/jquery.ajaxchimp.min.js"></script>
-			<script src="../../assets/js/jquery.magnific-popup.min.js"></script>
-			<script src="../../assets/js/owl.carousel.min.js"></script>
-			<script src="../../assets/js/jquery.sticky.js"></script>
-			<script src="../../assets/js/jquery.nice-select.min.js"></script>
-			<script src="../../assets/js/parallax.min.js"></script>
-			<script src="../../assets/js/mail-script.js"></script>
-			<script src="../../assets/js/main.js"></script>
-			<script src="../../assets/js/customer/simons_town_museum.js"></script>
-		</body>
-	</html>
+<script src="../../assets/js/vendor/jquery-2.2.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="../../assets/js/vendor/bootstrap.min.js"></script>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA&callback=initMap">
+</script>
+<script src="../../assets/js/easing.min.js"></script>
+<script src="../../assets/js/hoverIntent.js"></script>
+<script src="../../assets/js/superfish.min.js"></script>
+<script src="../../assets/js/jquery.ajaxchimp.min.js"></script>
+<script src="../../assets/js/jquery.magnific-popup.min.js"></script>
+<script src="../../assets/js/owl.carousel.min.js"></script>
+<script src="../../assets/js/jquery.sticky.js"></script>
+<script src="../../assets/js/jquery.nice-select.min.js"></script>
+<script src="../../assets/js/parallax.min.js"></script>
+<script src="../../assets/js/mail-script.js"></script>
+<script src="../../assets/js/main.js"></script>
+<script src="../../assets/js/customer/simons_town_museum.js"></script>
+</body>
+</html>

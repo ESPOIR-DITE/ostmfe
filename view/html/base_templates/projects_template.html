@@ -1,0 +1,14 @@
+{{define "project-template"}}
+    {{if .Projects}}
+        <div class="single-widget tags-widget">
+            <h4 class="title">Projects</h4>
+            <ul>
+                {{with .Projects }}
+                    {{range .}}
+                        <li><a href="/project/{{.Id}}">{{.Title}}</a></li>
+                    {{end}}
+                {{end}}
+            </ul>
+        </div>
+    {{end}}
+{{end}}

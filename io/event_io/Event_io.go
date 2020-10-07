@@ -59,6 +59,7 @@ func DeleteEvent(id string) (event.Event, error) {
 	return entity, nil
 }
 func ReadEvents() ([]event.Event, error) {
+	//fmt.Println("we are sending the requests to the following backend: ",api.BASE_URL)
 	entity := []event.Event{}
 	resp, _ := api.Rest().Get(evenT + "reads")
 	if resp.IsError() {

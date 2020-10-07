@@ -9,7 +9,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>SB Admin 2 - Tables</title>
+  <title>OSTM Admin | Project</title>
 
   <!-- Custom fonts for this template -->
   <link href="../../assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -49,13 +49,18 @@
         <div class="container-fluid">
 
           <!-- Page Heading -->
+          <!-- Add new -->
+          {{if .Backend_error}}
+            <div class="text-center alert-warning">
+              <a class="small" href="#">{{.Backend_error}}</a>
+            </div>
+          {{end}}
+          {{if .Unknown_error}}
+            <div class="text-center alert-warning">
+              <a class="small" href="#">{{.Unknown_error}}</a>
+            </div>
+          {{end}}
 
-          <a href="/admin_user/project/new" class="btn btn-success btn-icon-split mb-4">
-                    <span class="icon text-white-50">
-                      <i class="fas fa-check"></i>
-                    </span>
-            <span class="text">Add New User</span>
-          </a>
           <div class="card shadow mb-4">
             <!-- Card Header - Accordion -->
             <a href="#collapseCardExample" class="d-block card-header py-3 btn-success" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
@@ -228,7 +233,7 @@
         <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
         <div class="modal-footer">
           <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-          <a class="btn btn-primary" href="login.html">Logout</a>
+          <a class="btn btn-primary" href="../login/login.html">Logout</a>
         </div>
       </div>
     </div>

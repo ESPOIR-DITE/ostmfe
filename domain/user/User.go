@@ -22,3 +22,14 @@ type RoleOfUser struct {
 	Email  string `json:"email"`
 	RoleId string `json:"roleId"`
 }
+type UserImage struct {
+	Id          string `json:"id"`
+	Email       string `json:"email"`
+	HistoryId   string `json:"historyId"`
+	ImageId     string `json:"imageId"`
+	Description string `json:"description"`
+}
+type UserImageHelper struct {
+	Files     [][]byte  `json:"files"`
+	UserImage UserImage `json:"userImage"`
+}

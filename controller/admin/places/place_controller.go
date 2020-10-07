@@ -144,7 +144,7 @@ func CreateHistoryHandler(app *config.Env) http.HandlerFunc {
 			}
 			fmt.Println("HistoryId created successfully ..")
 			fmt.Println(" proceeding into creation of a place_history.....")
-			placeHistory := place2.PlaceHistory{"", PlaceId, newHistory.Id}
+			placeHistory := place2.PlaceHistories{"", PlaceId, newHistory.Id}
 			_, errr := place_io.CreatePlaceHistpory(placeHistory)
 			if errr != nil {
 				fmt.Println(err, " could not create ProjectHistory")
@@ -404,9 +404,10 @@ func EditPlacesHandler(app *config.Env) http.HandlerFunc {
 		placeDate := GetPlaceEditable(placeId)
 
 		type PageData struct {
-			PlaceData PlaceDataEditable
+			PlaceData   PlaceDataEditable
+			SidebarData misc.SidebarData
 		}
-		data := PageData{placeDate}
+		data := PageData{placeDate, misc.GetSideBarData("place", "")}
 		files := []string{
 			app.Path + "admin/place/new_edit_place.html",
 			app.Path + "admin/template/navbar.html",
@@ -480,8 +481,9 @@ func PlacesHandler(app *config.Env) http.HandlerFunc {
 			Backend_error string
 			Unknown_error string
 			Places        []place2.Place
+			SidebarData   misc.SidebarData
 		}
-		data := PageData{backend_error, unknown_error, places}
+		data := PageData{backend_error, unknown_error, places, misc.GetSideBarData("place", "")}
 		files := []string{
 			app.Path + "admin/place/places.html",
 			app.Path + "admin/template/navbar.html",
@@ -512,23 +514,33 @@ func CreatePlaceStp2Handler(app *config.Env) http.HandlerFunc {
 		history := r.PostFormValue("history")
 		placeId := r.PostFormValue("placeId")
 		description := r.PostFormValue("description")
+		var placeHistory place2.PlaceHistories
 		if err != nil {
 			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
 		}
 
 		filesArray := []io.Reader{file, file2, file3, file4, file5, file6}
 		filesByteArray := misc.CheckFiles(filesArray)
-		placeHistoryObject := place2.PlaceHistory{"", placeId, history}
-		placeHistory, err := place_io.CreatePlaceHistpory(placeHistoryObject)
+
+		//History
+		historiesObject := history2.Histories{"", misc.ConvertToByteArray(history)}
+		histories, err := history_io.CreateHistorie(historiesObject)
 		if err != nil {
-			fmt.Println(err, " error creating a new placeHistory")
-			if app.Session.GetString(r.Context(), "user-create-error") != "" {
-				app.Session.Remove(r.Context(), "user-create-error")
+			fmt.Println(err, " error creating a new History")
+		} else {
+			placeHistoryObject := place2.PlaceHistories{"", placeId, histories.Id}
+			placeHistory, err = place_io.CreatePlaceHistpory(placeHistoryObject)
+			if err != nil {
+				fmt.Println(err, " error creating a new placeHistory")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/place/new_stp2/"+placeId, 301)
+				return
 			}
-			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-			http.Redirect(w, r, "/admin_user/place/new_stp2/"+placeId, 301)
-			return
 		}
+
 		placeImageObejct := place2.PlaceImage{"", placeId, "", description}
 		placeImageHelper := place2.PlaceImageHelper{placeImageObejct, filesByteArray}
 		_, errr := place_io.CreatePlaceImage(placeImageHelper)
@@ -552,8 +564,8 @@ func CreatePlaceStp2Handler(app *config.Env) http.HandlerFunc {
 		if app.Session.GetString(r.Context(), "creation-successful") != "" {
 			app.Session.Remove(r.Context(), "creation-successful")
 		}
-		app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new project : "+place.Title)
-		http.Redirect(w, r, "/admin_user", 301)
+		app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new place : "+place.Title)
+		http.Redirect(w, r, "/admin_user/place", 301)
 		return
 	}
 }
@@ -610,7 +622,7 @@ func CreateStp1Handler(app *config.Env) http.HandlerFunc {
 					app.Session.Remove(r.Context(), "user-create-error")
 				}
 				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-				http.Redirect(w, r, "/admin_user/place/new", 301)
+				http.Redirect(w, r, "/admin_user/place", 301)
 				return
 			}
 			//Here are trying to make sure that newPlace.Id is not nil.
@@ -630,7 +642,7 @@ func CreateStp1Handler(app *config.Env) http.HandlerFunc {
 			app.Session.Remove(r.Context(), "creation-unknown-error")
 		}
 		app.Session.Put(r.Context(), "creation-unknown-error", "You have encountered an unknown error, please try again")
-		http.Redirect(w, r, "/admin_user/place/new", 301)
+		http.Redirect(w, r, "/admin_user/place", 301)
 		return
 	}
 }
@@ -666,7 +678,7 @@ func getPlaceData(placeId string) PlaceData {
 	}
 	placeHistory, err := place_io.ReadPlaceHistporyOf(placeId)
 	if err != nil {
-		fmt.Println("error reading PlaceHistory")
+		fmt.Println("error reading PlaceHistories")
 	} else {
 		history, err = history_io.ReadHistory(placeHistory.HistoryId)
 		if err != nil {
@@ -709,7 +721,7 @@ func deletePlaceData(placeId string) (bool, string) {
 	}
 	placeHistory, err := place_io.ReadPlaceHistporyOf(placeId)
 	if err != nil {
-		fmt.Println("error reading PlaceHistory")
+		fmt.Println("error reading PlaceHistories")
 	} else {
 		_, err := history_io.DeleteHistory(placeHistory.HistoryId)
 		if err != nil {
@@ -717,7 +729,7 @@ func deletePlaceData(placeId string) (bool, string) {
 		} else {
 			_, err := place_io.DeletePlaceHistpory(placeHistory.Id)
 			if err != nil {
-				fmt.Println("error delete PlaceHistory of the following place", placeId)
+				fmt.Println("error delete PlaceHistories of the following place", placeId)
 			}
 		}
 	}

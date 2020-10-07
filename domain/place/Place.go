@@ -14,7 +14,7 @@ type PlaceImage struct {
 	ImageId     string `json:"imageId"`
 	Description string `json:"description"`
 }
-type PlaceHistory struct {
+type PlaceHistories struct {
 	Id        string `json:"id"`
 	PlaceId   string `json:"placeId"`
 	HistoryId string `json:"historyId"`
@@ -22,4 +22,10 @@ type PlaceHistory struct {
 type PlaceImageHelper struct {
 	PlaceImage PlaceImage `json:"placeImage"`
 	Files      [][]byte   `json:"files"`
+}
+type PlacePlace struct {
+	Id          string `json:"id"`
+	PlaceId     string `json:"placeId"`
+	HistoryId   string `json:"historyId"`
+	Description string `json:"description"`
 }

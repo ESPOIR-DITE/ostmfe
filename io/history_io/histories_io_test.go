@@ -35,3 +35,17 @@ func ConvertToByteArray(valeu string) []byte {
 	toreturn := []byte(valeu)
 	return toreturn
 }
+func TestReadHistory(t *testing.T) {
+	result, err := ReadHistorys()
+	fmt.Println(" result: ", result)
+	assert.Nil(t, err)
+}
+
+func TestCreateHistoryImage(t *testing.T) {
+	//var mybyte [][]byte
+	//historyImageObject := history.HistoryImageHelper{history.HistoryImage{"","001","003","testing"},mybyte}
+
+	result, err := CreateHistoryImage(history.HistoryImage{"", "001", "003", "testing"})
+	fmt.Println(" result: ", result)
+	assert.Nil(t, err)
+}

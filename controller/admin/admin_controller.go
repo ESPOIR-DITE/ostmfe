@@ -5,15 +5,19 @@ import (
 	"html/template"
 	"net/http"
 	"ostmfe/config"
+	"ostmfe/controller/admin/adminHelper"
 	collection2 "ostmfe/controller/admin/collection"
 	"ostmfe/controller/admin/event"
 	"ostmfe/controller/admin/group"
 	"ostmfe/controller/admin/histories"
+	"ostmfe/controller/admin/page"
 	"ostmfe/controller/admin/parteners"
 	"ostmfe/controller/admin/peoples"
 	"ostmfe/controller/admin/places"
 	project3 "ostmfe/controller/admin/project"
 	"ostmfe/controller/admin/users"
+	"ostmfe/controller/admin/year"
+	"ostmfe/controller/misc"
 )
 
 /***
@@ -46,11 +50,18 @@ func Home(app *config.Env) http.Handler {
 
 	mux.Mount("/group", group.GroupHome(app))
 
+	mux.Mount("/page", page.PageHome(app))
+
+	mux.Mount("/years", year.YearHome(app))
+
 	return mux
 }
 
 func homeHanler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		var success_notice string
 		if app.Session.GetString(r.Context(), "creation-successful") != "" {
 			success_notice = app.Session.GetString(r.Context(), "creation-successful")
@@ -58,8 +69,9 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 		}
 		type PageData struct {
 			Success_notice string
+			SidebarData    misc.SidebarData
 		}
-		data := PageData{success_notice}
+		data := PageData{success_notice, misc.GetSideBarData("", "")}
 		files := []string{
 			app.Path + "admin/admin.html",
 			app.Path + "admin/template/navbar.html",

@@ -29,11 +29,12 @@ func GetPeopleEditable(peopleId string) PeopleEditable {
 	var historyToreturn history2.HistoriesHelper
 	var peopleEditable PeopleEditable
 
-	people, err := people_io.ReadPeople(peopleId)
+	peopleObject, err := people_io.ReadPeople(peopleId)
 	if err != nil {
 		fmt.Println(err, " can not read this people")
 		return peopleEditable
 	}
+	peopleToReturn := people.People{peopleObject.Id, peopleObject.Name, peopleObject.Surname, misc.FormatDateMonth(peopleObject.BirthDate), misc.FormatDateMonth(peopleObject.DeathDate), peopleObject.Origin, peopleObject.Profession, peopleObject.Brief}
 	//Reading Image
 	peopleImages, err := people_io.ReadPeopleImagewithPeopleId(peopleId)
 	if err != nil {
@@ -60,6 +61,6 @@ func GetPeopleEditable(peopleId string) PeopleEditable {
 		}
 		historyToreturn = history2.HistoriesHelper{history.Id, misc.ConvertingToString(history.History)}
 	}
-	peopleEditable = PeopleEditable{people, Images, historyToreturn}
+	peopleEditable = PeopleEditable{peopleToReturn, Images, historyToreturn}
 	return peopleEditable
 }

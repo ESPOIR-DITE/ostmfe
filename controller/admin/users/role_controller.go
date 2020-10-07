@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"net/http"
 	"ostmfe/config"
+	"ostmfe/controller/misc"
 	user2 "ostmfe/domain/user"
 	"ostmfe/io/user_io"
 )
@@ -38,10 +39,11 @@ func EditRoleHandler(app *config.Env) http.HandlerFunc {
 			fmt.Println(err, " error reading roles")
 		}
 		type PageData struct {
-			Role  user2.Roles
-			Roles []user2.Roles
+			Role        user2.Roles
+			Roles       []user2.Roles
+			SidebarData misc.SidebarData
 		}
-		data := PageData{role, roles}
+		data := PageData{role, roles, misc.GetSideBarData("user", "role")}
 		files := []string{
 			app.Path + "admin/user/role_edit.html",
 			app.Path + "admin/template/navbar.html",
@@ -72,7 +74,7 @@ func CreateRoleHandler(app *config.Env) http.HandlerFunc {
 					app.Session.Remove(r.Context(), "user-create-error")
 				}
 				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-				http.Redirect(w, r, "/admin_user/users/role", 301)
+				http.Redirect(w, r, "/admin_user/role", 301)
 				return
 			}
 			fmt.Println(err, "Creation of a new user successful")
@@ -80,7 +82,7 @@ func CreateRoleHandler(app *config.Env) http.HandlerFunc {
 				app.Session.Remove(r.Context(), "creation-successful")
 			}
 			app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new Role : "+roleResult.Role)
-			http.Redirect(w, r, "/admin_user/users/role", 301)
+			http.Redirect(w, r, "/admin_user/role", 301)
 			return
 
 		}
@@ -109,8 +111,9 @@ func RoleHandler(app *config.Env) http.HandlerFunc {
 			Unknown_error string
 			Error         string
 			RoleList      []user2.Roles
+			SidebarData   misc.SidebarData
 		}
-		data := PagePage{backend_error, unknown_error, Error, roles}
+		data := PagePage{backend_error, unknown_error, Error, roles, misc.GetSideBarData("user", "role")}
 		files := []string{
 			app.Path + "admin/user/roles.html",
 			app.Path + "admin/template/navbar.html",

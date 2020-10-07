@@ -171,8 +171,9 @@ func CollectionTypeHandler(app *config.Env) http.HandlerFunc {
 			Unknown_error  string
 			Collections    []misc.CollectionBridge
 			CollectionType []collection.CollectionTypes
+			SidebarData    misc.SidebarData
 		}
-		data := PagePage{backend_error, unknown_error, collections, collectionType}
+		data := PagePage{backend_error, unknown_error, collections, collectionType, misc.GetSideBarData("collection", "collectio_type")}
 		files := []string{
 			app.Path + "admin/collection/collectionType_tables.html",
 			app.Path + "admin/template/navbar.html",
@@ -499,8 +500,9 @@ func NewCollectionTypeHandler(app *config.Env) http.HandlerFunc {
 			Backend_error  string
 			Unknown_error  string
 			CollectionType []collection.CollectionTypes
+			SidebarData    misc.SidebarData
 		}
-		data := PagePage{backend_error, unknown_error, collectionTypes}
+		data := PagePage{backend_error, unknown_error, collectionTypes, misc.GetSideBarData("collection", "collection-type")}
 		files := []string{
 			app.Path + "admin/Collection/collectionType_tables.html",
 			app.Path + "admin/template/navbar.html",
@@ -672,8 +674,9 @@ func EditCollectionHandler(app *config.Env) http.HandlerFunc {
 
 		type DataPage struct {
 			CollectionData CollectionData
+			SidebarData    misc.SidebarData
 		}
-		data := DataPage{GetCollectionData(collectionId)}
+		data := DataPage{GetCollectionData(collectionId), misc.GetSideBarData("collection", "collection-type")}
 		files := []string{
 			app.Path + "admin/collection/edit_collection.html",
 			app.Path + "admin/template/navbar.html",
@@ -756,8 +759,9 @@ func CollectionHandler(app *config.Env) http.HandlerFunc {
 			Unknown_error  string
 			Collections    []misc.CollectionBridge
 			CollectionType []collection.CollectionTypes
+			SidebarData    misc.SidebarData
 		}
-		data := PagePage{backend_error, unknown_error, collections, collectionType}
+		data := PagePage{backend_error, unknown_error, collections, collectionType, misc.GetSideBarData("collection", "collection")}
 		files := []string{
 			app.Path + "admin/collection/collections.html",
 			app.Path + "admin/template/navbar.html",

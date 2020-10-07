@@ -60,8 +60,8 @@ func DeleteHistory(id string) (history.History, error) {
 	return entity, nil
 }
 
-func ReadHistorys() (history.History, error) {
-	entity := history.History{}
+func ReadHistorys() ([]history.History, error) {
+	entity := []history.History{}
 	resp, _ := api.Rest().Get(historyURL + "reads")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())

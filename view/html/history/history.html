@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zxx" class="no-js">
+<head>
+    <!-- Mobile Specific Meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Favicon-->
+    <link rel="shortcut icon" href="../../assets/img/elements/fav.png">
+    <!-- Author Meta -->
+    <meta name="author" content="colorlib">
+    <!-- Meta Description -->
+    <meta name="description" content="">
+    <!-- Meta Keyword -->
+    <meta name="keywords" content="">
+    <!-- meta character set -->
+    <meta charset="UTF-8">
+    <!-- Site Title -->
+    <title>Art Museum</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700" rel="stylesheet">
+    <!--
+    CSS
+    ============================================= -->
+    <link rel="stylesheet" href="../../assets/css/linearicons.css">
+    <link rel="stylesheet" href="../../assets/css/owl.carousel.css">
+    <link rel="stylesheet" href="../../assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../assets/css/nice-select.css">
+    <link rel="stylesheet" href="../../assets/css/magnific-popup.css">
+    <link rel="stylesheet" href="../../assets/css/bootstrap.css">
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/customer/mySidebar.css">
+</head>
+<body>
+
+{{template "navigator" .}}
+
+<!-- start banner Area -->
+<section class="banner-area relative" id="home">
+    <div class="overlay overlay-bg"></div>
+    <div class="container">
+        <div  class="row d-flex align-items-center justify-content-center">
+            <div class="about-content col-lg-12">
+                <h1 class="text-white">
+                    History
+                </h1>
+                <p class="text-white link-nav"><a href="/">Home </a>  <span class="lnr lnr-line-spacing"></span>  <a href="/history"> History</a></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<div class="row">
+    <div class="col-lg-3 col-md-4 mt-sm-30">
+        <!-- Bootstrap NavBar -->
+        <!-- NavBar END -->
+        <!-- Bootstrap row -->
+        <div class="row" id="body-row">
+            <!-- Sidebar -->
+            <div id="sidebar-container" class="sidebar-expanded  d-md-block col p-4">
+                <!-- d-* hiddens the Sidebar in smaller devices. Its itens can be kept on the Navbar 'Menu' -->
+                <!-- Bootstrap List Group -->
+                <ul class="list-group">
+                    <!-- Separator with title -->
+
+                    <!-- /END Separator -->
+                    <!-- Menu with submenu -->
+
+                    <!-- Separator with title -->
+                    <li class="list-group-item sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">
+                        <small>Histories</small>
+                    </li>
+                    <!-- /END Separator -->
+                    {{with .History}}
+                    {{range .}}
+                    <a href="/history/single_history/{{.Id}}" class="bg-dark list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-start align-items-center">
+                            <span class="menu-collapsed">{{.Title}}</span>
+                        </div>
+                    </a>
+                    {{end}}
+                    {{end}}
+
+                </ul><!-- List Group END-->
+            </div><!-- sidebar-container END -->
+            <!-- MAIN -->
+
+            <!-- Main Col END -->
+        </div><!-- body-row END -->
+    </div>
+    <div class="col-lg-8 col-md-8">
+        <section class="sample-text-area">
+            <div class="container">
+                <h3 class="text-heading">COMMUNITIES</h3>
+                <p class="sample-text">
+                    Simon’s Town was a town of many nations and cultures from its inception. Simon’s Bay was named by Simon van der Stel, when he was carrying out his survey of False Bay in 1687. He recommended Simon’s Bay as the new winter anchorage for the "Verenigde Oostindische Compagnie" fleet (in English, the " United East India Company" and nowadays more generally called the "Dutch East India Company") or simply the "VOC". After much dithering, the VOC finally acted on his recommendation in 1743, when Baron von Imhoff ordered the building of the Storehouses in what is now the West Dockyard. At first the settlement remained tiny, most of its inhabitants being resident only in the winter. The population of Simon’s Town were mainly VOC officials, soldiers and slaves that had been bought to the Cape from China, Indonesia, India, Madagascar, Mozambique, Zanzibar, Angola and other parts of West Africa and the indigenous Khoisan people. Small numbers of Scandinavians, Germans and Frenchmen joined the community as sailors, whalermen, mercenaries, farmers, teachers, traders and so on. The little village remained small though as a result of its seasonal trade with the Dutch East India Company fleet and other passing shipping.
+                    The British took control of the Cape in 1795 and handed it back to the Dutch in 1803, only to seize it once more in 1806. From 1814 the Royal Navy established a permanent naval base at Simon’s Bay and the town began to flourish. People were drawn from all over by the possibility of employment. The large Royal Naval fleet had to be provisioned and this created business opportunities for a relatively large number of persons. Many people from Britain began to settle in Simon’s Town. <a href="Hyperlinked to https://www.sahistory.org.za/archive/west-african-kroomen-and-their-link-simons-town-joline-young">The Kroomen from West Africa</a> originated in places like Sierra Leone, Liberia, Ivory Coast and Ghana. They joined the Royal Navy on three year contracts, but many married Simon’s Town women and stayed on in the town after their contracts had expired.
+                    Muslim sailors from Zanzibar joined the Royal Navy too. They were known as "Seedies". Most returned home at the end of their contracts, though a few settled in the town, marrying local women.
+                    The Catholic Church of Saints Simon and Jude owes its existence to two Spanish brothers, the Delcarmes, reportedly from South America, who married Irish and German wives respectively and whose descendants were so numerous that they formed the basis of the resultant Catholic congregation and were able to build a church in 1850.
+                    During the middle and late 1800’s islanders came from St Helena to settle in Simon’s Town. In the early 1900’s another group of islanders arrived from Tristan da Cunha to settle in the town. Amongst other trades, these people were skilled fishermen and whalermen.
+                    Also arriving in the late 1800’s and early 1900’s were the Indian people, who began businesses in the town. Their descendants still own businesses in Simon’s Town today.
+                    Another group to arrive in the late 1880’s were the Xhosa people from the Eastern Cape. They built the railway into Simon’s Town from Kalk Bay, which was opened in 1890. At first they lived alongside the railway track and then on completion of the work, they moved to a kloof close to the town, where they built their homes on terraces on the mountainside. They assisted with the building of the East Dockyard (1901-1910) and later found employment with the Simon’s Town Municipality and in the day to day activities of the expanding Dockyard.
+                    Other nationalities who worked on the building of the East Dockyard were the Italians, the Chinese, Indians from the Punjab and again a large number of men from the United Kingdom.
+                    In the late 1800’s and early 1900’s, a large number of Jewish people, mainly Lithuanians, settled and opened businesses in Simon’s Town, becoming prominent members of the community.
+                    In addition, there were small numbers of Philippinos who settled in Simon’s Town in the 1800’s. They were mostly sailors or fishermen.
+                    Centuries of intermarriage and social interaction in Simon’s Town created a very culturally diverse community, whose history and heritage must be UNIQUE in South Africa, if not the world!                </p>
+            </div>
+        </section>
+
+            <div class="container">
+                <div class="row d-flex justify-content-center">
+                    <div class="menu-content pb-60 col-lg-10">
+                        <div class="title text-center">
+                            <h1 class="mb-10">Ongoing Exhibitions from the scratch</h1>
+                            <p>Who are in extremely love with eco friendly system.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="active-exibition-carusel">
+                        <div class="single-exibition item">
+                            <img src="../assets/img/e1.jpg" alt="">
+                            <ul class="tags">
+                                <li><a href="#">Travel</a></li>
+                                <li><a href="#">Life style</a></li>
+                            </ul>
+                            <a href="#"><h4>Portable latest blog for women</h4></a>
+                            <p>
+                                Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
+                            </p>
+                            <h6 class="date">31st January, 2018</h6>
+                        </div>
+
+                        <div class="single-exibition item">
+                            <img src="../assets/img/e2.jpg" alt="">
+                            <ul class="tags">
+                                <li><a href="#">Travel</a></li>
+                                <li><a href="#">Life style</a></li>
+                            </ul>
+                            <a href="#"><h4>Portable latest blog for women</h4></a>
+                            <p>
+                                Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
+                            </p>
+                            <h6 class="date">31st January, 2018</h6>
+                        </div>
+
+                        <div class="single-exibition item">
+                            <img src="../assets/img/e3.jpg" alt="">
+                            <ul class="tags">
+                                <li><a href="#">Travel</a></li>
+                                <li><a href="#">Life style</a></li>
+                            </ul>
+                            <a href="#"><h4>Portable latest blog for women</h4></a>
+                            <p>
+                                Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
+                            </p>
+                            <h6 class="date">31st January, 2018</h6>
+                        </div>
+                        <div class="single-exibition item">
+                            <img src="../assets/img/e1.jpg" alt="">
+                            <ul class="tags">
+                                <li><a href="#">Travel</a></li>
+                                <li><a href="#">Life style</a></li>
+                            </ul>
+                            <a href="#"><h4>Portable latest blog for women</h4></a>
+                            <p>
+                                Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
+                            </p>
+                            <h6 class="date">31st January, 2018</h6>
+                        </div>
+
+                        <div class="single-exibition item">
+                            <img src="../assets/img/e2.jpg" alt="">
+                            <ul class="tags">
+                                <li><a href="#">Travel</a></li>
+                                <li><a href="#">Life style</a></li>
+                            </ul>
+                            <a href="#"><h4>Portable latest blog for women</h4></a>
+                            <p>
+                                Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
+                            </p>
+                            <h6 class="date">31st January, 2018</h6>
+                        </div>
+
+                        <div class="single-exibition item">
+                            <img src="../assets/img/e3.jpg" alt="">
+                            <ul class="tags">
+                                <li><a href="#">Travel</a></li>
+                                <li><a href="#">Life style</a></li>
+                            </ul>
+                            <a href="#"><h4>Portable latest blog for women</h4></a>
+                            <p>
+                                Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
+                            </p>
+                            <h6 class="date">31st January, 2018</h6>
+                        </div>
+                        <div class="single-exibition item">
+                            <img src="../assets/img/e1.jpg" alt="">
+                            <ul class="tags">
+                                <li><a href="#">Travel</a></li>
+                                <li><a href="#">Life style</a></li>
+                            </ul>
+                            <a href="#"><h4>Portable latest blog for women</h4></a>
+                            <p>
+                                Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
+                            </p>
+                            <h6 class="date">31st January, 2018</h6>
+                        </div>
+
+                        <div class="single-exibition item">
+                            <img class="img-fluid" src="../assets/img/e2.jpg" alt="">
+                            <ul class="tags">
+                                <li><a href="#">Travel</a></li>
+                                <li><a href="#">Life style</a></li>
+                            </ul>
+                            <a href="#"><h4>Portable latest blog for women</h4></a>
+                            <p>
+                                Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
+                            </p>
+                            <h6 class="date">31st January, 2018</h6>
+                        </div>
+
+                        <div class="single-exibition item">
+                            <img class="img-fluid" src="../assets/img/e3.jpg" alt="">
+                            <ul class="tags">
+                                <li><a href="#">Travel</a></li>
+                                <li><a href="#">Life style</a></li>
+                            </ul>
+                            <a href="#"><h4>Portable latest blog for women</h4></a>
+                            <p>
+                                Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
+                            </p>
+                            <h6 class="date">31st January, 2018</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+    </div>
+
+</div>
+<!-- End Align Area -->
+
+<!-- start footer Area -->
+{{template "footer" .}}
+<!-- End footer Area -->
+
+
+<script src="../assets/js/vendor/jquery-2.2.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="../assets/js/vendor/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA"></script>
+<script src="../assets/js/easing.min.js"></script>
+<script src="../assets/js/hoverIntent.js"></script>
+<script src="../assets/js/superfish.min.js"></script>
+<script src="../assets/js/jquery.ajaxchimp.min.js"></script>
+<script src="../assets/js/jquery.magnific-popup.min.js"></script>
+<script src="../assets/js/owl.carousel.min.js"></script>
+<script src="../assets/js/jquery.sticky.js"></script>
+<script src="../assets/js/jquery.nice-select.min.js"></script>
+<script src="../assets/js/parallax.min.js"></script>
+<script src="../assets/js/mail-script.js"></script>
+<script src="../assets/js/main.js"></script>
+<script src="../assets/js/customer/mysidebar.js"></script>
+</body>
+</html>

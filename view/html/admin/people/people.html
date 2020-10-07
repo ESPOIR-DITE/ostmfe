@@ -226,12 +226,7 @@
 
           <!-- Page Heading -->
 
-          <a href="/admin_user/people/new" class="btn btn-success btn-icon-split mb-4">
-                    <span class="icon text-white-50">
-                      <i class="fas fa-check"></i>
-                    </span>
-            <span class="text">Add New Person</span>
-          </a>
+
 
           <!--Card for adding new person--->
 
@@ -239,7 +234,7 @@
             <!-- Card Header - Accordion -->
             <a href="#collapseCardExample" class="d-block card-header py-3 btn-success" data-toggle="collapse"
                role="button" aria-expanded="true" aria-controls="collapseCardExample">
-              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Create a new Event</h6>
+              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Create a new People</h6>
             </a>
             <!-- Card Content - Collapse -->
             <div class="collapse " id="collapseCardExample">
@@ -332,7 +327,7 @@
           <!-- DataTales Example -->
           <div class="card shadow mb-4">
             <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">User Table</h6>
+              <h6 class="m-0 font-weight-bold text-primary">People Table</h6>
             </div>
             <div class="card-body">
               <div class="table-responsive">
@@ -350,19 +345,6 @@
                       <th>Action</th>
                     </tr>
                   </thead>
-                  <tfoot>
-                    <tr>
-                      <th>Nr</th>
-                      <th>Name</th>
-                      <th>User Surname</th>
-                      <th>Date of Birth</th>
-                      <th>Date of Death</th>
-                      <th>Origin</th>
-                      <th>Profession</th>
-                      <th>Action</th>
-                      <th>Action</th>
-                    </tr>
-                  </tfoot>
                   <tbody>
                   {{with .Peoples}}
                   {{range $i, $e := .}}
@@ -425,7 +407,7 @@
         <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
         <div class="modal-footer">
           <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-          <a class="btn btn-primary" href="login.html">Logout</a>
+          <a class="btn btn-primary" href="../login/login.html">Logout</a>
         </div>
       </div>
     </div>

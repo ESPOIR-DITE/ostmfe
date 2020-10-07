@@ -67,7 +67,8 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 		}
 		data := PageData{places}
 		files := []string{
-			app.Path + "place/places_page.html",
+			//app.Path + "place/places_page.html",
+			app.Path + "place/places_page_mapBox.html",
 			app.Path + "base_templates/navigator.html",
 			app.Path + "base_templates/footer.html",
 		}

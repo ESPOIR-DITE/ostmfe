@@ -3,12 +3,16 @@ package people
 import (
 	"fmt"
 	"ostmfe/controller/misc"
+	"ostmfe/domain/event"
 	history2 "ostmfe/domain/history"
 	image3 "ostmfe/domain/image"
 	"ostmfe/domain/people"
+	place2 "ostmfe/domain/place"
+	"ostmfe/io/event_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
 	"ostmfe/io/people_io"
+	"ostmfe/io/place_io"
 )
 
 /****
@@ -53,6 +57,8 @@ type PeopleDataHistory struct {
 	ProfileImage image3.Images
 	Images       []image3.Images
 	History      history2.HistoriesHelper
+	Place        []place2.Place
+	Event        []event.Event
 }
 
 /****
@@ -63,11 +69,13 @@ func GetPeopleDataHistory(id string) PeopleDataHistory {
 	var profileImage image3.Images
 	var images []image3.Images
 	//People
-	people, err := people_io.ReadPeople(id)
+	peopleObject, err := people_io.ReadPeople(id)
 	if err != nil {
 		fmt.Println("could not read people")
 		return peopleDataHistory
 	}
+	peopleToReturn := people.People{peopleObject.Id, peopleObject.Name, peopleObject.Surname, misc.FormatDateMonth(peopleObject.BirthDate), misc.FormatDateMonth(peopleObject.DeathDate), peopleObject.Origin, peopleObject.Profession, peopleObject.Brief}
+
 	//Images
 	peopleImages, err := people_io.ReadPeopleImagewithPeopleId(id)
 	if err != nil {
@@ -102,8 +110,45 @@ func GetPeopleDataHistory(id string) PeopleDataHistory {
 	}
 	historyhelper := history2.HistoriesHelper{history.Id, misc.ConvertingToString(history.History)}
 
-	peopleDataHistory = PeopleDataHistory{people, profileImage, images, historyhelper}
+	peopleDataHistory = PeopleDataHistory{peopleToReturn, profileImage, images, historyhelper, getPeoplePlace(id), getPeopleEventS(id)}
 
 	return peopleDataHistory
+}
+
+func getPeoplePlace(id string) []place2.Place {
+	//get People Place
+	var places []place2.Place
+	peoplePlaces, err := people_io.ReadPeoplePlaceWithPeopleId(id)
+	if err != nil {
+		fmt.Println(err, " error reading people place.")
+		return places
+	}
+	for _, peoplePlace := range peoplePlaces {
+		place, err := place_io.ReadPlace(peoplePlace.PlaceId)
+		if err != nil {
+			fmt.Println(err, " error reading place.")
+		} else {
+			places = append(places, place)
+		}
+	}
+	return places
+}
+func getPeopleEventS(peopleId string) []event.Event {
+	var events []event.Event
+
+	peopleEvents, err := event_io.ReadEventPeopleWithPeopleId(peopleId)
+	if err != nil {
+		fmt.Println(err, " error reading people event.")
+		return events
+	}
+	for _, peopleEvent := range peopleEvents {
+		event, err := event_io.ReadEvent(peopleEvent.EventId)
+		if err != nil {
+			fmt.Println(err, " error reading Event.")
+		} else {
+			events = append(events, event)
+		}
+	}
+	return events
 
 }

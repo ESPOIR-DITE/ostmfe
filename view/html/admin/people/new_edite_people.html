@@ -9,7 +9,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>SB Admin 2 - Cards</title>
+  <title>OSTM 1 - People</title>
   <base href="/">
   <!-- Custom fonts for this template-->
   <link href="../../assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -319,10 +319,10 @@
             <!-- Card Header - Accordion -->
             <a href="#collapseCardImage" class="d-block card-header py-3 btn-success" data-toggle="collapse"
                role="button" aria-expanded="true" aria-controls="collapseCardExample">
-              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Step 2 Of {{.People.People.Name}} creation</h6>
+              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Image</h6>
             </a>
             <!-- Card Content - Collapse -->
-            <div class="collapse show" id="collapseCardImage">
+            <div class="collapse " id="collapseCardImage">
               <div class="card-body p-0">
                 <!-- Nested Row within Card Body -->
                 <div class="row">
@@ -450,7 +450,7 @@
             <!-- Card Header - Accordion -->
             <a href="#collapseCardDetails" class="d-block card-header py-3 btn-success" data-toggle="collapse"
                role="button" aria-expanded="true" aria-controls="collapseCardExample">
-              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Step 2 Of {{.People.People.Name}} creation</h6>
+              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Details</h6>
             </a>
             <!-- Card Content - Collapse -->
             <div class="collapse " id="collapseCardDetails">
@@ -464,7 +464,7 @@
                             <h6 class="m-0 font-weight-bold text-primary">People Details</h6>
                           </div>
                           <div class="card-body">
-                            <form class="user"method="post" id="" action="/admin_user/project/update_details">
+                            <form class="user"method="post" id="" action="/admin_user/people/update_details">
 
                               <input type="hidden"name="peopleId" value="{{.People.People.Id}}" class="form-control " >
 
@@ -619,7 +619,7 @@
         <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
         <div class="modal-footer">
           <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-          <a class="btn btn-primary" href="login.html">Logout</a>
+          <a class="btn btn-primary" href="../login/login.html">Logout</a>
         </div>
       </div>
     </div>

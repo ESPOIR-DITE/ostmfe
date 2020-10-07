@@ -1,16 +1,14 @@
 package people
 
-import "time"
-
 type People struct {
-	Id         string    `json:"id"`
-	Name       string    `json:"name"`
-	Surname    string    `json:"surname"`
-	BirthDate  time.Time `json:"birthDate"`
-	DeathDate  time.Time `json:"deathDate"`
-	Origin     string    `json:"origin"`
-	Profession string    `json:"profession"`
-	Brief      string    `json:"brief"`
+	Id         string `json:"id"`
+	Name       string `json:"name"`
+	Surname    string `json:"surname"`
+	BirthDate  string `json:"birth_date"`
+	DeathDate  string `json:"deathdate"`
+	Origin     string `json:"origin"`
+	Profession string `json:"profession"`
+	Brief      string `json:"brief"`
 }
 
 type People_image struct {

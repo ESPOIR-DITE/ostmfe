@@ -8,8 +8,8 @@ import (
 
 const placehistoryURl = api.BASE_URL + "place_history/"
 
-func CreatePlaceHistpory(history place2.PlaceHistory) (place2.PlaceHistory, error) {
-	entity := place2.PlaceHistory{}
+func CreatePlaceHistpory(history place2.PlaceHistories) (place2.PlaceHistories, error) {
+	entity := place2.PlaceHistories{}
 
 	resp, _ := api.Rest().SetBody(history).Post(placehistoryURl + "create")
 	if resp.IsError() {
@@ -22,8 +22,8 @@ func CreatePlaceHistpory(history place2.PlaceHistory) (place2.PlaceHistory, erro
 	return entity, nil
 }
 
-func UpdatePlaceHistpory(history place2.PlaceHistory) (place2.PlaceHistory, error) {
-	entity := place2.PlaceHistory{}
+func UpdatePlaceHistpory(history place2.PlaceHistories) (place2.PlaceHistories, error) {
+	entity := place2.PlaceHistories{}
 
 	resp, _ := api.Rest().SetBody(history).Post(placehistoryURl + "update")
 	if resp.IsError() {
@@ -35,8 +35,8 @@ func UpdatePlaceHistpory(history place2.PlaceHistory) (place2.PlaceHistory, erro
 	}
 	return entity, nil
 }
-func ReadPlaceHistpory(id string) (place2.PlaceHistory, error) {
-	entity := place2.PlaceHistory{}
+func ReadPlaceHistpory(id string) (place2.PlaceHistories, error) {
+	entity := place2.PlaceHistories{}
 
 	resp, _ := api.Rest().Get(placehistoryURl + "read?id=" + id)
 	if resp.IsError() {
@@ -49,8 +49,8 @@ func ReadPlaceHistpory(id string) (place2.PlaceHistory, error) {
 	return entity, nil
 }
 
-func ReadPlaceHistporyOf(placeId string) (place2.PlaceHistory, error) {
-	entity := place2.PlaceHistory{}
+func ReadPlaceHistporyOf(placeId string) (place2.PlaceHistories, error) {
+	entity := place2.PlaceHistories{}
 
 	resp, _ := api.Rest().Get(placehistoryURl + "readOf?id=" + placeId)
 	if resp.IsError() {
@@ -63,8 +63,8 @@ func ReadPlaceHistporyOf(placeId string) (place2.PlaceHistory, error) {
 	return entity, nil
 }
 
-func DeletePlaceHistpory(id string) (place2.PlaceHistory, error) {
-	entity := place2.PlaceHistory{}
+func DeletePlaceHistpory(id string) (place2.PlaceHistories, error) {
+	entity := place2.PlaceHistories{}
 
 	resp, _ := api.Rest().Get(placehistoryURl + "delete?id=" + id)
 	if resp.IsError() {
@@ -76,8 +76,8 @@ func DeletePlaceHistpory(id string) (place2.PlaceHistory, error) {
 	}
 	return entity, nil
 }
-func ReadPlaceHistporys() ([]place2.PlaceHistory, error) {
-	entity := []place2.PlaceHistory{}
+func ReadPlaceHistporys() ([]place2.PlaceHistories, error) {
+	entity := []place2.PlaceHistories{}
 
 	resp, _ := api.Rest().Get(placehistoryURl + "reads")
 	if resp.IsError() {

@@ -29,33 +29,50 @@
 
     <!-- Nav Item - Pages Collapse Menu -->
     <li class="nav-item">
-        <a class="nav-link collapsed" href="/admin_user/users" data-toggle="collapse" data-target="#collapseUser" aria-expanded="true" aria-controls="collapseTwo">
+        <a class="nav-link collapsed " href="/admin_user/users" data-toggle="collapse" data-target="#collapseUser" aria-expanded="true" aria-controls="collapseTwo">
             <i class="fas fa-fw fa-cog"></i>
             <span>Users</span>
         </a>
-        <div id="collapseUser" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div id="collapseUser" class="collapse {{if eq .SidebarData.Menu "user"}} show {{end}}" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Custom Components:</h6>
-                <a class="collapse-item" href="/admin_user/users">Users</a>
-                <a class="collapse-item" href="/admin_user/role">User Roles</a>
+                <a class="collapse-item {{if eq .SidebarData.Submenu "user"}} active {{end}}" href="/admin_user/users">Users</a>
+                <a class="collapse-item {{if eq .SidebarData.Submenu "role"}} active {{end}}" href="/admin_user/role">User Roles</a>
             </div>
         </div>
     </li>
 
-    <li class="nav-item">
-        <a class="nav-link" href="/admin_user/event">
-            <i class="fas fa-fw fa-chart-area"></i>
-            <span>Events</span></a>
-    </li>
 
     <li class="nav-item">
-        <a class="nav-link" href="/admin_user/project">
+        <a class="nav-link collapsed " href="/admin_user/event" data-toggle="collapse" data-target="#collapseYear" aria-expanded="true" aria-controls="collapseTwo">
+            <i class="fas fa-fw fa-cog"></i>
+            <span>Event</span>
+        </a>
+        <div id="collapseYear" class="collapse {{if eq .SidebarData.Menu "event"}} show {{end}}" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Custom Components:</h6>
+                <a class="collapse-item {{if eq .SidebarData.Submenu "event"}} active {{end}}" href="/admin_user/event">Event</a>
+                <a class="collapse-item {{if eq .SidebarData.Submenu "year"}} active {{end}}" href="/admin_user/years">Years</a>
+            </div>
+        </div>
+    </li>
+
+
+
+
+    <li class="nav-item {{if eq .SidebarData.Menu "project"}} active {{end}}">
+        <a class="nav-link " href="/admin_user/project">
             <i class="fas fa-fw fa-chart-area"></i>
             <span>Project</span></a>
     </li>
+    <li class="nav-item {{if eq .SidebarData.Menu "history"}} active {{end}}">
+        <a class="nav-link " href="/admin_user/history">
+            <i class="fas fa-fw fa-chart-area"></i>
+            <span>History</span></a>
+    </li>
 
-    <li class="nav-item">
-        <a class="nav-link" href="/admin_user/place">
+    <li class="nav-item {{if eq .SidebarData.Menu "place"}} active {{end}}">
+        <a class="nav-link " href="/admin_user/place">
             <i class="fas fa-fw fa-chart-area"></i>
             <span>Place</span></a>
     </li>
@@ -63,89 +80,48 @@
 
 
 
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="/admin_user/people" data-toggle="collapse" data-target="#collapsePeople" aria-expanded="true" aria-controls="collapseTwo">
+    <li class="nav-item {{if eq .SidebarData.Menu "people"}} active {{end}}">
+        <a class="nav-link collapsed " href="/admin_user/people" data-toggle="collapse" data-target="#collapsePeople" aria-expanded="true" aria-controls="collapseTwo">
             <i class="fas fa-fw fa-cog"></i>
             <span>People</span>
         </a>
-        <div id="collapsePeople" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div id="collapsePeople" class="collapse {{if eq .SidebarData.Menu "people"}} show {{end}}" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Custom Components:</h6>
-                <a class="collapse-item" href="/admin_user/people">Peoples</a>
-                <a class="collapse-item" href="/admin_user/people/people_category/new">People category</a>
+                <a class="collapse-item {{if eq .SidebarData.Submenu "people"}} active {{end}}" href="/admin_user/people">Peoples</a>
+                <a class="collapse-item {{if eq .SidebarData.Submenu "people_category"}} active {{end}}" href="/admin_user/people/people_category/new">People category</a>
             </div>
         </div>
     </li>
 
     <!-- Nav Item - Pages Collapse Menu -->
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="/admin_user/collection" data-toggle="collapse" data-target="#collapseCollection" aria-expanded="true" aria-controls="collapseTwo">
+    <li class="nav-item {{if eq .SidebarData.Menu "collection"}} active {{end}}">
+        <a class="nav-link collapsed " href="/admin_user/collection" data-toggle="collapse" data-target="#collapseCollection" aria-expanded="true" aria-controls="collapseTwo">
             <i class="fas fa-fw fa-cog"></i>
             <span>Collections</span>
         </a>
-        <div id="collapseCollection" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div id="collapseCollection" class="collapse {{if eq .SidebarData.Menu "collection"}} show {{end}}" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Custom Components:</h6>
-                <a class="collapse-item" href="/admin_user/collection">Collections</a>
-                <a class="collapse-item" href="/admin_user/collection/collection_type">Collection type</a>
+                <a class="collapse-item {{if eq .SidebarData.Submenu "collection"}} active {{end}}" href="/admin_user/collection">Collections</a>
+                <a class="collapse-item {{if eq .SidebarData.Submenu "collection-type"}} active {{end}}" href="/admin_user/collection/collection_type">Collection type</a>
             </div>
         </div>
     </li>
 
-    <!-- Nav Item - Pages Collapse Menu -->
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="/admin_user/history" data-toggle="collapse" data-target="#collapseHistory" aria-expanded="true" aria-controls="collapseTwo">
-            <i class="fas fa-fw fa-cog"></i>
-            <span>History</span>
-        </a>
-        <div id="collapseHistory" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Custom Components:</h6>
-                <a class="collapse-item" href="/admin_user/history">Histories</a>
-                <a class="collapse-item" href="/admin_user/history/new">New</a>
-                <a class="collapse-item" href="/admin_user/history/edit">Modify</a>
-            </div>
-        </div>
+    <li class="nav-item {{if eq .SidebarData.Menu "partner"}} active {{end}}">
+        <a class="nav-link" href="/admin_user/partner">
+            <i class="fas fa-fw fa-chart-area"></i>
+            <span>Partners</span></a>
     </li>
 
-    <!-- Nav Item - Pages Collapse Menu -->
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="/admin_user/partner" data-toggle="collapse" data-target="#collapsePartner" aria-expanded="true" aria-controls="collapseTwo">
-            <i class="fas fa-fw fa-cog"></i>
-            <span>Partner</span>
-        </a>
-        <div id="collapsePartner" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Custom Components:</h6>
-                <a class="collapse-item" href="/admin_user/partner">Partners</a>
-                <a class="collapse-item" href="/admin_user/partner/new">New Partner</a>
-                <a class="collapse-item" href="/admin_user/partner/edit">Modify Partner</a>
-            </div>
-        </div>
-    </li>
-
-    <li class="nav-item">
-        <a class="nav-link" href="/admin_user/group">
+    <li class="nav-item {{if eq .SidebarData.Menu "group"}} active {{end}}">
+        <a class="nav-link " href="/admin_user/group">
             <i class="fas fa-fw fa-chart-area"></i>
             <span>Group</span></a>
     </li>
 
     <!-- Nav Item - Utilities Collapse Menu -->
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
-            <i class="fas fa-fw fa-wrench"></i>
-            <span>Utilities</span>
-        </a>
-        <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Custom Utilities:</h6>
-                <a class="collapse-item" href="#">Colors</a>
-                <a class="collapse-item" href="#">Borders</a>
-                <a class="collapse-item" href="#">Animations</a>
-                <a class="collapse-item" href="#">Other</a>
-            </div>
-        </div>
-    </li>
 
     <!-- Divider -->
     <hr class="sidebar-divider">
@@ -156,21 +132,22 @@
     </div>
 
     <!-- Nav Item - Pages Collapse Menu -->
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="true" aria-controls="collapsePages">
+    <li class="nav-item {{if eq .SidebarData.Menu "page"}} active {{end}}" >
+        <a class="nav-link collapsed " href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="true" aria-controls="collapsePages">
             <i class="fas fa-fw fa-folder"></i>
             <span>Pages</span>
         </a>
-        <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+        <div id="collapsePages" class="collapse {{if eq .SidebarData.Menu "page"}} show {{end}}" aria-labelledby="headingPages" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Login Screens:</h6>
-                <a class="collapse-item" href="#">Login</a>
-                <a class="collapse-item" href="#">Register</a>
-                <a class="collapse-item" href="#">Forgot Password</a>
-                <div class="collapse-divider"></div>
-                <h6 class="collapse-header">Other Pages:</h6>
-                <a class="collapse-item" href="404.html">404 Page</a>
-                <a class="collapse-item" href="blank.html">Blank Page</a>
+                <h6 class="collapse-header">client pages:</h6>
+                    <!a class="collapse-item" href="#">Create a page</a>
+                    <!--a class="collapse-item" href="/admin_user/page">Create a page</a-->
+
+                {{with .SidebarData.PageData}}
+                    {{range .}}
+                <a class="collapse-item {{if eq $.SidebarData.Submenu .Id}} active {{end}}" href="/admin_user/page/edit/{{.Id}}">{{.PageName}}</a>
+                    {{end}}
+                {{end}}
             </div>
         </div>
     </li>
@@ -179,14 +156,14 @@
     <li class="nav-item">
         <a class="nav-link" href="#">
             <i class="fas fa-fw fa-chart-area"></i>
-            <span>Charts</span></a>
+            <span>User Contribution</span></a>
     </li>
 
     <!-- Nav Item - Tables -->
     <li class="nav-item">
         <a class="nav-link" href="#">
             <i class="fas fa-fw fa-table"></i>
-            <span>Tables</span></a>
+            <span>User Comments</span></a>
     </li>
 
     <!-- Divider -->

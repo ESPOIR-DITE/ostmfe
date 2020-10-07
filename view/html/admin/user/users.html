@@ -9,7 +9,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>SB Admin 2 - Tables</title>
+  <title>SB Admin 2 - Users</title>
 
   <!-- Custom fonts for this template -->
   <link href="../../assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -21,6 +21,18 @@
   <!-- Custom styles for this page -->
   <link href="../../assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
+  <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+  <style>
+    .form-select .nice-select {
+      border: none;
+      border-radius: 0px;
+      height: 40px;
+      background: #f9f9ff;
+      padding-left: 45px;
+      padding-right: 40px;
+      width: 100%;
+    }
+  </style>
 </head>
 
 <body id="page-top">
@@ -74,7 +86,7 @@
                       <div class="text-center">
                         <h1 class="h4 text-gray-900 mb-4">System User</h1>
                       </div>
-                      <form class="user" method="post" action="/admin_user/users/create">
+                      <form class="user" method="post" action="/admin_user/users/create" enctype="multipart/form-data">
                         <div class="form-group row">
                           <div class="col-sm-6 mb-3 mb-sm-0">
                             <input type="text" class="form-control" id="exampleFirstName" name="name" placeholder="Name" required>
@@ -83,13 +95,17 @@
                             <input type="text" class="form-control" id="exampleLastName"name="surname" placeholder="Surname" required>
                           </div>
                         </div>
-                        <div class="form-group">
+
+                        <div class="form-group row">
+                          <div class="col-sm-6 mb-3 mb-sm-0">
                           <input type="email" class="form-control" id="exampleInputEmail"name="email" placeholder="Email Address"required>
                         </div>
-                        <div class="form-group">
+                          <div class="col-sm-6 mb-3 mb-sm-0">
                           <input type="text" class="form-control" id="exampleInputEmail"name="password" placeholder="Password"required>
                         </div>
-                        <div class="form-group">
+                        </div>
+                        <div class="form-group row">
+                          <div class="col-sm-6 mb-3 mb-sm-0">
                           <label>User Role</label>
                           <select name="userRoleId" class="browser-default custom-select" required>
                             <option selected>Choose a role</option>
@@ -100,6 +116,17 @@
                             {{end}}
                           </select>
                         </div>
+                          <div class="col-sm-6 mb-3 mb-sm-0">
+                          <label>User profile Picture</label>
+                          <input type="file"name="file" class="form-control " id="file" placeholder="Project Name" required>
+                        </div>
+                        </div>
+                        <div class="form-group">
+                          <label>User History</label>
+                          <textarea id="mytextare" class="form-control"  name="mytextarea"></textarea>
+                        </div>
+
+
                         <button type="submit" class="btn btn-primary btn-block">
                           Register new user
                         </button>
@@ -137,17 +164,6 @@
                       <th>Action</th>
                     </tr>
                   </thead>
-                  <tfoot>
-                    <tr>
-                      <th>Nr</th>
-                      <th>Name</th>
-                      <th>User Surname</th>
-                      <th>User Email</th>
-                      <th>User Role</th>
-                      <th>Action</th>
-                      <th>Action</th>
-                    </tr>
-                  </tfoot>
                   <tbody>
                   {{with .Users}}
                   {{range $i, $e := .}}
@@ -214,7 +230,7 @@
         <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
         <div class="modal-footer">
           <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-          <a class="btn btn-primary" href="login.html">Logout</a>
+          <a class="btn btn-primary" href="../login/login.html">Logout</a>
         </div>
       </div>
     </div>
@@ -237,6 +253,11 @@
   <!-- Page level custom scripts -->
   <script src="../../assets/js/demo/datatables-demo.js"></script>
 
+  <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 </body>
-
+<script>
+  $(document).ready(function() {
+    $('#mytextare').summernote();
+  });
+</script>
 </html>

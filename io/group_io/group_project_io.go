@@ -45,8 +45,8 @@ func ReadGroupProject(id string) (group.GroupProject, error) {
 	}
 	return entity, nil
 }
-func ReadGroupProjectWithGroupId(groupId string) (group.GroupHistory, error) {
-	entity := group.GroupHistory{}
+func ReadGroupProjectWithGroupId(groupId string) ([]group.GroupProject, error) {
+	entity := []group.GroupProject{}
 	resp, _ := api.Rest().Get(groupprojectURL + "readWith?id=" + groupId)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())

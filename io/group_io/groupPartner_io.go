@@ -45,8 +45,8 @@ func ReadGroupPartner(id string) (group.GroupPartener, error) {
 	}
 	return entity, nil
 }
-func ReadGroupPartnerWithGroupId(groupId string) (group.GroupPartener, error) {
-	entity := group.GroupPartener{}
+func ReadGroupPartnerWithGroupId(groupId string) ([]group.GroupPartener, error) {
+	entity := []group.GroupPartener{}
 	resp, _ := api.Rest().Get(grouppartnerURL + "readWith?id=" + groupId)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())

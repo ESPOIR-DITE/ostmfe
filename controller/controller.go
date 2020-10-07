@@ -9,6 +9,7 @@ import (
 	"ostmfe/config"
 	"ostmfe/controller/about_us"
 	"ostmfe/controller/admin"
+	"ostmfe/controller/admin/administration"
 	"ostmfe/controller/collection"
 	"ostmfe/controller/event"
 	"ostmfe/controller/history"
@@ -24,6 +25,7 @@ import (
 	project2 "ostmfe/domain/project"
 	"ostmfe/io/event_io"
 	"ostmfe/io/image_io"
+	"ostmfe/io/pageData_io"
 	"ostmfe/io/project_io"
 )
 
@@ -42,6 +44,7 @@ func Controllers(env *config.Env) http.Handler {
 	mux.Mount("/place", place.Home(env))
 	mux.Mount("/people", people.Home(env))
 	mux.Mount("/admin_user", admin.Home(env))
+	mux.Mount("/administration", administration.AdministrationController(env))
 	mux.Mount("/user", user.Home(env))
 	mux.Mount("/event", event.Home(env))
 	mux.Mount("/about_us", about_us.Home(env))
@@ -61,71 +64,41 @@ type SimpleEventData struct {
 	Images       []image3.Images
 	//Location string
 }
+type PageData struct {
+	Projects      []misc.ProjectContentsHome
+	EventDataList []misc.SimpleEventData
+	//EventDataListLeft   []misc.SimpleEventData
+	AllProjects     []project2.Project
+	PagePageSection HomePageData
+	CheckOdds       func(index int) bool
+}
 
 func homeHanler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		projects := misc.GetProjectContentsHomes()
-		var images []image3.Images
-		var profileImage image3.Images
-		var eventDataList []SimpleEventData
+
 		//var eventDataListLeft []EventData
 		//var eventDataListRight []EventData
 
-		//Here we are reading all the events
-		events, err := event_io.ReadEvents()
-		if err != nil {
-			fmt.Println(err, " error reading events")
-		} else {
-			for _, event := range events {
-				eventImages, err := event_io.ReadEventImgOf(event.Id)
-				if err != nil {
-					fmt.Println(err, " error reading events Images")
-				} else {
-					fmt.Println(" Looping eventImages")
-					for _, eventImage := range eventImages {
-
-						fmt.Println(" eventImage.Description: ", eventImage.Description)
-						if eventImage.Description == "1" || eventImage.Description == "profile" {
-							fmt.Println(" We have a profile Image")
-							profileImage, err = image_io.ReadImage(eventImage.ImageId)
-							if err != nil {
-								fmt.Println(err, " error reading profile event image")
-							}
-						}
-						fmt.Println(" eventImage.ImageId: ", eventImage.ImageId)
-						image, err := image_io.ReadImage(eventImage.ImageId)
-						if err != nil {
-							fmt.Println(err, " error reading image")
-						}
-						images = append(images, image)
-					}
-					//eventLocation,err:= ReadEvent
-				}
-				//we need to make sure that profileImage is not empty
-				if profileImage.Id != "" {
-					//fmt.Println(" profileImage.Id: ", profileImage.Id)
-					eventData := SimpleEventData{event, profileImage, images}
-					eventDataList = append(eventDataList, eventData)
-					eventData = SimpleEventData{}
-
-					//adding data to the correct list
-					//if CheckEventAndOdd(index)
-				}
-				fmt.Println("This error may occur if there is no events created error:  profileImage is empty")
-
-			}
-
-		}
 		allProjects, err := project_io.ReadProjects()
 		if err != nil {
 			fmt.Println(err, " error reading all the project")
 		}
-		type PageData struct {
-			Projects      []misc.ProjectContentsHome
-			EventDataList []SimpleEventData
-			AllProjects   []project2.Project
+		eventdataLeft := misc.GetSimpleEventData(6)
+
+		date := PageData{projects,
+			eventdataLeft,
+			allProjects,
+			GetPageData("HomePage"),
+			func(index int) bool {
+				if index%2 == 0 {
+					return true
+				} else {
+					return false
+				}
+			},
 		}
-		date := PageData{projects, eventDataList, allProjects}
+
 		files := []string{
 			app.Path + "index.html",
 			app.Path + "base_templates/navigator.html",
@@ -142,10 +115,111 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 		}
 	}
 }
+
 func CheckEventAndOdd(index int) bool {
 	if index%2 == 0 {
 		return true
 	} else {
 		return false
 	}
+}
+
+type HomePageData struct {
+	Notification    string
+	ProjectIntro    string
+	EventIntro      string
+	ExhibitionIntro string
+}
+
+func GetPageData(pageName string) HomePageData {
+	var notification string
+	var projectintro string
+	var eventintro string
+	var exibitionintro string
+
+	page, err := pageData_io.ReadPageDataWIthName(pageName)
+	if err != nil {
+		fmt.Println(err, " error reading page")
+	} else {
+		pageDateSectionObject, err := pageData_io.ReadPageSectionAllOf(page.Id)
+		if err != nil {
+			fmt.Println(err, " error reading page")
+		}
+		for _, pageDateSection := range pageDateSectionObject {
+			pageSection, err := pageData_io.ReadSection(pageDateSection.SectionId)
+			if err != nil {
+				fmt.Println(err, " error reading page")
+			} else {
+				if pageSection.SectionName == "Notification" {
+					fmt.Println(" Notification", pageSection)
+					notification = misc.ConvertingToString(pageDateSection.Content)
+				}
+				if pageSection.SectionName == "ProjectIntro" {
+					fmt.Println(" ProjectIntro", pageSection)
+					projectintro = misc.ConvertingToString(pageDateSection.Content)
+				}
+				if pageSection.SectionName == "EventIntro" {
+					fmt.Println(" EventIntro", pageSection)
+					eventintro = misc.ConvertingToString(pageDateSection.Content)
+				}
+				if pageSection.SectionName == "ExhibitionIntro" {
+					fmt.Println(" exhibition", pageSection)
+					exibitionintro = misc.ConvertingToString(pageDateSection.Content)
+				}
+			}
+		}
+	}
+	return HomePageData{notification, projectintro, eventintro, exibitionintro}
+}
+
+func GetEvents() []SimpleEventData {
+	var images []image3.Images
+	var profileImage image3.Images
+	var eventDataList []SimpleEventData
+	//Here we are reading all the events
+	events, err := event_io.ReadEvents()
+	if err != nil {
+		fmt.Println(err, " error reading events")
+	} else {
+		for _, event := range events {
+			eventImages, err := event_io.ReadEventImgOf(event.Id)
+			if err != nil {
+				fmt.Println(err, " error reading events Images")
+			} else {
+				fmt.Println(" Looping eventImages")
+				for _, eventImage := range eventImages {
+
+					fmt.Println(" eventImage.Description: ", eventImage.Description)
+					if eventImage.Description == "1" || eventImage.Description == "profile" {
+						fmt.Println(" We have a profile Image")
+						profileImage, err = image_io.ReadImage(eventImage.ImageId)
+						if err != nil {
+							fmt.Println(err, " error reading profile event image")
+						}
+					}
+					fmt.Println(" eventImage.ImageId: ", eventImage.ImageId)
+					image, err := image_io.ReadImage(eventImage.ImageId)
+					if err != nil {
+						fmt.Println(err, " error reading image")
+					}
+					images = append(images, image)
+				}
+				//eventLocation,err:= ReadEvent
+			}
+			//we need to make sure that profileImage is not empty
+			if profileImage.Id != "" {
+				//fmt.Println(" profileImage.Id: ", profileImage.Id)
+				eventData := SimpleEventData{event, profileImage, images}
+				eventDataList = append(eventDataList, eventData)
+				eventData = SimpleEventData{}
+
+				//adding data to the correct list
+				//if CheckEventAndOdd(index)
+			}
+			fmt.Println("This error may occur if there is no events created error:  profileImage is empty")
+
+		}
+
+	}
+	return eventDataList
 }

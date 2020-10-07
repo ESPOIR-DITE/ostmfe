@@ -10,6 +10,7 @@ import (
 	history2 "ostmfe/domain/history"
 	image3 "ostmfe/domain/image"
 	"ostmfe/domain/member"
+	"ostmfe/domain/pageData"
 	"ostmfe/domain/partner"
 	people2 "ostmfe/domain/people"
 	"ostmfe/domain/place"
@@ -20,6 +21,7 @@ import (
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
 	"ostmfe/io/member_io"
+	"ostmfe/io/pageData_io"
 	"ostmfe/io/partner_io"
 	"ostmfe/io/people_io"
 	"ostmfe/io/place_io"
@@ -33,7 +35,7 @@ const (
 	YYYYMMDD_FORMAT    = "2006-01-02"
 	YYYMMDDTIME_FORMAT = "2006-01-02 15:04:05"
 	layoutUS           = "January 2, 2006"
-	layoutISO          = "2006-01-02"
+	RFC3339Nano        = "2006-01-02T15:00:00.000+0000"
 )
 
 /**
@@ -44,19 +46,12 @@ func FormatDateTime(date time.Time) string {
 	return date.Format(YYYMMDDTIME_FORMAT)
 }
 
-/**
-format date in yyyy-MM-dd
-*/
-func FormatDate(date time.Time) string {
-	return date.Format(YYYYMMDD_FORMAT)
-}
-
 /****
 formating date with month name
 */
-func FormatingDateMonth(date string) string {
-	t, _ := time.Parse(YYYMMDDTIME_FORMAT, date)
-	return t.Format(layoutUS)
+func FormatDateMonth(date string) string {
+	t, _ := time.Parse(RFC3339Nano, date)
+	return t.Format(YYYYMMDD_FORMAT)
 }
 
 /***
@@ -275,6 +270,7 @@ func GetUserAndRole() []UsersAndRoles {
 		if err != nil {
 			fmt.Println(err, " error reading user role of: "+user.Email)
 		}
+		//fmt.Println("User Role",userRole)
 		role, err := user_io.ReadRole(userRole.RoleId)
 		if err != nil {
 			fmt.Println(err, " error reading role of the following role: "+userRole.RoleId)
@@ -307,12 +303,7 @@ func GetPeopleWithStringdate() []PeopleWithStringdate {
 	}
 	for _, people := range peoples {
 
-		dateOfBirth := people.BirthDate.Format("2006-01-02")
-		fmt.Println(people.BirthDate)
-		fmt.Println(dateOfBirth)
-		fmt.Println("yyyy-mm-dd : ", people.BirthDate.Format("2006-01-02"))
-		dateOfDearth := people.DeathDate.Format("2006-01-02")
-		peopleObject := PeopleWithStringdate{people.Id, people.Name, people.Surname, dateOfBirth, dateOfDearth, people.Origin, people.Profession}
+		peopleObject := PeopleWithStringdate{people.Id, people.Name, people.Surname, FormatDateMonth(people.BirthDate), FormatDateMonth(people.DeathDate), people.Origin, people.Profession}
 		peopelToreturn = append(peopelToreturn, peopleObject)
 		peopleObject = PeopleWithStringdate{}
 	}
@@ -551,6 +542,7 @@ type EventData struct {
 	Projects project2.Project
 	Place    place.Place
 	History  history2.HistoriesHelper
+	Peoples  []people2.People
 }
 type EventImageHelperEditable struct {
 	Id           string
@@ -566,15 +558,17 @@ func GetEventDate(eventId string) EventData {
 	var place place.Place
 	var imageHelper []EventImageHelperEditable
 	var historyHelper history2.HistoriesHelper
+	var peoples []people2.People
 
-	event, err := event_io.ReadEvent(eventId)
+	theEvent, err := event_io.ReadEvent(eventId)
 	if err != nil {
 		fmt.Println(err, "error reading event: ", eventId)
 		return eventData
 	}
-	if event.Id != "" {
+
+	if theEvent.Id != "" {
 		//First let's get the Images
-		eventImages, err := event_io.ReadEventImgOf(event.Id)
+		eventImages, err := event_io.ReadEventImgOf(theEvent.Id)
 		if err != nil {
 			fmt.Println(err, "error reading eventImages: ", eventId)
 		} else {
@@ -590,7 +584,7 @@ func GetEventDate(eventId string) EventData {
 		}
 
 		//Second, Partners
-		eventPartners, err := event_io.ReadEventPartenerOf(event.Id)
+		eventPartners, err := event_io.ReadEventPartenerOf(theEvent.Id)
 		if err != nil {
 			fmt.Println(err, "error reading eventPartners: ", eventId)
 		} else {
@@ -605,7 +599,7 @@ func GetEventDate(eventId string) EventData {
 		}
 
 		//thirdly, Projects
-		eventProject, err := event_io.ReadEventProjectWithEventId(event.Id)
+		eventProject, err := event_io.ReadEventProjectWithEventId(theEvent.Id)
 		if err != nil {
 			fmt.Println(err, "error reading eventProjects: ", eventId)
 		} else {
@@ -615,7 +609,7 @@ func GetEventDate(eventId string) EventData {
 			}
 		}
 		//Fourth, Places
-		eventplace, err := event_io.ReadEventPlaceOf(event.Id)
+		eventplace, err := event_io.ReadEventPlaceOf(theEvent.Id)
 		if err != nil {
 			fmt.Println(err, "error reading event Place: ", eventId)
 		} else {
@@ -635,8 +629,25 @@ func GetEventDate(eventId string) EventData {
 			}
 			historyHelper = history2.HistoriesHelper{history.Id, ConvertingToString(history.History)}
 		}
+
+		//People
+		eventPeoples, err := event_io.ReadEventPeopleOf(eventId)
+		if err != nil {
+			fmt.Println(err, "error reading eventPEople ")
+		} else {
+			for _, eventPeople := range eventPeoples {
+				people, err := people_io.ReadPeople(eventPeople.PeopleId)
+				if err != nil {
+					fmt.Println(err, "error reading people")
+				} else {
+					peoples = append(peoples, people)
+				}
+			}
+		}
+
 	}
-	eventDataObject := EventData{event, imageHelper, partners, project, place, historyHelper}
+	eventObejct := event.Event{theEvent.Id, theEvent.Name, FormatDateMonth(theEvent.Date), theEvent.IsPast, theEvent.Description}
+	eventDataObject := EventData{eventObejct, imageHelper, partners, project, place, historyHelper, peoples}
 	return eventDataObject
 }
 
@@ -644,13 +655,15 @@ func GetEventDate(eventId string) EventData {
 type SimpleEventData struct {
 	Event        event.Event
 	ProfileImage image3.Images
-	Images       []image3.Images
-	//Location string
+}
+
+//Client Events
+type SimpleEventDataLeft struct {
+	Event        event.Event
+	ProfileImage image3.Images
 }
 
 func GetSimpleEventData(limit int) []SimpleEventData {
-	var images []image3.Images
-	var image image3.Images
 	var profileImage image3.Images
 	var eventDataList []SimpleEventData
 
@@ -658,7 +671,7 @@ func GetSimpleEventData(limit int) []SimpleEventData {
 	events, err := event_io.ReadEvents()
 	if err != nil {
 		fmt.Println(err, " error reading events")
-	} else {
+	} else { //First loop
 		for index, eventEntity := range events {
 			eventImages, err := event_io.ReadEventImgOf(eventEntity.Id)
 			if err != nil {
@@ -666,7 +679,6 @@ func GetSimpleEventData(limit int) []SimpleEventData {
 			} else {
 				fmt.Println(" Looping eventImages")
 				for _, eventImage := range eventImages {
-
 					fmt.Println(" eventImage.Description: ", eventImage.Description)
 					if eventImage.Description == "1" || eventImage.Description == "profile" {
 						fmt.Println(" We have a profile Image")
@@ -675,22 +687,17 @@ func GetSimpleEventData(limit int) []SimpleEventData {
 							fmt.Println(err, " error reading profile event image")
 						}
 					}
-					fmt.Println(" eventImage.ImageId: ", eventImage.ImageId)
-					image, err = image_io.ReadImage(eventImage.ImageId)
-					if err != nil {
-						fmt.Println(err, " error reading image")
-					}
-					images = append(images, image)
-					image = image3.Images{}
 				}
-				//eventLocation,err:= ReadEvent
 			}
 			//we need to make sure that profileImage is not empty
 			if profileImage.Id != "" {
 				//fmt.Println(" profileImage.Id: ", profileImage.Id)
-				eventData := SimpleEventData{eventEntity, profileImage, images}
+				eventObject := event.Event{eventEntity.Id, eventEntity.Name, FormatDateMonth(eventEntity.Date), eventEntity.IsPast, eventEntity.Description}
+				eventData := SimpleEventData{eventObject, profileImage /** images**/}
 				eventDataList = append(eventDataList, eventData)
 				eventData = SimpleEventData{}
+				profileImage = image3.Images{}
+				eventObject = event.Event{}
 
 				//adding data to the correct list
 				//if CheckEventAndOdd(index)
@@ -705,4 +712,77 @@ func GetSimpleEventData(limit int) []SimpleEventData {
 
 	}
 	return eventDataList
+}
+
+//This method like the top one, it returns all the events of a particular year.
+func GetSimpleEventDataOfYear(yearId string) []SimpleEventData {
+	var profileImage image3.Images
+	var eventDataList []SimpleEventData
+
+	eventYears, err := event_io.ReadEventYearsWithYearId(yearId)
+	if err != nil {
+		fmt.Println(err, " error reading event years")
+	} else {
+		for _, eventYear := range eventYears {
+
+			eventEntity, err := event_io.ReadEvent(eventYear.EventId)
+			if err != nil {
+				fmt.Println(err, " error reading events")
+			}
+
+			eventImages, err := event_io.ReadEventImgOf(eventEntity.Id)
+			if err != nil {
+				fmt.Println(err, " error reading events Images")
+			} else {
+				fmt.Println(" Looping eventImages")
+				for _, eventImage := range eventImages {
+					fmt.Println(" eventImage.Description: ", eventImage.Description)
+					if eventImage.Description == "1" || eventImage.Description == "profile" {
+						fmt.Println(" We have a profile Image")
+						profileImage, err = image_io.ReadImage(eventImage.ImageId)
+						if err != nil {
+							fmt.Println(err, " error reading profile event image")
+						}
+					}
+				}
+			}
+			//we need to make sure that profileImage is not empty
+			if profileImage.Id != "" {
+				//fmt.Println(" profileImage.Id: ", profileImage.Id)
+				eventObject := event.Event{eventEntity.Id, eventEntity.Name, FormatDateMonth(eventEntity.Date), eventEntity.IsPast, eventEntity.Description}
+				eventData := SimpleEventData{eventObject, profileImage /** images**/}
+				eventDataList = append(eventDataList, eventData)
+				eventData = SimpleEventData{}
+				profileImage = image3.Images{}
+				eventObject = event.Event{}
+
+				//adding data to the correct list
+				//if CheckEventAndOdd(index)
+			}
+			fmt.Println("This error may occur if there is no events created error:  profileImage is empty")
+
+			// we are putting limit here so that the loop should exit if the index reach the limited number
+
+		}
+	}
+
+	return eventDataList
+}
+
+//dealing with sidebar data
+type SidebarData struct {
+	PageData []pageData.PageData
+	Menu     string
+	Submenu  string
+}
+
+func GetSideBarData(menu, submenu string) SidebarData {
+	var pageDataObject []pageData.PageData
+	//Reading all the Pages
+	pageData, err := pageData_io.ReadPageDatas()
+	if err != nil {
+		fmt.Println(err, " error reading all the PageData")
+		return SidebarData{pageDataObject, menu, submenu}
+	}
+	return SidebarData{pageData, menu, submenu}
 }

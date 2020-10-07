@@ -45,8 +45,21 @@ func ReadPeoplePlace(id string) (people.PeoplePlace, error) {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
-
 }
+
+func ReadPeoplePlaceWithPeopleId(peopleId string) ([]people.PeoplePlace, error) {
+	entity := []people.PeoplePlace{}
+	resp, _ := api.Rest().Get(pplPlace + "readWithPeopleId?id" + peopleId)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
+
 func DeletePeoplePlace(id string) (people.PeoplePlace, error) {
 	entity := people.PeoplePlace{}
 	resp, _ := api.Rest().Get(pplPlace + "delete?id" + id)

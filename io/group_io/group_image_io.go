@@ -20,7 +20,7 @@ func CreateGroupImage(myEvent group.GroupImageHelper) (group.GroupImage, error) 
 	}
 	return entity, nil
 }
-func UpdateGroupImage(myEvent group.GroupImage) (group.GroupImage, error) {
+func UpdateGroupImage(myEvent group.GroupImageHelper) (group.GroupImage, error) {
 	entity := group.GroupImage{}
 	resp, _ := api.Rest().SetBody(myEvent).Post(groupimageURL + "update")
 	if resp.IsError() {

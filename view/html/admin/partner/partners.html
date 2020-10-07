@@ -314,12 +314,16 @@
                       <td>{{.Name}}</td>
                       <td>{{.Description}}</td>
                       <td>{{.Link}}</td>
-                      <td><a href="/admin_user/user/edit/{{.Id}}" class="btn btn-primary btn-user btn-block">
+                      <td><a class="btn btn-primary btn-user btn-block" data-toggle="modal"
+                             onclick="updatePartnerBTN({{.Id}},{{.Link}},{{.Name}})"
+                             data-target="#exampleModalUpdatePatern">
                           Edit
                         </a>
                       </td>
-                      <td><a href="/admin_user/user/delete/{{.Id}}" class="btn btn-google btn-user btn-block">
-                          <i class="fab fa-fw"></i> Delete
+                      <td><a class="btn btn-google btn-user btn-block" data-toggle="modal"
+                             onclick="deleteTheEventBTN({{.Id}},{{.Name}})"
+                             data-target="#exampleModalDeletPartner">
+                          Delete
                         </a>
                       </td>
                     </tr>
@@ -371,7 +375,61 @@
         <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
         <div class="modal-footer">
           <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-          <a class="btn btn-primary" href="login.html">Logout</a>
+          <a class="btn btn-primary" href="../login/login.html">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--Delete warning Modal -->
+  <div class="modal fade" id="exampleModalDeletPartner" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-danger" id="exampleModalLongTitle">Warning</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h3 class="text-danger text-center"> About to delete the record of:</h3>
+          <h4 id="value" class="text-center"></h4>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-danger" id=""><a id="deleteBtn">Delete</a></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--Update warning Modal -->
+  <div class="modal fade" id="exampleModalUpdatePatern" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-success" id="exampleModalLongTitle">Updating Partner</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h3 class=" text-center"> About to edit the record of:</h3>
+          <form class="user"method="post" action="/admin_user/partner/update">
+            <input type="hidden" name="partnerId" class="form-control " id="partnerId" required>
+            <div class="form-group">
+              <label>Partner Name</label>
+              <input type="text" name="partner_name" class="form-control " id="partnerName" required>
+            </div>
+            <div class="form-group">
+              <label>Site Link</label>
+              <input type="url" name="url" class="form-control " id="link"  required>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">
+              Submit
+            </button>
+          </form>
         </div>
       </div>
     </div>
@@ -395,5 +453,16 @@
   <script src="../../assets/js/demo/datatables-demo.js"></script>
 
 </body>
+<script>
+  function deletePartnerBTN(id,name) {
+    $("#deleteBtn").attr('href','/admin_user/partner/delete/'+id);
+    $("#value").text(name);
+  }
+  function updatePartnerBTN(id,link,name) {
+    $("#partnerName").val(name);
+    $("#link").val(link);
+    $("#partnerId").val(id);
+  }
+</script>
 
 </html>

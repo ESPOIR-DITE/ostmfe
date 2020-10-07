@@ -6,11 +6,23 @@ import (
 	"ostmfe/domain/history"
 )
 
-const historyImg = api.BASE_URL + "historyImg"
+const historyimageURL = api.BASE_URL + "historyImages/"
 
-func CreateHistoryImage(hist history.History_image) (history.History_image, error) {
-	entity := history.History_image{}
-	resp, _ := api.Rest().SetBody(hist).Post(historyImg + "create")
+func CreateHistoryImage(hist history.HistoryImageHelper) (history.HistoryImage, error) {
+	entity := history.HistoryImage{}
+	resp, _ := api.Rest().SetBody(hist).Post(historyimageURL + "create")
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
+func UpdateHistoryImage(hist history.HistoryImageHelper) (history.HistoryImage, error) {
+	entity := history.HistoryImage{}
+	resp, _ := api.Rest().SetBody(hist).Post(historyimageURL + "update")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -21,22 +33,9 @@ func CreateHistoryImage(hist history.History_image) (history.History_image, erro
 	return entity, nil
 
 }
-func UpdateHistoryImage(hist history.History_image) (history.History_image, error) {
-	entity := history.History_image{}
-	resp, _ := api.Rest().SetBody(hist).Post(historyImg + "update")
-	if resp.IsError() {
-		return entity, errors.New(resp.Status())
-	}
-	err := api.JSON.Unmarshal(resp.Body(), &entity)
-	if err != nil {
-		return entity, errors.New(resp.Status())
-	}
-	return entity, nil
-
-}
-func ReadHistoryImage(id string) (history.History_image, error) {
-	entity := history.History_image{}
-	resp, _ := api.Rest().Get(historyImg + "read?id" + id)
+func ReadHistoryImage(id string) (history.HistoryImage, error) {
+	entity := history.HistoryImage{}
+	resp, _ := api.Rest().Get(historyimageURL + "read?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -47,21 +46,33 @@ func ReadHistoryImage(id string) (history.History_image, error) {
 	return entity, nil
 }
 
-//func ReadHistoryImage(id string) (history.History_image, error) {
-//	entity := history.History_image{}
-//	resp, _ := api.Rest().Get(historyImg + "read?id" + id)
-//	if resp.IsError() {
-//		return entity, errors.New(resp.Status())
-//	}
-//	err := api.JSON.Unmarshal(resp.Body(), &entity)
-//	if err != nil {
-//		return entity, errors.New(resp.Status())
-//	}
-//	return entity, nil
-//}
-func DeleteHistoryImage(id string) (history.History_image, error) {
-	entity := history.History_image{}
-	resp, _ := api.Rest().Get(historyImg + "delete?id" + id)
+func ReadHistoryImageWithHistoryId(id string) (history.HistoryImage, error) {
+	entity := history.HistoryImage{}
+	resp, _ := api.Rest().Get(historyimageURL + "readWithHistoryId?id=" + id)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
+func ReadHistoryImagesWithHistoryId(id string) ([]history.HistoryImage, error) {
+	entity := []history.HistoryImage{}
+	resp, _ := api.Rest().Get(historyimageURL + "readAllWithHistoryId?id=" + id)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
+func DeleteHistoryImage(id string) (history.HistoryImage, error) {
+	entity := history.HistoryImage{}
+	resp, _ := api.Rest().Get(historyimageURL + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -72,9 +83,9 @@ func DeleteHistoryImage(id string) (history.History_image, error) {
 	return entity, nil
 
 }
-func ReadHistoryImages() (history.History_image, error) {
-	entity := history.History_image{}
-	resp, _ := api.Rest().Get(historyImg + "reads")
+func ReadHistoryImages() (history.HistoryImage, error) {
+	entity := history.HistoryImage{}
+	resp, _ := api.Rest().Get(historyimageURL + "reads")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}

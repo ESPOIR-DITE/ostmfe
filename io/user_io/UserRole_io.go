@@ -86,3 +86,16 @@ func ReadUserRoles() ([]user2.RoleOfUser, error) {
 	}
 	return entity, nil
 }
+func ReadUserRoleAllOf(roleId string) ([]user2.RoleOfUser, error) {
+	var entity []user2.RoleOfUser
+	resp, _ := api.Rest().Get(userroleURL + "readAllOf?id=" + roleId)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}

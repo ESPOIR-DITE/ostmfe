@@ -9,19 +9,33 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Admin OSTM</title>
+  <title>Admin OSTM | Event</title>
   <style>
-
     .form-select .nice-select {
-      border: none;
+      border: 1px solid #d1d3e2;!important;
+      color: #6e707e;
       border-radius: 0px;
-      height: 40px;
       background: #f9f9ff;
       padding-left: 45px;
       padding-right: 40px;
       width: 100%;
+      height: calc(1.5em + .75rem + 2px);
+      display: inline-block;
     }
-
+    .btn-group{
+      color: #6e707e;
+      padding-left: 45px;
+      padding-right: 40px;
+      width: 100%;
+      height: calc(1.5em + .75rem + 2px);
+      display: inline-block;
+      background-color: #fff;
+      border: 1px solid #d1d3e2;
+      border-radius: .35rem;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+    }
   </style>
 
   <!-- Custom fonts for this template-->
@@ -32,12 +46,10 @@
   <link href="../../../assets/css/sb-admin-2.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../../../assets/css/main.css">
 
-  <script src="https://cdn.tiny.cloud/1/tmo7wwuvihuwqom08gjvonhdda8blx4on0n7jvm1i4pq2coh/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
-  <script>
-    tinymce.init({
-      selector: '#mytextarea'
-    });
-  </script>
+  <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+
+  <!-- Custom styles for this page -->
+  <link href="../../assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 </head>
 
 <body class="bg-gradient-primary">
@@ -57,9 +69,21 @@
               </div>
               <form class="user" method="post" action="/admin_user/event/create-history" enctype="multipart/form-data">
                 <input type="hidden" name="eventId" value="{{.Event.Id}}">
+
+                <div class="form-group">
+                  <label>Groups |<small> You can select one or multiple Groups that are linked to this event</small></label>
+                  <select  style="margin-bottom: 10px;" name="groupId" class="" multiple data-live-search="true" id="multiple-checkboxes" multiple="multiple">
+                    {{with .Groups}}
+                      {{range .}}
+                        <option title="{{.Description}}" value={{.Id}}>{{.Name}}</option>
+                      {{end}}
+                    {{end}}
+                  </select>
+                </div>
+
                 <div class="form-group">
                   <label>Event History</label>
-                  <textarea id="mytextarea" class="form-control"  name="mytextarea">
+                  <textarea id="mytextare" class="form-control"  name="mytextarea">
                  </textarea>
                 </div>
                 <div class="form-group ">
@@ -73,7 +97,7 @@
                 </div>
                 <div class="form-group row" >
                   <div class="col-sm-6" >
-                    <button type="button" id="add_form_field" class="btn btn-primary btn-user btn-block">
+                    <button type="button" id="add_form_field" class="btn btn-primary btn-block">
                       Add a picture
                     </button>
                   </div>
@@ -107,9 +131,22 @@
           src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA&callback=initMap">
   </script>
   <!--script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA"></script-->
+  <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.js"></script>
+  {{/*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">*/}}
+  {{/*<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>*/}}
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">
 </body>
 <script>
+  $(document).ready(function() {
+    $('#multiple-checkboxes').multiselect({
+      includeSelectAllOption: true,
+    });
+    $('#mytextare').summernote();
+  });
   var max_fields = 6;
   var wrapper = document.getElementById("filesArea");
   var add_button = document.getElementById("add_form_field");

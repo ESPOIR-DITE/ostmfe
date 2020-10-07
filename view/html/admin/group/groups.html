@@ -61,12 +61,6 @@
 
                 <!-- Page Heading -->
 
-                <a href="/admin_user/event/new" class="btn btn-success btn-icon-split mb-4">
-                    <span class="icon text-white-50">
-                      <i class="fas fa-check"></i>
-                    </span>
-                    <span class="text">Create new Group</span>
-                </a>
 
                 <!-- Add new -->
                 {{if .Backend_error}}
@@ -175,7 +169,7 @@
                                         <tr>
                                             <td>{{$i}}</td>
                                             <td>{{.Name}}</td>
-                                            <td><a href="/admin_user/event/edite/{{.Id}}"
+                                            <td><a href="/admin_user/group/edit/{{.Id}}"
                                                    class="btn btn-primary btn-user btn-block">
                                                     Edit
                                                 </a>
@@ -235,7 +229,7 @@
             <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                <a class="btn btn-primary" href="login.html">Logout</a>
+                <a class="btn btn-primary" href="../login/login.html">Logout</a>
             </div>
         </div>
     </div>

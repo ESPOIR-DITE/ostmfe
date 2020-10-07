@@ -12,11 +12,8 @@ import (
 
 func Home(app *config.Env) http.Handler {
 	r := chi.NewRouter()
-	r.Get("/", homeHanler(app))
+	r.Get("/", homeHandler(app))
 	r.Get("/{peopleId}", PeopleHanler(app))
-	//r.Use(middleware.LoginSession{SessionManager: app.Session}.RequireAuthenticatedUser)
-	//r.Get("/home", indexHanler(app))
-	//r.Get("/homeError", indexErrorHanler(app))
 
 	return r
 }
@@ -55,7 +52,7 @@ func PeopleHanler(app *config.Env) http.HandlerFunc {
 	}
 }
 
-func homeHanler(app *config.Env) http.HandlerFunc {
+func homeHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		peoples, err := people_io.ReadCategories()
 		if err != nil {
@@ -66,6 +63,7 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 			Peoples    []people.Category
 			PeopleData []PeopleBriefData
 		}
+
 		data := PageData{peoples, peopleData}
 		files := []string{
 			app.Path + "people/people_home.html",
