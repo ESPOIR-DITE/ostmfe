@@ -4,10 +4,10 @@ import (
 	"gopkg.in/resty.v1"
 	"ostmfe/config"
 )
+
 /**
 This links to the real server
- */
-
+*/
 
 func Rest() *resty.Request {
 	return resty.R().SetAuthToken("").
