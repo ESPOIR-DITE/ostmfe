@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"ostmfe/config"
 	"ostmfe/controller/misc"
+	people3 "ostmfe/controller/people"
 	history2 "ostmfe/domain/history"
 	people2 "ostmfe/domain/people"
 	place2 "ostmfe/domain/place"
@@ -35,7 +36,42 @@ func PeopleHome(app *config.Env) http.Handler {
 	r.Post("/update_details", UpdatePeopleDetailHandler(app))
 	r.Post("/update_history", UpdatePeopleHistoryHandler(app))
 	r.Post("/add_pictures", AddPeopleImageHandler(app))
+
+	r.Post("/add_place", AddPlaceHandler(app))
 	return r
+}
+
+func AddPlaceHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		peopleId:= r.PostFormValue("peopleId")
+		placeId:= r.PostFormValue("placeId")
+		if placeId!=""&&peopleId!=""{
+			peoplePlaceObejct := people2.PeoplePlace{"",placeId,peopleId}
+			_,err := people_io.CreatePeoplePlace(peoplePlaceObejct)
+			if err != nil {
+				fmt.Println(err, " error creating PeoplePlace")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/people/edit/"+peopleId, 301)
+				return
+			}
+			if app.Session.GetString(r.Context(), "creation-successful") != "" {
+				app.Session.Remove(r.Context(), "creation-successful")
+			}
+			app.Session.Put(r.Context(), "creation-successful", "You have successfully updated a People Picture : ")
+			http.Redirect(w, r, "/admin_user/people/edit/"+peopleId, 301)
+			return
+		}
+		fmt.Println("One of the field is missing")
+		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
+			app.Session.Remove(r.Context(), "creation-unknown-error")
+		}
+		app.Session.Put(r.Context(), "creation-unknown-error", "You have encountered an unknown error, please try again")
+		http.Redirect(w, r, "/admin_user/people", 301)
+	}
 }
 
 func AddPeopleImageHandler(app *config.Env) http.HandlerFunc {
@@ -73,7 +109,8 @@ func AddPeopleImageHandler(app *config.Env) http.HandlerFunc {
 				app.Session.Remove(r.Context(), "creation-successful")
 			}
 			app.Session.Put(r.Context(), "creation-successful", "You have successfully updated a People Picture : ")
-			http.Redirect(w, r, "/admin_user/people/people_category/new", 301)
+			//http.Redirect(w, r, "/admin_user/people/people_category/new", 301)
+			http.Redirect(w, r, "/admin_user/people/edit/"+peopleId, 301)
 			return
 		}
 		fmt.Println("One of the field is missing")
@@ -81,7 +118,8 @@ func AddPeopleImageHandler(app *config.Env) http.HandlerFunc {
 			app.Session.Remove(r.Context(), "creation-unknown-error")
 		}
 		app.Session.Put(r.Context(), "creation-unknown-error", "You have encountered an unknown error, please try again")
-		http.Redirect(w, r, "/admin_user/people/people_category/new", 301)
+		//http.Redirect(w, r, "/admin_user/people/people_category/new", 301)
+		http.Redirect(w, r, "/admin_user/people", 301)
 		return
 	}
 }
@@ -591,13 +629,23 @@ func EditPeopleHandler(app *config.Env) http.HandlerFunc {
 			http.Redirect(w, r, "/admin_user/people", 301)
 			return
 		}
+		places,err := place_io.ReadPlaces()
+		if err != nil {
+			fmt.Println(err, " error reading places")
+		}
+		peoplePlaces:=people3.GetPeoplePlace(peopleId)
+
+		// Getting this method from client people_controller. it gives me a list of places that are linked to a people.
 		peopleEditable := GetPeopleEditable(people.Id)
+
 		type PageDate struct {
 			PeopleDetails people2.People
 			People        PeopleEditable
 			SidebarData   misc.SidebarData
+			PeoplePlace []place2.Place
+			Places []place2.Place
 		}
-		data := PageDate{people, peopleEditable, misc.GetSideBarData("people", "people")}
+		data := PageDate{people, peopleEditable, misc.GetSideBarData("people", "people"),peoplePlaces,places}
 		files := []string{
 			app.Path + "admin/people/new_edite_people.html",
 			app.Path + "admin/template/navbar.html",

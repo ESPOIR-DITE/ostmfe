@@ -91,3 +91,16 @@ func TestReadEventGroupWithBoth(t *testing.T) {
 	assert.Nil(t, err)
 	fmt.Println(result)
 }
+
+//Event Year
+func TestReadEventYears(t *testing.T) {
+	result,err := ReadEventYears()
+	assert.Nil(t, err)
+	fmt.Println(result)
+}
+func TestCreateEventYear(t *testing.T) {
+	object := event2.EventYear{"","0000","000"}
+	result,err := CreateEventYear(object)
+	assert.Nil(t, err)
+	fmt.Println(result)
+}

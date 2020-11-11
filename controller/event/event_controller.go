@@ -144,6 +144,7 @@ func getYearDate() []YearData {
 		//get the year event
 		for _, yearResult := range yearResults {
 			amount, err := event_io.CountEventYearWithYearId(yearResult.Id)
+			fmt.Println("Year with number of event: ",yearResult," number: ",amount)
 			if err != nil {
 				fmt.Println(err, "error reading year with yearId.")
 			} else {

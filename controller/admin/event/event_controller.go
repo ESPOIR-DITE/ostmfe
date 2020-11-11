@@ -627,6 +627,7 @@ func UpdateDetailsHandler(app *config.Env) http.HandlerFunc {
 		description := r.PostFormValue("description")
 		projectId := r.PostFormValue("projectId")
 		eventStatus := r.PostFormValue("eventStatus")
+		yearId := r.PostFormValue("year")
 
 		_, err := event_io.ReadEvent(eventId)
 		if err != nil {
@@ -638,6 +639,43 @@ func UpdateDetailsHandler(app *config.Env) http.HandlerFunc {
 			http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
 			return
 		}
+		//updating event Year
+		if yearId!=""{
+			eventYearRead,err := event_io.ReadEventYearWithEventId(eventId)
+			if err!=nil{
+				eventYearNewObject := event2.EventYear{"",eventId,yearId}
+				_,err:= event_io.CreateEventYear(eventYearNewObject)
+				if err!=nil{
+					fmt.Println("could not create a new eventYear")
+				}
+			}else {
+				eventYearNewObject := event2.EventYear{eventYearRead.Id,eventId,yearId}
+				_,err:= event_io.CreateEventYear(eventYearNewObject)
+				if err!=nil{
+					fmt.Println("could not update a new eventYear")
+				}
+			}
+		}
+
+
+		if projectId!=""{
+			eventProject, err := event_io.ReadEventProjectWithEventId(eventId)
+			if err != nil {
+				fmt.Println("error reading Event project, this event may not had a project yet. proceeding into creating a project")
+				eventProjectObject := event2.EventProject{"", projectId, eventId, ""}
+				_, err := event_io.CreateEventProject(eventProjectObject)
+				if err != nil {
+					fmt.Println("error Creating Event project")
+				}
+			} else {
+				eventProjectObject := event2.EventProject{eventProject.Id, projectId, eventId, eventProject.Description}
+				_, err := event_io.UpdateEventProject(eventProjectObject)
+				if err != nil {
+					fmt.Println("error updating Event project")
+				}
+			}
+		}
+
 		//If the event already exist, this time we need to update.
 		eventObject := event2.Event{eventId, event_name, date, eventStatus, description}
 		_, errs := event_io.UpdateEvent(eventObject)
@@ -651,21 +689,6 @@ func UpdateDetailsHandler(app *config.Env) http.HandlerFunc {
 			return
 		}
 
-		eventProject, err := event_io.ReadEventProjectWithEventId(eventId)
-		if err != nil {
-			fmt.Println("error reading Event project, this event may not had a project yet. proceeding into creating a project")
-			eventProjectObject := event2.EventProject{"", projectId, eventId, ""}
-			_, err := event_io.CreateEventProject(eventProjectObject)
-			if err != nil {
-				fmt.Println("error Creating Event project")
-			}
-		} else {
-			eventProjectObject := event2.EventProject{eventProject.Id, projectId, eventId, eventProject.Description}
-			_, err := event_io.UpdateEventProject(eventProjectObject)
-			if err != nil {
-				fmt.Println("error updating Event project")
-			}
-		}
 
 		fmt.Println(" successfully updated")
 		app.Session.Put(r.Context(), "creation-successful", "You have successfully updating: Event Details. ")
@@ -1095,6 +1118,7 @@ func NewEventsHandler(app *config.Env) http.HandlerFunc {
 func EventsHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
+		fmt.Println("Session result: ",adminHelper.CheckAdminInSession(app, r))
 		if !adminHelper.CheckAdminInSession(app, r) {
 			http.Redirect(w, r, "/administration/", 301)
 		}
@@ -1303,8 +1327,10 @@ func UpdateEventHandler(app *config.Env) http.HandlerFunc {
 		name := r.PostFormValue("name")
 		description := r.PostFormValue("description")
 		date := r.PostFormValue("date")
-		event, err := event_io.ReadEvent(id)
+		year := r.PostFormValue("year")
 		eventStatus := r.PostFormValue("eventStatus")
+
+		event, err := event_io.ReadEvent(id)
 		if err != nil {
 			fmt.Println(err, " could not read event")
 			if app.Session.GetString(r.Context(), "user-create-error") != "" {
@@ -1314,6 +1340,30 @@ func UpdateEventHandler(app *config.Env) http.HandlerFunc {
 			http.Redirect(w, r, "/admin_user/event/edit/"+id, 301)
 			return
 		}
+
+		//checking if this event has been associated to a year
+		enventYear,errx :=event_io.ReadEventYearWithEventId(id)
+		if errx!=nil{
+			//Creating event year
+			if year != "" {
+				//fmt.Println("eventStatus: ",eventStatus)
+				eventyearObject := event2.EventYear{"", id, year}
+				_, err := event_io.CreateEventYear(eventyearObject)
+				if err != nil {
+					fmt.Println(err, " error when creating event year")
+				}
+			}
+
+		}else {// if this event has been already associated to a year now we need to update.
+			eventyearObject := event2.EventYear{"", enventYear.EventId, year}
+			fmt.Println("updating event year :",eventyearObject)
+			_, err := event_io.UpdateEventYear(eventyearObject)
+			if err != nil {
+				fmt.Println(err, " error when creating event year")
+			}
+		}
+
+
 		//we checking if there is a need of updating
 		if event.Name != name && event.Id != id && event.Date != date {
 			event := event2.Event{id, name, date, eventStatus, description}

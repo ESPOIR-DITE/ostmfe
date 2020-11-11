@@ -45,6 +45,10 @@
 
             <!-- Begin Page Content -->
             <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">{{.EventData.Event.Name}} Event</h1>
+                    <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
+                </div>
 
 
                 <!---Event Images---->
@@ -272,11 +276,11 @@
                                                 <div class="form-group row">
                                                     <div class="col-sm-6">
                                                         <label>Year of starting event</label>
-                                                        <select name="year" class="browser-default custom-select">
-                                                            <option selected>Choose a starting year</option>
+                                                        <select name="year" id="yearField" class="browser-default custom-select" onchange="checkSelectedYear({{.EventData.Year.Id}})">
+                                                            <option selected>Choose a starting year </option>
                                                             {{with .Years}}
                                                                 {{range .}}
-                                                                    <option value={{.Id}}>{{.Year}}</option>
+                                                                    <option value="{{.Id}}" {{if eq $.EventData.Year.Id .Id}} selected {{end}}>{{.Year}}</option>
                                                                 {{end}}
                                                             {{end}}
                                                         </select>
@@ -287,7 +291,7 @@
                                                         <div class="custom-control custom-checkbox small">
                                                             <input type="checkbox" name="eventStatus"
                                                                    class=" browser-default custom-control-input"
-                                                                   id="customCheck">
+                                                                   id="customCheck" {{if .EventData.Event.IsPast}}checked{{end}}>
                                                             <label class="custom-control-label" for="customCheck">Past
                                                                 Event <small>Check if this event has been stopped to be
                                                                     hosted</small></label>
@@ -308,7 +312,7 @@
                                     </div>
 
                                     <!-- Basic Card Example -->
-                                    <div class="card shadow mb-4">
+                                    <div class="card  mb-4">
 
                                         <div class="card-body row">
 
@@ -405,7 +409,7 @@
                                         </div>
                                     </div>
                                     <!-- Partner and group -->
-                                    <div class="card shadow mb-4">
+                                    <div class="card  mb-4">
 
                                         <div class="card-body row">
 
@@ -761,10 +765,7 @@
 <!-- Bootstrap core JavaScript-->
 <script src="../../assets/vendor/jquery/jquery.min.js"></script>
 <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="../../../assets/js/customer/mymap.js"></script>
-<script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA&callback=initMap">
-</script>
+
 
 <!-- Core plugin JavaScript-->
 <script src="../../assets/vendor/jquery-easing/jquery.easing.min.js"></script>
@@ -824,6 +825,10 @@
         const selectedApplicantType = $("#projectDrop").val();
         if (initialApplicantType.localeCompare(selectedApplicantType)) {
         }
+    };
+    let checkSelectedYear = function (initialApplicantType) {
+        const selectedApplicantType = $("#yearField").val();
+            initialApplicantType.localeCompare(selectedApplicantType)
     };
     let checkSelectedPlace = function (initialApplicantType) {
         const selectedApplicantType = $("#projectDrop").val();

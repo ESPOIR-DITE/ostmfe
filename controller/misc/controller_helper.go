@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	museum "ostmfe/domain"
 	"ostmfe/domain/collection"
 	"ostmfe/domain/event"
 	history2 "ostmfe/domain/history"
@@ -16,6 +17,7 @@ import (
 	"ostmfe/domain/place"
 	project2 "ostmfe/domain/project"
 	user2 "ostmfe/domain/user"
+	io2 "ostmfe/io"
 	"ostmfe/io/collection_io"
 	"ostmfe/io/event_io"
 	"ostmfe/io/history_io"
@@ -543,6 +545,7 @@ type EventData struct {
 	Place    place.Place
 	History  history2.HistoriesHelper
 	Peoples  []people2.People
+	Year museum.Years
 }
 type EventImageHelperEditable struct {
 	Id           string
@@ -559,6 +562,7 @@ func GetEventDate(eventId string) EventData {
 	var imageHelper []EventImageHelperEditable
 	var historyHelper history2.HistoriesHelper
 	var peoples []people2.People
+	var year museum.Years;
 
 	theEvent, err := event_io.ReadEvent(eventId)
 	if err != nil {
@@ -597,6 +601,16 @@ func GetEventDate(eventId string) EventData {
 				}
 			}
 		}
+		eventYear,err :=event_io.ReadEventYearWithEventId(eventId)
+		if err != nil {
+			fmt.Println(err, "error reading eventYear of: ", eventId)
+		}else{
+			year,err = io2.ReadYear(eventYear.YearId)
+			if err != nil {
+				fmt.Println(err, "error reading Year of: ", eventId)
+			}
+
+		}
 
 		//thirdly, Projects
 		eventProject, err := event_io.ReadEventProjectWithEventId(theEvent.Id)
@@ -605,7 +619,7 @@ func GetEventDate(eventId string) EventData {
 		} else {
 			project, err = project_io.ReadProject(eventProject.ProjectId)
 			if err != nil {
-				fmt.Println(err, "error reading Projects: ", eventId)
+				fmt.Println(err, "error reading Project: ", eventId)
 			}
 		}
 		//Fourth, Places
@@ -647,7 +661,7 @@ func GetEventDate(eventId string) EventData {
 
 	}
 	eventObejct := event.Event{theEvent.Id, theEvent.Name, FormatDateMonth(theEvent.Date), theEvent.IsPast, theEvent.Description}
-	eventDataObject := EventData{eventObejct, imageHelper, partners, project, place, historyHelper, peoples}
+	eventDataObject := EventData{eventObejct, imageHelper, partners, project, place, historyHelper, peoples,year}
 	return eventDataObject
 }
 

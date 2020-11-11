@@ -110,12 +110,14 @@ func GetPeopleDataHistory(id string) PeopleDataHistory {
 	}
 	historyhelper := history2.HistoriesHelper{history.Id, misc.ConvertingToString(history.History)}
 
-	peopleDataHistory = PeopleDataHistory{peopleToReturn, profileImage, images, historyhelper, getPeoplePlace(id), getPeopleEventS(id)}
+	peopleDataHistory = PeopleDataHistory{peopleToReturn, profileImage, images, historyhelper, GetPeoplePlace(id), getPeopleEventS(id)}
 
 	return peopleDataHistory
 }
-
-func getPeoplePlace(id string) []place2.Place {
+/***
+this method return all the place that have a link to a person by providing peopleId
+ */
+func GetPeoplePlace(id string) []place2.Place {
 	//get People Place
 	var places []place2.Place
 	peoplePlaces, err := people_io.ReadPeoplePlaceWithPeopleId(id)

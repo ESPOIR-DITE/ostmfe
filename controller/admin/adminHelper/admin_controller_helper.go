@@ -13,6 +13,7 @@ if there is not the page will be directed to a login page
 */
 func CheckAdminInSession(app *config.Env, r *http.Request) bool {
 	email := app.Session.GetString(r.Context(), "email")
+	fmt.Println("Email int the session: ",email)
 	if email != "" {
 		return true
 	}

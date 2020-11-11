@@ -144,19 +144,22 @@
 							</div>
 
                             {{with .EventData.Images}}
-                            {{range .}}
+                            {{range $i, $e := .}}
 							<div class="single-widget protfolio-widget">
                                 <img id='base64image' height="200px" src='data:image/jpeg;base64,{{.Id}}' alt="">
-								<a href="#"><h4>Introduction</h4></a>
+								<a href="#"><h4></h4></a>
+                                {{if eq $i 0}}
 								<p>
 									{{$.EventData.Event.Description}}
 								</p>
+
 								<ul>
 									<li><a href="#"><i class="fa fa-facebook"></i></a></li>
 									<li><a href="#"><i class="fa fa-twitter"></i></a></li>
 									<li><a href="#"><i class="fa fa-dribbble"></i></a></li>
 									<li><a href="#"><i class="fa fa-behance"></i></a></li>
-								</ul>								
+								</ul>
+                                {{end}}
 							</div>
                             {{end}}
                             {{end}}
@@ -172,7 +175,7 @@
 
                             {{if .Peoples}}
                             <div class="single-widget recent-posts-widget">
-                                <h4 class="title">Peoples</h4>
+                                <h4 class="title">Peoples linked to this event</h4>
                                 <div class="blog-list ">
                                     {{with .Peoples}}
                                         {{range .}}
@@ -192,6 +195,7 @@
                                             </p>
                                         </div>
                                     </div>
+                                            <hr>
                                     {{end}}
                                     {{end}}
                                 </div>

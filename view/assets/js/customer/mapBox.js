@@ -8,7 +8,7 @@ function getTheMap(placeList) {
     });
 
     map.on('load', function () {
-        console.log("returns of getPlaceData(placeList: ",getPlaceData(placeList));
+        //console.log("returns of getPlaceData(placeList: ",getPlaceData(placeList));
         map.addSource('places', {
             'type': 'geojson',
             'data': {
@@ -58,12 +58,24 @@ function getTheMap(placeList) {
     });
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 function getPlaceData(PlaceList) {
-    console.log(PlaceList);
+    //console.log(PlaceList);
     var myPlaceList = [];
     for (let placeList of PlaceList) {
         console.log(placeList);
-        console.log("placeList[i]");
         var logitude = placeList.longitude
         var  trimedLongitude = logitude.trim();
          myPlaceList.push( {
@@ -71,7 +83,7 @@ function getPlaceData(PlaceList) {
             'properties': {
                 'description':
                     '<strong>placeList.title</strong><p><a href="http://www.mtpleasantdc.com/makeitmtpleasant" target="_blank" title="Opens in a new window">Make it Mount Pleasant</a>placeList.description</p>',
-                'icon': 'theatre'
+                'icon': ''
             },
             'geometry': {
                 'type': 'Point',

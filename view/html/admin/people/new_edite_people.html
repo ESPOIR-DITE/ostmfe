@@ -515,6 +515,104 @@
             </div>
           </div>
 
+            <div class="card shadow mb-4">
+                <!-- Card Header - Accordion -->
+                <a href="#collapseCardPlace" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+                   role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                    <h6 class="m-0 font-weight-bold" style="color: #0b0b0b">People Place</h6>
+                </a>
+                <!-- Card Content - Collapse -->
+                <div class="collapse " id="collapseCardPlace">
+                    <div class="card-body p-0">
+                        <!-- Nested Row within Card Body -->
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <!-- Basic Card Example -->
+                                <div class="card shadow mb-4">
+
+                                    <div class="card-body row">
+
+                                        <div class="col-md-6">
+                                            <div class="card-header py-3">
+                                                <h6 class="m-0 font-weight-bold text-primary">People Place <small>Places that are linked to should be listed and added here.</small></h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered" id="dataTable" width="100%"
+                                                           cellspacing="0">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Nr</th>
+                                                            <th>Name</th>
+                                                            <th>Surname</th>
+                                                            <th>Action</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {{with .PeoplePlace}}
+                                                            {{range $i, $e := .}}
+                                                                <tr>
+                                                                    <td>{{$i}}</td>
+                                                                    <td>{{.Title}}</td>
+                                                                    <td>{{.Description}}</td>
+                                                                    <td>
+                                                                        <a href="/admin_user/event/delete_people/{{.Id}}/"
+                                                                           class="btn btn-danger btn-user btn-block">
+                                                                            Remove
+                                                                        </a>
+                                                                    </td>
+                                                                </tr>
+                                                            {{end}}
+                                                        {{end}}
+
+                                                        </tbody>
+                                                    </table>
+                                                    <a class="btn btn-primary btn-user btn-block text-white"
+                                                       data-toggle="modal"
+                                                       data-target="#exampleModalUpdatePeoplePlace">
+                                                        Add People
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="card-header py-3">
+                                                <h6 class="m-0 font-weight-bold text-primary">Event People</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered" id="dataTable" width="100%"
+                                                           cellspacing="0">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Nr</th>
+                                                            <th>Name</th>
+                                                            <th>Surname</th>
+                                                            <th>Action</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+
+                                                        </tbody>
+                                                    </table>
+                                                    <a class="btn btn-primary btn-user btn-block text-white"
+                                                       data-toggle="modal"
+                                                       data-target="#exampleModalUpdatePeoplePlace">
+                                                        Add People
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <hr>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
           <!---People History---->
           <div class="card shadow mb-4">
             <!-- Card Header - Accordion -->
@@ -624,6 +722,43 @@
       </div>
     </div>
   </div>
+
+
+  <!--Update Event Place -->
+  <div class="modal fade" id="exampleModalUpdatePeoplePlace" tabindex="-1" role="dialog"
+       aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-success" id="exampleModalLongTitle">Updating People Place</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h3 class=" text-center"> Event Place</h3>
+          <form class="user" method="post" action="/admin_user/people/add_place">
+            <input type="hidden" name="peopleId" class="form-control" value="{{.PeopleDetails.Id}}" required>
+            <div class="form-group">
+              <label>Choose a Place that will replace</label>
+              <select name="placeId" id="modePlace" class="browser-default custom-select">
+                <option selected>Choose a Place</option>
+                {{with .Places}}
+                  {{range .}}
+                    <option title="{{.Description}}" value="{{.Id}}">{{.Title}}</option>
+                  {{end}}
+                {{end}}
+              </select>
+            </div>
+            <button type="submit" id="placeModelBtn" class="btn btn-primary btn-block" >
+              Submit
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
 
   <!-- Bootstrap core JavaScript-->
   <script src="../../assets/vendor/jquery/jquery.min.js"></script>

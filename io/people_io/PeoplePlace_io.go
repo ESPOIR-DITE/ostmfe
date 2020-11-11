@@ -36,7 +36,7 @@ func UpdatePeoplePlace(pPl people.PeoplePlace) (people.PeoplePlace, error) {
 }
 func ReadPeoplePlace(id string) (people.PeoplePlace, error) {
 	entity := people.PeoplePlace{}
-	resp, _ := api.Rest().Get(pplPlace + "read?id" + id)
+	resp, _ := api.Rest().Get(pplPlace + "read?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -49,7 +49,7 @@ func ReadPeoplePlace(id string) (people.PeoplePlace, error) {
 
 func ReadPeoplePlaceWithPeopleId(peopleId string) ([]people.PeoplePlace, error) {
 	entity := []people.PeoplePlace{}
-	resp, _ := api.Rest().Get(pplPlace + "readWithPeopleId?id" + peopleId)
+	resp, _ := api.Rest().Get(pplPlace + "readWithPeopleId?id=" + peopleId)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -62,7 +62,7 @@ func ReadPeoplePlaceWithPeopleId(peopleId string) ([]people.PeoplePlace, error) 
 
 func DeletePeoplePlace(id string) (people.PeoplePlace, error) {
 	entity := people.PeoplePlace{}
-	resp, _ := api.Rest().Get(pplPlace + "delete?id" + id)
+	resp, _ := api.Rest().Get(pplPlace + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}

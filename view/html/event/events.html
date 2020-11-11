@@ -16,7 +16,7 @@
 		<!-- Site Title -->
 		<title>Simon's Town Museum</title>
 
-		<link href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700" rel="stylesheet"> 
+		<link href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700" rel="stylesheet">
 			<!--
 			CSS
 			============================================= -->
@@ -34,191 +34,178 @@
 		{{template "navigator" .}}
 
 			<!-- start banner Area -->
-			<section class="banner-area relative" id="home">	
+			<section class="banner-area relative" id="home">
 				<div class="overlay overlay-bg"></div>
 				<div class="container">
 					<div class="row d-flex align-items-center justify-content-center">
 						<div class="about-content col-lg-12">
 							<h1 class="text-white">
 								Events
-							</h1>	
+							</h1>
 							<p class="text-white link-nav"><a href="/">Home </a>  <span class="lnr lnr-arrow-right"></span>  <a href="/event"> Events</a></p>
-						</div>											
+						</div>
 					</div>
 				</div>
 			</section>
-			<!-- End banner Area -->	
-			
-			<!-- Start blog-posts Area -->
-			<section class="blog-posts-area section-gap">
-				<div class="container">
-					<div class="row">
-						<div class="col-lg-8 post-list blog-post-list">
-							{{with .Events}}
-							{{range .}}
-							<div class="single-post">
-								<img class="img-fluid" id='base64image' width="400px" src='data:image/jpeg;base64,{{.ProfileImage.Id}}' alt="">
-								<ul class="tags">
-									<li><a href="#">{{.Event.Date}}</a></li>
-								</ul>
-								<a href="#">
-									<h1>
-										<a href="/event/single/{{.Event.Id}}"><h4>{{.Event.Name}}</h4></a>
-									</h1>
-								</a>
-									<p>
-										{{.Event.Description}}
-									</p>
-								<div class="bottom-meta">
-									<div class="user-details row align-items-center">
-										<div class="comment-wrap col-lg-6">
-											<ul>
-												<li><a href="#"><span class="lnr lnr-heart"></span>	4 likes</a></li>
-												<li><a href="#"><span class="lnr lnr-bubble"></span> 06 Comments</a></li>
-											</ul>
-										</div>
-										<div class="social-wrap col-lg-6">
-											<ul>
-												<li><a href="#"><i class="fa fa-facebook"></i></a></li>
-												<li><a href="#"><i class="fa fa-twitter"></i></a></li>
-												<li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-												<li><a href="#"><i class="fa fa-behance"></i></a></li>
-											</ul>
-											
+			<!-- End banner Area -->
+
+
+
+		<section class="service-area pt-100" id="about">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-8 ">
+						<div class="row">
+					{{with .Events}}
+						{{range .}}
+							<div class="col-lg-4">
+								<div class="single-service">
+									<img class="img-fluid" id='base64image' width="400px" src='data:image/jpeg;base64,{{.ProfileImage.Id}}' alt="">
+									<h4><a href="/event/single/{{.Event.Id}}"><h4>{{.Event.Name}}</h4></a></h4>
+									<div class="overlay">
+										<div class="text">
+											<p>
+												{{.Event.Description}}
+											</p>
+											<a href="/event/single/{{.Event.Id}}"  class="text-uppercase primary-btn"
+											   >Read more</a>
 										</div>
 									</div>
 								</div>
 							</div>
-							{{end}}
-							{{end}}
-
-						</div>
-						<div class="col-lg-4 sidebar">
-							{{if .Years}}
-							<div class="single-widget category-widget">
-								<h4 class="title">Event years</h4>
-								<ul>
-									{{with .Years}}
-									{{range .}}
-									<li><a href="/event/ofayear/{{.Year.Id}}" class="justify-content-between align-items-center d-flex"><h6>
-										{{.Year.Year}}</h6> <span>{{.Number}}</span></a></li>
-									{{end}}
-									{{end}}
-								</ul>
-							</div>
-							{{end}}
-
-
-							{{template "project-template" .}}
-							<!--
-							<div class="single-widget recent-posts-widget">
-								<h4 class="title">Recent Posts</h4>
-								<div class="blog-list ">
-									<div class="single-recent-post d-flex flex-row">
-										<div class="recent-thumb">
-											<img class="img-fluid" src="../../assets/img/blog/r1.jpg" alt="">
-										</div>
-										<div class="recent-details">
-											<a href="#">
-												<h4>
-													Home Audio Recording
-													For Everyone
-												</h4>
-											</a>
-											<p>
-												02 hours ago
-											</p>
-										</div>
-									</div>	
-									<div class="single-recent-post d-flex flex-row">
-										<div class="recent-thumb">
-											<img class="img-fluid" src="../../assets/img/blog/r2.jpg" alt="">
-										</div>
-										<div class="recent-details">
-											<a href="#">
-												<h4>
-													Home Audio Recording
-													For Everyone
-												</h4>
-											</a>
-											<p>
-												02 hours ago
-											</p>
-										</div>
-									</div>	
-									<div class="single-recent-post d-flex flex-row">
-										<div class="recent-thumb">
-											<img class="img-fluid" src="../../assets/img/blog/r3.jpg" alt="">
-										</div>
-										<div class="recent-details">
-											<a href="#">
-												<h4>
-													Home Audio Recording
-													For Everyone
-												</h4>
-											</a>
-											<p>
-												02 hours ago
-											</p>
-										</div>
-									</div>	
-									<div class="single-recent-post d-flex flex-row">
-										<div class="recent-thumb">
-											<img class="img-fluid" src="../../assets/img/blog/r4.jpg" alt="">
-										</div>
-										<div class="recent-details">
-											<a href="blog-single.html">
-												<h4>
-													Home Audio Recording
-													For Everyone
-												</h4>
-											</a>
-											<p>
-												02 hours ago
-											</p>
-										</div>
-									</div>																																					
-								</div>								
-							</div>
-
-							<div class="single-widget category-widget">
-								<h4 class="title">Post Archive</h4>
-								<ul>
-									<li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Dec '17</h6> <span>37</span></a></li>
-									<li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Nov '17</h6> <span>24</span></a></li>
-									<li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Oct '17</h6> <span>59</span></a></li>
-									<li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Sep '17</h6> <span>29</span></a></li>
-									<li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Aug '17</h6> <span>15</span></a></li>
-									<li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Jul '17</h6> <span>09</span></a></li>
-									<li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Jun '17</h6> <span>44</span></a></li>
-								</ul>
-							</div>			
-
-							<div class="single-widget tags-widget">
-								<h4 class="title">Tag Clouds</h4>
-								 <ul>
-								 	<li><a href="#">Lifestyle</a></li>
-								 	<li><a href="#">Art</a></li>
-								 	<li><a href="#">Adventure</a></li>
-								 	<li><a href="#">Food</a></li>
-								 	<li><a href="#">Techlology</a></li>
-								 	<li><a href="#">Fashion</a></li>
-								 	<li><a href="#">Architecture</a></li>
-								 	<li><a href="#">Food</a></li>
-								 	<li><a href="#">Technology</a></li>
-								 </ul>
-							</div>	-->
-
+						{{end}}
+					{{end}}
 						</div>
 					</div>
-				</div>	
-			</section>
+					<div class="col-lg-4 sidebar">
+						{{if .Years}}
+							<div class="single-widget category-widget">
+								<h4 class="title">Event Per years</h4>
+								<ul>
+									{{with .Years}}
+										{{range .}}
+											<li><a href="/event/ofayear/{{.Year.Id}}" class="justify-content-between align-items-center d-flex"><h6>
+														{{.Year.Year}}</h6> <span>{{.Number}}</span></a></li>
+										{{end}}
+									{{end}}
+								</ul>
+							</div>
+						{{end}}
+
+
+						{{template "project-template" .}}
+						<!--
+                        <div class="single-widget recent-posts-widget">
+                            <h4 class="title">Recent Posts</h4>
+                            <div class="blog-list ">
+                                <div class="single-recent-post d-flex flex-row">
+                                    <div class="recent-thumb">
+                                        <img class="img-fluid" src="../../assets/img/blog/r1.jpg" alt="">
+                                    </div>
+                                    <div class="recent-details">
+                                        <a href="#">
+                                            <h4>
+                                                Home Audio Recording
+                                                For Everyone
+                                            </h4>
+                                        </a>
+                                        <p>
+                                            02 hours ago
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="single-recent-post d-flex flex-row">
+                                    <div class="recent-thumb">
+                                        <img class="img-fluid" src="../../assets/img/blog/r2.jpg" alt="">
+                                    </div>
+                                    <div class="recent-details">
+                                        <a href="#">
+                                            <h4>
+                                                Home Audio Recording
+                                                For Everyone
+                                            </h4>
+                                        </a>
+                                        <p>
+                                            02 hours ago
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="single-recent-post d-flex flex-row">
+                                    <div class="recent-thumb">
+                                        <img class="img-fluid" src="../../assets/img/blog/r3.jpg" alt="">
+                                    </div>
+                                    <div class="recent-details">
+                                        <a href="#">
+                                            <h4>
+                                                Home Audio Recording
+                                                For Everyone
+                                            </h4>
+                                        </a>
+                                        <p>
+                                            02 hours ago
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="single-recent-post d-flex flex-row">
+                                    <div class="recent-thumb">
+                                        <img class="img-fluid" src="../../assets/img/blog/r4.jpg" alt="">
+                                    </div>
+                                    <div class="recent-details">
+                                        <a href="blog-single.html">
+                                            <h4>
+                                                Home Audio Recording
+                                                For Everyone
+                                            </h4>
+                                        </a>
+                                        <p>
+                                            02 hours ago
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="single-widget category-widget">
+                            <h4 class="title">Post Archive</h4>
+                            <ul>
+                                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Dec '17</h6> <span>37</span></a></li>
+                                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Nov '17</h6> <span>24</span></a></li>
+                                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Oct '17</h6> <span>59</span></a></li>
+                                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Sep '17</h6> <span>29</span></a></li>
+                                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Aug '17</h6> <span>15</span></a></li>
+                                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Jul '17</h6> <span>09</span></a></li>
+                                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Jun '17</h6> <span>44</span></a></li>
+                            </ul>
+                        </div>
+
+                        <div class="single-widget tags-widget">
+                            <h4 class="title">Tag Clouds</h4>
+                             <ul>
+                                 <li><a href="#">Lifestyle</a></li>
+                                 <li><a href="#">Art</a></li>
+                                 <li><a href="#">Adventure</a></li>
+                                 <li><a href="#">Food</a></li>
+                                 <li><a href="#">Techlology</a></li>
+                                 <li><a href="#">Fashion</a></li>
+                                 <li><a href="#">Architecture</a></li>
+                                 <li><a href="#">Food</a></li>
+                                 <li><a href="#">Technology</a></li>
+                             </ul>
+                        </div>	-->
+
+					</div>
+				</div>
+			</div>
+		</section>
+
+			<!-- Start blog-posts Area -->
+
 			<!-- End blog-posts Area -->
-			
+
 
 			<!-- start footer Area -->
 		{{template "footer" .}}
-			<!-- End footer Area -->		
+			<!-- End footer Area -->
 
 			<script src="../../assets/js/vendor/jquery-2.2.4.min.js"></script>
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
