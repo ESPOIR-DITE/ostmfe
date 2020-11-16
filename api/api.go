@@ -8,6 +8,7 @@ import (
 /**
 This links to the real server
 */
+const BASE_URL string = "http://localhost:9000/ostm/"
 
 func Rest() *resty.Request {
 	return resty.R().SetAuthToken("").
