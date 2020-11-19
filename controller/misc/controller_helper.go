@@ -45,7 +45,7 @@ Format date in yyyy-MM-dd HH:mm:ss
 */
 
 func FormatDateTime(date time.Time) string {
-	return date.Format(YYYMMDDTIME_FORMAT)
+	return date.Format(YYYYMMDD_FORMAT)
 }
 
 /****
@@ -545,7 +545,7 @@ type EventData struct {
 	Place    place.Place
 	History  history2.HistoriesHelper
 	Peoples  []people2.People
-	Year museum.Years
+	Year     museum.Years
 }
 type EventImageHelperEditable struct {
 	Id           string
@@ -562,7 +562,7 @@ func GetEventDate(eventId string) EventData {
 	var imageHelper []EventImageHelperEditable
 	var historyHelper history2.HistoriesHelper
 	var peoples []people2.People
-	var year museum.Years;
+	var year museum.Years
 
 	theEvent, err := event_io.ReadEvent(eventId)
 	if err != nil {
@@ -601,11 +601,11 @@ func GetEventDate(eventId string) EventData {
 				}
 			}
 		}
-		eventYear,err :=event_io.ReadEventYearWithEventId(eventId)
+		eventYear, err := event_io.ReadEventYearWithEventId(eventId)
 		if err != nil {
 			fmt.Println(err, "error reading eventYear of: ", eventId)
-		}else{
-			year,err = io2.ReadYear(eventYear.YearId)
+		} else {
+			year, err = io2.ReadYear(eventYear.YearId)
 			if err != nil {
 				fmt.Println(err, "error reading Year of: ", eventId)
 			}
@@ -661,7 +661,7 @@ func GetEventDate(eventId string) EventData {
 
 	}
 	eventObejct := event.Event{theEvent.Id, theEvent.Name, FormatDateMonth(theEvent.Date), theEvent.IsPast, theEvent.Description}
-	eventDataObject := EventData{eventObejct, imageHelper, partners, project, place, historyHelper, peoples,year}
+	eventDataObject := EventData{eventObejct, imageHelper, partners, project, place, historyHelper, peoples, year}
 	return eventDataObject
 }
 
@@ -706,6 +706,7 @@ func GetSimpleEventData(limit int) []SimpleEventData {
 			//we need to make sure that profileImage is not empty
 			if profileImage.Id != "" {
 				//fmt.Println(" profileImage.Id: ", profileImage.Id)
+				//Formating data
 				eventObject := event.Event{eventEntity.Id, eventEntity.Name, FormatDateMonth(eventEntity.Date), eventEntity.IsPast, eventEntity.Description}
 				eventData := SimpleEventData{eventObject, profileImage /** images**/}
 				eventDataList = append(eventDataList, eventData)

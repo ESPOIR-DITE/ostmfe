@@ -6,24 +6,54 @@ import (
 	"html/template"
 	"net/http"
 	"ostmfe/config"
+	comment2 "ostmfe/controller/comment"
 	"ostmfe/controller/misc"
+	"ostmfe/domain/comment"
 	history2 "ostmfe/domain/history"
 	"ostmfe/domain/image"
 	project2 "ostmfe/domain/project"
+	"ostmfe/io/comment_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
 	"ostmfe/io/project_io"
+	"time"
 )
 
 func Home(app *config.Env) http.Handler {
 	r := chi.NewRouter()
 	r.Get("/", homeHanler(app))
 	r.Get("/read_single/{projectId}", ReadSingleProjectHanler(app))
+	r.Post("/comment/{projectId}", createProjectComment(app))
 	//r.Use(middleware.LoginSession{SessionManager: app.Session}.RequireAuthenticatedUser)
 	//r.Get("/home", indexHanler(app))
 	//r.Get("/homeError", indexErrorHanler(app))
 
 	return r
+}
+
+func createProjectComment(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		projectId := chi.URLParam(r, "projectId")
+		r.ParseForm()
+		name := r.PostFormValue("name")
+		email := r.PostFormValue("email")
+		Subject := r.PostFormValue("Subject")
+		message := r.PostFormValue("message")
+
+		if name != "" && email != "" && message != "" && Subject != "" {
+			commentObject := comment.Comment{"", email, name, misc.FormatDateTime(time.Now()), misc.ConvertToByteArray(message), ""}
+			newComment, err := comment_io.CreateComment(commentObject)
+			if err != nil {
+				fmt.Println("error creating comment")
+			} else {
+				_, err := comment_io.CreateCommentProject(comment.CommentProject{"", projectId, newComment.Id})
+				if err != nil {
+					fmt.Println("error creating comment")
+				}
+			}
+		}
+		http.Redirect(w, r, "/project/read_single/"+projectId, 301)
+	}
 }
 
 func ReadSingleProjectHanler(app *config.Env) http.HandlerFunc {
@@ -39,17 +69,24 @@ func ReadSingleProjectHanler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			fmt.Println(err, " error reading projects")
 		}
+		commentNumber, err := comment_io.CountProjectComment(projectId)
+		if err != nil {
+			fmt.Println(err, " error reading projects comment Number")
+		}
 		type PageData struct {
 			ProjectDataHistory ProjectDataHistory
 			Projects           []project2.Project
+			Comments           []comment.CommentStack
+			CommentNumber      int64
 		}
-		data := PageData{projectDataHistory, projects}
+		data := PageData{projectDataHistory, projects, comment2.GetProjectComment(projectId), commentNumber}
 
 		files := []string{
 			app.Path + "project/project_single.html",
 			app.Path + "base_templates/navigator.html",
 			app.Path + "base_templates/footer.html",
 			app.Path + "base_templates/comments.html",
+			app.Path + "base_templates/reply-template.html",
 		}
 		ts, err := template.ParseFiles(files...)
 		if err != nil {

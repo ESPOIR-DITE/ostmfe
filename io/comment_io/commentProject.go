@@ -70,7 +70,7 @@ func ReadCommentProjects() ([]comment.CommentProject, error) {
 }
 func ReadAllByProjectId(projectId string) ([]comment.CommentProject, error) {
 	entity := []comment.CommentProject{}
-	resp, _ := api.Rest().Get(commentProjectURL + "readAllbyProjectId")
+	resp, _ := api.Rest().Get(commentProjectURL + "readAllbyProjectId?projectId=" + projectId)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -84,6 +84,18 @@ func ReadAllByProjectId(projectId string) ([]comment.CommentProject, error) {
 func ReadAllbyCommentId(projectId string) ([]comment.CommentProject, error) {
 	entity := []comment.CommentProject{}
 	resp, _ := api.Rest().Get(commentProjectURL + "readAllbyCommentId")
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
+func CountProjectComment(projectId string) (int64, error) {
+	var entity int64
+	resp, _ := api.Rest().Get(commentProjectURL + "count?projectId=" + projectId)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}

@@ -1,14 +1,25 @@
 package comment
 
-import "time"
-
 type Comment struct {
-	Id              string    `json:"id"`
-	Email           string    `json:"email"`
-	Name            string    `json:"name"`
-	Date            time.Time `json:"date"`
-	Comment         []byte    `json:"comment"`
-	ParentCommentId string    `json:"parentCommentId"`
+	Id              string `json:"id"`
+	Email           string `json:"email"`
+	Name            string `json:"name"`
+	Date            string `json:"date"`
+	Comment         []byte `json:"comment"`
+	ParentCommentId string `json:"parentCommentId"`
+}
+
+type CommentHelper struct {
+	Id              string `json:"id"`
+	Email           string `json:"email"`
+	Name            string `json:"name"`
+	Date            string `json:"date"`
+	Comment         string `json:"comment"`
+	ParentCommentId string `json:"parentCommentId"`
+}
+type CommentStack struct {
+	ParentComment CommentHelper
+	SubComment    []CommentHelper
 }
 type CommentEvent struct {
 	Id        string `json:"id"`

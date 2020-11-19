@@ -16,7 +16,7 @@
         <!-- Site Title -->
         <title>Simon's Town Museum</title>
 
-        <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700" rel="stylesheet"> 
+        <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700" rel="stylesheet">
             <!--
             CSS
             ============================================= -->
@@ -34,21 +34,21 @@
         {{template "navigator" .}}
 
             <!-- start banner Area -->
-            <section class="banner-area relative" id="home">    
+            <section class="banner-area relative" id="home">
                 <div class="overlay overlay-bg"></div>
                 <div class="container">
                     <div class="row d-flex align-items-center justify-content-center">
                         <div class="about-content col-lg-12">
                             <h1 class="text-white">
                                 {{.EventData.Event.Name}}
-                            </h1>   
+                            </h1>
                             <p class="text-white link-nav"><a href="/">Home </a>  <span class="lnr lnr-arrow-right"></span>  <a href="#"> Event</a></p>
-                        </div>                                          
+                        </div>
                     </div>
                 </div>
             </section>
-            <!-- End banner Area -->    
-			
+            <!-- End banner Area -->
+
 			<!-- Start blog-posts Area -->
         <hr>
 			<section class="blog-posts-area section">
@@ -102,7 +102,7 @@
 												<li><a href="#"><i class="fa fa-dribbble"></i></a></li>
 												<li><a href="#"><i class="fa fa-behance"></i></a></li>
 											</ul>
-											
+
 										</div>
 									</div>
 								</div>
@@ -111,37 +111,49 @@
                             <!-- Start comment-sec Area -->
                                 {{template "comments" .}}
                             <!-- End comment-sec Area -->
-                            
+
                             <!-- Start commentform Area -->
                             <section class="commentform-area pt-80">
                                 <div class="container">
+                                    <form method="post" action="/event/create">
                                     <h5 class="pb-50">Leave a Reply</h5>
                                     <div class="row flex-row d-flex">
                                         <div class="col-lg-4 col-md-6">
                                             <input name="name" placeholder="Enter your name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your name'" class="common-input mb-20 form-control" required="" type="text">
                                             <input name="email" placeholder="Enter your email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your email'" class="common-input mb-20 form-control" required="" type="email">
                                             <input name="Subject" placeholder="Subject" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your Subject'" class="common-input mb-20 form-control" required="" type="text">
+                                            <input name="eventId" value="{{.EventData.Event.Id}}" type="hidden">
 
                                         </div>
                                         <div class="col-lg-8 col-md-6">
                                             <textarea class="form-control mb-10" name="message" placeholder="Messege" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Messege'" required=""></textarea>
-                                            <a class="primary-btn mt-20" href="#">Comment</a>
+                                            <button type="submit" class="primary-btn mt-20" href="#">Comment</button>
                                         </div>
                                     </div>
-                                </div>    
+                                    </form>
+                                </div>
                             </section>
                             <!-- End commentform Area -->
 
 
-							</div>																		
+							</div>
 						</div>
 						<div class="col-lg-4 sidebar">
-							<div class="single-widget search-widget">
-								<form class="example" action="#" style="margin:auto;max-width:300px">
-								  <input type="text" placeholder="Search Posts" name="search2">
-								  <button type="submit"><i class="fa fa-search"></i></button>
-								</form>								
-							</div>
+                            <div class="single-widget protfolio-widget">
+                                <img width="70%" src="../../assets/img/share_your_story.jpg" alt="">
+                                <a href="#"><h4>Share Your Story Here about this Event</h4></a>
+                                <!---p>
+                                    MCSE boot camps have its supporters and
+                                    its detractors. Some people do not understand why you should have to spend money
+                                    on boot camp when you can get.
+                                </p--->
+                                <ul>
+                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-behance"></i></a></li>
+                                </ul>
+                            </div>
 
                             {{with .EventData.Images}}
                             {{range $i, $e := .}}
@@ -233,21 +245,21 @@
                                 <div class="single-widget category-widget">
                                     <h4 class="title">Event Project</h4>
                                     <ul>
-                                        <li><a href="/place/{{.Id}}" class="justify-content-between align-items-center d-flex"><h6>{{.Title}}</h6></a></li>
+                                        <li><a href="/place/{{.Project.Id}}" class="justify-content-between align-items-center d-flex"><h6>{{.Project.Title}}</h6></a></li>
                                     </ul>
                                 </div>
                             {{end}}
 
 						</div>
 					</div>
-				</div>	
+				</div>
 			</section>
 			<!-- End blog-posts Area -->
-			
+
 
             <!-- start footer Area -->
         {{template "footer" .}}
-            <!-- End footer Area -->        
+            <!-- End footer Area -->
 
             <script src="../../assets/js/vendor/jquery-2.2.4.min.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>

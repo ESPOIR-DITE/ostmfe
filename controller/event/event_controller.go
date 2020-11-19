@@ -6,14 +6,18 @@ import (
 	"html/template"
 	"net/http"
 	"ostmfe/config"
+	comment2 "ostmfe/controller/comment"
 	"ostmfe/controller/misc"
 	museum "ostmfe/domain"
+	"ostmfe/domain/comment"
 	"ostmfe/domain/people"
 	place2 "ostmfe/domain/place"
 	"ostmfe/domain/project"
 	io2 "ostmfe/io"
+	"ostmfe/io/comment_io"
 	"ostmfe/io/event_io"
 	"ostmfe/io/project_io"
+	"time"
 )
 
 func Home(app *config.Env) http.Handler {
@@ -21,7 +25,34 @@ func Home(app *config.Env) http.Handler {
 	r.Get("/", homeHanler(app))
 	r.Get("/single/{eventId}", EventHanler(app))
 	r.Get("/ofayear/{yearId}", EventOfAYearHanler(app))
+	r.Post("/create", CreateComment(app))
 	return r
+}
+
+func CreateComment(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		r.ParseForm()
+		name := r.PostFormValue("name")
+		email := r.PostFormValue("email")
+		Subject := r.PostFormValue("Subject")
+		message := r.PostFormValue("message")
+		eventId := r.PostFormValue("eventId")
+
+		if name != "" && email != "" && message != "" && Subject != "" {
+			commentObject := comment.Comment{"", email, name, misc.FormatDateTime(time.Now()), misc.ConvertToByteArray(message), ""}
+			newComment, err := comment_io.CreateComment(commentObject)
+			if err != nil {
+				fmt.Println("error creating comment")
+			} else {
+				_, err := comment_io.CreateCommentEvent(comment.CommentEvent{"", eventId, newComment.Id})
+				if err != nil {
+					fmt.Println("error creating comment")
+				}
+			}
+		}
+		http.Redirect(w, r, "/event/single/"+eventId, 301)
+	}
 }
 
 func EventOfAYearHanler(app *config.Env) http.HandlerFunc {
@@ -72,14 +103,21 @@ func EventHanler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		eventId := chi.URLParam(r, "eventId")
 		eventdata := GetEventData(eventId)
-		type PageData struct {
-			EventData EventData
-			Place     place2.Place
-			Peoples   []people.People
-			GroupData []GroupData
-			Project   project.Project
+		eventNumber, err := comment_io.CountCommentEvent(eventId)
+		if err != nil {
+			fmt.Println("error reading COmmentEvent")
 		}
-		data := PageData{eventdata, GetEnventPlaceData(eventId), GetEventPeopleData(eventId), GetGroupsData(eventId), getEventProject(eventId)}
+
+		type PageData struct {
+			EventData     EventData
+			Place         place2.Place
+			Peoples       []people.People
+			GroupData     []GroupData
+			Project       project.Project
+			CommentNumber int64
+			Comments      []comment.CommentStack
+		}
+		data := PageData{eventdata, GetEnventPlaceData(eventId), GetEventPeopleData(eventId), GetGroupsData(eventId), getEventProject(eventId), eventNumber, comment2.GetEventComments(eventId)}
 		files := []string{
 			app.Path + "event/event_single.html",
 			app.Path + "base_templates/navigator.html",
@@ -144,7 +182,7 @@ func getYearDate() []YearData {
 		//get the year event
 		for _, yearResult := range yearResults {
 			amount, err := event_io.CountEventYearWithYearId(yearResult.Id)
-			fmt.Println("Year with number of event: ",yearResult," number: ",amount)
+			fmt.Println("Year with number of event: ", yearResult, " number: ", amount)
 			if err != nil {
 				fmt.Println(err, "error reading year with yearId.")
 			} else {

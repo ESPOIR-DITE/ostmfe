@@ -29,6 +29,11 @@
     <link rel="stylesheet" href="../assets/css/animate.min.css">
     <link rel="stylesheet" href="../assets/css/owl.carousel.css">
     <link rel="stylesheet" href="../assets/css/main.css">
+    <style>
+        a.julie:hover{
+            color: #1cc88a;
+        }
+    </style>
 </head>
 <body>
 
@@ -321,90 +326,87 @@
 </section>
 <!-- end project Area -->
 
-<!-- /.container -->
-
-<!-- Start upcoming-event Area -->
-<br>
-<br>
-<br>
-<br>
 {{if .EventDataList}}
-    <section class="upcoming-event-area" id="events">
-        <div class="container">
-            <div class="row d-flex justify-content-center">
-                <div class="menu-content pb-60 col-lg-10">
-                    {{if .PagePageSection.EventIntro}}
-                        <div class="title text-center" id="EventIntro">
-                            <script>
-                                var div = document.getElementById('EventIntro');
-                                var myvalue = {{.PagePageSection.EventIntro}}
-                                    parseMe(myvalue);
+    <section class="section-gap">
+        <div class="whole-wrap">
+            <div class="container">
+                <br>
+                {{if .PagePageSection.EventIntro}}
+                    <div class="title text-center" id="EventIntro">
+                        <script>
+                            var div = document.getElementById('EventIntro');
+                            var myvalue = {{.PagePageSection.EventIntro}}
+                                parseMe(myvalue);
 
-                                function parseMe(value) {
-                                    div.innerHTML += value;
-                                }
-                            </script>
-                        </div>
-                    {{else}}
-                        <div class="title text-center">
-                            <h1 class="mb-10">Checkout our Upcoming Events</h1>
-                            <p>Simon's town museum organizes events around each project.</p>
-                        </div>
-                    {{end}}
-                </div>
-            </div>
+                            function parseMe(value) {
+                                div.innerHTML += value;
+                            }
+                        </script>
+                    </div>
+                {{else}}
+                    <div class="title text-center">
+                        <h1 class="mb-10">Checkout our Upcoming Events</h1>
+                        <p>Simon's town museum organizes events around each project.</p>
+                    </div>
+                {{end}}
 
-            <div class="row">
+
 
                 {{with .EventDataList}}
                 {{range $i, $e := .}}
                 {{if (call $.CheckOdds $i )}}
-                    <div class="col-lg-6 event-left">
-                        <div class="single-events">
-                            <img class="img-fluid" id='base64image' width="540px" height="157px"
-                                 src='data:image/jpeg;base64,{{.ProfileImage.Id}}' alt="">
-                            <a href="/event/single/{{.Event.Id}}"><h4>{{.Event.Name}}</h4></a>
-                            <br>
-                            <br>
-                            <h6><span>{{.Event.Date}}</span> at Central government museum</h6>
 
-                            <div style="height: 200px">
-                            <p>
-                                {{.Event.Description}}
-                            </p>
+                <div class="section-top-border">
+                    <div class="row">
+
+                        <div class="col-md-5">
+                            <img class="img-fluid" id='base64image' width="540px" height="157px" src='data:image/jpeg;base64,{{.ProfileImage.Id}}' alt="">
+                        </div>
+                        <div class="col-md-7 julie">
+                            <a class="julie" href="/event/single/{{.Event.Id}}"><h3>{{.Event.Name}}</h3></a>
+                            <br>
+                            <h6><span>{{.Event.Date}}</span></h6>
+                            <div>
+                                <p>
+                                    {{.Event.Description}}
+                                </p>
+                            </div>
+                            <a href="/event/single/{{.Event.Id}}" class="primary-btn text-uppercase">View Details</a>                        </div>
+                    </div>
+                </div>
+
+                {{else}}
+                <div class="section-top-border text-right">
+
+                    <div class="row">
+                        <div class="col-md-7">
+                            <a class="julie" href="/event/single/{{.Event.Id}}"><h3>{{.Event.Name}}</h3></a>
+                            <br>
+                            <h6><span>{{.Event.Date}}</span></h6>
+                            <div >
+                                <p>
+                                    {{.Event.Description}}
+                                </p>
                             </div>
                             <a href="/event/single/{{.Event.Id}}" class="primary-btn text-uppercase">View Details</a>
                         </div>
-                    </div>
-                    {{else}}
-                    <div class="col-lg-6 event-right">
-                        <div class="single-events">
-                            <a href="/event/single/{{.Event.Id}}"><h4>{{.Event.Name}}</h4></a>
-                            <br>
-                            <br>
-                            <h6><span>{{.Event.Date}}</span> at Central government museum</h6>
 
-                            <div style="height: 200px">
-                            <p>
-                                {{.Event.Description}}
-                            </p>
-                            </div>
-
-                            <a href="/event/single/{{.Event.Id}}" class="primary-btn text-uppercase">View Details</a>
-                            <img class="img-fluid" id='base64image' width="540px" height="157px"
-                                 src='data:image/jpeg;base64,{{.ProfileImage.Id}}' alt="">
+                        <div class="col-md-5">
+                            <img class="img-fluid" id='base64image' width="540px" height="157px" src='data:image/jpeg;base64,{{.ProfileImage.Id}}' alt="">
                         </div>
                     </div>
+                </div>
                 {{end}}
+                {{end}}
+                {{end}}
+                <hr>
+                <div class="col-md-12 text-center">
+                    <a href="/project" class="primary-btn text-uppercase text-center">View All The Projects</a>
 
-                {{end}}
-                {{end}}
+                </div>
+
+                <br/>
             </div>
-            <div class="col-md-12 text-center">
-                <a href="/event" class="primary-btn text-uppercase text-center">View All The Events</a>
-            </div>
-            <br/>
-            <br/>
         </div>
     </section>
 {{end}}
@@ -515,7 +517,7 @@
                 </div>
             </div>
         </div>
-        
+
     </div>
 </section>
 <!-- End gallery Area -->

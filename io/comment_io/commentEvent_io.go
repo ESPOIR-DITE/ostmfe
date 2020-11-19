@@ -44,6 +44,18 @@ func ReadCommentEvent(id string) (comment.CommentEvent, error) {
 	}
 	return entity, nil
 }
+func CountCommentEvent(eventId string) (int64, error) {
+	var entity int64
+	resp, _ := api.Rest().Get(commenteventURL + "count?eventId=" + eventId)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
 func DeleteCommentEvent(id string) (comment.CommentEvent, error) {
 	entity := comment.CommentEvent{}
 	resp, _ := api.Rest().Get(commenteventURL + "delete?id=" + id)
@@ -69,9 +81,9 @@ func ReadCommentEvents() ([]comment.CommentEvent, error) {
 	return entity, nil
 }
 
-func ReadAllByEventId(projectId string) ([]comment.CommentEvent, error) {
+func ReadAllByEventId(eventId string) ([]comment.CommentEvent, error) {
 	entity := []comment.CommentEvent{}
-	resp, _ := api.Rest().Get(commenteventURL + "readAllByEventId")
+	resp, _ := api.Rest().Get(commenteventURL + "readAllByEventId?eventId=" + eventId)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}

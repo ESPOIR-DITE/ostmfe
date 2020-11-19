@@ -44,6 +44,18 @@ func ReadComment(id string) (comment.Comment, error) {
 	}
 	return entity, nil
 }
+func ReadCommentWithParentId(parentId string) ([]comment.Comment, error) {
+	entity := []comment.Comment{}
+	resp, _ := api.Rest().Get(commentURL + "findAllByParentCommentId?parentCommentId=" + parentId)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
 func DeleteComment(id string) (comment.Comment, error) {
 	entity := comment.Comment{}
 	resp, _ := api.Rest().Get(commentURL + "delete?id=" + id)

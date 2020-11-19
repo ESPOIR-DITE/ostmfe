@@ -5,9 +5,6 @@ import (
 	"ostmfe/config"
 )
 
-/**
-This links to the real server
-*/
 const BASE_URL string = "http://localhost:9000/ostm/"
 
 func Rest() *resty.Request {

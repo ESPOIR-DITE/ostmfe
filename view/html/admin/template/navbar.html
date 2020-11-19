@@ -140,7 +140,7 @@
         <div id="collapsePages" class="collapse {{if eq .SidebarData.Menu "page"}} show {{end}}" aria-labelledby="headingPages" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">client pages:</h6>
-                    <!a class="collapse-item" href="#">Create a page</a>
+                    <a class="collapse-item" href="#">Create a page</a>
                     <!--a class="collapse-item" href="/admin_user/page">Create a page</a-->
 
                 {{with .SidebarData.PageData}}
@@ -150,6 +150,13 @@
                 {{end}}
             </div>
         </div>
+    </li>
+
+    <!-- Nav Item - Charts -->
+    <li class="nav-item">
+        <a class="nav-link" href="#">
+            <i class="fas fa-fw fa-chart-area"></i>
+            <span>Home Slider</span></a>
     </li>
 
     <!-- Nav Item - Charts -->
