@@ -1,22 +1,28 @@
 package event
 
 import (
+	"bufio"
 	"fmt"
 	"github.com/go-chi/chi"
 	"html/template"
+	"io/ioutil"
+	"mime/multipart"
 	"net/http"
 	"ostmfe/config"
 	comment2 "ostmfe/controller/comment"
 	"ostmfe/controller/misc"
 	museum "ostmfe/domain"
 	"ostmfe/domain/comment"
+	contribution2 "ostmfe/domain/contribution"
 	"ostmfe/domain/people"
 	place2 "ostmfe/domain/place"
 	"ostmfe/domain/project"
 	io2 "ostmfe/io"
 	"ostmfe/io/comment_io"
+	"ostmfe/io/contribution_io"
 	"ostmfe/io/event_io"
 	"ostmfe/io/project_io"
+	"path/filepath"
 	"time"
 )
 
@@ -26,20 +32,88 @@ func Home(app *config.Env) http.Handler {
 	r.Get("/single/{eventId}", EventHanler(app))
 	r.Get("/ofayear/{yearId}", EventOfAYearHanler(app))
 	r.Post("/create", CreateComment(app))
+	r.Post("/contribution", CreateContributionComment(app))
 	return r
 }
 
+func CreateContributionComment(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		var content []byte
+		var isExtension bool
+		var fileTypeId string
+		r.ParseForm()
+		file, m, err := r.FormFile("file")
+		eventId := r.PostFormValue("eventId")
+		if err != nil {
+			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
+		} else {
+			reader := bufio.NewReader(file)
+			content, _ = ioutil.ReadAll(reader)
+			//Check the file extension
+			isExtension, fileTypeId = getFileExtension(m)
+
+			if !isExtension {
+				fmt.Println("error creating contribution")
+				fmt.Println("wrong file: ", m.Filename)
+				http.Redirect(w, r, "/event/single/"+eventId, 301)
+			}
+		}
+		name := r.PostFormValue("name")
+		email := r.PostFormValue("email")
+		message := r.PostFormValue("message")
+		cellphone := r.PostFormValue("cellphone")
+
+		if name != "" && email != "" && message != "" && eventId != "" {
+			contributionObject := contribution2.Contribution{"", email, name, misc.FormatDateTime(time.Now()), cellphone, misc.ConvertToByteArray(message)}
+
+			contribution, err := contribution_io.CreateContribution(contributionObject)
+			if err != nil {
+				fmt.Println("error creating a new contribution")
+			} else {
+				contributorEventObject := contribution2.ContributionEvent{"", contribution.Id, eventId, name}
+				_, err := contribution_io.CreateContributionEvent(contributorEventObject)
+				if err != nil {
+					contribution_io.DeleteContribution(contribution.Id)
+					fmt.Println("error creating a new contribution")
+				} else {
+					contributionFileObject := contribution2.ContributionFile{"", content, fileTypeId}
+					_, err := contribution_io.CreateContributionFile(contributionFileObject)
+					if err != nil {
+						fmt.Println("error creating contributionFile")
+					}
+				}
+			}
+		}
+		http.Redirect(w, r, "/event/single/"+eventId, 301)
+	}
+}
+
+func getFileExtension(fileData *multipart.FileHeader) (bool, string) {
+	var extension = filepath.Ext(fileData.Filename)
+	contributionFileTypes, err := contribution_io.ReadContributionFileTypes()
+	if err != nil {
+		fmt.Println("error reading contributionFileType")
+		return true, ""
+	} else {
+		for _, contributionFileType := range contributionFileTypes {
+			if extension == contributionFileType.FileType {
+				return true, contributionFileType.Id
+			}
+		}
+	}
+	return false, ""
+}
 func CreateComment(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		r.ParseForm()
 		name := r.PostFormValue("name")
 		email := r.PostFormValue("email")
-		Subject := r.PostFormValue("Subject")
 		message := r.PostFormValue("message")
 		eventId := r.PostFormValue("eventId")
 
-		if name != "" && email != "" && message != "" && Subject != "" {
+		if name != "" && email != "" && message != "" {
 			commentObject := comment.Comment{"", email, name, misc.FormatDateTime(time.Now()), misc.ConvertToByteArray(message), ""}
 			newComment, err := comment_io.CreateComment(commentObject)
 			if err != nil {
@@ -49,6 +123,7 @@ func CreateComment(app *config.Env) http.HandlerFunc {
 				if err != nil {
 					fmt.Println("error creating comment")
 				}
+				http.Redirect(w, r, "/event/single/"+eventId, 301)
 			}
 		}
 		http.Redirect(w, r, "/event/single/"+eventId, 301)

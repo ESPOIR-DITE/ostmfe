@@ -229,7 +229,7 @@
                 {{with .Projects}}
                     {{range .}}
                         {{if .Picture}}
-                            <div class="single-post">
+                            <div class="single-post ">
                                 <a href="/project/read_single/{{.ProjectId}}">
                                     <img class="card-img"
                                          id='base64image' height="400px"
@@ -379,11 +379,11 @@
                 <div class="section-top-border text-right">
 
                     <div class="row">
-                        <div class="col-md-7">
+                        <div class="col-md-7 julie">
                             <a class="julie" href="/event/single/{{.Event.Id}}"><h3>{{.Event.Name}}</h3></a>
                             <br>
                             <h6><span>{{.Event.Date}}</span></h6>
-                            <div >
+                            <div>
                                 <p>
                                     {{.Event.Description}}
                                 </p>
@@ -401,10 +401,8 @@
                 {{end}}
                 <hr>
                 <div class="col-md-12 text-center">
-                    <a href="/project" class="primary-btn text-uppercase text-center">View All The Projects</a>
-
+                    <a href="/event" class="primary-btn text-uppercase text-center">View All The Event</a>
                 </div>
-
                 <br/>
             </div>
         </div>

@@ -1,14 +1,20 @@
 package contribution
 
-import "time"
-
 type Contribution struct {
-	Id          string    `json:"id"`
-	Email       string    `json:"email"`
-	Name        string    `json:"name"`
-	Date        time.Time `json:"date"`
-	PhoneNumber string    `json:"phoneNumber"`
-	Description string    `json:"description"`
+	Id          string `json:"id"`
+	Email       string `json:"email"`
+	Name        string `json:"name"`
+	Date        string `json:"date"`
+	PhoneNumber string `json:"phoneNumber"`
+	Description []byte `json:"description"`
+}
+type ContributionHelper struct {
+	Id          string `json:"id"`
+	Email       string `json:"email"`
+	Name        string `json:"name"`
+	Date        string `json:"date"`
+	PhoneNumber string `json:"phoneNumber"`
+	Description string `json:"description"`
 }
 type ContributionEvent struct {
 	Id             string `json:"id"`
