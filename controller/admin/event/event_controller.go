@@ -12,6 +12,8 @@ import (
 	event3 "ostmfe/controller/event"
 	"ostmfe/controller/misc"
 	museum "ostmfe/domain"
+	"ostmfe/domain/comment"
+	contribution2 "ostmfe/domain/contribution"
 	event2 "ostmfe/domain/event"
 	"ostmfe/domain/group"
 	history2 "ostmfe/domain/history"
@@ -20,6 +22,8 @@ import (
 	place2 "ostmfe/domain/place"
 	project2 "ostmfe/domain/project"
 	io2 "ostmfe/io"
+	"ostmfe/io/comment_io"
+	"ostmfe/io/contribution_io"
 	"ostmfe/io/event_io"
 	"ostmfe/io/group_io"
 	"ostmfe/io/history_io"
@@ -54,7 +58,61 @@ func EventHome(app *config.Env) http.Handler {
 	r.Get("/delete/{eventId}", DeleteEventHandler(app))
 	r.Get("/delete_people/{peopleId}/{eventId}", DeletepeopleEventHandler(app))
 	r.Get("/delete_group/{groupId}/{eventId}", DeleteGroupEventHandler(app))
+	r.Get("/delete_comment/{commentId}/{eventCommentId}", DeleteCommentEventHandler(app))
+
 	return r
+}
+
+func DeleteCommentEventHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
+		commentId := chi.URLParam(r, "commentId")
+		eventCommentId := chi.URLParam(r, "eventCommentId")
+
+		if eventCommentId != "" && commentId != "" {
+			eventComment, err := comment_io.ReadCommentEvent(eventCommentId)
+			if err != nil {
+				fmt.Println(err, " error deleting event")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/event", 301)
+				return
+			}
+			_, err2 := comment_io.DeleteComment(eventComment.CommentId)
+			if err2 != nil {
+				fmt.Println(err, " error deleting comment")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/event", 301)
+				return
+			}
+			_, err1 := comment_io.DeleteCommentEvent(eventComment.Id)
+			if err1 != nil {
+				fmt.Println(err, " error deleting event comment")
+			}
+
+			if app.Session.GetString(r.Context(), "creation-successful") != "" {
+				app.Session.Remove(r.Context(), "creation-successful")
+			}
+			app.Session.Put(r.Context(), "creation-successful", "You have successfully deleted an event Group")
+			http.Redirect(w, r, "/admin_user/event/edit/"+eventComment.EventId, 301)
+			return
+		}
+		fmt.Println(" error field missing")
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			app.Session.Remove(r.Context(), "user-create-error")
+		}
+		app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+		http.Redirect(w, r, "/admin_user/event", 301)
+		return
+
+	}
 }
 
 func DeleteGroupEventHandler(app *config.Env) http.HandlerFunc {
@@ -640,25 +698,24 @@ func UpdateDetailsHandler(app *config.Env) http.HandlerFunc {
 			return
 		}
 		//updating event Year
-		if yearId!=""{
-			eventYearRead,err := event_io.ReadEventYearWithEventId(eventId)
-			if err!=nil{
-				eventYearNewObject := event2.EventYear{"",eventId,yearId}
-				_,err:= event_io.CreateEventYear(eventYearNewObject)
-				if err!=nil{
+		if yearId != "" {
+			eventYearRead, err := event_io.ReadEventYearWithEventId(eventId)
+			if err != nil {
+				eventYearNewObject := event2.EventYear{"", eventId, yearId}
+				_, err := event_io.CreateEventYear(eventYearNewObject)
+				if err != nil {
 					fmt.Println("could not create a new eventYear")
 				}
-			}else {
-				eventYearNewObject := event2.EventYear{eventYearRead.Id,eventId,yearId}
-				_,err:= event_io.CreateEventYear(eventYearNewObject)
-				if err!=nil{
+			} else {
+				eventYearNewObject := event2.EventYear{eventYearRead.Id, eventId, yearId}
+				_, err := event_io.CreateEventYear(eventYearNewObject)
+				if err != nil {
 					fmt.Println("could not update a new eventYear")
 				}
 			}
 		}
 
-
-		if projectId!=""{
+		if projectId != "" {
 			eventProject, err := event_io.ReadEventProjectWithEventId(eventId)
 			if err != nil {
 				fmt.Println("error reading Event project, this event may not had a project yet. proceeding into creating a project")
@@ -688,7 +745,6 @@ func UpdateDetailsHandler(app *config.Env) http.HandlerFunc {
 			http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
 			return
 		}
-
 
 		fmt.Println(" successfully updated")
 		app.Session.Put(r.Context(), "creation-successful", "You have successfully updating: Event Details. ")
@@ -992,6 +1048,7 @@ func EventPicture(app *config.Env) http.HandlerFunc {
 
 func EditEventsHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var contributionList []contribution2.Contribution
 		if !adminHelper.CheckAdminInSession(app, r) {
 			http.Redirect(w, r, "/administration/", 301)
 		}
@@ -1032,20 +1089,33 @@ func EditEventsHandler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			fmt.Println(err, " error reading all the groups")
 		}
-
-		type PageData struct {
-			Event       event2.Event
-			EventData   misc.EventData
-			Projects    []project2.Project
-			Partners    []partner2.Partner
-			SidebarData misc.SidebarData
-			Peoples     []people.People
-			Places      []place2.Place
-			Years       []museum.Years
-			GroupData   []event3.GroupData
-			Groups      []group.Groups
+		eventContribution, err := contribution_io.ReadAllByEventId(eventId)
+		if err != nil {
+			fmt.Println(err, " error reading all the eventContribution")
+		} else {
+			for _, contribution := range eventContribution {
+				contribution, err := contribution_io.ReadContribution(contribution.ContributionId)
+				if err != nil {
+					fmt.Println(err, " error reading all the Contribution")
+				}
+				contributionList = append(contributionList, contribution)
+			}
 		}
-		date := PageData{event, eventData, projects, partners, misc.GetSideBarData("event", ""), peoples, places, years, event3.GetGroupsData(eventId), groups}
+		type PageData struct {
+			Event         event2.Event
+			EventData     misc.EventData
+			Projects      []project2.Project
+			Partners      []partner2.Partner
+			SidebarData   misc.SidebarData
+			Peoples       []people.People
+			Places        []place2.Place
+			Years         []museum.Years
+			GroupData     []event3.GroupData
+			Groups        []group.Groups
+			Contributions []contribution2.Contribution
+			Comments      []comment.CommentHelper2
+		}
+		date := PageData{event, eventData, projects, partners, misc.GetSideBarData("event", ""), peoples, places, years, event3.GetGroupsData(eventId), groups, contributionList, GetEventCommentsWithEventId(eventId)}
 		files := []string{
 			app.Path + "admin/event/edit_event.html",
 			app.Path + "admin/template/navbar.html",
@@ -1118,7 +1188,7 @@ func NewEventsHandler(app *config.Env) http.HandlerFunc {
 func EventsHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		fmt.Println("Session result: ",adminHelper.CheckAdminInSession(app, r))
+		fmt.Println("Session result: ", adminHelper.CheckAdminInSession(app, r))
 		if !adminHelper.CheckAdminInSession(app, r) {
 			http.Redirect(w, r, "/administration/", 301)
 		}
@@ -1342,8 +1412,8 @@ func UpdateEventHandler(app *config.Env) http.HandlerFunc {
 		}
 
 		//checking if this event has been associated to a year
-		enventYear,errx :=event_io.ReadEventYearWithEventId(id)
-		if errx!=nil{
+		enventYear, errx := event_io.ReadEventYearWithEventId(id)
+		if errx != nil {
 			//Creating event year
 			if year != "" {
 				//fmt.Println("eventStatus: ",eventStatus)
@@ -1354,15 +1424,14 @@ func UpdateEventHandler(app *config.Env) http.HandlerFunc {
 				}
 			}
 
-		}else {// if this event has been already associated to a year now we need to update.
+		} else { // if this event has been already associated to a year now we need to update.
 			eventyearObject := event2.EventYear{"", enventYear.EventId, year}
-			fmt.Println("updating event year :",eventyearObject)
+			fmt.Println("updating event year :", eventyearObject)
 			_, err := event_io.UpdateEventYear(eventyearObject)
 			if err != nil {
 				fmt.Println(err, " error when creating event year")
 			}
 		}
-
 
 		//we checking if there is a need of updating
 		if event.Name != name && event.Id != id && event.Date != date {

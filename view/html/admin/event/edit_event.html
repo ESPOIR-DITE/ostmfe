@@ -582,9 +582,113 @@
                     </div>
                 </div>
 
+                <!-- DataTales Example -->
+                <div class="card shadow mb-4">
+                    <!-- Card Header - Accordion -->
+                    <a href="#contributionCard" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+                       role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                        <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Event Contribution</h6>
+                    </a>
+                    <!-- Card Content - Collapse -->
+                    <div class="collapse " id="contributionCard">
+
+
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>Nr</th>
+                                    <th>Event Name</th>
+                                    <th>Event Date</th>
+                                    <th>Action</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                {{with .Contributions}}
+                                    {{range $i, $e := .}}
+                                        <tr>
+                                            <td>{{$i}}</td>
+                                            <td>{{.Name}}</td>
+                                            <td>{{.Email}}</td>
+                                            <td>{{.Date}}</td>
+                                            <td><a href="/admin_user/event-comment/edit/{{.Id}}"
+                                                   class="btn btn-primary btn-user btn-block">
+                                                    Edit
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a class="btn btn-google btn-user btn-block" data-toggle="modal"
+                                                   onclick="deleteTheEventContributionBTN({{.Id}},{{.Name}})"
+                                                   data-target="#exampleModalEvent">
+                                                    Delete
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {{end}}
+                                {{end}}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    </div>
+                </div>
+
+                <!-- DataTales Example -->
+                <div class="card shadow mb-4">
+                    <!-- Card Header - Accordion -->
+                    <a href="#commentCard" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+                       role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                        <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Event Comment</h6>
+                    </a>
+                    <!-- Card Content - Collapse -->
+                    <div class="collapse " id="commentCard">
+
+
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                    <tr>
+                                        <th>Nr</th>
+                                        <th>Event Name</th>
+                                        <th>Email</th>
+                                        <th>Event Date</th>
+                                        <th>Comment</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {{with .Comments}}
+                                        {{range $i, $e := .}}
+                                            <tr>
+                                                <td>{{$i}}</td>
+                                                <td>{{.Name}}</td>
+                                                <td>{{.Email}}</td>
+                                                <td>{{.Date}}</td>
+                                                <td><small>{{.Comment}}</small></td>
+                                                <td>
+                                                    <a class="btn btn-google btn-user btn-block" data-toggle="modal"
+                                                       onclick="deleteTheEventCommentBTN({{.Id}},{{.BridgeId}},{{.Name}})"
+                                                       data-target="#exampleModalEvent">
+                                                        Delete
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {{end}}
+                                    {{end}}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
             </div>
             <!-- /.container-fluid -->
-
         </div>
         <!-- End of Main Content -->
 
@@ -761,11 +865,9 @@
     </div>
 </div>
 
-
 <!-- Bootstrap core JavaScript-->
 <script src="../../assets/vendor/jquery/jquery.min.js"></script>
 <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
 
 <!-- Core plugin JavaScript-->
 <script src="../../assets/vendor/jquery-easing/jquery.easing.min.js"></script>
@@ -874,6 +976,14 @@
         $("#eventPlaceId").val(id);
     }
 
+    function deleteTheEventContributionBTN(id,name) {
+        $("#deleteBtn").attr('href','/admin_user/event-contribution/delete/'+id);
+        $("#value").text(name);
+    }
+ function deleteTheEventCommentBTN(commentId,bridgeId,name) {
+        $("#deleteBtn").attr('href','/admin_user/event/delete_comment/'+commentId+"/"+bridgeId);
+        $("#value").text(name);
+    }
 </script>
 
 </html>
