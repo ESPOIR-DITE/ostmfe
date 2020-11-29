@@ -557,7 +557,7 @@
                     <div class="input-group-icon mt-10">
                         <label>Booking Type</label>
                         <div class="form-select" id="default-select">
-                            <select>
+                            <select  id="bookingType" >
                                 <option value="1">Private</option>
                                 <option value="2">School Tour</option>
                                 <option value="3">Group Tour</option>
@@ -565,8 +565,9 @@
                         </div>
                     </div>
 
-                    <br>
-                    <div class="input-group-icon mt-10">
+
+                    <div class="input-group-icon mt-10" id="gradeOrAge">
+                        <br>
                         <label>Grade or Age</label>
                         <div class="form-select" id="default-select">
                             <select>
@@ -579,21 +580,7 @@
                                 <option value="7">7</option>
                             </select>
                         </div>
-                    </div>
-
-                    <br>
-                    <div class="input-group-icon mt-10">
-                        <label>Number of People</label>
-                        <div class="form-select" id="default-select">
-                            <select>
-                                <option value="1">1-5</option>
-                                <option value="2">5-10</option>
-                                <option value="3">10-15</option>
-                                <option value="4">15-20</option>
-                                <option value="5">20-25</option>
-                                <option value="6">25-30</option>
-                            </select>
-                        </div>
+                        <br>
                     </div>
 
                     <br>
@@ -653,6 +640,20 @@
 <script src="../assets/js/mail-script.js"></script>
 <script src="../assets/js/main.js"></script>
 </body>
+<script>
+    $(document).ready(function () {
+        $("#gradeOrAge").hide();
+    })
+    $("select#bookingType").change(function () {
+        var bType = $("#bookingType option:selected").text();
+        if (bType!=="Private"){
+            $("#gradeOrAge").show(1000);
+        }
+        if (bType==="Private"){
+            $("#gradeOrAge").hide(1000);
+        }
+    })
+</script>
 </html>
 
 

@@ -7,6 +7,7 @@ import (
 	"ostmfe/config"
 	"ostmfe/controller/admin/adminHelper"
 	collection2 "ostmfe/controller/admin/collection"
+	"ostmfe/controller/admin/contribution"
 	"ostmfe/controller/admin/event"
 	"ostmfe/controller/admin/group"
 	"ostmfe/controller/admin/histories"
@@ -53,6 +54,8 @@ func Home(app *config.Env) http.Handler {
 	mux.Mount("/page", page.PageHome(app))
 
 	mux.Mount("/years", year.YearHome(app))
+
+	mux.Mount("/contribution", contribution.Home(app))
 
 	return mux
 }

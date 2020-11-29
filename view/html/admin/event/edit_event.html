@@ -64,35 +64,32 @@
                         <div class="card-body p-0">
                             <!-- Nested Row within Card Body -->
                             <div class="row">
-                                <div class="col-lg-6">
+
                                     <div class="p-5">
                                         <div class="text-center">
                                             <h1 class="h4 text-gray-900 mb-4">Event Picture </h1>
                                         </div>
-                                        <div class="col-lg-12 row">
+                                        <div class=" row">
                                             <!-- Default Card Example -->
                                             {{if .EventData.Images}}
                                                 {{with .EventData.Images}}
                                                     {{range $i,$e :=.}}
-                                                        <div class="card mb-4">
+                                                        <div class="card col-md-6">
                                                             {{if eq $i 0 }}
                                                                 <div class="card-header py-3">
                                                                     <h6 class="m-0 font-weight-bold text-primary">First
                                                                         Project Image</h6>
                                                                 </div>
                                                             {{else}}
-                                                                <div class="card-header py-3">
+                                                                <div class="card-header">
                                                                     <h6 class="m-0 font-weight-bold text-primary">Second
                                                                         Project Image</h6>
                                                                 </div>
                                                             {{end}}
-
                                                             <div class="card-body">
                                                                 {{if .Id}}
                                                                     <img class="card-img"
-                                                                         style="width:100%;height:312px;"
-                                                                         id='base64image'
-                                                                         src='data:image/jpeg;base64,{{.Id}}' alt=""/>
+                                                                         style="width:100%;height:312px;" id='base64image' src='data:image/jpeg;base64,{{.Id}}' alt=""/>
                                                                     <a disabled="true"
                                                                        class="btn btn-google btn-user btn-block disabled"
                                                                        data-toggle="modal"
@@ -118,7 +115,7 @@
                                                                            value="{{$.EventData.Event.Id}}"
                                                                            class="form-control ">
                                                                     <div class="form-group row">
-                                                                        <div class="col-sm-6">
+                                                                        <div class="col-sm-5">
                                                                             <select name="imageType"
                                                                                     class="browser-default custom-select"
                                                                                     required>
@@ -128,7 +125,7 @@
                                                                                 </option>
                                                                             </select>
                                                                         </div>
-                                                                        <div class="col-sm-6">
+                                                                        <div class="col-sm-5">
                                                                             <input type="file" name="file"
                                                                                    class="form-control" id="fileInput"
                                                                                    onchange="fileToUpdate()" required>
@@ -160,25 +157,15 @@
                                                                placeholder="Project Name" required>
                                                     </div>
 
-                                                    <!--div class="form-group  row" id="filesArea"></div-->
-                                                    <!--div class="form-group row">
-                                                        <div class="col-sm-6">
-                                                            <button type="button" id="add_form_field"
-                                                                    class="btn btn-primary  btn-block">
-                                                                Add a picture
-                                                            </button>
-                                                        </div>
-                                                    </div-->
-
                                                     <button type="submit" class="btn btn-primary btn-block">
                                                         Add
                                                     </button>
                                                 </form>
                                             {{end}}
                                         </div>
-                                        <hr>
+                                        <br>
                                     </div>
-                                </div>
+
 
                                 <div class="col-lg-12 text-center">
                                     <hr>
@@ -210,7 +197,7 @@
                                         <button type="submit" class="btn btn-primary btn-block">
                                             Add
                                         </button>
-                                        <hr>
+                                        <br>
                                     </form>
                                 </div>
                             </div>
@@ -582,7 +569,7 @@
                     </div>
                 </div>
 
-                <!-- DataTales Example -->
+                <!-- Contribution -->
                 <div class="card shadow mb-4">
                     <!-- Card Header - Accordion -->
                     <a href="#contributionCard" class="d-block card-header py-3 btn-success" data-toggle="collapse"
@@ -637,7 +624,7 @@
                     </div>
                 </div>
 
-                <!-- DataTales Example -->
+                <!-- Comment Card -->
                 <div class="card shadow mb-4">
                     <!-- Card Header - Accordion -->
                     <a href="#commentCard" class="d-block card-header py-3 btn-success" data-toggle="collapse"

@@ -46,7 +46,7 @@ func CreateContributionComment(app *config.Env) http.HandlerFunc {
 		file, m, err := r.FormFile("file")
 		eventId := r.PostFormValue("eventId")
 		if err != nil {
-			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
+			fmt.Println(err, "<<<<<< error reading contribution file>>>>This error should happen>>>")
 		} else {
 			reader := bufio.NewReader(file)
 			content, _ = ioutil.ReadAll(reader)

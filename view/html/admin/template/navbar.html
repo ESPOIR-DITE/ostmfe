@@ -160,8 +160,8 @@
     </li>
 
     <!-- Nav Item - Charts -->
-    <li class="nav-item">
-        <a class="nav-link" href="#">
+    <li class="nav-item {{if eq .SidebarData.Menu "contributor"}} active {{end}}">
+        <a class="nav-link" href="/admin_user/contribution">
             <i class="fas fa-fw fa-chart-area"></i>
             <span>User Contribution</span></a>
     </li>
