@@ -30,7 +30,7 @@ func CreateFileType(app *config.Env) http.HandlerFunc {
 		fileType := r.PostFormValue("fileType")
 
 		if fileType != "" {
-			contributionFileType := contribution.ContributionType{"", fileType}
+			contributionFileType := contribution.ContributionFileType{"", fileType}
 			_, err := contribution_io.CreateContributionFileType(contributionFileType)
 			if err != nil {
 				fmt.Println("error creating file type")
@@ -60,7 +60,7 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 			Success_notice    string
 			SidebarData       misc.SidebarData
 			Contribution      []contribution.Contribution
-			ContributionTypes []contribution.ContributionType
+			ContributionTypes []contribution.ContributionFileType
 		}
 		data := PageData{success_notice, misc.GetSideBarData("contributor", ""), contributions, contributionFileTypes}
 		files := []string{

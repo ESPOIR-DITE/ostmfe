@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"mime/multipart"
 	museum "ostmfe/domain"
 	"ostmfe/domain/collection"
 	"ostmfe/domain/event"
@@ -19,6 +20,7 @@ import (
 	user2 "ostmfe/domain/user"
 	io2 "ostmfe/io"
 	"ostmfe/io/collection_io"
+	"ostmfe/io/contribution_io"
 	"ostmfe/io/event_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
@@ -29,6 +31,7 @@ import (
 	"ostmfe/io/place_io"
 	"ostmfe/io/project_io"
 	"ostmfe/io/user_io"
+	"path/filepath"
 	"strings"
 	"time"
 )
@@ -800,4 +803,25 @@ func GetSideBarData(menu, submenu string) SidebarData {
 		return SidebarData{pageDataObject, menu, submenu}
 	}
 	return SidebarData{pageData, menu, submenu}
+}
+
+//This method help to get a contributor file type
+func GetFileExtension(fileData *multipart.FileHeader) (bool, string) {
+	var extension = filepath.Ext(fileData.Filename)
+	contributionFileTypes, err := contribution_io.ReadContributionFileTypes()
+	if err != nil {
+		fmt.Println("error reading contributionFileType")
+		return true, ""
+	} else {
+		for _, contributionFileType := range contributionFileTypes {
+			fmt.Println("extension: " + extension + " file extension: " + contributionFileType.FileType)
+			//t := strings.Trim(extension, ".")
+			t := strings.Replace(extension, ".", "", -1)
+			fmt.Println("extension2: " + t + " file extension: " + contributionFileType.FileType)
+			if t == contributionFileType.FileType {
+				return true, contributionFileType.Id
+			}
+		}
+	}
+	return false, ""
 }

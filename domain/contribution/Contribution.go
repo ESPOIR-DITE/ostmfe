@@ -15,6 +15,7 @@ type ContributionHelper struct {
 	Date        string `json:"date"`
 	PhoneNumber string `json:"phoneNumber"`
 	Description string `json:"description"`
+	Image       string
 }
 type ContributionEvent struct {
 	Id             string `json:"id"`
@@ -23,11 +24,12 @@ type ContributionEvent struct {
 	Description    string `json:"description"`
 }
 type ContributionFile struct {
-	Id          string `json:"id"`
-	File        []byte `json:"file"`
-	Description string `json:"description"`
+	Id             string `json:"id"`
+	ContributionId string `json:"contributionId"`
+	File           []byte `json:"file"`
+	Description    string `json:"description"`
 }
-type ContributionType struct {
+type ContributionFileType struct {
 	Id       string `json:"id"`
 	FileType string `json:"fileType"`
 }

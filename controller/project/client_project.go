@@ -1,21 +1,28 @@
 package project
 
 import (
+	"bufio"
 	"fmt"
 	"github.com/go-chi/chi"
 	"html/template"
+	"io/ioutil"
+	"mime/multipart"
 	"net/http"
 	"ostmfe/config"
 	comment2 "ostmfe/controller/comment"
 	"ostmfe/controller/misc"
 	"ostmfe/domain/comment"
+	contribution2 "ostmfe/domain/contribution"
 	history2 "ostmfe/domain/history"
 	"ostmfe/domain/image"
 	project2 "ostmfe/domain/project"
 	"ostmfe/io/comment_io"
+	"ostmfe/io/contribution_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
 	"ostmfe/io/project_io"
+	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -24,6 +31,7 @@ func Home(app *config.Env) http.Handler {
 	r.Get("/", homeHanler(app))
 	r.Get("/read_single/{projectId}", ReadSingleProjectHanler(app))
 	r.Post("/comment/{projectId}", createProjectComment(app))
+	r.Post("/contribution", CreateContributionComment(app))
 	//r.Use(middleware.LoginSession{SessionManager: app.Session}.RequireAuthenticatedUser)
 	//r.Get("/home", indexHanler(app))
 	//r.Get("/homeError", indexErrorHanler(app))
@@ -31,16 +39,88 @@ func Home(app *config.Env) http.Handler {
 	return r
 }
 
+func CreateContributionComment(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var content []byte
+		var isExtension bool
+		var fileTypeId string
+		r.ParseForm()
+		file, m, err := r.FormFile("file")
+		projectId := r.PostFormValue("projectId")
+		if err != nil {
+			fmt.Println(err, "<<<<<< error reading contribution file>>>>This error should happen>>>")
+		} else {
+			reader := bufio.NewReader(file)
+			content, _ = ioutil.ReadAll(reader)
+			//Check the file extension
+			isExtension, fileTypeId = getFileExtension(m)
+
+			fmt.Println("result from assement: ", isExtension)
+
+			if isExtension == false {
+				fmt.Println("error creating contribution")
+				fmt.Println("wrong file: ", m.Filename)
+				http.Redirect(w, r, "/project/read_single/"+projectId, 301)
+			}
+		}
+		name := r.PostFormValue("name")
+		email := r.PostFormValue("email")
+		message := r.PostFormValue("message")
+		cellphone := r.PostFormValue("cellphone")
+
+		if name != "" && email != "" && message != "" && projectId != "" {
+			contributionObject := contribution2.Contribution{"", email, name, misc.FormatDateTime(time.Now()), cellphone, misc.ConvertToByteArray(message)}
+
+			contribution, err := contribution_io.CreateContribution(contributionObject)
+			if err != nil {
+				fmt.Println("error creating a new contribution")
+			} else {
+				contributorEventObject := contribution2.ContributionProject{"", contribution.Id, projectId, name}
+				_, err := contribution_io.CreateContributionProject(contributorEventObject)
+				if err != nil {
+					_, _ = contribution_io.DeleteContribution(contribution.Id)
+					fmt.Println("error creating a new contribution")
+				} else {
+					contributionFileObject := contribution2.ContributionFile{"", contribution.Id, content, fileTypeId}
+					_, err := contribution_io.CreateContributionFile(contributionFileObject)
+					if err != nil {
+						fmt.Println("error creating contributionFile")
+					}
+				}
+			}
+		}
+		http.Redirect(w, r, "/event/read_single/"+projectId, 301)
+	}
+}
+
+func getFileExtension(fileData *multipart.FileHeader) (bool, string) {
+	var extension = filepath.Ext(fileData.Filename)
+	contributionFileTypes, err := contribution_io.ReadContributionFileTypes()
+	if err != nil {
+		fmt.Println("error reading contributionFileType")
+		return true, ""
+	} else {
+		for _, contributionFileType := range contributionFileTypes {
+			fmt.Println("extension: " + extension + " file extension: " + contributionFileType.FileType)
+			//t := strings.Trim(extension, ".")
+			t := strings.Replace(extension, ".", "", -1)
+			fmt.Println("extension2: " + t + " file extension: " + contributionFileType.FileType)
+			if t == contributionFileType.FileType {
+				return true, contributionFileType.Id
+			}
+		}
+	}
+	return false, ""
+}
 func createProjectComment(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		projectId := chi.URLParam(r, "projectId")
 		r.ParseForm()
 		name := r.PostFormValue("name")
 		email := r.PostFormValue("email")
-		Subject := r.PostFormValue("Subject")
 		message := r.PostFormValue("message")
 
-		if name != "" && email != "" && message != "" && Subject != "" {
+		if name != "" && email != "" && message != "" {
 			commentObject := comment.Comment{"", email, name, misc.FormatDateTime(time.Now()), misc.ConvertToByteArray(message), ""}
 			newComment, err := comment_io.CreateComment(commentObject)
 			if err != nil {
@@ -86,7 +166,7 @@ func ReadSingleProjectHanler(app *config.Env) http.HandlerFunc {
 			app.Path + "base_templates/navigator.html",
 			app.Path + "base_templates/footer.html",
 			app.Path + "base_templates/comments.html",
-			app.Path + "base_templates/reply-template.html",
+			//app.Path + "base_templates/reply-template.html",
 		}
 		ts, err := template.ParseFiles(files...)
 		if err != nil {

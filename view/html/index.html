@@ -53,14 +53,14 @@
                 <img class="d-block img-fluid" src="../assets/img/protestWithFilter.png" alt="">
                 <div class="carousel-caption d-none d-md-block primary-border"
                      style="background-color: #4e555b; opacity: 85%">
-                    <h1>Mountain</h1>
+                    <h1 class="text-white">Mountain</h1>
                 </div>
             </div>
             <div class="carousel-item">
                 <img class="d-block img-fluid" src="../assets/img/schoutWithFilter.png" alt="">
-                <div class="carousel-caption d-none d-md-block primary-border"
-                     style="background-color: #4e555b; opacity: 85%">
-                    <h3>Mountain</h3>
+                <div class="carousel-caption d-none d-md-block primary-border "
+                     style="background-color: #4e555b; opacity: 85%; ">
+                    <h3 class="text-white">Mountain</h3>
                     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci esse vitae exercitationem
                         fugit, numquam minus!</p>
                 </div>
@@ -68,11 +68,25 @@
             <div class="carousel-item">
                 <img class="d-block img-fluid" src="../assets/img/simonsTownWithFilter.png" alt="">
                 <div class="carousel-caption d-none d-md-block" style="background-color: #4e555b; opacity: 85%">
-                    <h2>Mountain</h2>
+                    <h2 class="text-white">Mountain</h2>
                     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci esse vitae exercitationem
                         fugit, numquam minus!</p>
                 </div>
             </div>
+
+            {{if .Sliders}}
+                {{with .Sliders}}
+                    {{range .}}
+                <div class="carousel-item ">
+                    <img class="d-block img-fluid"  width="100%" src='data:image/jpeg;base64,{{.SliderImage}}' alt="">
+                    <div class="carousel-caption d-none d-md-block" style="background-color: #4e555b; opacity: 85%">
+                        <h2 class="text-white">{{.SliderName}}</h2>
+                        <p>{{.SliderMessage}}</p>
+                    </div>
+                </div>
+                {{end}}
+                {{end}}
+            {{end}}
         </div>
         <!-- /.carousel-inner -->
 
@@ -273,12 +287,12 @@
             </div>
 
             <div class="col-lg-4 sidebar">
-                <div class="single-widget search-widget">
+                <!--div class="single-widget search-widget">
                     <form class="example" action="#" style="margin:auto;max-width:300px">
                         <input type="text" placeholder="Search Posts" name="search2">
                         <button type="submit"><i class="fa fa-search"></i></button>
                     </form>
-                </div>
+                </div-->
 
                 <div class="single-widget protfolio-widget">
                     <img width="70%" src="../assets/img/share_your_story.jpg" alt="">
@@ -298,7 +312,7 @@
 
 
                 <div class="single-widget tags-widget">
-                    <h4 class="title">Other Projects</h4>
+                    <h4 class="title">Museum Projects</h4>
                     <ul>
                         {{with .AllProjects}}
                             {{range .}}
@@ -307,13 +321,25 @@
                         {{end}}
                     </ul>
                 </div>
+
+                {{if .Histories}}
+                <div class="single-widget tags-widget">
+                    <h4 class="title">Simon's Town History</h4>
+                    <ul>
+                        {{with .Histories}}
+                            {{range .}}
+                                <li><a href="/history/single_history/{{.Id}}">{{.Title}}</a></li>
+                            {{end}}
+                        {{end}}
+                    </ul>
+                </div>
+                {{end}}
+
                 <div class="single-widget tags-widget">
                     <a href="/place"><h4>View an interactive Simon's town Map</h4></a>
                     <br>
                     <p>
-                        MCSE boot camps have its supporters and
-                        its detractors. Some people do not understand why you should have to spend money
-                        on boot camp when you can get.
+                        Through an up to date map, the history of simon's town is transmitted to the current generation.
                     </p>
                     <div class="col-md-12 text-center">
                         <a href="/place" class="primary-btn text-uppercase text-center">View The Map</a>
@@ -595,8 +621,6 @@
                             </select>
                         </div>
                     </div>
-
-
                     <div class="mt-10">
                         <textarea class="single-textarea" placeholder="Message" onfocus="this.placeholder = ''"
                                   onblur="this.placeholder = 'Message'" required></textarea>
@@ -614,6 +638,97 @@
     </div>
 </div>
 
+<div class="modal fade" id="warning" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <form action="/visit/book" method="post" class="col-12">
+                    <h5 class="modal-title" id="exampleModalLabel">Book a Tour</h5>
+                    <div class="mt-10">
+                        <input type="text" name="name" placeholder="name" onfocus="this.placeholder = ''"
+                               onblur="this.placeholder = 'First Name'" required class="single-input">
+                    </div>
+
+                    <div class="mt-10">
+                        <input type="text" name="phoneNumber" placeholder="Phone Number" onfocus="this.placeholder = ''"
+                               onblur="this.placeholder = 'First Name'" required class="single-input">
+                    </div>
+
+                    <div class="mt-10">
+                        <input type="text" name="fax" placeholder="fax Number" onfocus="this.placeholder = ''"
+                               onblur="this.placeholder = 'First Name'" required class="single-input">
+                    </div>
+
+                    <div class="mt-10">
+                        <input type="email" name="email" placeholder="Email address" onfocus="this.placeholder = ''"
+                               onblur="this.placeholder = 'Email address'" required class="single-input">
+                    </div>
+
+                    <div class="mt-10">
+                        <input type="date" name="date" placeholder="Date" onfocus="this.placeholder = ''"
+                               onblur="this.placeholder = 'Email address'" required class="single-input">
+                    </div>
+
+                    <br>
+                    <div class="input-group-icon mt-10">
+                        <label>Booking Type</label>
+                        <div class="form-select" id="default-select">
+                            <select  id="bookingType" >
+                                <option value="1">Private</option>
+                                <option value="2">School Tour</option>
+                                <option value="3">Group Tour</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <div class="input-group-icon mt-10" id="gradeOrAge">
+                        <br>
+                        <label>Grade or Age</label>
+                        <div class="form-select" id="default-select">
+                            <select>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                            </select>
+                        </div>
+                        <br>
+                    </div>
+
+                    <br>
+                    <div class="input-group-icon mt-10">
+                        <label>Language</label>
+                        <div class="form-select" id="default-select">
+                            <select>
+                                <option value="1">English</option>
+                                <option value="2">French</option>
+                                <option value="3">Zulu</option>
+                                <option value="4">Xhosa</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-10">
+                        <textarea class="single-textarea" placeholder="Message" onfocus="this.placeholder = ''"
+                                  onblur="this.placeholder = 'Message'" required></textarea>
+                    </div>
+
+                    <button class="primary-btn mt-20 text-white" style="float: right;">Submit</button>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <!--button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-primary" href="#">Logout</a-->
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- start footer Area -->
 {{template "footer" .}}
@@ -643,6 +758,9 @@
 <script>
     $(document).ready(function () {
         $("#gradeOrAge").hide();
+        if(){
+            $('#warning').modal('show');
+        }
     })
     $("select#bookingType").change(function () {
         var bType = $("#bookingType option:selected").text();

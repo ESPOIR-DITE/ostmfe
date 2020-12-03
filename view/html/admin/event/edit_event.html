@@ -47,7 +47,8 @@
             <div class="container-fluid">
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
                     <h1 class="h3 mb-0 text-gray-800">{{.EventData.Event.Name}} Event</h1>
-                    <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
+                    <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
                 </div>
 
 
@@ -65,106 +66,107 @@
                             <!-- Nested Row within Card Body -->
                             <div class="row">
 
-                                    <div class="p-5">
-                                        <div class="text-center">
-                                            <h1 class="h4 text-gray-900 mb-4">Event Picture </h1>
-                                        </div>
-                                        <div class=" row">
-                                            <!-- Default Card Example -->
-                                            {{if .EventData.Images}}
-                                                {{with .EventData.Images}}
-                                                    {{range $i,$e :=.}}
-                                                        <div class="card col-md-6">
-                                                            {{if eq $i 0 }}
-                                                                <div class="card-header py-3">
-                                                                    <h6 class="m-0 font-weight-bold text-primary">First
-                                                                        Project Image</h6>
-                                                                </div>
-                                                            {{else}}
-                                                                <div class="card-header">
-                                                                    <h6 class="m-0 font-weight-bold text-primary">Second
-                                                                        Project Image</h6>
-                                                                </div>
-                                                            {{end}}
-                                                            <div class="card-body">
-                                                                {{if .Id}}
-                                                                    <img class="card-img"
-                                                                         style="width:100%;height:312px;" id='base64image' src='data:image/jpeg;base64,{{.Id}}' alt=""/>
-                                                                    <a disabled="true"
-                                                                       class="btn btn-google btn-user btn-block disabled"
-                                                                       data-toggle="modal"
-                                                                       onclick="deleteEventImageBTN({{.ImageId}},{{$.EventData.Event.Id}},{{.EventImageId}},{{.Id}})"
-                                                                       data-target="#exampleModalProject"
-                                                                       disabled="true">
-                                                                        Delete
-                                                                    </a>
-                                                                {{end}}
-                                                                <div class="text-center">
-                                                                    <h1 class="h4 text-gray-900 mb-4">You can update
-                                                                        this image here</h1>
-                                                                </div>
-                                                                <form class="user" method="post" id=""
-                                                                      action="/admin_user/event/update_pictures"
-                                                                      enctype="multipart/form-data">
-                                                                    <input type="hidden" name="imageId"
-                                                                           value="{{.ImageId}}" class="form-control ">
-                                                                    <input type="hidden" name="eventImageId"
-                                                                           value="{{.EventImageId}}"
-                                                                           class="form-control ">
-                                                                    <input type="hidden" name="eventId"
-                                                                           value="{{$.EventData.Event.Id}}"
-                                                                           class="form-control ">
-                                                                    <div class="form-group row">
-                                                                        <div class="col-sm-5">
-                                                                            <select name="imageType"
-                                                                                    class="browser-default custom-select"
-                                                                                    required>
-                                                                                <option selected>Picture type</option>
-                                                                                <option value="1">Profile image</option>
-                                                                                <option value="2">Secondary Image
-                                                                                </option>
-                                                                            </select>
-                                                                        </div>
-                                                                        <div class="col-sm-5">
-                                                                            <input type="file" name="file"
-                                                                                   class="form-control" id="fileInput"
-                                                                                   onchange="fileToUpdate()" required>
-                                                                        </div>
-                                                                    </div>
-                                                                    <button type="submit"
-                                                                            class="btn btn-primary btn-block"
-                                                                            id="completeBTN" hidden>Update
-                                                                    </button>
-                                                                </form>
-
-                                                            </div>
-                                                        </div>
-                                                    {{end}}
-                                                {{end}}
-                                            {{else}}
-                                                <div class="text-center">
-                                                    <h1 class="h4 text-gray-900 mb-4">You have no pictures for this
-                                                        Event, Please Upload pictures</h1>
-                                                </div>
-                                                <form class="user" method="post"
-                                                      action="/admin_user/event/create-pictures"
-                                                      enctype="multipart/form-data">
-                                                    <input type="hidden" name="eventId" value="{{.EventData.Event.Id}}"
-                                                           required>
-                                                    <div class="form-group ">
-                                                        <label>Project profile Picture</label>
-                                                        <input type="file" name="file" class="form-control " id="file"
-                                                               placeholder="Project Name" required>
-                                                    </div>
-
-                                                    <button type="submit" class="btn btn-primary btn-block">
-                                                        Add
-                                                    </button>
-                                                </form>
-                                            {{end}}
-                                        </div>
-                                        <br>
+                                <div class="p-5">
+                                    <div class="text-center">
+                                        <h1 class="h4 text-gray-900 mb-4">Event Picture </h1>
                                     </div>
+                                    <div class=" row">
+                                        <!-- Default Card Example -->
+                                        {{if .EventData.Images}}
+                                            {{with .EventData.Images}}
+                                                {{range $i,$e :=.}}
+                                                    <div class="card col-md-6">
+                                                        {{if eq $i 0 }}
+                                                            <div class="card-header py-3">
+                                                                <h6 class="m-0 font-weight-bold text-primary">First
+                                                                    Project Image</h6>
+                                                            </div>
+                                                        {{else}}
+                                                            <div class="card-header">
+                                                                <h6 class="m-0 font-weight-bold text-primary">Second
+                                                                    Project Image</h6>
+                                                            </div>
+                                                        {{end}}
+                                                        <div class="card-body">
+                                                            {{if .Id}}
+                                                                <img class="card-img"
+                                                                     style="width:100%;height:312px;" id='base64image'
+                                                                     src='data:image/jpeg;base64,{{.Id}}' alt=""/>
+                                                                <a disabled="true"
+                                                                   class="btn btn-google btn-user btn-block disabled"
+                                                                   data-toggle="modal"
+                                                                   onclick="deleteEventImageBTN({{.ImageId}},{{$.EventData.Event.Id}},{{.EventImageId}},{{.Id}})"
+                                                                   data-target="#exampleModalProject"
+                                                                   disabled="true">
+                                                                    Delete
+                                                                </a>
+                                                            {{end}}
+                                                            <div class="text-center">
+                                                                <h1 class="h4 text-gray-900 mb-4">You can update
+                                                                    this image here</h1>
+                                                            </div>
+                                                            <form class="user" method="post" id=""
+                                                                  action="/admin_user/event/update_pictures"
+                                                                  enctype="multipart/form-data">
+                                                                <input type="hidden" name="imageId"
+                                                                       value="{{.ImageId}}" class="form-control ">
+                                                                <input type="hidden" name="eventImageId"
+                                                                       value="{{.EventImageId}}"
+                                                                       class="form-control ">
+                                                                <input type="hidden" name="eventId"
+                                                                       value="{{$.EventData.Event.Id}}"
+                                                                       class="form-control ">
+                                                                <div class="form-group row">
+                                                                    <div class="col-sm-5">
+                                                                        <select name="imageType"
+                                                                                class="browser-default custom-select"
+                                                                                required>
+                                                                            <option selected>Picture type</option>
+                                                                            <option value="1">Profile image</option>
+                                                                            <option value="2">Secondary Image
+                                                                            </option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="col-sm-5">
+                                                                        <input type="file" name="file"
+                                                                               class="form-control" id="fileInput"
+                                                                               onchange="fileToUpdate()" required>
+                                                                    </div>
+                                                                </div>
+                                                                <button type="submit"
+                                                                        class="btn btn-primary btn-block"
+                                                                        id="completeBTN" hidden>Update
+                                                                </button>
+                                                            </form>
+
+                                                        </div>
+                                                    </div>
+                                                {{end}}
+                                            {{end}}
+                                        {{else}}
+                                            <div class="text-center">
+                                                <h1 class="h4 text-gray-900 mb-4">You have no pictures for this
+                                                    Event, Please Upload pictures</h1>
+                                            </div>
+                                            <form class="user" method="post"
+                                                  action="/admin_user/event/create-pictures"
+                                                  enctype="multipart/form-data">
+                                                <input type="hidden" name="eventId" value="{{.EventData.Event.Id}}"
+                                                       required>
+                                                <div class="form-group ">
+                                                    <label>Project profile Picture</label>
+                                                    <input type="file" name="file" class="form-control " id="file"
+                                                           placeholder="Project Name" required>
+                                                </div>
+
+                                                <button type="submit" class="btn btn-primary btn-block">
+                                                    Add
+                                                </button>
+                                            </form>
+                                        {{end}}
+                                    </div>
+                                    <br>
+                                </div>
 
 
                                 <div class="col-lg-12 text-center">
@@ -263,8 +265,10 @@
                                                 <div class="form-group row">
                                                     <div class="col-sm-6">
                                                         <label>Year of starting event</label>
-                                                        <select name="year" id="yearField" class="browser-default custom-select" onchange="checkSelectedYear({{.EventData.Year.Id}})">
-                                                            <option selected>Choose a starting year </option>
+                                                        <select name="year" id="yearField"
+                                                                class="browser-default custom-select"
+                                                                onchange="checkSelectedYear({{.EventData.Year.Id}})">
+                                                            <option selected>Choose a starting year</option>
                                                             {{with .Years}}
                                                                 {{range .}}
                                                                     <option value="{{.Id}}" {{if eq $.EventData.Year.Id .Id}} selected {{end}}>{{.Year}}</option>
@@ -278,7 +282,8 @@
                                                         <div class="custom-control custom-checkbox small">
                                                             <input type="checkbox" name="eventStatus"
                                                                    class=" browser-default custom-control-input"
-                                                                   id="customCheck" {{if .EventData.Event.IsPast}}checked{{end}}>
+                                                                   id="customCheck"
+                                                                   {{if .EventData.Event.IsPast}}checked{{end}}>
                                                             <label class="custom-control-label" for="customCheck">Past
                                                                 Event <small>Check if this event has been stopped to be
                                                                     hosted</small></label>
@@ -354,43 +359,43 @@
                                                     <h6 class="m-0 font-weight-bold text-primary">Event People</h6>
                                                 </div>
                                                 <div class="card-body">
-                                                <div class="table-responsive">
-                                                    <table class="table table-bordered" id="dataTable" width="100%"
-                                                           cellspacing="0">
-                                                        <thead>
-                                                        <tr>
-                                                            <th>Nr</th>
-                                                            <th>Name</th>
-                                                            <th>Surname</th>
-                                                            <th>Action</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        {{with .EventData.Peoples}}
-                                                            {{range $i, $e := .}}
-                                                                <tr>
-                                                                    <td>{{$i}}</td>
-                                                                    <td>{{.Name}}</td>
-                                                                    <td>{{.Surname}}</td>
-                                                                    <td>
-                                                                        <a href="/admin_user/event/delete_people/{{.Id}}/{{$.EventData.Event.Id}}"
-                                                                           class="btn btn-danger btn-user btn-block">
-                                                                            Remove
-                                                                        </a>
-                                                                    </td>
-                                                                </tr>
+                                                    <div class="table-responsive">
+                                                        <table class="table table-bordered" id="dataTable" width="100%"
+                                                               cellspacing="0">
+                                                            <thead>
+                                                            <tr>
+                                                                <th>Nr</th>
+                                                                <th>Name</th>
+                                                                <th>Surname</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            {{with .EventData.Peoples}}
+                                                                {{range $i, $e := .}}
+                                                                    <tr>
+                                                                        <td>{{$i}}</td>
+                                                                        <td>{{.Name}}</td>
+                                                                        <td>{{.Surname}}</td>
+                                                                        <td>
+                                                                            <a href="/admin_user/event/delete_people/{{.Id}}/{{$.EventData.Event.Id}}"
+                                                                               class="btn btn-danger btn-user btn-block">
+                                                                                Remove
+                                                                            </a>
+                                                                        </td>
+                                                                    </tr>
+                                                                {{end}}
                                                             {{end}}
-                                                        {{end}}
 
-                                                        </tbody>
-                                                    </table>
-                                                    <a class="btn btn-primary btn-user btn-block text-white"
+                                                            </tbody>
+                                                        </table>
+                                                        <a class="btn btn-primary btn-user btn-block text-white"
                                                            data-toggle="modal"
                                                            onclick="updateEventPeopleBTN({{.EventData.Event.Id}})"
                                                            data-target="#exampleModalUpdateEventPeople">
                                                             Add People
                                                         </a>
-                                                </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -431,7 +436,7 @@
                                                                         </td>
                                                                         <td><a href="/admin_user/event/delete/{{.Id}}"
                                                                                class="btn btn-danger btn-user btn-block">
-                                                                                 Delete
+                                                                                Delete
                                                                             </a>
                                                                         </td>
                                                                     </tr>
@@ -448,41 +453,41 @@
                                                     <h6 class="m-0 font-weight-bold text-primary">Event Group</h6>
                                                 </div>
                                                 <div class="card-body">
-                                                <div class="table-responsive">
-                                                    <table class="table table-bordered" id="dataTable" width="100%"
-                                                           cellspacing="0">
-                                                        <thead>
-                                                        <tr>
-                                                            <th>Nr</th>
-                                                            <th>Name</th>
-                                                            <th>Action</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        {{with .GroupData}}
-                                                            {{range $i, $e := .}}
-                                                                <tr>
-                                                                    <td>{{$i}}</td>
-                                                                    <td>{{.Group.Name}}</td>
-                                                                    <td>
-                                                                        <a href="/admin_user/event/delete_group/{{.Group.Id}}/{{$.EventData.Event.Id}}"
-                                                                           class="btn btn-google btn-user btn-block">
-                                                                             Remove
-                                                                        </a>
-                                                                    </td>
-                                                                </tr>
+                                                    <div class="table-responsive">
+                                                        <table class="table table-bordered" id="dataTable" width="100%"
+                                                               cellspacing="0">
+                                                            <thead>
+                                                            <tr>
+                                                                <th>Nr</th>
+                                                                <th>Name</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            {{with .GroupData}}
+                                                                {{range $i, $e := .}}
+                                                                    <tr>
+                                                                        <td>{{$i}}</td>
+                                                                        <td>{{.Group.Name}}</td>
+                                                                        <td>
+                                                                            <a href="/admin_user/event/delete_group/{{.Group.Id}}/{{$.EventData.Event.Id}}"
+                                                                               class="btn btn-google btn-user btn-block">
+                                                                                Remove
+                                                                            </a>
+                                                                        </td>
+                                                                    </tr>
+                                                                {{end}}
                                                             {{end}}
-                                                        {{end}}
 
-                                                        </tbody>
-                                                    </table>
-                                                    <a class="btn btn-primary btn-user btn-block text-white"
-                                                       data-toggle="modal"
-                                                       onclick="updateEventGroupBTN({{.EventData.Event.Id}})"
-                                                       data-target="#exampleModalUpdateEventGroup">
-                                                        Add Group
-                                                    </a>
-                                                </div>
+                                                            </tbody>
+                                                        </table>
+                                                        <a class="btn btn-primary btn-user btn-block text-white"
+                                                           data-toggle="modal"
+                                                           onclick="updateEventGroupBTN({{.EventData.Event.Id}})"
+                                                           data-target="#exampleModalUpdateEventGroup">
+                                                            Add Group
+                                                        </a>
+                                                    </div>
                                                 </div>
                                             </div>
 
@@ -537,7 +542,7 @@
                                 </div>
                                 <hr>
                                 <div class="form-group">
-                                    <form method="post" action="/admin_user/people/update_history">
+                                    <form method="post" action="/admin_user/event/update_history">
                                         <div class="form-group">
                                             <input name="historyId" value="{{.EventData.History.Id}}" hidden>
                                             <input name="projectId" value="{{.EventData.Event.Id}}" hidden>
@@ -545,9 +550,7 @@
                                                 <label id="label" hidden style="color: steelblue">Add the new contents
                                                     here<small> (You may copy from the previous. Remember this new
                                                         content will override the previous)</small></label>
-                                                <textarea name="myArea" id="myArea" class="form-control" hidden>
-
-                          </textarea>
+                                                <textarea name="myArea" id="myArea" class="form-control" hidden></textarea>
                                             </div>
 
                                         </div>
@@ -580,46 +583,46 @@
                     <div class="collapse " id="contributionCard">
 
 
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                <thead>
-                                <tr>
-                                    <th>Nr</th>
-                                    <th>Event Name</th>
-                                    <th>Event Date</th>
-                                    <th>Action</th>
-                                    <th>Action</th>
-                                </tr>
-                                </thead>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                    <tr>
+                                        <th>Nr</th>
+                                        <th>Event Name</th>
+                                        <th>Event Date</th>
+                                        <th>Action</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
 
-                                <tbody>
-                                {{with .Contributions}}
-                                    {{range $i, $e := .}}
-                                        <tr>
-                                            <td>{{$i}}</td>
-                                            <td>{{.Name}}</td>
-                                            <td>{{.Email}}</td>
-                                            <td>{{.Date}}</td>
-                                            <td><a href="/admin_user/event-comment/edit/{{.Id}}"
-                                                   class="btn btn-primary btn-user btn-block">
-                                                    Edit
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a class="btn btn-google btn-user btn-block" data-toggle="modal"
-                                                   onclick="deleteTheEventContributionBTN({{.Id}},{{.Name}})"
-                                                   data-target="#exampleModalEvent">
-                                                    Delete
-                                                </a>
-                                            </td>
-                                        </tr>
+                                    <tbody>
+                                    {{with .Contributions}}
+                                        {{range $i, $e := .}}
+                                            <tr>
+                                                <td>{{$i}}</td>
+                                                <td>{{.Name}}</td>
+                                                <td>{{.Email}}</td>
+                                                <td>{{.Date}}</td>
+                                                <td><a href="#"
+                                                       class="btn btn-primary btn-user btn-block">
+                                                        Edit
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <a class="btn btn-primary btn-user btn-block" data-toggle="modal"
+                                                       onclick="contributionViewBTN({{.Description}},{{.Image}})"
+                                                       data-target="#contributionView">
+                                                        View
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {{end}}
                                     {{end}}
-                                {{end}}
-                                </tbody>
-                            </table>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                    </div>
 
                     </div>
                 </div>
@@ -794,7 +797,7 @@
             <div class="modal-body">
                 <h3 class=" text-center"> Group Event</h3>
                 <form class="user" method="post" action="/admin_user/event/add_group">
-                    <input type="hidden" name="EventId" class="form-control " id="EventIdGroup"  required>
+                    <input type="hidden" name="EventId" class="form-control " id="EventIdGroup" required>
                     <div class="form-group">
                         <label>Groups</label>
                         <select name="groupId" class="browser-default custom-select">
@@ -843,6 +846,35 @@
                             {{end}}
                         </select>
                     </div>
+                    <button type="submit" id="placeModelBtn" class="btn btn-primary btn-block" disabled>
+                        Submit
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Contribution view -->
+<div class="modal fade" id="contributionView" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-success" id="exampleModalLongTitle">Contribution Data</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h3 class=" text-center"> Contribution </h3>
+                <form class="user" method="post" action="/admin_user/event/update_event_place">
+                    <div class="form-group ">
+                        <label>Description</label>
+                        <textarea id="contributionViewModel" class="form-control" name="description" minlength="200"
+                                  required></textarea>
+                    </div>
+                    <img class="card-img" style="width:100%;height:312px;" id='base64image' alt=""/>
                     <button type="submit" id="placeModelBtn" class="btn btn-primary btn-block" disabled>
                         Submit
                     </button>
@@ -917,7 +949,7 @@
     };
     let checkSelectedYear = function (initialApplicantType) {
         const selectedApplicantType = $("#yearField").val();
-            initialApplicantType.localeCompare(selectedApplicantType)
+        initialApplicantType.localeCompare(selectedApplicantType)
     };
     let checkSelectedPlace = function (initialApplicantType) {
         const selectedApplicantType = $("#projectDrop").val();
@@ -963,12 +995,19 @@
         $("#eventPlaceId").val(id);
     }
 
-    function deleteTheEventContributionBTN(id,name) {
-        $("#deleteBtn").attr('href','/admin_user/event-contribution/delete/'+id);
+    function deleteTheEventContributionBTN(id, name) {
+        $("#deleteBtn").attr('href', '/admin_user/event-contribution/delete/' + id);
         $("#value").text(name);
     }
- function deleteTheEventCommentBTN(commentId,bridgeId,name) {
-        $("#deleteBtn").attr('href','/admin_user/event/delete_comment/'+commentId+"/"+bridgeId);
+
+    function contributionViewBTN(massage, image) {
+        //$("#deleteBtn").attr('href','/admin_user/event-contribution/delete/'+id);
+        $("#contributionViewModel").text(massage);
+        $("#base64image").attr('src', 'data:image/jpeg;base64,' + image)
+    }
+
+    function deleteTheEventCommentBTN(commentId, bridgeId, name) {
+        $("#deleteBtn").attr('href', '/admin_user/event/delete_comment/' + commentId + "/" + bridgeId);
         $("#value").text(name);
     }
 </script>

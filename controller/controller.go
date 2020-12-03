@@ -21,12 +21,16 @@ import (
 	"ostmfe/controller/user"
 	"ostmfe/controller/visit"
 	event2 "ostmfe/domain/event"
+	history2 "ostmfe/domain/history"
 	image3 "ostmfe/domain/image"
 	project2 "ostmfe/domain/project"
+	"ostmfe/domain/slider"
 	"ostmfe/io/event_io"
+	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
 	"ostmfe/io/pageData_io"
 	"ostmfe/io/project_io"
+	"ostmfe/io/slider_io"
 )
 
 func Controllers(env *config.Env) http.Handler {
@@ -65,7 +69,9 @@ type SimpleEventData struct {
 	//Location string
 }
 type PageData struct {
+	Sliders       []slider.SliderHelper
 	Projects      []misc.ProjectContentsHome
+	Histories     []history2.History
 	EventDataList []misc.SimpleEventData
 	//EventDataListLeft   []misc.SimpleEventData
 	AllProjects     []project2.Project
@@ -76,17 +82,33 @@ type PageData struct {
 func homeHanler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		projects := misc.GetProjectContentsHomes()
-
 		//var eventDataListLeft []EventData
 		//var eventDataListRight []EventData
-
 		allProjects, err := project_io.ReadProjects()
 		if err != nil {
 			fmt.Println(err, " error reading all the project")
 		}
 		eventdataLeft := misc.GetSimpleEventData(6)
 
-		date := PageData{projects,
+		histories, err := history_io.ReadHistorys()
+		if err != nil {
+			fmt.Println(err, " error reading all the histories")
+		}
+		var sliderHelperList []slider.SliderHelper
+
+		sliders, err := slider_io.ReadSliders()
+		if err != nil {
+			fmt.Println(err, " error reading all the sliders")
+		} else {
+			for _, sliderContent := range sliders {
+				tempSliderObject := slider.SliderHelper{sliderContent.Id, sliderContent.SliderName, sliderContent.Description, misc.ConvertingToString(sliderContent.SliderMessage), misc.ConvertingToString(sliderContent.SliderImage)}
+				sliderHelperList = append(sliderHelperList, tempSliderObject)
+			}
+		}
+
+		date := PageData{sliderHelperList,
+			projects,
+			histories,
 			eventdataLeft,
 			allProjects,
 			GetPageData("HomePage"),

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="zxx" class="no-js">
 <head>
+
     <!-- Mobile Specific Meta -->
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <!-- Favicon-->
@@ -28,6 +29,12 @@
     <link rel="stylesheet" href="../../assets/css/animate.min.css">
     <link rel="stylesheet" href="../../assets/css/owl.carousel.css">
     <link rel="stylesheet" href="../../assets/css/main.css">
+<style>
+    .myinput{
+        border: black 2px solid;
+    }
+</style>
+
 </head>
 <body>
 
@@ -106,7 +113,7 @@
             <h3 class="mb-30">Simon's Town Museum</h3>
             <div class="row">
                 <div class="col-md-3">
-                    <img src="../../assets/img/elements/d.jpg" alt="" class="img-fluid">
+                    <img src="../../assets/img/resizes_museum.jpg" alt="" class="img-fluid">
                 </div>
                 <div class="col-md-9 mt-sm-20">
                     <p>Simon’s Town Museum is housed in "The Residency" which was built in 1777 as the  winter residence for the Dutch East India Company Governor at the Cape.
@@ -195,7 +202,7 @@
                         </ol>
                     </div>
                     <div class="col-md-4">
-                        <img src="../assets/img/elements/d.jpg" alt="" class="img-fluid">
+                        <img src="../../assets/img/resizes_museum.jpg" alt="" class="img-fluid">
                     </div>
                 </div>
             {{end}}
@@ -203,35 +210,34 @@
 
         <div class="section-top-border">
             <div class="row">
-                <div class="col-lg-8 col-md-8">
+                <div class="col-lg-12 col-md-12 generic-blockquote">
                     <h3 class="mb-30">Book a Visit</h3>
                     <form action="/visit/book" method="post">
-//TODO verify if a booking can be created.
                         <div class="mt-10">
-                            <input type="text" name="name" placeholder="name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'First Name'" required class="single-input">
+                            <input type="text"  name="name" placeholder="name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'First Name'" required class="single-input form-control myinput" >
                         </div>
 
                         <div class="mt-10">
-                            <input type="text" name="phoneNumber" placeholder="Phone Number" onfocus="this.placeholder = ''" onblur="this.placeholder = 'First Name'" required class="single-input">
+                            <input type="text" name="phoneNumber" placeholder="Phone Number" onfocus="this.placeholder = ''" onblur="this.placeholder = 'First Name'" required class="single-input form-control myinput">
                         </div>
 
                         <div class="mt-10">
-                            <input type="text" name="fax" placeholder="fax Number" onfocus="this.placeholder = ''" onblur="this.placeholder = 'First Name'" required class="single-input">
+                            <input type="text" name="fax" placeholder="fax Number" onfocus="this.placeholder = ''" onblur="this.placeholder = 'First Name'" required class="single-input form-control myinput">
                         </div>
 
                         <div class="mt-10">
-                            <input type="email" name="email" placeholder="Email address" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email address'" required class="single-input">
+                            <input type="email" name="email" placeholder="Email address" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email address'" required class="single-input form-control myinput">
                         </div>
 
                         <div class="mt-10">
-                            <input type="date" name="date" placeholder="Date" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email address'" required class="single-input">
+                            <input type="date" name="date" placeholder="Date" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email address'" required class="single-input form-control myinput">
                         </div>
 
                         <br>
                         <div class="input-group-icon mt-10">
                             <label>Booking Type</label>
-                            <div class="form-select" id="default-select">
-                                <select>
+                            <div class="form-select myinput" id="default-select">
+                                <select class="form-control">
                                     <option value="1">Private</option>
                                     <option value="2">School Tour</option>
                                     <option value="3">Group Tour</option>
@@ -242,8 +248,8 @@
                         <br>
                         <div class="input-group-icon mt-10">
                             <label>Grade or Age</label>
-                            <div class="form-select" id="default-select">
-                                <select>
+                            <div class="form-select myinput" id="default-select">
+                                <select class="form-control">
                                     <option value="1">1</option>
                                     <option value="2">2</option>
                                     <option value="3">3</option>
@@ -258,8 +264,8 @@
                         <br>
                         <div class="input-group-icon mt-10">
                             <label>Number of People</label>
-                            <div class="form-select" id="default-select">
-                                <select>
+                            <div class="form-select myinput" id="default-select">
+                                <select class="form-control">
                                     <option value="1">1-5</option>
                                     <option value="2">5-10</option>
                                     <option value="3">10-15</option>
@@ -273,8 +279,8 @@
                         <br>
                         <div class="input-group-icon mt-10">
                             <label>Language</label>
-                            <div class="form-select" id="default-select">
-                                <select>
+                            <div class="form-select myinput" id="default-select">
+                                <select class="form-control">
                                     <option value="1">English</option>
                                     <option value="2">French</option>
                                     <option value="3">Zulu</option>
@@ -282,14 +288,10 @@
                                 </select>
                             </div>
                         </div>
-
-
                         <div class="mt-10">
-                            <textarea class="single-textarea" placeholder="Message" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Message'" required></textarea>
+                            <textarea class="single-textarea form-control myinput" placeholder="Message" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Message'" required></textarea>
                         </div>
-
                         <button class="primary-btn mt-20 text-white" style="float: right;">Submit</button>
-
                     </form>
                 </div>
             </div>
@@ -347,7 +349,7 @@
                 <div class="row">
                     <div class="map-wrap" style="width:100%; height: 445px;" id="map"></div>
                     <div class="col-lg-12">
-                        <form class="form-area " id="myForm" action="mail.php" method="post" class="contact-form text-right">
+                        <!--form class="form-area " id="myForm" action="mail.php" method="post" class="contact-form text-right">
                             <div class="row">
                                 <div class="col-lg-6 form-group">
                                     <input name="name" placeholder="Enter your name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your name'" class="common-input mb-20 form-control" required="" type="text">
@@ -362,7 +364,7 @@
                                     <button class="primary-btn mt-20 text-white" style="float: right;">Send Message</button>
                                 </div>
                             </div>
-                        </form>
+                        </form-->
                     </div>
                 </div>
             </div>

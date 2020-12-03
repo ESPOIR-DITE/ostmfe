@@ -23,7 +23,6 @@ import (
 	project2 "ostmfe/domain/project"
 	io2 "ostmfe/io"
 	"ostmfe/io/comment_io"
-	"ostmfe/io/contribution_io"
 	"ostmfe/io/event_io"
 	"ostmfe/io/group_io"
 	"ostmfe/io/history_io"
@@ -869,7 +868,8 @@ func UpdateHistoryHandler(app *config.Env) http.HandlerFunc {
 		}
 		fmt.Println(" successfully updated")
 		app.Session.Put(r.Context(), "creation-successful", "You have successfully updating: "+event.Name+"  Event. ")
-		http.Redirect(w, r, "/admin_user/event", 301)
+		//http.Redirect(w, r, "/admin_user/event", 301)
+		http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
 		return
 	}
 }
@@ -1048,7 +1048,7 @@ func EventPicture(app *config.Env) http.HandlerFunc {
 
 func EditEventsHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var contributionList []contribution2.Contribution
+		var contributionList []contribution2.ContributionHelper
 		if !adminHelper.CheckAdminInSession(app, r) {
 			http.Redirect(w, r, "/administration/", 301)
 		}
@@ -1089,18 +1089,9 @@ func EditEventsHandler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			fmt.Println(err, " error reading all the groups")
 		}
-		eventContribution, err := contribution_io.ReadAllByEventId(eventId)
-		if err != nil {
-			fmt.Println(err, " error reading all the eventContribution")
-		} else {
-			for _, contribution := range eventContribution {
-				contribution, err := contribution_io.ReadContribution(contribution.ContributionId)
-				if err != nil {
-					fmt.Println(err, " error reading all the Contribution")
-				}
-				contributionList = append(contributionList, contribution)
-			}
-		}
+
+		//Getting all the contributions Data and their picture.
+		contributionList = GetContributionData(eventId)
 		type PageData struct {
 			Event         event2.Event
 			EventData     misc.EventData
@@ -1112,7 +1103,7 @@ func EditEventsHandler(app *config.Env) http.HandlerFunc {
 			Years         []museum.Years
 			GroupData     []event3.GroupData
 			Groups        []group.Groups
-			Contributions []contribution2.Contribution
+			Contributions []contribution2.ContributionHelper
 			Comments      []comment.CommentHelper2
 		}
 		date := PageData{event, eventData, projects, partners, misc.GetSideBarData("event", ""), peoples, places, years, event3.GetGroupsData(eventId), groups, contributionList, GetEventCommentsWithEventId(eventId)}

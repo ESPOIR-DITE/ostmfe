@@ -23,6 +23,7 @@ import (
 	"ostmfe/io/event_io"
 	"ostmfe/io/project_io"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -38,7 +39,6 @@ func Home(app *config.Env) http.Handler {
 
 func CreateContributionComment(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-
 		var content []byte
 		var isExtension bool
 		var fileTypeId string
@@ -53,7 +53,9 @@ func CreateContributionComment(app *config.Env) http.HandlerFunc {
 			//Check the file extension
 			isExtension, fileTypeId = getFileExtension(m)
 
-			if !isExtension {
+			fmt.Println("result from assement: ", isExtension)
+
+			if isExtension == false {
 				fmt.Println("error creating contribution")
 				fmt.Println("wrong file: ", m.Filename)
 				http.Redirect(w, r, "/event/single/"+eventId, 301)
@@ -74,10 +76,10 @@ func CreateContributionComment(app *config.Env) http.HandlerFunc {
 				contributorEventObject := contribution2.ContributionEvent{"", contribution.Id, eventId, name}
 				_, err := contribution_io.CreateContributionEvent(contributorEventObject)
 				if err != nil {
-					contribution_io.DeleteContribution(contribution.Id)
+					_, _ = contribution_io.DeleteContribution(contribution.Id)
 					fmt.Println("error creating a new contribution")
 				} else {
-					contributionFileObject := contribution2.ContributionFile{"", content, fileTypeId}
+					contributionFileObject := contribution2.ContributionFile{"", contribution.Id, content, fileTypeId}
 					_, err := contribution_io.CreateContributionFile(contributionFileObject)
 					if err != nil {
 						fmt.Println("error creating contributionFile")
@@ -97,7 +99,11 @@ func getFileExtension(fileData *multipart.FileHeader) (bool, string) {
 		return true, ""
 	} else {
 		for _, contributionFileType := range contributionFileTypes {
-			if extension == contributionFileType.FileType {
+			fmt.Println("extension: " + extension + " file extension: " + contributionFileType.FileType)
+			//t := strings.Trim(extension, ".")
+			t := strings.Replace(extension, ".", "", -1)
+			fmt.Println("extension2: " + t + " file extension: " + contributionFileType.FileType)
+			if t == contributionFileType.FileType {
 				return true, contributionFileType.Id
 			}
 		}
@@ -177,7 +183,11 @@ func EventOfAYearHanler(app *config.Env) http.HandlerFunc {
 func EventHanler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		eventId := chi.URLParam(r, "eventId")
+		if eventId == "" {
+			http.Redirect(w, r, "/", 301)
+		}
 		eventdata := GetEventData(eventId)
+
 		eventNumber, err := comment_io.CountCommentEvent(eventId)
 		if err != nil {
 			fmt.Println("error reading COmmentEvent")

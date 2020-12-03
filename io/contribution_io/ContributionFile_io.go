@@ -56,6 +56,19 @@ func DeleteContributionFile(id string) (contribution.ContributionFile, error) {
 	}
 	return entity, nil
 }
+func ReadByContributionFile(contributionId string) (contribution.ContributionFile, error) {
+	entity := contribution.ContributionFile{}
+	resp, _ := api.Rest().Get(contributionfileURL + "readByContributionId?id=" + contributionId)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
+
 func ReadContributionFiles() ([]contribution.ContributionFile, error) {
 	entity := []contribution.ContributionFile{}
 	resp, _ := api.Rest().Get(contributionfileURL + "reads")

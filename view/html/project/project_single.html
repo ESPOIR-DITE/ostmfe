@@ -118,7 +118,6 @@
                                                 <div class="col-lg-4 col-md-6">
                                                     <input name="name" placeholder="Enter your name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your name'" class="common-input mb-20 form-control" required="" type="text">
                                                     <input name="email" placeholder="Enter your email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your email'" class="common-input mb-20 form-control" required="" type="email">
-                                                    <input name="Subject" placeholder="Subject" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your Subject'" class="common-input mb-20 form-control" required="" type="text">
                                                 </div>
                                                 <div class="col-lg-8 col-md-6">
                                                     <textarea class="form-control mb-10" name="message" placeholder="Messege" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Messege'" required=""></textarea>
@@ -133,12 +132,21 @@
 							</div>
 						</div>
 						<div class="col-lg-4 sidebar">
-							<div class="single-widget search-widget">
-								<form class="example" action="#" style="margin:auto;max-width:300px">
-								  <input type="text" placeholder="Search Posts" name="search2">
-								  <button type="submit"><i class="fa fa-search"></i></button>
-								</form>
-							</div>
+                            <div class="single-widget protfolio-widget">
+                                <img width="70%" src="../../assets/img/share_your_story.jpg" alt="">
+                                <h4><a class="julie" data-toggle="modal" href="" data-target="#contributeToProject">Share Your Story Here about this Project</a></h4>
+                                <!---p>
+                                    MCSE boot camps have its supporters and
+                                    its detractors. Some people do not understand why you should have to spend money
+                                    on boot camp when you can get.
+                                </p--->
+                                <ul>
+                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-behance"></i></a></li>
+                                </ul>
+                            </div>
 
                             {{if .Projects}}
                             <div class="single-widget category-widget">
@@ -227,7 +235,47 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
             </footer>
             <!-- End footer Area -->
 
-            <script src="../../assets/js/vendor/jquery-2.2.4.min.js"></script>
+        <div class="modal fade" id="contributeToProject" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content" >
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Contribute to this Project</h5>
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <p class="container">
+                        <br>
+                        Your contribution may consists of facts or events, archives or any tangible data patterning to this Project.
+                        We value your contribution and we need you to fill in bellow form so that we may also contact to learn more from you.
+                        We promise to protect you input and your identity. In case of any uncertainty and sensitivity of your data that please
+                        contact us on <b>simonstown@museum.co.za</b>.
+                    </p>
+                    <div class="container">
+                        <form method="post" action="/project/contribution" enctype="multipart/form-data">
+                            <br>
+
+                            <input name="name" placeholder="Enter your name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your name'" class="common-input mb-20 form-control" required="true" type="text">
+                            <input name="email" placeholder="Enter your email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your email'" class="common-input mb-20 form-control" required="true" type="email">
+                            <input name="cellphone" placeholder="Enter your phone number" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your phone number'" class="common-input mb-20 form-control" required=""  type="number">
+                            <input name="eventId" value="{{.ProjectDataHistory.Project.Id}}" type="hidden">
+
+                            <label class="text-sm-left">Please upload a contribution file of type: <small>pdf,jpg,doc,mp3,mp4</small></label>
+                            <input type="file" class="common-input mb-20 form-control" name="file"/>
+                            <textarea style="height: 200px" class="form-control mb-10" name="message" placeholder="Messege" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Messege'" required="true"></textarea>
+
+                            <button type="submit" class="primary-btn mt-20 " href="#">Comment</button>
+
+                        </form>
+                    </div>
+                    <div class="mt-20">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <script src="../../assets/js/vendor/jquery-2.2.4.min.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
             <script src="../../assets/js/vendor/bootstrap.min.js"></script>
             <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA"></script>

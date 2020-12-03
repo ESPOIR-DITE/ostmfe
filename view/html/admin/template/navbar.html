@@ -77,9 +77,6 @@
             <span>Place</span></a>
     </li>
 
-
-
-
     <li class="nav-item {{if eq .SidebarData.Menu "people"}} active {{end}}">
         <a class="nav-link collapsed " href="/admin_user/people" data-toggle="collapse" data-target="#collapsePeople" aria-expanded="true" aria-controls="collapseTwo">
             <i class="fas fa-fw fa-cog"></i>
@@ -153,8 +150,8 @@
     </li>
 
     <!-- Nav Item - Charts -->
-    <li class="nav-item">
-        <a class="nav-link" href="#">
+    <li class="nav-item {{if eq .SidebarData.Menu "slider"}} active {{end}}">
+        <a class="nav-link" href="/admin_user/slider">
             <i class="fas fa-fw fa-chart-area"></i>
             <span>Home Slider</span></a>
     </li>

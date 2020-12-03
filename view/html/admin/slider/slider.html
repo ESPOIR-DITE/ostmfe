@@ -9,7 +9,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>OSTM Admin | Project</title>
+  <title>OSTM Admin | Slider</title>
 
   <!-- Custom fonts for this template -->
   <link href="../../assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -64,7 +64,7 @@
           <div class="card shadow mb-4">
             <!-- Card Header - Accordion -->
             <a href="#collapseCardExample" class="d-block card-header py-3 btn-success" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
-              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Create a new Project</h6>
+              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Create a new Slider</h6>
             </a>
             <!-- Card Content - Collapse -->
             <div class="collapse " id="collapseCardExample">
@@ -84,29 +84,25 @@
                         </div>
                       {{end}}
                       <div class="text-center">
-                        <h1 class="h4 text-gray-900 mb-4">Simon's Town Project</h1>
+                        <h1 class="h4 text-gray-900 mb-4">Slider</h1>
                       </div>
-                      <form class="user" id="myform" method="post" action="/admin_user/project/create" enctype="multipart/form-data">
+                      <form class="user" id="myform" method="post" action="/admin_user/slider/create" enctype="multipart/form-data">
                         <div class="form-group ">
-                          <label>Project Name</label>
-                          <input type="text" class="form-control" name="project_name" id="exampleFirstName" placeholder="name">
+                          <label>Slider Name</label>
+                          <input type="text" class="form-control" name="sliderName" id="exampleFirstName" placeholder="name">
                         </div>
                         <div class="form-group">
-                          <label>Project Description</label>
-                          <textarea  class="form-control " style="height: 100px" name="description" id="exampleLastName" placeholder="Description"></textarea>
+                          <label>Slider Description <small> 150 Maximum characters limit</small></label>
+                          <textarea  class="form-control "  maxlength="150" style="height: 100px" name="description" id="exampleLastName" placeholder="Description"></textarea>
+                        </div>
+                        <div class="form-group">
+                          <label>Slider Message </label>
+                          <textarea  class="form-control " style="height: 200px" name="message" id="exampleLastName" placeholder="Description"></textarea>
                         </div>
 
                         <div class="form-group ">
-                          <label>Project profile Picture</label>
+                          <label>Slider Image</label>
                           <input type="file"name="file" class="form-control " id="file" required>
-                        </div>
-
-
-                        <div class="form-group">
-                          <label>Project History</label>
-                          <textarea id="mytextarea" class="form-control"  name="mytextarea">
-
-                          </textarea>
                         </div>
 
                         <br>
@@ -146,8 +142,7 @@
           </div>
 
 
-          <h1 class="h3 mb-2 text-gray-800">Projects Table</h1>
-
+          <h1 class="h3 mb-2 text-gray-800">Slider Table</h1>
           <!-- DataTales Example -->
           <div class="card shadow mb-4">
             <div class="card-header py-3">
@@ -159,24 +154,26 @@
                   <thead>
                     <tr>
                       <th>Nr</th>
-                      <th>Project Name</th>
+                      <th>Image</th>
+                      <th>Slider Name</th>
                       <th>Description</th>
                       <th>Action</th>
                       <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
-                  {{with .Projects}}
+                  {{with .Sliders}}
                   {{range $i, $e := .}}
                     <tr>
                       <td>{{$i}}</td>
-                      <td>{{.Title}}</td>
-                      <td>{{.Description}}</td>
-                      <td><a href="/admin_user/project/edit/{{.Id}}" class="btn btn-primary btn-user btn-block">
+                      <td><img class="card-img" id='base64image' width="100px"{{if .SliderImage}}src='data:image/jpeg;base64,{{.SliderImage}}' alt=""{{end}}/></td>
+                      <td>{{.SliderName}}</td>
+                      <td><small>{{.Description}}</small></td>
+                      <td><a href="#" class="btn btn-primary btn-user btn-block">
                           Edit
                         </a>
                       </td>
-                      <td><a class="btn btn-google btn-user btn-block" data-toggle="modal" onclick="deleteProjectBTN({{.Id}},{{.Title}})"  data-target="#exampleModalProject">
+                      <td><a class="btn btn-google btn-user btn-block" href="/admin_user/slider/delete/{{.Id}}">
                           Delete
                         </a>
                       </td>

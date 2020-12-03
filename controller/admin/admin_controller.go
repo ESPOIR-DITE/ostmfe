@@ -16,6 +16,7 @@ import (
 	"ostmfe/controller/admin/peoples"
 	"ostmfe/controller/admin/places"
 	project3 "ostmfe/controller/admin/project"
+	"ostmfe/controller/admin/slider"
 	"ostmfe/controller/admin/users"
 	"ostmfe/controller/admin/year"
 	"ostmfe/controller/misc"
@@ -56,6 +57,7 @@ func Home(app *config.Env) http.Handler {
 	mux.Mount("/years", year.YearHome(app))
 
 	mux.Mount("/contribution", contribution.Home(app))
+	mux.Mount("/slider", slider.Home(app))
 
 	return mux
 }
