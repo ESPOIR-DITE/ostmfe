@@ -12,7 +12,7 @@ import (
 )
 
 type GroupDataHistory struct {
-	Group        group.Groups
+	Group        group.Groupes
 	ProfileImage image3.Images
 	Images       []image3.Images
 	History      history2.HistoriesHelper
@@ -24,7 +24,7 @@ func GetGroupDataHistory(groupId string) GroupDataHistory {
 	var images []image3.Images
 
 	//Group
-	group, err := group_io.ReadGroup(groupId)
+	groupObject, err := group_io.ReadGroup(groupId)
 	if err != nil {
 		fmt.Println("could not read groups")
 		return groupDataHistory
@@ -62,7 +62,7 @@ func GetGroupDataHistory(groupId string) GroupDataHistory {
 	}
 	historyhelper := history2.HistoriesHelper{history.Id, misc.ConvertingToString(history.History)}
 
-	groupDataHistory = GroupDataHistory{group, profile, images, historyhelper}
+	groupDataHistory = GroupDataHistory{groupObject, profile, images, historyhelper}
 
 	return groupDataHistory
 }

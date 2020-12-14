@@ -59,3 +59,8 @@ type EventGroup struct {
 	EventId string `json:"eventId"`
 	GroupId string `json:"groupId"`
 }
+type EventGalery struct {
+	Id       string `json:"id"`
+	EventId  string `json:"eventId"`
+	GaleryId string `json:"galeryId"`
+}

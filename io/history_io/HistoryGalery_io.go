@@ -1,65 +1,16 @@
-package group_io
+package history_io
 
 import (
 	"errors"
 	"ostmfe/api"
-	"ostmfe/domain/group"
+	"ostmfe/domain/history"
 )
 
-const groupimageURL = api.BASE_URL + "group_image/"
+const historygalleryURL = api.BASE_URL + "history-galery/"
 
-func CreateGroupImage(myEvent group.GroupImage) (group.GroupImage, error) {
-	entity := group.GroupImage{}
-	resp, _ := api.Rest().SetBody(myEvent).Post(groupimageURL + "create")
-	if resp.IsError() {
-		return entity, errors.New(resp.Status())
-	}
-	err := api.JSON.Unmarshal(resp.Body(), &entity)
-	if err != nil {
-		return entity, errors.New(resp.Status())
-	}
-	return entity, nil
-}
-func UpdateGroupImage(myEvent group.GroupImageHelper) (group.GroupImage, error) {
-	entity := group.GroupImage{}
-	resp, _ := api.Rest().SetBody(myEvent).Post(groupimageURL + "update")
-	if resp.IsError() {
-		return entity, errors.New(resp.Status())
-	}
-	err := api.JSON.Unmarshal(resp.Body(), &entity)
-	if err != nil {
-		return entity, errors.New(resp.Status())
-	}
-	return entity, nil
-
-}
-func ReadGroupImage(id string) (group.GroupImage, error) {
-	entity := group.GroupImage{}
-	resp, _ := api.Rest().Get(groupimageURL + "read?id=" + id)
-	if resp.IsError() {
-		return entity, errors.New(resp.Status())
-	}
-	err := api.JSON.Unmarshal(resp.Body(), &entity)
-	if err != nil {
-		return entity, errors.New(resp.Status())
-	}
-	return entity, nil
-}
-func ReadGroupImageWithGroupId(groupId string) (group.GroupImage, error) {
-	entity := group.GroupImage{}
-	resp, _ := api.Rest().Get(groupimageURL + "readWith?id=" + groupId)
-	if resp.IsError() {
-		return entity, errors.New(resp.Status())
-	}
-	err := api.JSON.Unmarshal(resp.Body(), &entity)
-	if err != nil {
-		return entity, errors.New(resp.Status())
-	}
-	return entity, nil
-}
-func ReadGroupImagesWithGroupId(groupId string) ([]group.GroupImage, error) {
-	entity := []group.GroupImage{}
-	resp, _ := api.Rest().Get(groupimageURL + "readAllWith?id=" + groupId)
+func CreateHistoryGallery(hist history.HistoryGalery) (history.HistoryGalery, error) {
+	entity := history.HistoryGalery{}
+	resp, _ := api.Rest().SetBody(hist).Post(historygalleryURL + "create")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -70,9 +21,9 @@ func ReadGroupImagesWithGroupId(groupId string) ([]group.GroupImage, error) {
 	return entity, nil
 }
 
-func DeleteGroupImage(id string) (group.GroupImage, error) {
-	entity := group.GroupImage{}
-	resp, _ := api.Rest().Get(groupimageURL + "delete?id=" + id)
+func UpdateHistoryGallery(hist history.HistoryGalery) (history.HistoryGalery, error) {
+	entity := history.HistoryGalery{}
+	resp, _ := api.Rest().SetBody(hist).Post(historygalleryURL + "update")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -82,9 +33,10 @@ func DeleteGroupImage(id string) (group.GroupImage, error) {
 	}
 	return entity, nil
 }
-func ReadGroupImages() ([]group.GroupImage, error) {
-	entity := []group.GroupImage{}
-	resp, _ := api.Rest().Get(groupimageURL + "reads")
+
+func ReadHistoryGallery(id string) (history.HistoryGalery, error) {
+	entity := history.HistoryGalery{}
+	resp, _ := api.Rest().Get(historygalleryURL + "read?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -93,5 +45,56 @@ func ReadGroupImages() ([]group.GroupImage, error) {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
+}
 
+func ReadHistoryGalleryWithHistoryId(historyId string) (history.HistoryGalery, error) {
+	entity := history.HistoryGalery{}
+	resp, _ := api.Rest().Get(historygalleryURL + "readByHistoryId?historyId=" + historyId)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
+
+func CountHistoryGalleryWithHistoryId(historyId string) (history.HistoryGalery, error) {
+	entity := history.HistoryGalery{}
+	resp, _ := api.Rest().Get(historygalleryURL + "countByHistoryId?historyId=" + historyId)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
+
+func DeleteHistoryGallery(id string) (history.HistoryGalery, error) {
+	entity := history.HistoryGalery{}
+	resp, _ := api.Rest().Get(historygalleryURL + "delete?id=" + id)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
+
+func ReadHistoryGalleries() ([]history.HistoryGalery, error) {
+	entity := []history.HistoryGalery{}
+	resp, _ := api.Rest().Get(historygalleryURL + "reads")
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
 }

@@ -32,9 +32,101 @@ func ProjectHome(app *config.Env) http.Handler {
 	r.Post("/update_details", ProjectUpdateDetails(app))
 
 	r.Post("/create_history", ProjectCreateHistoryHandler(app))
+	//Gallery
+	r.Post("/create-gallery", CreateGalleryHandler(app))
+	r.Get("/delete-gallery/{pictureId}/{projectId}/{projectGalleryPictureId}", DeleteGalleryHandler(app))
 
 	r.Get("/delete_project/{projectId}", DeleteProjectHandler(app))
 	return r
+}
+
+func DeleteGalleryHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		pictureId := chi.URLParam(r, "pictureId")
+		projectId := chi.URLParam(r, "projectId")
+		projectGalleryPictureId := chi.URLParam(r, "projectGalleryPictureId")
+
+		//Deleting project
+		gallery, err := image_io.DeleteGalery(pictureId)
+		if err != nil {
+			fmt.Println("error deleting gallery")
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+			http.Redirect(w, r, "/admin_user/project/edit/"+projectId, 301)
+			return
+		} else {
+			_, err := project_io.DeleteProjectGallery(projectGalleryPictureId)
+			if err != nil {
+
+				fmt.Println("ROLLING BACK!!!")
+				_, err := image_io.UpdateGallery(gallery)
+				if err != nil {
+					fmt.Println("error updating gallery")
+				}
+
+				fmt.Println("error deleting project gallery")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/project/edit/"+projectId, 301)
+				return
+			}
+		}
+		fmt.Println(" successful deletion.")
+		app.Session.Put(r.Context(), "creation-successful", "You have successfully deleted: Project Gallery. ")
+		http.Redirect(w, r, "/admin_user/project/edit/"+projectId, 301)
+		return
+	}
+}
+
+func CreateGalleryHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var content []byte
+		r.ParseForm()
+		file, _, err := r.FormFile("file")
+		project := r.PostFormValue("project")
+		description := r.PostFormValue("description")
+		if err != nil {
+			fmt.Println(err, "<<<<<< error reading contribution file>>>>This error should happen>>>")
+		} else {
+			reader := bufio.NewReader(file)
+			content, _ = ioutil.ReadAll(reader)
+		}
+		if project != "" && description != "" {
+			galery := image2.Galery{"", content, description}
+			galleryObject, err := image_io.CreateGalery(galery)
+			if err != nil {
+				fmt.Println(err, " error creating gallery")
+			} else {
+				placeGallery := project2.ProjectGallery{"", project, galleryObject.Id}
+				_, err := project_io.CreateProjectGallery(placeGallery)
+				if err != nil {
+					fmt.Println(err, " error creating projectGallery")
+					if app.Session.GetString(r.Context(), "user-create-error") != "" {
+						app.Session.Remove(r.Context(), "user-create-error")
+					}
+					app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+					http.Redirect(w, r, "/admin_user/project/edit/"+project, 301)
+					return
+				}
+				if app.Session.GetString(r.Context(), "creation-successful") != "" {
+					app.Session.Remove(r.Context(), "creation-successful")
+				}
+				app.Session.Put(r.Context(), "creation-successful", "You have successfully deleted an event Group")
+				http.Redirect(w, r, "/admin_user/project/edit/"+project, 301)
+				return
+			}
+		}
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			app.Session.Remove(r.Context(), "user-create-error")
+		}
+		app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+		http.Redirect(w, r, "/admin_user/project/edit/"+project, 301)
+		return
+	}
 }
 
 func DeleteProjectHandler(app *config.Env) http.HandlerFunc {

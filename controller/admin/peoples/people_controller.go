@@ -1,15 +1,18 @@
 package peoples
 
 import (
+	"bufio"
 	"fmt"
 	"github.com/go-chi/chi"
 	"html/template"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"ostmfe/config"
 	"ostmfe/controller/misc"
 	people3 "ostmfe/controller/people"
 	history2 "ostmfe/domain/history"
+	"ostmfe/domain/image"
 	people2 "ostmfe/domain/people"
 	place2 "ostmfe/domain/place"
 	"ostmfe/io/history_io"
@@ -38,17 +41,107 @@ func PeopleHome(app *config.Env) http.Handler {
 	r.Post("/add_pictures", AddPeopleImageHandler(app))
 
 	r.Post("/add_place", AddPlaceHandler(app))
+	//Gallery
+	r.Post("/create-galler", createPeopleGaller(app))
+	r.Get("/delete-gallery/{pictureId}/{peopleId}/{peopleGalleryPictureId}", DeleteGalleryHandler(app))
+
 	return r
 }
 
+func DeleteGalleryHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		pictureId := chi.URLParam(r, "pictureId")
+		peopleId := chi.URLParam(r, "peopleId")
+		peopleGalleryPictureId := chi.URLParam(r, "peopleGalleryPictureId")
+
+		//Deleting project
+		gallery, err := image_io.DeleteGalery(pictureId)
+		if err != nil {
+			fmt.Println("error deleting gallery")
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+			http.Redirect(w, r, "/admin_user/people/edit/"+peopleId, 301)
+			return
+		} else {
+			_, err := people_io.DeletePeopleGalery(peopleGalleryPictureId)
+			if err != nil {
+				fmt.Println("error deleting people gallery")
+				fmt.Println("ROLLING BACK!!!")
+				_, err := image_io.UpdateGallery(gallery)
+				if err != nil {
+					fmt.Println("error updating gallery")
+				}
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/people/edit/"+peopleId, 301)
+				return
+			}
+		}
+		fmt.Println(" successful deletion.")
+		app.Session.Put(r.Context(), "creation-successful", "You have successfully deleted: people Gallery. ")
+		http.Redirect(w, r, "/admin_user/people/edit/"+peopleId, 301)
+		return
+	}
+}
+
+func createPeopleGaller(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var content []byte
+		r.ParseForm()
+		file, _, err := r.FormFile("file")
+		peopleId := r.PostFormValue("peopleId")
+		description := r.PostFormValue("description")
+		if err != nil {
+			fmt.Println(err, "<<<<<< error reading contribution file>>>>This error should happen>>>")
+		} else {
+			reader := bufio.NewReader(file)
+			content, _ = ioutil.ReadAll(reader)
+		}
+		if peopleId != "" && description != "" {
+			galery := image.Galery{"", content, description}
+			galleryObject, err := image_io.CreateGalery(galery)
+			if err != nil {
+				fmt.Println(err, " error creating gallery")
+			} else {
+				peopleGallery := people2.PeopleGalery{"", peopleId, galleryObject.Id}
+				_, err := people_io.CreatePeopleGalery(peopleGallery)
+				if err != nil {
+					fmt.Println(err, " error creating GroupGallery")
+					if app.Session.GetString(r.Context(), "user-create-error") != "" {
+						app.Session.Remove(r.Context(), "user-create-error")
+					}
+					app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+					http.Redirect(w, r, "/admin_user/people/edit/"+peopleId, 301)
+					return
+				}
+				if app.Session.GetString(r.Context(), "creation-successful") != "" {
+					app.Session.Remove(r.Context(), "creation-successful")
+				}
+				app.Session.Put(r.Context(), "creation-successful", "You have successfully deleted an event Group")
+				http.Redirect(w, r, "/admin_user/people/edit/"+peopleId, 301)
+				return
+			}
+		}
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			app.Session.Remove(r.Context(), "user-create-error")
+		}
+		app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+		http.Redirect(w, r, "/admin_user/people/edit/"+peopleId, 301)
+		return
+	}
+}
 func AddPlaceHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
-		peopleId:= r.PostFormValue("peopleId")
-		placeId:= r.PostFormValue("placeId")
-		if placeId!=""&&peopleId!=""{
-			peoplePlaceObejct := people2.PeoplePlace{"",placeId,peopleId}
-			_,err := people_io.CreatePeoplePlace(peoplePlaceObejct)
+		peopleId := r.PostFormValue("peopleId")
+		placeId := r.PostFormValue("placeId")
+		if placeId != "" && peopleId != "" {
+			peoplePlaceObejct := people2.PeoplePlace{"", placeId, peopleId}
+			_, err := people_io.CreatePeoplePlace(peoplePlaceObejct)
 			if err != nil {
 				fmt.Println(err, " error creating PeoplePlace")
 				if app.Session.GetString(r.Context(), "user-create-error") != "" {
@@ -629,11 +722,11 @@ func EditPeopleHandler(app *config.Env) http.HandlerFunc {
 			http.Redirect(w, r, "/admin_user/people", 301)
 			return
 		}
-		places,err := place_io.ReadPlaces()
+		places, err := place_io.ReadPlaces()
 		if err != nil {
 			fmt.Println(err, " error reading places")
 		}
-		peoplePlaces:=people3.GetPeoplePlace(peopleId)
+		peoplePlaces := people3.GetPeoplePlace(peopleId)
 
 		// Getting this method from client people_controller. it gives me a list of places that are linked to a people.
 		peopleEditable := GetPeopleEditable(people.Id)
@@ -642,10 +735,10 @@ func EditPeopleHandler(app *config.Env) http.HandlerFunc {
 			PeopleDetails people2.People
 			People        PeopleEditable
 			SidebarData   misc.SidebarData
-			PeoplePlace []place2.Place
-			Places []place2.Place
+			PeoplePlace   []place2.Place
+			Places        []place2.Place
 		}
-		data := PageDate{people, peopleEditable, misc.GetSideBarData("people", "people"),peoplePlaces,places}
+		data := PageDate{people, peopleEditable, misc.GetSideBarData("people", "people"), peoplePlaces, places}
 		files := []string{
 			app.Path + "admin/people/new_edite_people.html",
 			app.Path + "admin/template/navbar.html",

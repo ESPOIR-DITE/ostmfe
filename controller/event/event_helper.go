@@ -124,7 +124,7 @@ func GetEventPeopleData(eventId string) []people.People {
 }
 
 type GroupData struct {
-	Group group.Groups
+	Group group.Groupes
 	Image image3.Images
 }
 

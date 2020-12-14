@@ -16,7 +16,7 @@ import (
 )
 
 type GroupData struct {
-	Group   group.Groups
+	Group   group.Groupes
 	History history2.HistoriesHelper
 	Profile image2.Images
 	Images  []image2.ImagesHelper

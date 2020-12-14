@@ -76,25 +76,34 @@
 
                     </div>
                     <hr>
-                    <div class="bottom-meta">
-                        <div class="user-details row align-items-center">
-                            <div class="comment-wrap col-lg-6 col-sm-6">
-                                <ul>
-                                    <li><a href="#"><span class="lnr lnr-heart"></span> 4 likes</a></li>
-                                    <li><a href="#"><span class="lnr lnr-bubble"></span> 06 Comments</a></li>
-                                </ul>
-                            </div>
-                            <div class="social-wrap col-lg-6">
-                                <ul>
-                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-behance"></i></a></li>
-                                </ul>
 
+                    <!--Project Gallery-->
+                    <div class="container">
+                        <div class="row d-flex justify-content-center">
+                            <div class="menu-content pb-60 col-lg-10">
+                                <div class="title text-center">
+                                    <h1 class="mb-10">Event Gallery</h1>
+                                    <!--p>Who are in extremely love with eco friendly system.</p-->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="active-exibition-carusel">
+                                {{with .GalleryImages}}
+                                {{range .}}
+                                <div class="single-exibition item">
+                                    <img id='base64image' width="300px" src='data:image/jpeg;base64,{{.Gallery.Image}}' alt="">
+
+                                    <p>
+                                        {{.Gallery.Description}}
+                                    </p>
+                                </div>
+                                {{end}}
+                                {{end}}
                             </div>
                         </div>
                     </div>
+                    <br>
 
                     <section class="contact-page-area section-gap">
                         <div class="container">
@@ -347,6 +356,8 @@
     </div>
 </section>
 <!-- End blog-posts Area -->
+
+
 
 
 <!-- start footer Area -->

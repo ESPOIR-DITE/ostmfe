@@ -1,11 +1,13 @@
 package event
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
 	"github.com/go-chi/chi"
 	"html/template"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"ostmfe/config"
 	"ostmfe/controller/admin/adminHelper"
@@ -17,6 +19,7 @@ import (
 	event2 "ostmfe/domain/event"
 	"ostmfe/domain/group"
 	history2 "ostmfe/domain/history"
+	"ostmfe/domain/image"
 	partner2 "ostmfe/domain/partner"
 	"ostmfe/domain/people"
 	place2 "ostmfe/domain/place"
@@ -59,7 +62,98 @@ func EventHome(app *config.Env) http.Handler {
 	r.Get("/delete_group/{groupId}/{eventId}", DeleteGroupEventHandler(app))
 	r.Get("/delete_comment/{commentId}/{eventCommentId}", DeleteCommentEventHandler(app))
 
+	//Gallery
+	r.Post("/create-gallery", CreateEventGalleryHandler(app))
+	r.Get("/delete-gallery/{pictureId}/{eventId}/{eventGalleryId}", DeleteGalleryHandler(app))
+
 	return r
+}
+
+func DeleteGalleryHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		pictureId := chi.URLParam(r, "pictureId")
+		eventId := chi.URLParam(r, "eventId")
+		eventGalleryId := chi.URLParam(r, "eventGalleryId")
+
+		//Deleting project
+		gallery, err := image_io.DeleteGalery(pictureId)
+		if err != nil {
+			fmt.Println("error deleting gallery")
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+			http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
+			return
+		} else {
+			_, err := event_io.DeleteEventGalery(eventGalleryId)
+			if err != nil {
+				fmt.Println("error deleting group gallery")
+				fmt.Println("ROLLING BACK!!!")
+				_, err := image_io.UpdateGallery(gallery)
+				if err != nil {
+					fmt.Println("error updating gallery")
+				}
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/eventId/edit/"+eventId, 301)
+				return
+			}
+		}
+		fmt.Println(" successful deletion.")
+		app.Session.Put(r.Context(), "creation-successful", "You have successfully deleted: group Gallery. ")
+		http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
+		return
+	}
+}
+
+func CreateEventGalleryHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var content []byte
+		r.ParseForm()
+		file, _, err := r.FormFile("file")
+		eventId := r.PostFormValue("eventId")
+		description := r.PostFormValue("description")
+		if err != nil {
+			fmt.Println(err, "<<<<<< error reading contribution file>>>>This error should happen>>>")
+		} else {
+			reader := bufio.NewReader(file)
+			content, _ = ioutil.ReadAll(reader)
+		}
+		if eventId != "" && description != "" {
+			galery := image.Galery{"", content, description}
+			galleryObject, err := image_io.CreateGalery(galery)
+			if err != nil {
+				fmt.Println(err, " error creating gallery")
+			} else {
+				eventGalery := event2.EventGalery{"", eventId, galleryObject.Id}
+				_, err := event_io.CreateEventGalery(eventGalery)
+				if err != nil {
+					fmt.Println(err, " error creating EventGallery")
+					if app.Session.GetString(r.Context(), "user-create-error") != "" {
+						app.Session.Remove(r.Context(), "user-create-error")
+					}
+					app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+					http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
+					return
+				}
+				if app.Session.GetString(r.Context(), "creation-successful") != "" {
+					app.Session.Remove(r.Context(), "creation-successful")
+				}
+				app.Session.Put(r.Context(), "creation-successful", "You have successfully deleted an event Group")
+				http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
+				return
+			}
+		}
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			app.Session.Remove(r.Context(), "user-create-error")
+		}
+		app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+		http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
+		return
+	}
 }
 
 func DeleteCommentEventHandler(app *config.Env) http.HandlerFunc {
@@ -1023,7 +1117,7 @@ func EventPicture(app *config.Env) http.HandlerFunc {
 			Projects      []project2.Project
 			Partners      []partner2.Partner
 			Event         event2.Event
-			Groups        []group.Groups
+			Groups        []group.Groupes
 			Backend_error string
 			Unknown_error string
 		}
@@ -1102,7 +1196,7 @@ func EditEventsHandler(app *config.Env) http.HandlerFunc {
 			Places        []place2.Place
 			Years         []museum.Years
 			GroupData     []event3.GroupData
-			Groups        []group.Groups
+			Groups        []group.Groupes
 			Contributions []contribution2.ContributionHelper
 			Comments      []comment.CommentHelper2
 		}

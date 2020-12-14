@@ -34,10 +34,11 @@ func SinglePlaceHanler(app *config.Env) http.HandlerFunc {
 			fmt.Println(err, "Error reading places")
 		}
 		type PageData struct {
-			Places    []place.Place
-			PlaceData PlaceSingleData
+			Places        []place.Place
+			PlaceData     PlaceSingleData
+			GalleryString []string
 		}
-		data := PageData{places, getPlaceSingleData(placeId)}
+		data := PageData{places, getPlaceSingleData(placeId), getPlaceGallery(placeId)}
 		files := []string{
 			app.Path + "place/place_single.html",
 			app.Path + "base_templates/navigator.html",
@@ -138,4 +139,22 @@ func getPlaceSingleData(placeId string) PlaceSingleData {
 	}
 	placeSingleData = PlaceSingleData{place, image, histor, profileImage}
 	return placeSingleData
+}
+
+func getPlaceGallery(placeId string) []string {
+	var picture []string
+	placeGallerys, err := place_io.ReadAllByPlaceGallery(placeId)
+	if err != nil {
+		fmt.Println(err, " error peopleGalleries.")
+	} else {
+		for _, placeGallery := range placeGallerys {
+			gallery, err := image_io.ReadGallery(placeGallery.GalleryId)
+			if err != nil {
+				fmt.Println(err, " error gallery")
+			} else {
+				picture = append(picture, misc.ConvertingToString(gallery.Image))
+			}
+		}
+	}
+	return picture
 }

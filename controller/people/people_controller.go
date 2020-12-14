@@ -29,17 +29,19 @@ func PeopleHanler(app *config.Env) http.HandlerFunc {
 			//app.Session.Put(r.Context(), "user-read-error", "An error has occurred, Please try again late")
 			http.Redirect(w, r, "/people", 301)
 			return
-
 		}
 		type PageData struct {
 			PeopleDataHistory PeopleDataHistory
+			GalleryString     []string
 		}
-		data := PageData{peopleDataHistory}
+
+		data := PageData{peopleDataHistory, GetpeopleGallery(peopleId)}
 		files := []string{
 			app.Path + "people/people_single.html",
 			app.Path + "base_templates/navigator.html",
 			app.Path + "base_templates/footer.html",
 		}
+
 		ts, err := template.ParseFiles(files...)
 		if err != nil {
 			app.ErrorLog.Println(err.Error())

@@ -158,8 +158,9 @@ func ReadSingleProjectHanler(app *config.Env) http.HandlerFunc {
 			Projects           []project2.Project
 			Comments           []comment.CommentStack
 			CommentNumber      int64
+			GalleryString      []string
 		}
-		data := PageData{projectDataHistory, projects, comment2.GetProjectComment(projectId), commentNumber}
+		data := PageData{projectDataHistory, projects, comment2.GetProjectComment(projectId), commentNumber, getProjectGallery(projectId)}
 
 		files := []string{
 			app.Path + "project/project_single.html",
@@ -287,3 +288,21 @@ func getProjectDataHistory(projectId string) ProjectDataHistory {
 //	}
 //	return projectContentsHomeObject
 //}
+
+func getProjectGallery(projectId string) []string {
+	var picture []string
+	projectGallerys, err := project_io.ReadAllByProjectIdGallery(projectId)
+	if err != nil {
+		fmt.Println(err, " error peopleGalleries.")
+	} else {
+		for _, projectGallery := range projectGallerys {
+			gallery, err := image_io.ReadGallery(projectGallery.GalleryId)
+			if err != nil {
+				fmt.Println(err, " error gallery")
+			} else {
+				picture = append(picture, misc.ConvertingToString(gallery.Image))
+			}
+		}
+	}
+	return picture
+}

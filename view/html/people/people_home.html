@@ -14,7 +14,7 @@
     <!-- meta character set -->
     <meta charset="UTF-8">
     <!-- Site Title -->
-    <title>Art Museum</title>
+    <title>Simon's Town Museum</title>
 
     <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700" rel="stylesheet">
     <!--
@@ -114,31 +114,36 @@
             </div>
         </section>
 
-
+        <section class="service-area pt-100" id="about">
             <div class="container">
-                {{if .PeopleData}}
-                {{with .PeopleData}}
-                {{range .}}
-                    <h3 class="mb-30"><a href="/people/{{.People.Id}}">{{.People.Name}}&nbsp; {{.People.Surname}}</a></h3>
                 <div class="row">
-                    <div class="col-md-3">
-                        <img id='base64image'
-
-                             src='data:image/jpeg;base64,{{.Image.Id}}' alt="" class="img-fluid">
-                    </div>
-                    <div class="col-md-9 mt-sm-20">
-                        <p>{{.People.Brief}}</p>
-                    </div>
+                    {{if .PeopleData}}
+                        {{with .PeopleData}}
+                            {{range .}}
+                                <div class="col-lg-4">
+                                    <div class="single-service">
+                                        <img class="img-fluid" id='base64image' src='data:image/jpeg;base64,{{.Image.Id}}' alt="" width="400px" >
+                                        <h3><a href="/people/{{.People.Id}}">{{.People.Name}}&nbsp; {{.People.Surname}}</a></h3>
+                                        <div class="overlay">
+                                            <div class="text">
+                                                <p>{{.People.Brief}}</p>
+                                                <a href="/people/{{.People.Id}}"  class="text-uppercase primary-btn"
+                                                >Read more</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {{end}}{{end}}
+                    {{end}}
                 </div>
-                <hr/>
-                {{end}}{{end}}
-                {{end}}
-
             </div>
+        </section>
 
     </div>
 
 </div>
+
+
 <!-- End Align Area -->
 
 <!-- start footer Area -->

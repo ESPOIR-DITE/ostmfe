@@ -114,9 +114,10 @@ func GetPeopleDataHistory(id string) PeopleDataHistory {
 
 	return peopleDataHistory
 }
+
 /***
 this method return all the place that have a link to a person by providing peopleId
- */
+*/
 func GetPeoplePlace(id string) []place2.Place {
 	//get People Place
 	var places []place2.Place
@@ -152,5 +153,22 @@ func getPeopleEventS(peopleId string) []event.Event {
 		}
 	}
 	return events
+}
 
+func GetpeopleGallery(peopleId string) []string {
+	var picture []string
+	peopleGallerys, err := people_io.ReadAllByPeopleIdGalery(peopleId)
+	if err != nil {
+		fmt.Println(err, " error peopleGalleries.")
+	} else {
+		for _, peopleGallery := range peopleGallerys {
+			gallery, err := image_io.ReadGallery(peopleGallery.Galery)
+			if err != nil {
+				fmt.Println(err, " error gallery")
+			} else {
+				picture = append(picture, misc.ConvertingToString(gallery.Image))
+			}
+		}
+	}
+	return picture
 }

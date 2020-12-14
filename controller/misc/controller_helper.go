@@ -825,3 +825,13 @@ func GetFileExtension(fileData *multipart.FileHeader) (bool, string) {
 	}
 	return false, ""
 }
+
+func GetGalleryImage(galleryId string) image3.GaleryHelper {
+	var galleryImage image3.GaleryHelper
+	gallery, err := image_io.ReadGallery(galleryId)
+	if err != nil {
+		fmt.Println(err, " error reading image")
+		return galleryImage
+	}
+	return image3.GaleryHelper{gallery.Id, ConvertingToString(gallery.Image), gallery.Description}
+}

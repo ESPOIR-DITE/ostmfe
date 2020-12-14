@@ -34,3 +34,8 @@ type ProjectHistory struct {
 	ProjectId string `json:"projectId"`
 	HistoryId string `json:"historyId"`
 }
+type ProjectGallery struct {
+	Id        string `json:"id"`
+	ProjectId string `json:"projectId"`
+	GalleryId string `json:"galleryId"`
+}

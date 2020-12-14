@@ -1,10 +1,12 @@
 package places
 
 import (
+	"bufio"
 	"fmt"
 	"github.com/go-chi/chi"
 	"html/template"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"ostmfe/config"
 	"ostmfe/controller/misc"
@@ -33,8 +35,100 @@ func PlaceHome(app *config.Env) http.Handler {
 	r.Post("/update_pictures", UpdatePictureHandler(app))
 	r.Post("/update_details", UpdateDetailsHandler(app))
 	r.Post("/update_history", UpdateHistoryHandler(app))
+	r.Post("/create-gallery", CreatePlaceGalleryHandler(app))
+
+	r.Get("/delete-gallery/{pictureId}/{placeId}/{PlaceGalleryId}", DeleteGalleryHandler(app))
 
 	return r
+}
+
+func DeleteGalleryHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		pictureId := chi.URLParam(r, "pictureId")
+		placeId := chi.URLParam(r, "placeId")
+		PlaceGalleryId := chi.URLParam(r, "PlaceGalleryId")
+
+		//Deleting project
+		gallery, err := image_io.DeleteGalery(pictureId)
+		if err != nil {
+			fmt.Println("error deleting gallery")
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+			http.Redirect(w, r, "/admin_user/place/edit/"+placeId, 301)
+			return
+		} else {
+			_, err := place_io.DeletePlaceGalery(PlaceGalleryId)
+			if err != nil {
+
+				fmt.Println("error deleting place gallery")
+				fmt.Println("ROLLING BACK!!!")
+				_, err := image_io.UpdateGallery(gallery)
+				if err != nil {
+					fmt.Println("error updating gallery")
+				}
+
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/place/edit/"+placeId, 301)
+				return
+			}
+		}
+		fmt.Println(" successful deletion.")
+		app.Session.Put(r.Context(), "creation-successful", "You have successfully deleted: Project Gallery. ")
+		http.Redirect(w, r, "/admin_user/place/edit/"+placeId, 301)
+		return
+	}
+}
+
+func CreatePlaceGalleryHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var content []byte
+		r.ParseForm()
+		file, _, err := r.FormFile("file")
+		placeId := r.PostFormValue("placeId")
+		description := r.PostFormValue("description")
+		if err != nil {
+			fmt.Println(err, "<<<<<< error reading contribution file>>>>This error should happen>>>")
+		} else {
+			reader := bufio.NewReader(file)
+			content, _ = ioutil.ReadAll(reader)
+		}
+		if placeId != "" && description != "" {
+			galery := image2.Galery{"", content, description}
+			galleryObject, err := image_io.CreateGalery(galery)
+			if err != nil {
+				fmt.Println(err, " error creating gallery")
+			} else {
+				placeGallery := place2.PlaceGallery{"", placeId, galleryObject.Id}
+				_, err := place_io.CreatePlaceGalery(placeGallery)
+				if err != nil {
+					fmt.Println(err, " error creating GroupGallery")
+					if app.Session.GetString(r.Context(), "user-create-error") != "" {
+						app.Session.Remove(r.Context(), "user-create-error")
+					}
+					app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+					http.Redirect(w, r, "/admin_user/place/edit/"+placeId, 301)
+					return
+				}
+				if app.Session.GetString(r.Context(), "creation-successful") != "" {
+					app.Session.Remove(r.Context(), "creation-successful")
+				}
+				app.Session.Put(r.Context(), "creation-successful", "You have successfully deleted an event Group")
+				http.Redirect(w, r, "/admin_user/place/edit/"+placeId, 301)
+				return
+			}
+		}
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			app.Session.Remove(r.Context(), "user-create-error")
+		}
+		app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+		http.Redirect(w, r, "/admin_user/place/edit/"+placeId, 301)
+		return
+	}
 }
 
 func DeleteImageHandler(app *config.Env) http.HandlerFunc {

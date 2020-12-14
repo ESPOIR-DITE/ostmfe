@@ -1,20 +1,24 @@
 package group
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
 	"github.com/go-chi/chi"
 	"html/template"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"ostmfe/config"
 	"ostmfe/controller/misc"
 	"ostmfe/domain/group"
 	history2 "ostmfe/domain/history"
+	"ostmfe/domain/image"
 	partner2 "ostmfe/domain/partner"
 	project2 "ostmfe/domain/project"
 	"ostmfe/io/group_io"
 	"ostmfe/io/history_io"
+	"ostmfe/io/image_io"
 	"ostmfe/io/partner_io"
 	"ostmfe/io/project_io"
 )
@@ -23,17 +27,108 @@ func GroupHome(app *config.Env) http.Handler {
 	r := chi.NewRouter()
 	r.Get("/", GroupsHandler(app))
 	r.Post("/create", CreateGroupsHandler(app))
-	r.Post("/create_history", CreateHistory_ImageHandler(app))
+	//r.Post("/create_history", CreateHistory_ImageHandler(app))
 	r.Get("/picture/{groupId}", GroupPictureHandler(app))
 	r.Get("/edit/{groupId}", GroupEditHandler(app))
 
-	r.Post("/create_image", CreateImageHandler(app))
+	//r.Post("/create_image", CreateImageHandler(app))
 	r.Post("/create_history", CreateHistoryHandler(app))
 	r.Post("/update_pictures", UpdateImageHandler(app))
 	r.Post("/update_history", UpdateHistoryHandler(app))
 	r.Post("/update_details", UpdateDetailsHandler(app))
 
+	//Gallery
+	r.Post("/create-gallery", CreateEventGalleryHandler(app))
+	r.Get("/delete-gallery/{pictureId}/{groupId}/{groupGalleryId}", DeleteGalleryHandler(app))
+
 	return r
+}
+
+func DeleteGalleryHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		pictureId := chi.URLParam(r, "pictureId")
+		groupId := chi.URLParam(r, "groupId")
+		groupGalleryId := chi.URLParam(r, "groupGalleryId")
+
+		//Deleting project
+		gallery, err := image_io.DeleteGalery(pictureId)
+		if err != nil {
+			fmt.Println("error deleting gallery")
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+			http.Redirect(w, r, "/admin_user/group/edit/"+groupId, 301)
+			return
+		} else {
+			_, err := group_io.DeleteGroupGalery(groupGalleryId)
+			if err != nil {
+				fmt.Println("error deleting group gallery")
+				fmt.Println("ROLLING BACK!!!")
+				_, err := image_io.UpdateGallery(gallery)
+				if err != nil {
+					fmt.Println("error updating gallery")
+				}
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/group/edit/"+groupId, 301)
+				return
+			}
+		}
+		fmt.Println(" successful deletion.")
+		app.Session.Put(r.Context(), "creation-successful", "You have successfully deleted: group Gallery. ")
+		http.Redirect(w, r, "/admin_user/group/edit/"+groupId, 301)
+		return
+	}
+}
+
+func CreateEventGalleryHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var content []byte
+		r.ParseForm()
+		file, _, err := r.FormFile("file")
+		groupId := r.PostFormValue("groupId")
+		description := r.PostFormValue("description")
+		if err != nil {
+			fmt.Println(err, "<<<<<< error reading contribution file>>>>This error should happen>>>")
+		} else {
+			reader := bufio.NewReader(file)
+			content, _ = ioutil.ReadAll(reader)
+		}
+		if groupId != "" && description != "" {
+			galery := image.Galery{"", content, description}
+			galleryObject, err := image_io.CreateGalery(galery)
+			if err != nil {
+				fmt.Println(err, " error creating gallery")
+			} else {
+				groupGalery := group.GroupGalery{"", groupId, galleryObject.Id}
+				_, err := group_io.CreateGroupGalery(groupGalery)
+				if err != nil {
+					fmt.Println(err, " error creating GroupGallery")
+					if app.Session.GetString(r.Context(), "user-create-error") != "" {
+						app.Session.Remove(r.Context(), "user-create-error")
+					}
+					app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+					http.Redirect(w, r, "/admin_user/group/edit/"+groupId, 301)
+					return
+				}
+				if app.Session.GetString(r.Context(), "creation-successful") != "" {
+					app.Session.Remove(r.Context(), "creation-successful")
+				}
+				app.Session.Put(r.Context(), "creation-successful", "You have successfully deleted an event Group")
+				http.Redirect(w, r, "/admin_user/group/edit/"+groupId, 301)
+				return
+			}
+		}
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			app.Session.Remove(r.Context(), "user-create-error")
+		}
+		app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+		http.Redirect(w, r, "/admin_user/group/edit/"+groupId, 301)
+		return
+	}
 }
 
 func UpdateDetailsHandler(app *config.Env) http.HandlerFunc {
@@ -44,7 +139,7 @@ func UpdateDetailsHandler(app *config.Env) http.HandlerFunc {
 		Description := r.PostFormValue("Description")
 
 		if Description != "" && groupId != "" && groupName != "" {
-			groupObejct := group.Groups{groupId, groupName, Description}
+			groupObejct := group.Groupes{groupId, groupName, Description}
 			group, err := group_io.CreateGroup(groupObejct)
 			if err != nil {
 				fmt.Println(err, " something went wrong! could not create group")
@@ -211,49 +306,49 @@ func UpdateImageHandler(app *config.Env) http.HandlerFunc {
 	}
 }
 
-func CreateImageHandler(app *config.Env) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		r.ParseForm()
-		file, _, err := r.FormFile("file")
-		groupId := r.PostFormValue("groupId")
-		imageType := r.PostFormValue("imageType")
-		if err != nil {
-			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
-		}
-		myGroup, err := group_io.ReadGroup(groupId)
-		if err != nil {
-			fmt.Println(err, " could not read group")
-			if app.Session.GetString(r.Context(), "user-create-error") != "" {
-				app.Session.Remove(r.Context(), "user-create-error")
-			}
-			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-			http.Redirect(w, r, "/admin_user/group", 301)
-			return
-		}
-
-		filesArray := []io.Reader{file}
-		filesByteArray := misc.CheckFiles(filesArray)
-		groupImage := group.GroupImage{"", "", groupId, imageType}
-
-		helper := group.GroupImageHelper{groupImage, filesByteArray}
-		_, errr := group_io.CreateGroupImage(helper)
-		if errr != nil {
-			fmt.Println(errr, " error creating GroupImage")
-			if app.Session.GetString(r.Context(), "user-create-error") != "" {
-				app.Session.Remove(r.Context(), "user-create-error")
-			}
-			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-			http.Redirect(w, r, "/admin_user/group/edit/"+groupId, 301)
-			return
-		}
-		if app.Session.GetString(r.Context(), "creation-successful") != "" {
-			app.Session.Remove(r.Context(), "creation-successful")
-		}
-		app.Session.Put(r.Context(), "creation-successful", "You have successfully created image(s) for the following Group  : "+myGroup.Name)
-		http.Redirect(w, r, "/admin_user/group/edit/"+groupId, 301)
-		return
-	}
-}
+//func CreateImageHandler(app *config.Env) http.HandlerFunc {
+//	return func(w http.ResponseWriter, r *http.Request) {
+//		r.ParseForm()
+//		file, _, err := r.FormFile("file")
+//		groupId := r.PostFormValue("groupId")
+//		imageType := r.PostFormValue("imageType")
+//		if err != nil {
+//			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
+//		}
+//		myGroup, err := group_io.ReadGroup(groupId)
+//		if err != nil {
+//			fmt.Println(err, " could not read group")
+//			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+//				app.Session.Remove(r.Context(), "user-create-error")
+//			}
+//			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+//			http.Redirect(w, r, "/admin_user/group", 301)
+//			return
+//		}
+//
+//		filesArray := []io.Reader{file}
+//		filesByteArray := misc.CheckFiles(filesArray)
+//		groupImage := group.GroupImage{"", "", groupId, imageType}
+//
+//		helper := group.GroupImageHelper{groupImage, filesByteArray}
+//		_, errr := group_io.CreateGroupImage(helper)
+//		if errr != nil {
+//			fmt.Println(errr, " error creating GroupImage")
+//			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+//				app.Session.Remove(r.Context(), "user-create-error")
+//			}
+//			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+//			http.Redirect(w, r, "/admin_user/group/edit/"+groupId, 301)
+//			return
+//		}
+//		if app.Session.GetString(r.Context(), "creation-successful") != "" {
+//			app.Session.Remove(r.Context(), "creation-successful")
+//		}
+//		app.Session.Put(r.Context(), "creation-successful", "You have successfully created image(s) for the following Group  : "+myGroup.Name)
+//		http.Redirect(w, r, "/admin_user/group/edit/"+groupId, 301)
+//		return
+//	}
+//}
 
 func GroupEditHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -262,8 +357,10 @@ func GroupEditHandler(app *config.Env) http.HandlerFunc {
 		type PageData struct {
 			Groups      GroupData
 			SidebarData misc.SidebarData
+			Gallery     []misc.GalleryImages
 		}
-		data := PageData{GetGroupData(groupId), misc.GetSideBarData("group", "")}
+
+		data := PageData{GetGroupData(groupId), misc.GetSideBarData("group", ""), misc.GetGroupGallery(groupId)}
 		files := []string{
 			app.Path + "admin/group/edit_group.html",
 			app.Path + "admin/template/navbar.html",
@@ -282,113 +379,113 @@ func GroupEditHandler(app *config.Env) http.HandlerFunc {
 	}
 }
 
-func CreateHistory_ImageHandler(app *config.Env) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		r.ParseForm()
-
-		var histories history2.Histories
-		var groupHistory group.GroupHistory
-
-		file, _, err := r.FormFile("file")
-		file2, _, err := r.FormFile("file2")
-		file3, _, err := r.FormFile("file3")
-		file4, _, err := r.FormFile("file4")
-		file5, _, err := r.FormFile("file5")
-		file6, _, err := r.FormFile("file6")
-		mytextarea := r.PostFormValue("mytextarea")
-		groupId := r.PostFormValue("group")
-		if err != nil {
-			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
-		}
-		filesArray := []io.Reader{file, file2, file3, file4, file5, file6}
-		filesByteArray := misc.CheckFiles(filesArray)
-
-		//Creating EventHistory and HistoryId
-		//fmt.Println("eventIed: ", groupId, " test>>>>", mytextarea)
-		if groupId != "" && mytextarea != "" {
-
-			//Creating Histories Object
-			historyObject := history2.Histories{"", misc.ConvertToByteArray(mytextarea)}
-			histories, err = history_io.CreateHistorie(historyObject)
-			if err != nil {
-				fmt.Println("could not create history and wont create group history")
-				if app.Session.GetString(r.Context(), "user-read-error") != "" {
-					app.Session.Remove(r.Context(), "user-read-error")
-				}
-				app.Session.Put(r.Context(), "user-read-error", "An error has occurred, Please try again late")
-				http.Redirect(w, r, "/admin_user/group", 301)
-				return
-			}
-
-			//creating Event HistoryId
-			groupHistoryObject := group.GroupHistory{"", groupId, histories.Id}
-			groupHistory, err = group_io.CreateGroupHistory(groupHistoryObject)
-			if err != nil {
-				fmt.Println("could not create group history")
-				_, err := history_io.DeleteHistorie(histories.Id)
-				if err != nil {
-					fmt.Println("error deleting history")
-				}
-				if app.Session.GetString(r.Context(), "user-read-error") != "" {
-					app.Session.Remove(r.Context(), "user-read-error")
-				}
-				app.Session.Put(r.Context(), "user-read-error", "An error has occurred, Please try again late")
-				http.Redirect(w, r, "/admin_user/group", 301)
-				return
-			}
-
-		} else {
-			fmt.Println("One of the field is empty")
-			if app.Session.GetString(r.Context(), "user-read-error") != "" {
-				app.Session.Remove(r.Context(), "user-read-error")
-			}
-			app.Session.Put(r.Context(), "user-read-error", "An error has occurred, Please try again late")
-			http.Redirect(w, r, "/admin_user/group", 301)
-			return
-		}
-
-		//creating EventImage
-		groupImageObejct := group.GroupImage{"", "", groupId, ""}
-		groupImageHelper := group.GroupImageHelper{groupImageObejct, filesByteArray}
-		_, errx := group_io.CreateGroupImage(groupImageHelper)
-		/**
-		Rolling back in case of error in the creation of the group image or image itself.
-		*/
-		if errx != nil {
-			fmt.Println(err, " error could not create eventImage Proceeding into rol back.....")
-			if histories.Id != "" {
-				fmt.Println(err, " Deleting histories of this event....")
-				_, err := history_io.DeleteHistorie(histories.Id)
-				if err != nil {
-					fmt.Println(err, " !!!!!error could not delete history")
-				} else {
-					fmt.Println(err, " Deleted")
-				}
-			}
-			if groupHistory.Id != "" {
-				fmt.Println(err, " Deleting Event histories of this event....")
-				_, err := group_io.DeleteGroupHistory(groupHistory.Id)
-				if err != nil {
-					fmt.Println(err, " !!!!!error could not delete group history")
-				} else {
-					fmt.Println(err, " Deleted")
-				}
-			}
-			if app.Session.GetString(r.Context(), "user-create-error") != "" {
-				app.Session.Remove(r.Context(), "user-create-error")
-			}
-			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-			http.Redirect(w, r, "/admin_user/group/picture/"+groupId, 301)
-			return
-		}
-		if app.Session.GetString(r.Context(), "creation-successful") != "" {
-			app.Session.Remove(r.Context(), "creation-successful")
-		}
-		app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new Group : ")
-		http.Redirect(w, r, "/admin_user", 301)
-		return
-	}
-}
+//func CreateHistory_ImageHandler(app *config.Env) http.HandlerFunc {
+//	return func(w http.ResponseWriter, r *http.Request) {
+//		r.ParseForm()
+//
+//		var histories history2.Histories
+//		var groupHistory group.GroupHistory
+//
+//		file, _, err := r.FormFile("file")
+//		file2, _, err := r.FormFile("file2")
+//		file3, _, err := r.FormFile("file3")
+//		file4, _, err := r.FormFile("file4")
+//		file5, _, err := r.FormFile("file5")
+//		file6, _, err := r.FormFile("file6")
+//		mytextarea := r.PostFormValue("mytextarea")
+//		groupId := r.PostFormValue("group")
+//		if err != nil {
+//			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
+//		}
+//		filesArray := []io.Reader{file, file2, file3, file4, file5, file6}
+//		filesByteArray := misc.CheckFiles(filesArray)
+//
+//		//Creating EventHistory and HistoryId
+//		//fmt.Println("eventIed: ", groupId, " test>>>>", mytextarea)
+//		if groupId != "" && mytextarea != "" {
+//
+//			//Creating Histories Object
+//			historyObject := history2.Histories{"", misc.ConvertToByteArray(mytextarea)}
+//			histories, err = history_io.CreateHistorie(historyObject)
+//			if err != nil {
+//				fmt.Println("could not create history and wont create group history")
+//				if app.Session.GetString(r.Context(), "user-read-error") != "" {
+//					app.Session.Remove(r.Context(), "user-read-error")
+//				}
+//				app.Session.Put(r.Context(), "user-read-error", "An error has occurred, Please try again late")
+//				http.Redirect(w, r, "/admin_user/group", 301)
+//				return
+//			}
+//
+//			//creating Event HistoryId
+//			groupHistoryObject := group.GroupHistory{"", groupId, histories.Id}
+//			groupHistory, err = group_io.CreateGroupHistory(groupHistoryObject)
+//			if err != nil {
+//				fmt.Println("could not create group history")
+//				_, err := history_io.DeleteHistorie(histories.Id)
+//				if err != nil {
+//					fmt.Println("error deleting history")
+//				}
+//				if app.Session.GetString(r.Context(), "user-read-error") != "" {
+//					app.Session.Remove(r.Context(), "user-read-error")
+//				}
+//				app.Session.Put(r.Context(), "user-read-error", "An error has occurred, Please try again late")
+//				http.Redirect(w, r, "/admin_user/group", 301)
+//				return
+//			}
+//
+//		} else {
+//			fmt.Println("One of the field is empty")
+//			if app.Session.GetString(r.Context(), "user-read-error") != "" {
+//				app.Session.Remove(r.Context(), "user-read-error")
+//			}
+//			app.Session.Put(r.Context(), "user-read-error", "An error has occurred, Please try again late")
+//			http.Redirect(w, r, "/admin_user/group", 301)
+//			return
+//		}
+//
+//		//creating EventImage
+//		groupImageObejct := group.GroupImage{"", "", groupId, ""}
+//		groupImageHelper := group.GroupImageHelper{groupImageObejct, filesByteArray}
+//		_, errx := group_io.CreateGroupImage(groupImageHelper)
+//		/**
+//		Rolling back in case of error in the creation of the group image or image itself.
+//		*/
+//		if errx != nil {
+//			fmt.Println(err, " error could not create eventImage Proceeding into rol back.....")
+//			if histories.Id != "" {
+//				fmt.Println(err, " Deleting histories of this event....")
+//				_, err := history_io.DeleteHistorie(histories.Id)
+//				if err != nil {
+//					fmt.Println(err, " !!!!!error could not delete history")
+//				} else {
+//					fmt.Println(err, " Deleted")
+//				}
+//			}
+//			if groupHistory.Id != "" {
+//				fmt.Println(err, " Deleting Event histories of this event....")
+//				_, err := group_io.DeleteGroupHistory(groupHistory.Id)
+//				if err != nil {
+//					fmt.Println(err, " !!!!!error could not delete group history")
+//				} else {
+//					fmt.Println(err, " Deleted")
+//				}
+//			}
+//			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+//				app.Session.Remove(r.Context(), "user-create-error")
+//			}
+//			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+//			http.Redirect(w, r, "/admin_user/group/picture/"+groupId, 301)
+//			return
+//		}
+//		if app.Session.GetString(r.Context(), "creation-successful") != "" {
+//			app.Session.Remove(r.Context(), "creation-successful")
+//		}
+//		app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new Group : ")
+//		http.Redirect(w, r, "/admin_user", 301)
+//		return
+//	}
+//}
 
 func GroupPictureHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -426,7 +523,7 @@ func GroupPictureHandler(app *config.Env) http.HandlerFunc {
 		type PageData struct {
 			Projects      []project2.Project
 			Partners      []partner2.Partner
-			Group         group.Groups
+			Group         group.Groupes
 			Backend_error string
 			Unknown_error string
 		}
@@ -452,14 +549,26 @@ func GroupPictureHandler(app *config.Env) http.HandlerFunc {
 func CreateGroupsHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
-		var newGroup group.Groups
+		var newGroup group.Groupes
+		var content []byte
+		file, _, err := r.FormFile("file")
+
+		if err != nil {
+			fmt.Println(err, "<<<<<< error reading file>>>>This error should not happen>>>")
+			http.Redirect(w, r, "/admin_user/group", 301)
+			return
+		} else {
+			reader := bufio.NewReader(file)
+			content, _ = ioutil.ReadAll(reader)
+		}
 		groupName := r.PostFormValue("name")
 		project := r.PostFormValue("project")
 		description := r.PostFormValue("description")
 		partner := r.PostFormValue("partner")
+		historyContent := r.PostFormValue("mytextarea")
 
 		if groupName != "" && description != "" {
-			groupObject := group.Groups{"", groupName, description}
+			groupObject := group.Groupes{"", groupName, description}
 			errs := errors.New("")
 			newGroup, errs = group_io.CreateGroup(groupObject)
 			if errs != nil {
@@ -471,6 +580,34 @@ func CreateGroupsHandler(app *config.Env) http.HandlerFunc {
 				http.Redirect(w, r, "/admin_user/group", 301)
 				return
 			}
+			//Creating group history.
+			if historyContent != "" {
+				history := history2.Histories{"", misc.ConvertToByteArray(historyContent)}
+
+				historyReturnObject, err := history_io.CreateHistorie(history)
+				if err != nil {
+					fmt.Println(err, " error when creating history")
+				} else {
+					_, err := group_io.CreateGroupHistory(group.GroupHistory{"", newGroup.Id, historyReturnObject.Id})
+					if err != nil {
+						fmt.Println(err, " error when creating group history")
+					}
+				}
+			}
+			//Group Image
+			imageObject := image.Images{"", content, "profile"}
+			imageReturnObject, err := image_io.CreateImage(imageObject)
+			if err != nil {
+				fmt.Println(err, " error when creating image")
+			} else {
+				groupImage := group.GroupImage{"", imageReturnObject.Id, newGroup.Id, groupName}
+				_, err := group_io.CreateGroupImage(groupImage)
+				if err != nil {
+					fmt.Println(err, " error when creating group image")
+				}
+			}
+
+			//Group Partner
 			if partner != "" {
 				grouoPartnerOnejct := group.GroupPartener{"", partner, newGroup.Id, ""}
 				_, err := group_io.CreateGroupPartner(grouoPartnerOnejct)
@@ -491,8 +628,8 @@ func CreateGroupsHandler(app *config.Env) http.HandlerFunc {
 			if app.Session.GetString(r.Context(), "creation-successful") != "" {
 				app.Session.Remove(r.Context(), "creation-successful")
 			}
-			app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new Groups : "+groupName)
-			http.Redirect(w, r, "/admin_user/group/picture/"+newGroup.Id, 301)
+			app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new Groupes : "+groupName)
+			http.Redirect(w, r, "/admin_user/group", 301)
 			return
 		}
 		fmt.Println("One of the field is missing")
@@ -536,7 +673,7 @@ func GroupsHandler(app *config.Env) http.HandlerFunc {
 			Partners      []partner2.Partner
 			Backend_error string
 			Unknown_error string
-			Groups        []group.Groups
+			Groups        []group.Groupes
 			SidebarData   misc.SidebarData
 		}
 		data := PageData{projects, partners, backend_error, unknown_error, groups, misc.GetSideBarData("group", "")}

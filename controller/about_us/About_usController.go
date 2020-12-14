@@ -35,9 +35,10 @@ func GrouphomeHanler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		type PageData struct {
-			Groups []GroupData
+			Groups    []GroupData
+			Histories []misc.HistoryAndProfile
 		}
-		data := PageData{getGroupData()}
+		data := PageData{getGroupData(), misc.ReadHistoryWithImages()}
 		files := []string{
 			app.Path + "about_us/group-home.html",
 			app.Path + "base_templates/navigator.html",
@@ -64,15 +65,16 @@ func GroupHanler(app *config.Env) http.HandlerFunc {
 		//TODO we need to implement error reporter on People Home Page
 		if groupDataHistory.History.Id == "" {
 			//app.Session.Put(r.Context(), "user-read-error", "An error has occurred, Please try again late")
-			http.Redirect(w, r, "/group", 301)
+			http.Redirect(w, r, "/about_us/group", 301)
 			return
 
 		}
 		type PageData struct {
 			GroupDataHistory GroupDataHistory
 			EventData        []EventData
+			GalleryImages    []misc.GalleryImages
 		}
-		data := PageData{groupDataHistory, getEventsData(groupId)}
+		data := PageData{groupDataHistory, getEventsData(groupId), misc.GetGroupGallery(groupId)}
 		files := []string{
 			app.Path + "about_us/groups_single.html",
 			app.Path + "base_templates/navigator.html",
@@ -126,7 +128,7 @@ func getEventsData(groupId string) []EventData {
 }
 
 type GroupData struct {
-	Group group.Groups
+	Group group.Groupes
 	Image image.Images
 }
 
