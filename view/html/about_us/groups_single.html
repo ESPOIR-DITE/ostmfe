@@ -82,7 +82,7 @@
                         <div class="row d-flex justify-content-center">
                             <div class="menu-content pb-60 col-lg-10">
                                 <div class="title text-center">
-                                    <h1 class="mb-10">Event Gallery</h1>
+                                    <h1 class="mb-10">Group Gallery</h1>
                                     <!--p>Who are in extremely love with eco friendly system.</p-->
                                 </div>
                             </div>
@@ -162,135 +162,28 @@
 
 
                     <!-- Start comment-sec Area -->
-                    <section class="comment-sec-area pt-80 pb-80">
-                        <div class="container">
-                            <div class="row flex-column">
-                                <h5 class="text-uppercase pb-80">05 Comments</h5>
-                                <br>
-                                <div class="comment-list">
-                                    <div class="single-comment justify-content-between d-flex">
-                                        <div class="user justify-content-between d-flex">
-                                            <div class="thumb">
-                                                <img src="../../assets/img/blog/c1.jpg" alt="">
-                                            </div>
-                                            <div class="desc">
-                                                <h5><a href="#">Emilly Blunt</a></h5>
-                                                <p class="date">December 4, 2017 at 3:12 pm </p>
-                                                <p class="comment">
-                                                    Never say goodbye till the end comes!
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="reply-btn">
-                                            <a href="" class="btn-reply text-uppercase">reply</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="comment-list left-padding">
-                                    <div class="single-comment justify-content-between d-flex">
-                                        <div class="user justify-content-between d-flex">
-                                            <div class="thumb">
-                                                <img src="../../assets/img/blog/c2.jpg" alt="">
-                                            </div>
-                                            <div class="desc">
-                                                <h5><a href="#">Emilly Blunt</a></h5>
-                                                <p class="date">December 4, 2017 at 3:12 pm </p>
-                                                <p class="comment">
-                                                    Never say goodbye till the end comes!
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="reply-btn">
-                                            <a href="" class="btn-reply text-uppercase">reply</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="comment-list left-padding">
-                                    <div class="single-comment justify-content-between d-flex">
-                                        <div class="user justify-content-between d-flex">
-                                            <div class="thumb">
-                                                <img src="../../assets/img/blog/c3.jpg" alt="">
-                                            </div>
-                                            <div class="desc">
-                                                <h5><a href="#">Emilly Blunt</a></h5>
-                                                <p class="date">December 4, 2017 at 3:12 pm </p>
-                                                <p class="comment">
-                                                    Never say goodbye till the end comes!
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="reply-btn">
-                                            <a href="" class="btn-reply text-uppercase">reply</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="comment-list">
-                                    <div class="single-comment justify-content-between d-flex">
-                                        <div class="user justify-content-between d-flex">
-                                            <div class="thumb">
-                                                <img src="../../assets/img/blog/c4.jpg" alt="">
-                                            </div>
-                                            <div class="desc">
-                                                <h5><a href="#">Emilly Blunt</a></h5>
-                                                <p class="date">December 4, 2017 at 3:12 pm </p>
-                                                <p class="comment">
-                                                    Never say goodbye till the end comes!
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="reply-btn">
-                                            <a href="" class="btn-reply text-uppercase">reply</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="comment-list">
-                                    <div class="single-comment justify-content-between d-flex">
-                                        <div class="user justify-content-between d-flex">
-                                            <div class="thumb">
-                                                <img src="../../assets/img/blog/c5.jpg" alt="">
-                                            </div>
-                                            <div class="desc">
-                                                <h5><a href="#">Emilly Blunt</a></h5>
-                                                <p class="date">December 4, 2017 at 3:12 pm </p>
-                                                <p class="comment">
-                                                    Never say goodbye till the end comes!
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="reply-btn">
-                                            <a href="" class="btn-reply text-uppercase">reply</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
+                    {{template "comments" .}}
                     <!-- End comment-sec Area -->
 
                     <!-- Start commentform Area -->
                     <section class="commentform-area pt-80">
                         <div class="container">
-                            <h5 class="pb-50">Leave a Reply</h5>
-                            <div class="row flex-row d-flex">
-                                <div class="col-lg-4 col-md-6">
-                                    <input name="name" placeholder="Enter your name" onfocus="this.placeholder = ''"
-                                           onblur="this.placeholder = 'Enter your name'"
-                                           class="common-input mb-20 form-control" required="" type="text">
-                                    <input name="email" placeholder="Enter your email" onfocus="this.placeholder = ''"
-                                           onblur="this.placeholder = 'Enter your email'"
-                                           class="common-input mb-20 form-control" required="" type="email">
-                                    <input name="Subject" placeholder="Subject" onfocus="this.placeholder = ''"
-                                           onblur="this.placeholder = 'Enter your Subject'"
-                                           class="common-input mb-20 form-control" required="" type="text">
+                            <form method="post" action="/about_us/create-comment">
+                                <h5 class="pb-50">Leave a Comment</h5>
+                                <div class="row flex-row d-flex">
+                                    <div class="col-lg-4 col-md-6">
+                                        <input name="name" placeholder="Enter your name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your name'" class="common-input mb-20 form-control" required="" type="text">
+                                        <input name="email" placeholder="Enter your email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your email'" class="common-input mb-20 form-control" required="" type="email">
+                                        <input name="Subject" placeholder="Subject" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your Subject'" class="common-input mb-20 form-control" required="" type="text">
+                                        <input name="groupId" value="{{.GroupDataHistory.Group.Id}}" type="hidden">
 
+                                    </div>
+                                    <div class="col-lg-8 col-md-6">
+                                        <textarea class="form-control mb-10" name="message" placeholder="message" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Messege'" required=""></textarea>
+                                        <button type="submit" class="primary-btn mt-20" href="#">Comment</button>
+                                    </div>
                                 </div>
-                                <div class="col-lg-8 col-md-6">
-                                    <textarea class="form-control mb-10" name="message" placeholder="Messege"
-                                              onfocus="this.placeholder = ''" onblur="this.placeholder = 'Messege'"
-                                              required=""></textarea>
-                                    <a class="primary-btn mt-20" href="#">Comment</a>
-                                </div>
-                            </div>
+                            </form>
                         </div>
                     </section>
                     <!-- End commentform Area -->

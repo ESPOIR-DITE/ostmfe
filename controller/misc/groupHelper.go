@@ -17,13 +17,16 @@ type HistoryAndProfile struct {
 	Date    string
 }
 
-type GalleryImages struct {
+type GroupGalleryImages struct {
 	Gallery      image.GaleryHelper
 	GroupGallery group.GroupGalery
 }
 
-func GetGroupGallery(groupId string) []GalleryImages {
-	var GalleryImagesList []GalleryImages
+/**
+Getting a gallery of a group by passing the groupId.
+*/
+func GetGroupGallery(groupId string) []GroupGalleryImages {
+	var GalleryImagesList []GroupGalleryImages
 
 	groupGalleryImages, err := group_io.ReadAllByGroupGalleryId(groupId)
 	if err != nil {
@@ -31,7 +34,7 @@ func GetGroupGallery(groupId string) []GalleryImages {
 		return GalleryImagesList
 	}
 	for _, groupGalleryImage := range groupGalleryImages {
-		GalleryImagesList = append(GalleryImagesList, GalleryImages{GetGalleryImage(groupGalleryImage.GaleryId), groupGalleryImage})
+		GalleryImagesList = append(GalleryImagesList, GroupGalleryImages{GetGalleryImage(groupGalleryImage.GaleryId), groupGalleryImage})
 	}
 	return GalleryImagesList
 }

@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"ostmfe/config"
 	"ostmfe/controller/misc"
+	"ostmfe/domain/comment"
 	"ostmfe/domain/group"
 	history2 "ostmfe/domain/history"
 	"ostmfe/domain/image"
@@ -357,10 +358,11 @@ func GroupEditHandler(app *config.Env) http.HandlerFunc {
 		type PageData struct {
 			Groups      GroupData
 			SidebarData misc.SidebarData
-			Gallery     []misc.GalleryImages
+			Gallery     []misc.GroupGalleryImages
+			Comments    []comment.CommentHelper2
 		}
 
-		data := PageData{GetGroupData(groupId), misc.GetSideBarData("group", ""), misc.GetGroupGallery(groupId)}
+		data := PageData{GetGroupData(groupId), misc.GetSideBarData("group", ""), misc.GetGroupGallery(groupId), GetGroupCommentsWithEventId(groupId)}
 		files := []string{
 			app.Path + "admin/group/edit_group.html",
 			app.Path + "admin/template/navbar.html",

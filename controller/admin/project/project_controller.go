@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"ostmfe/config"
 	"ostmfe/controller/misc"
+	"ostmfe/domain/comment"
 	history2 "ostmfe/domain/history"
 	image2 "ostmfe/domain/image"
 	project2 "ostmfe/domain/project"
@@ -372,8 +373,10 @@ func EditeProjectsHandler(app *config.Env) http.HandlerFunc {
 			Project        misc.ProjectEditable
 			ProjectDetails project2.Project
 			SidebarData    misc.SidebarData
+			Comments       []comment.CommentHelper2
+			Gallery        []misc.ProjectGalleryImages
 		}
-		data := PageData{selectedProjest, projectDetails, misc.GetSideBarData("project", "")}
+		data := PageData{selectedProjest, projectDetails, misc.GetSideBarData("project", ""), GetProjectCommentsWithProjectId(projectId), misc.GetProjectGallery(projectId)}
 		files := []string{
 			app.Path + "admin/project/edite_project.html",
 			app.Path + "admin/template/navbar.html",

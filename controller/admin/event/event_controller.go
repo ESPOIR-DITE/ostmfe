@@ -15,7 +15,6 @@ import (
 	"ostmfe/controller/misc"
 	museum "ostmfe/domain"
 	"ostmfe/domain/comment"
-	contribution2 "ostmfe/domain/contribution"
 	event2 "ostmfe/domain/event"
 	"ostmfe/domain/group"
 	history2 "ostmfe/domain/history"
@@ -1142,7 +1141,6 @@ func EventPicture(app *config.Env) http.HandlerFunc {
 
 func EditEventsHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var contributionList []contribution2.ContributionHelper
 		if !adminHelper.CheckAdminInSession(app, r) {
 			http.Redirect(w, r, "/administration/", 301)
 		}
@@ -1184,23 +1182,32 @@ func EditEventsHandler(app *config.Env) http.HandlerFunc {
 			fmt.Println(err, " error reading all the groups")
 		}
 
-		//Getting all the contributions Data and their picture.
-		contributionList = GetContributionData(eventId)
 		type PageData struct {
-			Event         event2.Event
-			EventData     misc.EventData
-			Projects      []project2.Project
-			Partners      []partner2.Partner
-			SidebarData   misc.SidebarData
-			Peoples       []people.People
-			Places        []place2.Place
-			Years         []museum.Years
-			GroupData     []event3.GroupData
-			Groups        []group.Groupes
-			Contributions []contribution2.ContributionHelper
-			Comments      []comment.CommentHelper2
+			Event       event2.Event
+			EventData   misc.EventData
+			Projects    []project2.Project
+			Partners    []partner2.Partner
+			SidebarData misc.SidebarData
+			Peoples     []people.People
+			Places      []place2.Place
+			Years       []museum.Years
+			GroupData   []event3.GroupData
+			Groups      []group.Groupes
+			Comments    []comment.CommentHelper2
+			Gallery     []misc.EventGalleryImages
 		}
-		date := PageData{event, eventData, projects, partners, misc.GetSideBarData("event", ""), peoples, places, years, event3.GetGroupsData(eventId), groups, contributionList, GetEventCommentsWithEventId(eventId)}
+		date := PageData{event,
+			eventData,
+			projects,
+			partners,
+			misc.GetSideBarData("event", ""),
+			peoples,
+			places,
+			years,
+			event3.GetGroupsData(eventId),
+			groups,
+			GetEventCommentsWithEventId(eventId),
+			misc.GetEventGallery(eventId)}
 		files := []string{
 			app.Path + "admin/event/edit_event.html",
 			app.Path + "admin/template/navbar.html",

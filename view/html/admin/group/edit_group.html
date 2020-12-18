@@ -253,6 +253,57 @@
             </div>
           </div>
 
+          <!-- Comment Card -->
+          <div class="card shadow mb-4">
+            <!-- Card Header - Accordion -->
+            <a href="#commentCard" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+               role="button" aria-expanded="true" aria-controls="collapseCardExample">
+              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Group Comment</h6>
+            </a>
+            <!-- Card Content - Collapse -->
+            <div class="collapse " id="commentCard">
+
+
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                    <tr>
+                      <th>Nr</th>
+                      <th>Event Name</th>
+                      <th>Email</th>
+                      <th>Event Date</th>
+                      <th>Comment</th>
+                      <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{with .Comments}}
+                      {{range $i, $e := .}}
+                        <tr>
+                          <td>{{$i}}</td>
+                          <td>{{.Name}}</td>
+                          <td>{{.Email}}</td>
+                          <td>{{.Date}}</td>
+                          <td><small>{{.Comment}}</small></td>
+                          <td>
+                            <a class="btn btn-google btn-user btn-block" data-toggle="modal"
+                               onclick="deleteTheGroupCommentBTN({{.Id}},{{.BridgeId}},{{.Name}})"
+                               data-target="#exampleModalEvent">
+                              Delete
+                            </a>
+                          </td>
+                        </tr>
+                      {{end}}
+                    {{end}}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
           <!---Group Gallery---->
           <div class="card shadow mb-4">
             <!-- Card Header - Accordion -->

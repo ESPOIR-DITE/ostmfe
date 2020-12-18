@@ -60,6 +60,19 @@ func ReadEventGaleryWitheventId(id string) (event.EventGalery, error) {
 	return entity, nil
 }
 
+func ReadAllEventGalleryWithEventId(eventId string) ([]event.EventGalery, error) {
+	entity := []event.EventGalery{}
+	resp, _ := api.Rest().Get(eventgaleryURL + "readAllByEventId?eventId=" + eventId)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
+
 func DeleteEventGalery(id string) (event.EventGalery, error) {
 	entity := event.EventGalery{}
 	resp, _ := api.Rest().Get(eventgaleryURL + "delete?id=" + id)

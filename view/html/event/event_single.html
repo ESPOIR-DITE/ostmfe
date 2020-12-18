@@ -128,11 +128,11 @@
                                             <input name="name" placeholder="Enter your name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your name'" class="common-input mb-20 form-control" required="" type="text">
                                             <input name="email" placeholder="Enter your email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your email'" class="common-input mb-20 form-control" required="" type="email">
                                             <input name="Subject" placeholder="Subject" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your Subject'" class="common-input mb-20 form-control" required="" type="text">
-                                            <input name="eventId" value="{{.EventData.Event.Id}}" type="hidden">
+                                            <input name="groupId" value="{{.EventData.Event.Id}}" type="hidden">
 
                                         </div>
                                         <div class="col-lg-8 col-md-6">
-                                            <textarea class="form-control mb-10" name="message" placeholder="Messege" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Messege'" required=""></textarea>
+                                            <textarea class="form-control mb-10" name="message" placeholder="message" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Messege'" required=""></textarea>
                                             <button type="submit" class="primary-btn mt-20" href="#">Comment</button>
                                         </div>
                                     </div>
@@ -145,23 +145,6 @@
 							</div>
 						</div>
 						<div class="col-lg-4 sidebar">
-                            <div class="single-widget protfolio-widget">
-                                <img width="70%" src="../../assets/img/share_your_story.jpg" alt="">
-                                <!--h4><a class="julie" data-toggle="modal" href="" data-target="#contributeToEvent">Share Your Story Here about this Event</a></h4-->
-                                <h4><a href="#">Share Your Story Here about this Event</a></h4>
-                                <!---p>
-                                    MCSE boot camps have its supporters and
-                                    its detractors. Some people do not understand why you should have to spend money
-                                    on boot camp when you can get.
-                                </p--->
-                                <ul>
-                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-behance"></i></a></li>
-                                </ul>
-                            </div>
-
                             {{with .EventData.Images}}
                             {{range $i, $e := .}}
 							<div class="single-widget protfolio-widget">
@@ -263,6 +246,33 @@
 			</section>
 			<!-- End blog-posts Area -->
 
+        <!--event gallery--->
+        <div class="container">
+            <div class="row d-flex justify-content-center">
+                <div class="menu-content pb-60 col-lg-10">
+                    <div class="title text-center">
+                        <h1 class="mb-10">Event Gallery</h1>
+                        <!--p>Who are in extremely love with eco friendly system.</p-->
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="active-exibition-carusel">
+                    {{with .GalleryImages}}
+                        {{range .}}
+                            <div class="single-exibition item">
+                                <img id='base64image'  src='data:image/jpeg;base64,{{.Gallery.Image}}' alt="">
+                                <p>
+                                    {{.Gallery.Description}}
+                                </p>
+                            </div>
+                        {{end}}
+                    {{end}}
+                </div>
+            </div>
+        </div>
+        <br>
+
         <div class="modal fade" id="contributeToEvent" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content" >
@@ -302,135 +312,7 @@
             </div>
         </div>
 
-        <!--event gallery--->
-        <div class="container">
-            <div class="row d-flex justify-content-center">
-                <div class="menu-content pb-60 col-lg-10">
-                    <div class="title text-center">
-                        <h1 class="mb-10">Ongoing Exhibitions from the scratch</h1>
-                        <p>Who are in extremely love with eco friendly system.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="active-exibition-carusel">
-                    <div class="single-exibition item">
-                        <img src="../assets/img/e1.jpg" alt="">
-                        <ul class="tags">
-                            <li><a href="#">Travel</a></li>
-                            <li><a href="#">Life style</a></li>
-                        </ul>
-                        <a href="#"><h4>Portable latest blog for women</h4></a>
-                        <p>
-                            Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
-                        </p>
-                        <h6 class="date">31st January, 2018</h6>
-                    </div>
 
-                    <div class="single-exibition item">
-                        <img src="../assets/img/e2.jpg" alt="">
-                        <ul class="tags">
-                            <li><a href="#">Travel</a></li>
-                            <li><a href="#">Life style</a></li>
-                        </ul>
-                        <a href="#"><h4>Portable latest blog for women</h4></a>
-                        <p>
-                            Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
-                        </p>
-                        <h6 class="date">31st January, 2018</h6>
-                    </div>
-
-                    <div class="single-exibition item">
-                        <img src="../assets/img/e3.jpg" alt="">
-                        <ul class="tags">
-                            <li><a href="#">Travel</a></li>
-                            <li><a href="#">Life style</a></li>
-                        </ul>
-                        <a href="#"><h4>Portable latest blog for women</h4></a>
-                        <p>
-                            Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
-                        </p>
-                        <h6 class="date">31st January, 2018</h6>
-                    </div>
-                    <div class="single-exibition item">
-                        <img src="../assets/img/e1.jpg" alt="">
-                        <ul class="tags">
-                            <li><a href="#">Travel</a></li>
-                            <li><a href="#">Life style</a></li>
-                        </ul>
-                        <a href="#"><h4>Portable latest blog for women</h4></a>
-                        <p>
-                            Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
-                        </p>
-                        <h6 class="date">31st January, 2018</h6>
-                    </div>
-
-                    <div class="single-exibition item">
-                        <img src="../assets/img/e2.jpg" alt="">
-                        <ul class="tags">
-                            <li><a href="#">Travel</a></li>
-                            <li><a href="#">Life style</a></li>
-                        </ul>
-                        <a href="#"><h4>Portable latest blog for women</h4></a>
-                        <p>
-                            Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
-                        </p>
-                        <h6 class="date">31st January, 2018</h6>
-                    </div>
-
-                    <div class="single-exibition item">
-                        <img src="../assets/img/e3.jpg" alt="">
-                        <ul class="tags">
-                            <li><a href="#">Travel</a></li>
-                            <li><a href="#">Life style</a></li>
-                        </ul>
-                        <a href="#"><h4>Portable latest blog for women</h4></a>
-                        <p>
-                            Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
-                        </p>
-                        <h6 class="date">31st January, 2018</h6>
-                    </div>
-                    <div class="single-exibition item">
-                        <img src="../assets/img/e1.jpg" alt="">
-                        <ul class="tags">
-                            <li><a href="#">Travel</a></li>
-                            <li><a href="#">Life style</a></li>
-                        </ul>
-                        <a href="#"><h4>Portable latest blog for women</h4></a>
-                        <p>
-                            Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
-                        </p>
-                        <h6 class="date">31st January, 2018</h6>
-                    </div>
-
-                    <div class="single-exibition item">
-                        <img class="img-fluid" src="../assets/img/e2.jpg" alt="">
-                        <ul class="tags">
-                            <li><a href="#">Travel</a></li>
-                            <li><a href="#">Life style</a></li>
-                        </ul>
-                        <a href="#"><h4>Portable latest blog for women</h4></a>
-                        <p>
-                            Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
-                        </p>
-                        <h6 class="date">31st January, 2018</h6>
-                    </div>
-
-                    <div class="single-exibition item">
-                        <img class="img-fluid" src="../assets/img/e3.jpg" alt="">
-                        <ul class="tags">
-                            <li><a href="#">Travel</a></li>
-                            <li><a href="#">Life style</a></li>
-                        </ul>
-                        <a href="#"><h4>Portable latest blog for women</h4></a>
-                        <p>
-                            Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
-                        </p>
-                        <h6 class="date">31st January, 2018</h6>
-                    </div>
-                </div>
-            </div>
-        </div>
 
 
             <!-- start footer Area -->

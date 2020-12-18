@@ -57,18 +57,16 @@
 							<div class="row">
 							{{with .Projects}}
 							{{range .}}
-
-
 							<div class="col-lg-4">
 								<div class="single-service">
 									<img class="img-fluid" id='base64image' width="400px" src='data:image/jpeg;base64,{{.Picture}}' alt="">
-									<h4><a href="/event/single/{{.ProjectId}}"><h4>{{.Title}}</h4></a></h4>
+									<h4><a href="/project/read_single/{{.ProjectId}}"><h4>{{.Title}}</h4></a></h4>
 									<div class="overlay">
 										<div class="text">
 											<p>
 												{{.Description}}
 											</p>
-											<a href="/event/single/{{.ProjectId}}"  class="text-uppercase primary-btn"
+											<a href="/project/read_single/{{.ProjectId}}"  class="text-uppercase primary-btn"
 											>Read more</a>
 										</div>
 									</div>

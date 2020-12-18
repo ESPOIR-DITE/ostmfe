@@ -6,18 +6,22 @@ import (
 	"html/template"
 	"net/http"
 	"ostmfe/config"
+	comment2 "ostmfe/controller/comment"
 	"ostmfe/controller/misc"
+	"ostmfe/domain/comment"
 	"ostmfe/domain/event"
 	"ostmfe/domain/group"
 	history2 "ostmfe/domain/history"
 	"ostmfe/domain/image"
 	"ostmfe/domain/user"
+	"ostmfe/io/comment_io"
 	"ostmfe/io/event_io"
 	"ostmfe/io/group_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
 	"ostmfe/io/pageData_io"
 	"ostmfe/io/user_io"
+	"time"
 )
 
 func Home(app *config.Env) http.Handler {
@@ -25,10 +29,37 @@ func Home(app *config.Env) http.Handler {
 	r.Get("/", homeHanler(app))
 	r.Get("/group", GrouphomeHanler(app))
 	r.Get("/single/{groupId}", GroupHanler(app))
+	r.Post("/create-comment", CreateComment(app))
 	//r.Use(middleware.LoginSession{SessionManager: app.Session}.RequireAuthenticatedUser)
 	//r.Get("/home", indexHanler(app))
 	//r.Get("/homeError", indexErrorHanler(app))
 	return r
+}
+
+func CreateComment(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		r.ParseForm()
+		name := r.PostFormValue("name")
+		email := r.PostFormValue("email")
+		message := r.PostFormValue("message")
+		groupId := r.PostFormValue("groupId")
+
+		if name != "" && email != "" && message != "" {
+			commentObject := comment.Comment{"", email, name, misc.FormatDateTime(time.Now()), misc.ConvertToByteArray(message), ""}
+			newComment, err := comment_io.CreateComment(commentObject)
+			if err != nil {
+				fmt.Println("error creating comment")
+			} else {
+				_, err := comment_io.CreateCommentGroup(comment.CommentGroup{"", groupId, newComment.Id})
+				if err != nil {
+					fmt.Println("error creating comment")
+				}
+				http.Redirect(w, r, "/about_us/single/"+groupId, 301)
+			}
+		}
+		http.Redirect(w, r, "/about_us/single/"+groupId, 301)
+	}
 }
 
 func GrouphomeHanler(app *config.Env) http.HandlerFunc {
@@ -67,18 +98,27 @@ func GroupHanler(app *config.Env) http.HandlerFunc {
 			//app.Session.Put(r.Context(), "user-read-error", "An error has occurred, Please try again late")
 			http.Redirect(w, r, "/about_us/group", 301)
 			return
-
 		}
+		eventCommentNumber, err := comment_io.CountCommentGroup(groupId)
+		if err != nil {
+			fmt.Println("error reading counting CommentGroup")
+		}
+		commentes := comment2.GetGroupComment(groupId)
+
+		fmt.Println("Comments: ", commentes)
 		type PageData struct {
 			GroupDataHistory GroupDataHistory
 			EventData        []EventData
-			GalleryImages    []misc.GalleryImages
+			GalleryImages    []misc.GroupGalleryImages
+			Comments         []comment.CommentStack
+			CommentNumber    int64
 		}
-		data := PageData{groupDataHistory, getEventsData(groupId), misc.GetGroupGallery(groupId)}
+		data := PageData{groupDataHistory, getEventsData(groupId), misc.GetGroupGallery(groupId), commentes, eventCommentNumber}
 		files := []string{
 			app.Path + "about_us/groups_single.html",
 			app.Path + "base_templates/navigator.html",
 			app.Path + "base_templates/footer.html",
+			app.Path + "base_templates/comments.html",
 		}
 		ts, err := template.ParseFiles(files...)
 		if err != nil {

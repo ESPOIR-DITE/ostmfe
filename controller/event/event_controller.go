@@ -190,7 +190,7 @@ func EventHanler(app *config.Env) http.HandlerFunc {
 
 		eventNumber, err := comment_io.CountCommentEvent(eventId)
 		if err != nil {
-			fmt.Println("error reading COmmentEvent")
+			fmt.Println("error reading counting CommentEvent")
 		}
 
 		type PageData struct {
@@ -201,8 +201,17 @@ func EventHanler(app *config.Env) http.HandlerFunc {
 			Project       project.Project
 			CommentNumber int64
 			Comments      []comment.CommentStack
+			GalleryImages []misc.EventGalleryImages
 		}
-		data := PageData{eventdata, GetEnventPlaceData(eventId), GetEventPeopleData(eventId), GetGroupsData(eventId), getEventProject(eventId), eventNumber, comment2.GetEventComments(eventId)}
+		data := PageData{eventdata,
+			GetEnventPlaceData(eventId),
+			GetEventPeopleData(eventId),
+			GetGroupsData(eventId),
+			getEventProject(eventId),
+			eventNumber,
+			comment2.GetEventComments(eventId),
+			misc.GetEventGallery(eventId),
+		}
 		files := []string{
 			app.Path + "event/event_single.html",
 			app.Path + "base_templates/navigator.html",

@@ -113,15 +113,16 @@
                                 <section class="commentform-area pt-80">
                                     <div class="container">
                                         <h5 class="pb-50">Leave a Reply</h5>
-                                        <form method="post" action="/project/comment/{{.ProjectDataHistory.Project.Id}}">
+                                        <form method="post" action="/project/comment">
                                             <div class="row flex-row d-flex">
                                                 <div class="col-lg-4 col-md-6">
                                                     <input name="name" placeholder="Enter your name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your name'" class="common-input mb-20 form-control" required="" type="text">
                                                     <input name="email" placeholder="Enter your email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your email'" class="common-input mb-20 form-control" required="" type="email">
+                                                    <input name="projectId" value="{{.ProjectDataHistory.Project.Id}}" type="hidden">
                                                 </div>
                                                 <div class="col-lg-8 col-md-6">
                                                     <textarea class="form-control mb-10" name="message" placeholder="Messege" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Messege'" required=""></textarea>
-                                                    <a class="primary-btn mt-20" href="#">Comment</a>
+                                                    <button type="submit" class="primary-btn mt-20" href="#">Comment</button>
                                                 </div>
                                             </div>
                                         </form>
@@ -132,21 +133,24 @@
 							</div>
 						</div>
 						<div class="col-lg-4 sidebar">
-                            <div class="single-widget protfolio-widget">
-                                <img width="70%" src="../../assets/img/share_your_story.jpg" alt="">
-                                <h4><a class="julie" data-toggle="modal" href="" data-target="#contributeToProject">Share Your Story Here about this Project</a></h4>
-                                <!---p>
-                                    MCSE boot camps have its supporters and
-                                    its detractors. Some people do not understand why you should have to spend money
-                                    on boot camp when you can get.
-                                </p--->
-                                <ul>
-                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-behance"></i></a></li>
-                                </ul>
-                            </div>
+
+                            {{with .ProjectDataHistory.Images}}
+                                {{range .}}
+                                    <div class="single-widget protfolio-widget">
+                                        <img id='base64image' height="200px" src='data:image/jpeg;base64,{{.Id}}' alt="">
+                                        <a href="#"><h4>{{$.ProjectDataHistory.Project.Title}}</h4></a>
+                                        <p>
+                                            {{$.ProjectDataHistory.Project.Description}}
+                                        </p>
+                                        <ul>
+                                            <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                                            <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                            <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
+                                            <li><a href="#"><i class="fa fa-behance"></i></a></li>
+                                        </ul>
+                                    </div>
+                                {{end}}
+                            {{end}}
 
                             {{if .Projects}}
                             <div class="single-widget category-widget">
@@ -160,23 +164,7 @@
                             </div>
                             {{end}}
 
-                            {{with .ProjectDataHistory.Images}}
-                            {{range .}}
-							<div class="single-widget protfolio-widget">
-                                <img id='base64image' height="200px" src='data:image/jpeg;base64,{{.Id}}' alt="">
-								<a href="#"><h4>{{$.ProjectDataHistory.Project.Title}}</h4></a>
-								<p>
-                                    {{$.ProjectDataHistory.Project.Description}}
-								</p>
-								<ul>
-									<li><a href="#"><i class="fa fa-facebook"></i></a></li>
-									<li><a href="#"><i class="fa fa-twitter"></i></a></li>
-									<li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-									<li><a href="#"><i class="fa fa-behance"></i></a></li>
-								</ul>
-							</div>
-                            {{end}}
-                            {{end}}
+
 						</div>
 					</div>
 				</div>
@@ -184,136 +172,34 @@
 			<!-- End blog-posts Area -->
 
 
-			<!--Project Gallery-->
+        <!--event gallery--->
+        {{if .GalleryImages}}
         <div class="container">
             <div class="row d-flex justify-content-center">
                 <div class="menu-content pb-60 col-lg-10">
                     <div class="title text-center">
-                        <h1 class="mb-10">Ongoing Exhibitions from the scratch</h1>
-                        <p>Who are in extremely love with eco friendly system.</p>
+                        <h1 class="mb-10">Event Gallery</h1>
+                        <!--p>Who are in extremely love with eco friendly system.</p-->
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="active-exibition-carusel">
-                    <div class="single-exibition item">
-                        <img src="../assets/img/e1.jpg" alt="">
-                        <ul class="tags">
-                            <li><a href="#">Travel</a></li>
-                            <li><a href="#">Life style</a></li>
-                        </ul>
-                        <a href="#"><h4>Portable latest blog for women</h4></a>
-                        <p>
-                            Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
-                        </p>
-                        <h6 class="date">31st January, 2018</h6>
-                    </div>
-
-                    <div class="single-exibition item">
-                        <img src="../assets/img/e2.jpg" alt="">
-                        <ul class="tags">
-                            <li><a href="#">Travel</a></li>
-                            <li><a href="#">Life style</a></li>
-                        </ul>
-                        <a href="#"><h4>Portable latest blog for women</h4></a>
-                        <p>
-                            Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
-                        </p>
-                        <h6 class="date">31st January, 2018</h6>
-                    </div>
-
-                    <div class="single-exibition item">
-                        <img src="../assets/img/e3.jpg" alt="">
-                        <ul class="tags">
-                            <li><a href="#">Travel</a></li>
-                            <li><a href="#">Life style</a></li>
-                        </ul>
-                        <a href="#"><h4>Portable latest blog for women</h4></a>
-                        <p>
-                            Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
-                        </p>
-                        <h6 class="date">31st January, 2018</h6>
-                    </div>
-                    <div class="single-exibition item">
-                        <img src="../assets/img/e1.jpg" alt="">
-                        <ul class="tags">
-                            <li><a href="#">Travel</a></li>
-                            <li><a href="#">Life style</a></li>
-                        </ul>
-                        <a href="#"><h4>Portable latest blog for women</h4></a>
-                        <p>
-                            Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
-                        </p>
-                        <h6 class="date">31st January, 2018</h6>
-                    </div>
-
-                    <div class="single-exibition item">
-                        <img src="../assets/img/e2.jpg" alt="">
-                        <ul class="tags">
-                            <li><a href="#">Travel</a></li>
-                            <li><a href="#">Life style</a></li>
-                        </ul>
-                        <a href="#"><h4>Portable latest blog for women</h4></a>
-                        <p>
-                            Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
-                        </p>
-                        <h6 class="date">31st January, 2018</h6>
-                    </div>
-
-                    <div class="single-exibition item">
-                        <img src="../assets/img/e3.jpg" alt="">
-                        <ul class="tags">
-                            <li><a href="#">Travel</a></li>
-                            <li><a href="#">Life style</a></li>
-                        </ul>
-                        <a href="#"><h4>Portable latest blog for women</h4></a>
-                        <p>
-                            Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
-                        </p>
-                        <h6 class="date">31st January, 2018</h6>
-                    </div>
-                    <div class="single-exibition item">
-                        <img src="../assets/img/e1.jpg" alt="">
-                        <ul class="tags">
-                            <li><a href="#">Travel</a></li>
-                            <li><a href="#">Life style</a></li>
-                        </ul>
-                        <a href="#"><h4>Portable latest blog for women</h4></a>
-                        <p>
-                            Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
-                        </p>
-                        <h6 class="date">31st January, 2018</h6>
-                    </div>
-
-                    <div class="single-exibition item">
-                        <img class="img-fluid" src="../assets/img/e2.jpg" alt="">
-                        <ul class="tags">
-                            <li><a href="#">Travel</a></li>
-                            <li><a href="#">Life style</a></li>
-                        </ul>
-                        <a href="#"><h4>Portable latest blog for women</h4></a>
-                        <p>
-                            Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
-                        </p>
-                        <h6 class="date">31st January, 2018</h6>
-                    </div>
-
-                    <div class="single-exibition item">
-                        <img class="img-fluid" src="../assets/img/e3.jpg" alt="">
-                        <ul class="tags">
-                            <li><a href="#">Travel</a></li>
-                            <li><a href="#">Life style</a></li>
-                        </ul>
-                        <a href="#"><h4>Portable latest blog for women</h4></a>
-                        <p>
-                            Lorem ipsum dolor sit amet, consec teturadip isicing elit, sed do eiusmod tempor.
-                        </p>
-                        <h6 class="date">31st January, 2018</h6>
-                    </div>
+                    {{with .GalleryImages}}
+                        {{range .}}
+                            <div class="single-exibition item">
+                                <img id='base64image'  src='data:image/jpeg;base64,{{.Gallery.Image}}' alt="">
+                                <p>
+                                    {{.Gallery.Description}}
+                                </p>
+                            </div>
+                        {{end}}
+                    {{end}}
                 </div>
             </div>
         </div>
-
+        <br>
+        {{end}}
 
             <!-- start footer Area -->
             <footer class="footer-area section-gap">

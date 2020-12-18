@@ -6,11 +6,11 @@ import (
 	"ostmfe/domain/comment"
 )
 
-const commentProjectURL = api.BASE_URL + "comment-project/"
+const commentgroupURL = api.BASE_URL + "comment-group/"
 
-func CreateCommentProject(commentObject comment.CommentProject) (comment.CommentProject, error) {
-	entity := comment.CommentProject{}
-	resp, _ := api.Rest().SetBody(commentObject).Post(commentProjectURL + "create")
+func CreateCommentGroup(commentObject comment.CommentGroup) (comment.CommentGroup, error) {
+	entity := comment.CommentGroup{}
+	resp, _ := api.Rest().SetBody(commentObject).Post(commentgroupURL + "create")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -20,9 +20,9 @@ func CreateCommentProject(commentObject comment.CommentProject) (comment.Comment
 	}
 	return entity, nil
 }
-func UpdateCommentProject(commentObject comment.CommentProject) (comment.CommentProject, error) {
-	entity := comment.CommentProject{}
-	resp, _ := api.Rest().SetBody(commentObject).Post(commentProjectURL + "update")
+func UpdateCommentGroup(commentObject comment.CommentGroup) (comment.CommentGroup, error) {
+	entity := comment.CommentGroup{}
+	resp, _ := api.Rest().SetBody(commentObject).Post(commentgroupURL + "update")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -32,9 +32,9 @@ func UpdateCommentProject(commentObject comment.CommentProject) (comment.Comment
 	}
 	return entity, nil
 }
-func ReadCommentProject(id string) (comment.CommentProject, error) {
-	entity := comment.CommentProject{}
-	resp, _ := api.Rest().Get(commentProjectURL + "read?id=" + id)
+func ReadCommentGroup(id string) (comment.CommentGroup, error) {
+	entity := comment.CommentGroup{}
+	resp, _ := api.Rest().Get(commentgroupURL + "read?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -44,59 +44,59 @@ func ReadCommentProject(id string) (comment.CommentProject, error) {
 	}
 	return entity, nil
 }
-func DeleteCommentProject(id string) (comment.CommentProject, error) {
-	entity := comment.CommentProject{}
-	resp, _ := api.Rest().Get(commentProjectURL + "delete?id=" + id)
-	if resp.IsError() {
-		return entity, errors.New(resp.Status())
-	}
-	err := api.JSON.Unmarshal(resp.Body(), &entity)
-	if err != nil {
-		return entity, errors.New(resp.Status())
-	}
-	return entity, nil
-}
-
-func ReadCommentProjects() ([]comment.CommentProject, error) {
-	entity := []comment.CommentProject{}
-	resp, _ := api.Rest().Get(commentProjectURL + "reads")
-	if resp.IsError() {
-		return entity, errors.New(resp.Status())
-	}
-	err := api.JSON.Unmarshal(resp.Body(), &entity)
-	if err != nil {
-		return entity, errors.New(resp.Status())
-	}
-	return entity, nil
-}
-func ReadAllByProjectId(projectId string) ([]comment.CommentProject, error) {
-	entity := []comment.CommentProject{}
-	resp, _ := api.Rest().Get(commentProjectURL + "readAllbyProjectId?projectId=" + projectId)
-	if resp.IsError() {
-		return entity, errors.New(resp.Status())
-	}
-	err := api.JSON.Unmarshal(resp.Body(), &entity)
-	if err != nil {
-		return entity, errors.New(resp.Status())
-	}
-	return entity, nil
-}
-
-func ReadAllbyCommentId(projectId string) ([]comment.CommentProject, error) {
-	entity := []comment.CommentProject{}
-	resp, _ := api.Rest().Get(commentProjectURL + "readAllbyCommentId")
-	if resp.IsError() {
-		return entity, errors.New(resp.Status())
-	}
-	err := api.JSON.Unmarshal(resp.Body(), &entity)
-	if err != nil {
-		return entity, errors.New(resp.Status())
-	}
-	return entity, nil
-}
-func CountProjectComment(projectId string) (int64, error) {
+func CountCommentGroup(eventId string) (int64, error) {
 	var entity int64
-	resp, _ := api.Rest().Get(commentProjectURL + "count?projectId=" + projectId)
+	resp, _ := api.Rest().Get(commentgroupURL + "count?eventId=" + eventId)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
+func DeleteCommentGroup(id string) (comment.CommentGroup, error) {
+	entity := comment.CommentGroup{}
+	resp, _ := api.Rest().Get(commentgroupURL + "delete?id=" + id)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
+func ReadCommentGroups() ([]comment.CommentGroup, error) {
+	entity := []comment.CommentGroup{}
+	resp, _ := api.Rest().Get(commentgroupURL + "reads")
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
+
+func ReadAllByGroupId(eventId string) ([]comment.CommentGroup, error) {
+	entity := []comment.CommentGroup{}
+	resp, _ := api.Rest().Get(commentgroupURL + "readAllByEventId?eventId=" + eventId)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
+
+func ReadAllbyGroupId(projectId string) ([]comment.CommentGroup, error) {
+	entity := []comment.CommentGroup{}
+	resp, _ := api.Rest().Get(commentgroupURL + "readAllByCommentId")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}

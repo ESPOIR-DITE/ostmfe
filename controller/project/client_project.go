@@ -30,7 +30,7 @@ func Home(app *config.Env) http.Handler {
 	r := chi.NewRouter()
 	r.Get("/", homeHanler(app))
 	r.Get("/read_single/{projectId}", ReadSingleProjectHanler(app))
-	r.Post("/comment/{projectId}", createProjectComment(app))
+	r.Post("/comment", createProjectComment(app))
 	r.Post("/contribution", CreateContributionComment(app))
 	//r.Use(middleware.LoginSession{SessionManager: app.Session}.RequireAuthenticatedUser)
 	//r.Get("/home", indexHanler(app))
@@ -114,25 +114,30 @@ func getFileExtension(fileData *multipart.FileHeader) (bool, string) {
 }
 func createProjectComment(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		projectId := chi.URLParam(r, "projectId")
 		r.ParseForm()
 		name := r.PostFormValue("name")
 		email := r.PostFormValue("email")
 		message := r.PostFormValue("message")
+		projectId := r.PostFormValue("projectId")
 
-		if name != "" && email != "" && message != "" {
+		if name != "" && email != "" && message != "" && projectId != "" {
 			commentObject := comment.Comment{"", email, name, misc.FormatDateTime(time.Now()), misc.ConvertToByteArray(message), ""}
 			newComment, err := comment_io.CreateComment(commentObject)
 			if err != nil {
 				fmt.Println("error creating comment")
 			} else {
-				_, err := comment_io.CreateCommentProject(comment.CommentProject{"", projectId, newComment.Id})
+				projectCommentObject := comment.CommentProject{"", projectId, newComment.Id}
+				_, err := comment_io.CreateCommentProject(projectCommentObject)
 				if err != nil {
 					fmt.Println("error creating comment")
 				}
 			}
+			http.Redirect(w, r, "/project/read_single/"+projectId, 301)
+			return
 		}
+		fmt.Println("error one field missing")
 		http.Redirect(w, r, "/project/read_single/"+projectId, 301)
+		return
 	}
 }
 
@@ -153,14 +158,17 @@ func ReadSingleProjectHanler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			fmt.Println(err, " error reading projects comment Number")
 		}
+		projectComment := comment2.GetProjectComment(projectId)
+		//fmt.Println(" projectComment: ",projectComment)
 		type PageData struct {
 			ProjectDataHistory ProjectDataHistory
 			Projects           []project2.Project
 			Comments           []comment.CommentStack
 			CommentNumber      int64
-			GalleryString      []string
+			//GalleryString      []string
+			GalleryImages []misc.ProjectGalleryImages
 		}
-		data := PageData{projectDataHistory, projects, comment2.GetProjectComment(projectId), commentNumber, getProjectGallery(projectId)}
+		data := PageData{projectDataHistory, projects, projectComment, commentNumber, misc.GetProjectGallery(projectId)}
 
 		files := []string{
 			app.Path + "project/project_single.html",

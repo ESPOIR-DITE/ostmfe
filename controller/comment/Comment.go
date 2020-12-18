@@ -7,6 +7,48 @@ import (
 	"ostmfe/io/comment_io"
 )
 
+/**
+Group comment to be implemented in the backend
+*/
+func GetGroupComment(projectId string) []comment.CommentStack {
+	var parentCommentStack []comment.CommentStack
+	var parentComment []comment.CommentHelper
+	var subComment []comment.CommentHelper
+
+	for _, commentObject := range getGroupComment(projectId) {
+		if commentObject.ParentCommentId != "" {
+			subComment = append(subComment, commentObject)
+		} else {
+			parentComment = append(parentComment, commentObject)
+			parentCommentStack = append(parentCommentStack, comment.CommentStack{commentObject, subComment})
+		}
+	}
+	return parentCommentStack
+}
+func getGroupComment(groupId string) []comment.CommentHelper {
+	var myCommentObject []comment.CommentHelper
+	groupComments, err := comment_io.ReadAllByGroupId(groupId)
+	if err != nil {
+		fmt.Println("error reading group Comment")
+		return myCommentObject
+	}
+	//fmt.Println("groupComments: ",groupComments)
+	for _, groupComment := range groupComments {
+		myComment, err := comment_io.ReadComment(groupComment.CommentId)
+		if err != nil {
+			fmt.Println("error reading Comment")
+		}
+
+		//fmt.Println("Id: ",myComment.Id,"\n Comment ParentId: ",myComment.ParentCommentId,"\n Comment: ",myComment.Comment)
+		if myComment.Comment != nil {
+			commentHelper := comment.CommentHelper{myComment.Id, myComment.Email, myComment.Name, misc.FormatDateMonth(myComment.Date), misc.ConvertingToString(myComment.Comment), myComment.ParentCommentId}
+			myCommentObject = append(myCommentObject, commentHelper)
+		}
+	}
+	//fmt.Println("myComment: ",myCommentObject)
+	return myCommentObject
+}
+
 func GetProjectComment(projectId string) []comment.CommentStack {
 	var parentCommentStack []comment.CommentStack
 	var parentComment []comment.CommentHelper
@@ -35,7 +77,7 @@ func getProjectComment(projectId string) []comment.CommentHelper {
 		if err != nil {
 			fmt.Println("error reading Comment")
 		}
-		if myComment.ParentCommentId != "" && myComment.Comment != nil {
+		if myComment.Comment != nil {
 			commentHelper := comment.CommentHelper{myComment.Id, myComment.Email, myComment.Name, misc.FormatDateMonth(myComment.Date), misc.ConvertingToString(myComment.Comment), myComment.ParentCommentId}
 			myCommentObject = append(myCommentObject, commentHelper)
 		}
@@ -78,7 +120,7 @@ func getSubComment(parentComment string) []comment.CommentHelper {
 	return myComments
 }
 
-//This method returns a list of either parent or subcomment
+//This method returns a list of either parent or subComment
 func getComments(eventId string) []comment.CommentHelper {
 	var myCommentObject []comment.CommentHelper
 	eventComments, err := comment_io.ReadAllByEventId(eventId)
