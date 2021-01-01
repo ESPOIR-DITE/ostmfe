@@ -24,3 +24,13 @@ type SectionBlock struct {
 	SectionName string `json:"sectionName"`
 	Description string `json:"description"`
 }
+type PageBanner struct {
+	Id          string `json:"id"`
+	PageName    string `json:"pageName"`
+	Description string `json:"description"`
+	BannerId    string `json:"bannerId"`
+}
+type Banner struct {
+	Id    string `json:"id"`
+	Image []byte `json:"image"`
+}

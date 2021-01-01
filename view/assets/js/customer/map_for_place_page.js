@@ -1,28 +1,28 @@
-
-
-function initMap(PlaceList) {
-    // console.log(PlaceList);
-    // Object.keys(PlaceList).forEach((key, index) => {
-    //     console.log(key ,PlaceList[key]);
-    // });
-    // for (var key in PlaceList) {
-    //     if (PlaceList.hasOwnProperty(key)) {
-    //         console.log(key + " -> " + PlaceList[key]);
-    //     }
-    // }
-    // var myLatLng = {lat: -25.363, lng: 131.044};
-    //
-    // var map = new google.maps.Map(document.getElementById('map'), {
-    //     zoom: 4,
-    //     center: myLatLng
-    // });
-    //
-    // var marker = new google.maps.Marker({
-    //     position: myLatLng,
-    //     map: map,
-    //     title: 'Hello World!'
-    // });
-}
+//
+//
+// function initMap(PlaceList) {
+//     console.log(PlaceList);
+//     Object.keys(PlaceList).forEach((key, index) => {
+//         console.log(key ,PlaceList[key]);
+//     });
+//     for (var key in PlaceList) {
+//         if (PlaceList.hasOwnProperty(key)) {
+//             console.log(key + " -> " + PlaceList[key]);
+//         }
+//     }
+//     var myLatLng = {lat: -25.363, lng: 131.044};
+//
+//     var map = new google.maps.Map(document.getElementById('map'), {
+//         zoom: 4,
+//         center: myLatLng
+//     });
+//
+//     var marker = new google.maps.Marker({
+//         position: myLatLng,
+//         map: map,
+//         title: 'Hello World!'
+//     });
+// }
 // <script>
 // var markers = null;
 // var infoWindowContent = null

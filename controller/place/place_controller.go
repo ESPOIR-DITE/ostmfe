@@ -7,11 +7,16 @@ import (
 	"net/http"
 	"ostmfe/config"
 	"ostmfe/controller/misc"
+	"ostmfe/domain/event"
 	"ostmfe/domain/history"
 	image3 "ostmfe/domain/image"
+	"ostmfe/domain/people"
 	"ostmfe/domain/place"
+	"ostmfe/io/event_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
+	"ostmfe/io/pageData_io"
+	"ostmfe/io/people_io"
 	"ostmfe/io/place_io"
 )
 
@@ -56,20 +61,50 @@ func SinglePlaceHanler(app *config.Env) http.HandlerFunc {
 		}
 	}
 }
-
+func getPlaceImage(PlaceId string) string {
+	placeImage, err := place_io.ReadPlaceImageByPlaceId(PlaceId)
+	if err != nil {
+		fmt.Println(err, "Error reading places Image")
+		return ""
+	}
+	image, err := image_io.ReadImage(placeImage.ImageId)
+	if err != nil {
+		fmt.Println(err, "Error reading Image")
+		return ""
+	}
+	return misc.ConvertingToString(image.Image)
+}
 func homeHanler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		places, err := place_io.ReadPlaces()
 		if err != nil {
 			fmt.Println(err, "Error reading places")
 		}
-		type PageData struct {
-			Places []place.Place
+		var bannerImage string
+		pageBanner, err := pageData_io.ReadPageBannerWIthPageName("place-page")
+		if err != nil {
+			fmt.Println(err, " There is an error when reading place pageBanner")
+		} else {
+			bannerImage = misc.GetBannerImage(pageBanner.BannerId)
 		}
-		data := PageData{places}
+		type PageData struct {
+			Places      []place.Place
+			PlaceBanner string
+			GetImage    func(placeId string) string
+			PlaceData   []PlaceAggregatedDate
+		}
+
+		data := PageData{places,
+			bannerImage,
+			func(placeId string) string {
+				return getPlaceImage(placeId)
+			},
+			getPlaceAggregatedData(),
+		}
 		files := []string{
 			//app.Path + "place/places_page.html",
-			app.Path + "place/places_page_mapBox.html",
+			//app.Path + "place/places_page_mapBox.html",
+			app.Path + "place/mapBoxWithPics.html",
 			app.Path + "base_templates/navigator.html",
 			app.Path + "base_templates/footer.html",
 		}
@@ -157,4 +192,105 @@ func getPlaceGallery(placeId string) []string {
 		}
 	}
 	return picture
+}
+
+type PlaceAggregatedDate struct {
+	Place   place.Place
+	Event   event.Event
+	Gallery image3.GaleryHelper
+	People  []misc.PeopleData
+	Image   string
+}
+
+func getPlaceAggregatedData() []PlaceAggregatedDate {
+	var placeAggregated []PlaceAggregatedDate
+	var events event.Event
+	var gallery image3.GaleryHelper
+	var peoples []misc.PeopleData
+	var image string
+
+	places, err := place_io.ReadPlaces()
+	if err != nil {
+		fmt.Println(err, " error places")
+		return placeAggregated
+	}
+	for _, place := range places {
+		//Event Place
+		eventPlace, err := event_io.ReadEventPlaceOf(place.Id)
+		if err != nil {
+			fmt.Println(err, " error Event place")
+		} else {
+			events = getEvent(eventPlace.EventId)
+		}
+
+		//Gallery
+		PlaceGallery, err := place_io.ReadPlaceGaleryWithPlaceId(place.Id)
+		if err != nil {
+			fmt.Println(err, " error Gallery place")
+		} else {
+			gallery = getGallery(PlaceGallery.GalleryId)
+		}
+
+		//People
+		peoplePlaceObject, err := people_io.ReadPeoplePlaceAllByPlaceId(place.Id)
+		if err != nil {
+			fmt.Println(err, " error people place")
+		} else {
+			peoples = getPeopleWithPeoplePlace(peoplePlaceObject)
+		}
+		//Image
+		placeImage, err := place_io.ReadPlaceImageByPlaceId(place.Id)
+		if err != nil {
+			fmt.Println(err, " error image place")
+		} else {
+			image = misc.ConvertingToString(getImage(placeImage.ImageId).Image)
+		}
+		placeAggregated = append(placeAggregated, PlaceAggregatedDate{place, events, gallery, peoples, image})
+	}
+	return placeAggregated
+}
+
+func getPeopleWithPeoplePlace(peoplePlaces []people.PeoplePlace) []misc.PeopleData {
+	var peoples []misc.PeopleData
+	for _, peoplePlace := range peoplePlaces {
+		peoples = append(peoples, misc.GetPeopleData(peoplePlace.PeopleId))
+	}
+	return peoples
+}
+
+func getEvent(eventId string) event.Event {
+	var eventObject event.Event
+	newEventObject, err := event_io.ReadEvent(eventId)
+	if err != nil {
+		fmt.Println(err, " error places")
+		return eventObject
+	}
+	return newEventObject
+}
+func getGallery(galleryId string) image3.GaleryHelper {
+	var imageHelper image3.GaleryHelper
+	imageobject, err := image_io.ReadGallery(galleryId)
+	if err != nil {
+		fmt.Println(err, " error gallery")
+		return imageHelper
+	}
+	return image3.GaleryHelper{imageobject.Id, misc.ConvertingToString(imageobject.Image), imageobject.Description}
+}
+func getPeople(pepleId string) people.People {
+	var people people.People
+	peopleObject, err := people_io.ReadPeople(pepleId)
+	if err != nil {
+		fmt.Println(err, " error gallery")
+		return people
+	}
+	return peopleObject
+}
+func getImage(imageId string) image3.Images {
+	var image image3.Images
+	imageObject, err := image_io.ReadImage(imageId)
+	if err != nil {
+		fmt.Println(err, " error gallery")
+		return image
+	}
+	return imageObject
 }

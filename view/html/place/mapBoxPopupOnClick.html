@@ -4,11 +4,36 @@
     <meta charset="utf-8" />
     <title>Display a popup on click</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <script src="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js"></script>
-    <link href="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css" rel="stylesheet" />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.css" rel="stylesheet" />
+
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700" rel="stylesheet">
+    <!--
+    CSS
+    ============================================= -->
+    <link rel="stylesheet" href="../../assets/css/linearicons.css">
+    <link rel="stylesheet" href="../../assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../assets/css/bootstrap.css">
+    <link rel="stylesheet" href="../../assets/css/magnific-popup.css">
+    <link rel="stylesheet" href="../../assets/css/nice-select.css">
+    <link rel="stylesheet" href="../../assets/css/animate.min.css">
+    <link rel="stylesheet" href="../../assets/css/owl.carousel.css">
+    <link rel="stylesheet" href="../../assets/css/main.css">
     <style>
         body { margin: 0; padding: 0; }
         #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+        .ScrollStyle {
+            max-height: 990px;
+            overflow-y: scroll;
+        }
+        #marker {
+            background-image: url('https://docs.mapbox.com/mapbox-gl-js/assets/washington-monument.jpg');
+            background-size: cover;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -18,7 +43,147 @@
         font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
     }
 </style>
-<div id="map"></div>
+<div class="row">
+    <div class="col-lg-8 post-list blog-post-list">
+        <div id="map"></div>
+    </div>
+    <div class="col-lg-4 sidebar ScrollStyle" >
+        <div class="single-widget search-widget">
+            <form class="example" action="#" style="margin:auto;max-width:300px">
+                <input type="text" placeholder="Search Posts" name="search2">
+                <button type="submit"><i class="fa fa-search"></i></button>
+            </form>
+        </div>
+
+        <div class="single-widget protfolio-widget">
+            <img src="../../assets/img/blog/user2.jpg" alt="">
+            <a href="#"><h4>Adele Gonzalez</h4></a>
+            <p>
+                MCSE boot camps have its supporters and
+                its detractors. Some people do not understand why you should have to spend money
+                on boot camp when you can get.
+            </p>
+            <ul>
+                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
+                <li><a href="#"><i class="fa fa-behance"></i></a></li>
+            </ul>
+        </div>
+
+        <div class="single-widget category-widget">
+            <h4 class="title">Post Categories</h4>
+            <ul>
+                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Techlology</h6> <span>37</span></a></li>
+                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Lifestyle</h6> <span>24</span></a></li>
+                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Fashion</h6> <span>59</span></a></li>
+                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Art</h6> <span>29</span></a></li>
+                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Food</h6> <span>15</span></a></li>
+                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Architecture</h6> <span>09</span></a></li>
+                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Adventure</h6> <span>44</span></a></li>
+            </ul>
+        </div>
+
+        <div class="single-widget recent-posts-widget">
+            <h4 class="title">Recent Posts</h4>
+            <div class="blog-list ">
+                <div class="single-recent-post d-flex flex-row">
+                    <div class="recent-thumb">
+                        <img class="img-fluid" src="../assets/img/blog/r1.jpg" alt="">
+                    </div>
+                    <div class="recent-details">
+                        <a href="blog-single.html">
+                            <h4>
+                                Home Audio Recording
+                                For Everyone
+                            </h4>
+                        </a>
+                        <p>
+                            02 hours ago
+                        </p>
+                    </div>
+                </div>
+                <div class="single-recent-post d-flex flex-row">
+                    <div class="recent-thumb">
+                        <img class="img-fluid" src="../assets/img/blog/r2.jpg" alt="">
+                    </div>
+                    <div class="recent-details">
+                        <a href="blog-single.html">
+                            <h4>
+                                Home Audio Recording
+                                For Everyone
+                            </h4>
+                        </a>
+                        <p>
+                            02 hours ago
+                        </p>
+                    </div>
+                </div>
+                <div class="single-recent-post d-flex flex-row">
+                    <div class="recent-thumb">
+                        <img class="img-fluid" src="../assets/img/blog/r3.jpg" alt="">
+                    </div>
+                    <div class="recent-details">
+                        <a href="blog-single.html">
+                            <h4>
+                                Home Audio Recording
+                                For Everyone
+                            </h4>
+                        </a>
+                        <p>
+                            02 hours ago
+                        </p>
+                    </div>
+                </div>
+                <div class="single-recent-post d-flex flex-row">
+                    <div class="recent-thumb">
+                        <img class="img-fluid" src="../assets/img/blog/r4.jpg" alt="">
+                    </div>
+                    <div class="recent-details">
+                        <a href="blog-single.html">
+                            <h4>
+                                Home Audio Recording
+                                For Everyone
+                            </h4>
+                        </a>
+                        <p>
+                            02 hours ago
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="single-widget category-widget">
+            <h4 class="title">Post Archive</h4>
+            <ul>
+                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Dec '17</h6> <span>37</span></a></li>
+                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Nov '17</h6> <span>24</span></a></li>
+                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Oct '17</h6> <span>59</span></a></li>
+                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Sep '17</h6> <span>29</span></a></li>
+                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Aug '17</h6> <span>15</span></a></li>
+                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Jul '17</h6> <span>09</span></a></li>
+                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Jun '17</h6> <span>44</span></a></li>
+            </ul>
+        </div>
+
+        <div class="single-widget tags-widget">
+            <h4 class="title">Tag Clouds</h4>
+            <ul>
+                <li><a href="#">Lifestyle</a></li>
+                <li><a href="#">Art</a></li>
+                <li><a href="#">Adventure</a></li>
+                <li><a href="#">Food</a></li>
+                <li><a href="#">Techlology</a></li>
+                <li><a href="#">Fashion</a></li>
+                <li><a href="#">Architecture</a></li>
+                <li><a href="#">Food</a></li>
+                <li><a href="#">Technology</a></li>
+            </ul>
+        </div>
+
+    </div>
+</div>
 <script>
     mapboxgl.accessToken = 'pk.eyJ1IjoiZXNwb2lyLWRpdGUiLCJhIjoiY2tmaTZsdDBiMGpubzJzcDh2aXdodXlnayJ9.e6tqu6hLu5xlaSk84ERd9g';
     var map = new mapboxgl.Map({
@@ -27,6 +192,11 @@
         center: [-77.04, 38.907],
         zoom: 11.15
     });
+    var marker = new mapboxgl.Marker({
+        color: "#FFFFFF",
+        draggable: true
+    }).setLngLat([18.440777988132027, -34.19459834383511])
+        .addTo(map);
 
     map.on('load', function () {
         map.addSource('places', {
@@ -39,7 +209,7 @@
                         'properties': {
                             'description':
                                 '<strong>Make it Mount Pleasant</strong><p><a href="http://www.mtpleasantdc.com/makeitmtpleasant" target="_blank" title="Opens in a new window">Make it Mount Pleasant</a> is a handmade and vintage market and afternoon of live entertainment and kids activities. 12:00-6:00 p.m.</p>',
-                            'icon': 'theatre'
+                            'icon': 'marker'
                         },
                         'geometry': {
                             'type': 'Point',
@@ -51,7 +221,7 @@
                         'properties': {
                             'description':
                                 '<strong>Mad Men Season Five Finale Watch Party</strong><p>Head to Lounge 201 (201 Massachusetts Avenue NE) Sunday for a <a href="http://madmens5finale.eventbrite.com/" target="_blank" title="Opens in a new window">Mad Men Season Five Finale Watch Party</a>, complete with 60s costume contest, Mad Men trivia, and retro food and drink. 8:00-11:00 p.m. $10 general admission, $20 admission and two hour open bar.</p>',
-                            'icon': 'theatre'
+                            'icon': 'marker'
                         },
                         'geometry': {
                             'type': 'Point',
@@ -145,7 +315,7 @@
                 ]
             }
         });
-// Add a layer showing the places.
+        // Add a layer showing the places.
         map.addLayer({
             'id': 'places',
             'type': 'symbol',
@@ -156,15 +326,15 @@
             }
         });
 
-// When a click event occurs on a feature in the places layer, open a popup at the
-// location of the feature, with description HTML from its properties.
+        // When a click event occurs on a feature in the places layer, open a popup at the
+        // location of the feature, with description HTML from its properties.
         map.on('click', 'places', function (e) {
             var coordinates = e.features[0].geometry.coordinates.slice();
             var description = e.features[0].properties.description;
 
-// Ensure that if the map is zoomed out such that multiple
-// copies of the feature are visible, the popup appears
-// over the copy being pointed to.
+            // Ensure that if the map is zoomed out such that multiple
+            // copies of the feature are visible, the popup appears
+            // over the copy being pointed to.
             while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
                 coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
             }
@@ -173,14 +343,15 @@
                 .setLngLat(coordinates)
                 .setHTML(description)
                 .addTo(map);
+            console.log(coordinates);
         });
 
-// Change the cursor to a pointer when the mouse is over the places layer.
+        // Change the cursor to a pointer when the mouse is over the places layer.
         map.on('mouseenter', 'places', function () {
             map.getCanvas().style.cursor = 'pointer';
         });
 
-// Change it back to a pointer when it leaves.
+        // Change it back to a pointer when it leaves.
         map.on('mouseleave', 'places', function () {
             map.getCanvas().style.cursor = '';
         });

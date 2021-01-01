@@ -21,6 +21,7 @@ import (
 	"ostmfe/io/comment_io"
 	"ostmfe/io/contribution_io"
 	"ostmfe/io/event_io"
+	"ostmfe/io/pageData_io"
 	"ostmfe/io/project_io"
 	"path/filepath"
 	"strings"
@@ -237,12 +238,22 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			fmt.Println(err, " error reading projects")
 		}
-		type PageData struct {
-			Events   []misc.SimpleEventData
-			Years    []YearData
-			Projects []project.Project
+
+		var bannerImage string
+		pageBanner, err := pageData_io.ReadPageBannerWIthPageName("event-page")
+		if err != nil {
+			fmt.Println(err, " There is an error when reading people pageBanner")
+		} else {
+			bannerImage = misc.GetBannerImage(pageBanner.BannerId)
 		}
-		data := PageData{events, getYearDate(), projects}
+
+		type PageData struct {
+			Events      []misc.SimpleEventData
+			Years       []YearData
+			Projects    []project.Project
+			EventBanner string
+		}
+		data := PageData{events, getYearDate(), projects, bannerImage}
 		files := []string{
 			app.Path + "event/events.html",
 			app.Path + "base_templates/navigator.html",

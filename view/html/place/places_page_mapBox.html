@@ -71,7 +71,7 @@
 {{template "navigator"}}
 
 <!-- start banner Area -->
-<section class="banner-area relative" id="home">
+<section {{if .PlaceBanner}} style="background: url('data:image/jpeg;base64,{{.PlaceBanner}}') center; width: 100%;background-size: cover;background-color: rgba(0, 0, 0, 0.7);" class="relative" {{else}}class="banner-area relative" {{end}}  id="home" >
     <div class="overlay overlay-bg"></div>
     <div class="container">
         <div class="row d-flex align-items-center justify-content-center">
@@ -112,7 +112,7 @@
     </section>
 
 
-    <a class="navbar-brand" href="#">
+    <a class="navbar-brand" href="#" >
 
     </a>
         <div class="container text-center">

@@ -41,8 +41,17 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 
 		type PageData struct {
 			VisitPageSection VisitPageSection
+			VisitBanner      string
 		}
-		data := PageData{getPageData("Visit")}
+
+		var bannerImage string
+		pageBanner, err := pageData_io.ReadPageBannerWIthPageName("visit-page")
+		if err != nil {
+			fmt.Println(err, " There is an error when reading people pageBanner")
+		} else {
+			bannerImage = misc.GetBannerImage(pageBanner.BannerId)
+		}
+		data := PageData{getPageData("Visit"), bannerImage}
 		files := []string{
 			app.Path + "visit/visit.html",
 			app.Path + "base_templates/navigator.html",

@@ -8,7 +8,7 @@ import (
 
 const placeimageURL = api.BASE_URL + "place_image/"
 
-func CreatePlaceImage(helper place2.PlaceImageHelper) (place2.PlaceImage, error) {
+func CreatePlaceImage(helper place2.PlaceImage) (place2.PlaceImage, error) {
 	entity := place2.PlaceImage{}
 
 	resp, _ := api.Rest().SetBody(helper).Post(placeimageURL + "create")
@@ -64,6 +64,19 @@ func ReadPlaceImageWithImageId(id string) (place2.PlaceImage, error) {
 func ReadPlaceImageAllOf(placeId string) ([]place2.PlaceImage, error) {
 	entity := []place2.PlaceImage{}
 	resp, _ := api.Rest().Get(placeimageURL + "readAllOf?id=" + placeId)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
+
+func ReadPlaceImageByPlaceId(placeId string) (place2.PlaceImage, error) {
+	entity := place2.PlaceImage{}
+	resp, _ := api.Rest().Get(placeimageURL + "readByPlaceId?id=" + placeId)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}

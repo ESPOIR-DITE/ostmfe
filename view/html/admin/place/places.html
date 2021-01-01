@@ -12,15 +12,23 @@
   <title>SB Admin 2 - Tables</title>
 
   <!-- Custom fonts for this template -->
-  <link href="../../assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="../../../assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
   <!-- Custom styles for this template -->
-  <link href="../../assets/css/sb-admin-2.min.css" rel="stylesheet">
+  <link href="../../../assets/css/sb-admin-2.min.css" rel="stylesheet">
 
   <!-- Custom styles for this page -->
-  <link href="../../assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+  <link href="../../../assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.js"></script>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.css" rel="stylesheet" />
+
+  <style>
+    body { margin: 0; padding: 0; }
+    #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+
+  </style>
 </head>
 
 <body id="page-top">
@@ -68,15 +76,13 @@
               <div class="card-body p-0">
                 <!-- Nested Row within Card Body -->
                 <div class="row">
-                  <div class="col-lg-7 d-none d-lg-block">
-                    <div class="map-wrap" style="width:100%; height: 100%;" id="map"></div>
-                  </div>
-                  <div class="col-lg-5">
+
+                  <div class="col-lg-8">
                     <div class="p-5">
                       <div class="text-center">
                         <h1 class="h4 text-gray-900 mb-4">New Place </h1>
                       </div>
-                      <form class="user" method="post" action="/admin_user/place/create_stp1">
+                      <form class="user" method="post" action="/admin_user/place/create_stp1" enctype="multipart/form-data">
                         <div class="form-group">
                           <label>Place Title</label>
                           <input type="text" class="form-control" name="title" id="exampleInputEmail" placeholder="Place name ex: la peirre tailler!" required>
@@ -87,7 +93,15 @@
                         </div>
                         <div class="form-group ">
                           <label>Description <small> Only 150 characters </small></label>
-                          <textarea class="form-control" name="description" maxlength="200"></textarea>
+                          <textarea class="form-control" id="desc" name="description" maxlength="200"></textarea>
+                        </div>
+                        <div class="form-group">
+                          <label>Place History</label>
+                          <textarea style="height: 200px" name="history" class="form-control" id="mytextare" placeholder="History...."></textarea>
+                        </div>
+                        <div class="form-group ">
+                          <label>Project profile Picture</label>
+                          <input type="file"name="file" class="form-control " id="file" placeholder="Project Name" required>
                         </div>
 
                         <button type="submit" class="btn btn-primary  btn-block">
@@ -101,6 +115,13 @@
                       <hr>
                     </div>
                   </div>
+
+
+                  <div class="col-lg-4">
+                    <br/>
+                    <div class="map-wrap" style=" height: 100%; width: 100%; margin-top: 15px;" id="map"></div>
+                  </div>
+
                 </div>
               </div>
 
@@ -238,26 +259,22 @@
 
   <!-- Bootstrap core JavaScript-->
   <script src="../../assets/vendor/jquery/jquery.min.js"></script>
-  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
   <!-- Core plugin JavaScript-->
-  <script src="../../assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+  <script src="../../../assets/vendor/jquery-easing/jquery.easing.min.js"></script>
 
   <!-- Custom scripts for all pages-->
-  <script src="../../assets/js/sb-admin-2.min.js"></script>
+  <script src="../../../assets/js/sb-admin-2.min.js"></script>
 
   <!-- Page level plugins -->
-  <script src="../../assets/vendor/datatables/jquery.dataTables.min.js"></script>
-  <script src="../../assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+  <script src="../../../assets/vendor/datatables/jquery.dataTables.min.js"></script>
+  <script src="../../../assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
   <!-- Page level custom scripts -->
-  <script src="../../assets/js/demo/datatables-demo.js"></script>
+  <script src="../../../assets/js/demo/datatables-demo.js"></script>
   <!-- Custom map-->
-  <script src="../../assets/js/customer/mymap.js"></script>
-  <!-- Custom scripts for all pages-->
-  <script async defer
-          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA&callback=initMap">
-  </script>
+
 
 
 
@@ -267,5 +284,18 @@
     $("#deleteBtn").attr('href','/admin_user/place/delete/'+id);
     $("#value").text(name);
   }
+
+
+  mapboxgl.accessToken = 'pk.eyJ1IjoiZXNwb2lyLWRpdGUiLCJhIjoiY2tmaTZsdDBiMGpubzJzcDh2aXdodXlnayJ9.e6tqu6hLu5xlaSk84ERd9g';
+  var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/streets-v11',
+    center: [18.431896174363573,-34.19493744157412],
+    zoom: 10
+  });
+
+  map.on('click', function (e) {
+    document.getElementById('latlng').value = e.lngLat.lng.toString()+','+e.lngLat.lat.toString();
+  });
 </script>
 </html>

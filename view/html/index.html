@@ -15,6 +15,11 @@
     <meta charset="UTF-8">
     <!-- Site Title -->
     <title>Simon's Town Museum</title>
+    <style>
+        .banner .overlay-bg {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+    </style>
     <base href="/">
 
     <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700" rel="stylesheet">
@@ -48,7 +53,7 @@
             <li data-target="#main-carousel" data-slide-to="2"></li>
         </ol><!-- /.carousel-indicators -->
 
-        <div class="carousel-inner">
+        <div class="carousel-inner ">
             <div class="carousel-item active">
                 <img class="d-block img-fluid" src="../assets/img/protestWithFilter.png" alt="">
                 <div class="carousel-caption d-none d-md-block primary-border"
@@ -65,7 +70,7 @@
                         fugit, numquam minus!</p>
                 </div>
             </div>
-            <div class="carousel-item">
+            <div class="carousel-item banner">
                 <img class="d-block img-fluid" src="../assets/img/simonsTownWithFilter.png" alt="">
                 <div class="carousel-caption d-none d-md-block" style="background-color: #4e555b; opacity: 85%">
                     <h2 class="text-white">Mountain</h2>
@@ -194,6 +199,7 @@
                 </script>
             </div>
         {{else}}
+            <div class="row">
             <div class="col-lg-6 quote-left">
                 <h1>
                     <span>Music</span> gives soul to the universe, <br>
@@ -209,6 +215,7 @@
                     cillum dolore eu fugiat nulla pariatur.
                 </p>
             </div>
+            </div>
         {{end}}
 
 
@@ -220,35 +227,43 @@
 <div class="">
     <div class="container">
         <div class="section-top-border">
-            <h3 class="mb-30">Share Your Story Here.</h3>
             <div class="row">
-                <div class="col-md-3">
-                    <img width="90%" src="../assets/img/share_your_story.jpg" alt="">
+
+                {{if .PagePageSection.Notification}}
+                <div class="title text-center" id="shareYourStory">
+                    <script>
+                        var div = document.getElementById('shareYourStory');
+                        var myvalue = {{.PagePageSection.ShareYourStory}}
+                            parseMe(myvalue);
+                        function parseMe(value) {
+                            div.innerHTML += value;
+                        }
+                    </script>
                 </div>
-                <div class="col-md-9 mt-sm-20">
-                    <p >Recently, the US Federal government banned online casinos from operating
-                        in America by making it illegal to transfer money to them through any US bank or payment system.
-                        As a result of this law, most of the popular online casino networks such as Party Gaming and
-                        PlayTech left the United States. Overnight, online casino players found themselves being chased
-                        by the Federal government. But, after a fortnight, the online casino industry came up with a
-                        solution and new online casinos started taking root. These began to operate under a different
-                        business umbrella, and by doing that, rendered the transfer of money to and from them legal. A
-                        major part of this was enlisting electronic banking systems that would accept this new
-                        clarification and start doing business with me. Listed in this article are the electronic
-                        banking systems that accept players from the United States that wish to play in online
-                        casinos.</p>
-                    <a data-toggle="modal" href="" data-target="#Contribution" class="genric-btn default radius e-large">Share</a>
+                {{else}}
+                <div class="col-md-5">
+                    <h3 class="mb-30 text-center">Share Your Story Here.</h3>
+                    <img width="450px" src="../assets/img/share_your_story.jpg" alt="">
+                </div>
+                <div class="col-md-7 mt-sm-20">
+                    <h1 class="quote-right" style="margin-top: 30%">
+                        The History of simon's town is collected and written by the personage of the history.
+                    </h1>
+                    <br>
+                    <a data-toggle="modal" href="" data-target="#Contribution" class="genric-btn info radius e-large">Share</a>
 
                 </div>
+                {{end}}
             </div>
         </div>
     </div>
 </div>
 
 <!-- start project Area -->
+<!-- 1. check if there is any projects in the list so that we can display this block-->
+{{if .Projects}}
 <section class="blog-posts-area pt-100">
     <div class="container">
-
         <div class="row">
             <div class="col-lg-8 post-list blog-post-list">
                 {{if .PagePageSection.ProjectIntro}}
@@ -401,22 +416,17 @@
                     </form>
                 </div-->
 
-                <div class="single-widget protfolio-widget">
+                <!--div class="single-widget protfolio-widget">
                     <img width="70%" src="../assets/img/share_your_story.jpg" alt="">
                     <a class="julie" data-toggle="modal" href="" data-target="#Contribution"><h1>Share Your Story
                             Here.</h1></a>
-                    <!---p>
-                        MCSE boot camps have its supporters and
-                        its detractors. Some people do not understand why you should have to spend money
-                        on boot camp when you can get.
-                    </p--->
                     <ul>
                         <li><a href="#"><i class="fa fa-facebook"></i></a></li>
                         <li><a href="#"><i class="fa fa-twitter"></i></a></li>
                         <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
                         <li><a href="#"><i class="fa fa-behance"></i></a></li>
                     </ul>
-                </div>
+                </div-->
 
 
                 <div class="single-widget tags-widget">
@@ -458,6 +468,7 @@
         </div>
     </div>
 </section>
+{{end}}
 <!-- end project Area -->
 
 
@@ -474,18 +485,17 @@
                             var div = document.getElementById('ExhibitionIntro');
                             var myvalue = {{.PagePageSection.ExhibitionIntro}}
                                 parseMe(myvalue);
-
                             function parseMe(value) {
                                 div.innerHTML += value;
                             }
                         </script>
                     </div>
                 {{else}}
-                    <div class="title text-center">
+                    <!--div class="title text-center">
                         <h1 class="mb-10">Latest From Our Blog</h1>
                         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut
                             labore et dolore magna aliqua.</p>
-                    </div>
+                    </div-->
                 {{end}}
             </div>
         </div>
@@ -556,7 +566,7 @@
 <!-- End blog Area -->
 
 <!-- Start gallery Area -->
-<section class="gallery-area section-gap" id="gallery">
+<!--section class="gallery-area section-gap" id="gallery">
     <div class="container">
         <div class="row d-flex justify-content-center">
             <div class="menu-content pb-70 col-lg-8">
@@ -569,7 +579,7 @@
         </div>
 
     </div>
-</section>
+</section-->
 <!-- End gallery Area -->
 <!-- Logout Modal-->
 <div class="modal fade" id="bookingModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -756,7 +766,6 @@
     </div>
 </div>
 
-
 <div class="modal fade bd-example-modal-lg" id="Contribution" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -836,9 +845,9 @@
 <script>
     $(document).ready(function () {
         $("#gradeOrAge").hide();
-        if () {
-            $('#warning').modal('show');
-        }
+        // if () {
+        //     $('#warning').modal('show');
+        // }
     })
     $("select#bookingType").change(function () {
         var bType = $("#bookingType option:selected").text();

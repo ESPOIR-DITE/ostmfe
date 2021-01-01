@@ -151,6 +151,7 @@ type HomePageData struct {
 	ProjectIntro    string
 	EventIntro      string
 	ExhibitionIntro string
+	ShareYourStory  string
 }
 
 func GetPageData(pageName string) HomePageData {
@@ -158,6 +159,7 @@ func GetPageData(pageName string) HomePageData {
 	var projectintro string
 	var eventintro string
 	var exibitionintro string
+	var shareYourStory string
 
 	page, err := pageData_io.ReadPageDataWIthName(pageName)
 	if err != nil {
@@ -188,10 +190,14 @@ func GetPageData(pageName string) HomePageData {
 					fmt.Println(" exhibition", pageSection)
 					exibitionintro = misc.ConvertingToString(pageDateSection.Content)
 				}
+				if pageSection.SectionName == "shareYourStory" {
+					fmt.Println(" exhibition", pageSection)
+					shareYourStory = misc.ConvertingToString(pageDateSection.Content)
+				}
 			}
 		}
 	}
-	return HomePageData{notification, projectintro, eventintro, exibitionintro}
+	return HomePageData{notification, projectintro, eventintro, exibitionintro, shareYourStory}
 }
 
 func GetEvents() []SimpleEventData {

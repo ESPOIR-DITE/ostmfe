@@ -256,13 +256,22 @@ func getStaff() []StaffData {
 func homeHanler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
+		var bannerImage string
+		pageBanner, err := pageData_io.ReadPageBannerWIthPageName("event-page")
+		if err != nil {
+			fmt.Println(err, " There is an error when reading people pageBanner")
+		} else {
+			bannerImage = misc.GetBannerImage(pageBanner.BannerId)
+		}
 		type PageData struct {
-			Groups       []GroupData
-			Staffs       []StaffData
-			PageSections AboutUsPageSection
+			Groups        []GroupData
+			Staffs        []StaffData
+			PageSections  AboutUsPageSection
+			AboutUsBanner string
+			GalleryImages []misc.GroupGalleryImages
 		}
 
-		data := PageData{getGroupData(), getStaff(), getPageData("aboutUs")}
+		data := PageData{getGroupData(), getStaff(), getPageData("aboutUs"), bannerImage, misc.GetAllGroupGallery()}
 		files := []string{
 			app.Path + "about_us/about_us.html",
 			app.Path + "base_templates/navigator.html",

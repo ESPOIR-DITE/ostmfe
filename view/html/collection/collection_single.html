@@ -14,9 +14,9 @@
         <!-- meta character set -->
         <meta charset="UTF-8">
         <!-- Site Title -->
-        <title>Art Museum</title>
+        <title>Simon's Town Museum</title>
 
-        <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700" rel="stylesheet"> 
+        <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700" rel="stylesheet">
             <!--
             CSS
             ============================================= -->
@@ -34,21 +34,21 @@
         {{template "navigator" .}}
 
             <!-- start banner Area -->
-            <section class="banner-area relative" id="home">    
+            <section class="banner-area relative" id="home">
                 <div class="overlay overlay-bg"></div>
                 <div class="container">
                     <div class="row d-flex align-items-center justify-content-center">
                         <div class="about-content col-lg-12">
                             <h1 class="text-white">
                                 {{.CollectionData.Collection.Name}}
-                            </h1>   
+                            </h1>
                             <p class="text-white link-nav"><a href="/">Home </a>  <span class="lnr lnr-arrow-right"></span>  <a href="/collection"> Event</a></p>
-                        </div>                                          
+                        </div>
                     </div>
                 </div>
             </section>
-            <!-- End banner Area -->    
-			
+            <!-- End banner Area -->
+
 			<!-- Start blog-posts Area -->
         <hr>
 			<section class="blog-posts-area section">
@@ -89,7 +89,7 @@
 												<li><a href="#"><i class="fa fa-dribbble"></i></a></li>
 												<li><a href="#"><i class="fa fa-behance"></i></a></li>
 											</ul>
-											
+
 										</div>
 									</div>
 								</div>
@@ -98,7 +98,7 @@
                             <!-- Start comment-sec Area -->
                                 {{template "comments" .}}
                             <!-- End comment-sec Area -->
-                            
+
                             <!-- Start commentform Area -->
                             <section class="commentform-area pt-80">
                                 <div class="container">
@@ -115,19 +115,19 @@
                                             <a class="primary-btn mt-20" href="#">Comment</a>
                                         </div>
                                     </div>
-                                </div>    
+                                </div>
                             </section>
                             <!-- End commentform Area -->
 
 
-							</div>																		
+							</div>
 						</div>
 						<div class="col-lg-4 sidebar">
 							<div class="single-widget search-widget">
 								<form class="example" action="#" style="margin:auto;max-width:300px">
 								  <input type="text" placeholder="Search Posts" name="search2">
 								  <button type="submit"><i class="fa fa-search"></i></button>
-								</form>								
+								</form>
 							</div>
 
                             {{with .CollectionData.Images}}
@@ -143,20 +143,20 @@
 									<li><a href="#"><i class="fa fa-twitter"></i></a></li>
 									<li><a href="#"><i class="fa fa-dribbble"></i></a></li>
 									<li><a href="#"><i class="fa fa-behance"></i></a></li>
-								</ul>								
+								</ul>
 							</div>
                             {{end}}
                             {{end}}
 						</div>
 					</div>
-				</div>	
+				</div>
 			</section>
 			<!-- End blog-posts Area -->
-			
+
 
             <!-- start footer Area -->
         {{template "footer" .}}
-            <!-- End footer Area -->        
+            <!-- End footer Area -->
 
             <script src="../../assets/js/vendor/jquery-2.2.4.min.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>

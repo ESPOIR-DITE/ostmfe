@@ -109,7 +109,6 @@
                                   </form>
                                   {{end}}
                                 </div>
-
                               </div>
                             {{end}}
                           {{end}}
@@ -117,7 +116,7 @@
                           <div class="text-center">
                             <h1 class="h4 text-gray-900 mb-4">You have no pictures for this Group, Please Upload pictures</h1>
                           </div>
-                          <form class="user"method="post" action="/admin_user/group/create_image" enctype="multipart/form-data">
+                          <form class="user"method="post" action="/admin_user/group/create_pictures" enctype="multipart/form-data">
                             <input type="hidden"name="groupId" value="{{.Groups.Group.Id}}" required>
                             <div class="form-group ">
                               <label>Place profile Picture</label>

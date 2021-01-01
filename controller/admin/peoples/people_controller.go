@@ -392,6 +392,7 @@ func CreatePeopleCategoryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		category := r.PostFormValue("category")
+		fmt.Println(category)
 		if category != "" {
 			people := people2.Category{"", category}
 			peopleCategory, err := people_io.CreateCategory(people)
@@ -401,14 +402,15 @@ func CreatePeopleCategoryHandler(app *config.Env) http.HandlerFunc {
 					app.Session.Remove(r.Context(), "user-create-error")
 				}
 				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-				http.Redirect(w, r, "/admin_user/people/people/new", 301)
+				http.Redirect(w, r, "/admin_user/people/people_category/new", 301)
 				return
 			}
+
 			if app.Session.GetString(r.Context(), "creation-successful") != "" {
 				app.Session.Remove(r.Context(), "creation-successful")
 			}
 			app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new People Type : "+peopleCategory.Category)
-			http.Redirect(w, r, "/admin_user/people/people/new", 301)
+			http.Redirect(w, r, "/admin_user/people/people_category/new", 301)
 			return
 		}
 		fmt.Println("One of the field is missing")
@@ -416,7 +418,7 @@ func CreatePeopleCategoryHandler(app *config.Env) http.HandlerFunc {
 			app.Session.Remove(r.Context(), "creation-unknown-error")
 		}
 		app.Session.Put(r.Context(), "creation-unknown-error", "You have encountered an unknown error, please try again")
-		http.Redirect(w, r, "/admin_user/people/people/new", 301)
+		http.Redirect(w, r, "/admin_user/people/people_category/new", 301)
 		return
 	}
 }
@@ -434,12 +436,12 @@ func NewPeopleCategoryHandler(app *config.Env) http.HandlerFunc {
 			app.Session.Remove(r.Context(), "user-create-error")
 		}
 
-		peoples, err := people_io.ReadPeopleCategorys()
+		peoples, err := people_io.ReadCategories()
 		if err != nil {
 			fmt.Println(err, " There is an error when reading all the people category")
 		}
 		type PageData struct {
-			Peoples       []people2.PeopleCategory
+			Peoples       []people2.Category
 			Backend_error string
 			Unknown_error string
 			SidebarData   misc.SidebarData

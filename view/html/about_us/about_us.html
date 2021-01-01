@@ -15,6 +15,11 @@
     <meta charset="UTF-8">
     <!-- Site Title -->
     <title>Simon's Town Museum</title>
+    <style>
+        .banner .overlay-bg {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+    </style>
 
     <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700" rel="stylesheet">
     <!--
@@ -33,7 +38,7 @@
 {{template "navigator" .}}
 
 <!-- start banner Area -->
-<section class="banner-area relative" id="home">
+<section {{if .AboutUsBanner}} style="background: url('data:image/jpeg;base64,{{.AboutUsBanner}}') center; width: 100%;background-size: cover;background-color: rgba(0, 0, 0, 0.7);" class="relative banner" {{else}}class="banner-area relative" {{end}}  id="home" >
     <div class="overlay overlay-bg"></div>
     <div class="container">
         <div class="row d-flex align-items-center justify-content-center">
@@ -84,7 +89,7 @@
 </section>
 
 {{if .Staffs}}
-<section class="section-gap info-area" id="about">
+<section class="section info-area" id="about">
     <div class="container">
         <div class="row d-flex justify-content-center">
             <div class="menu-content pb-40 col-lg-8">
@@ -185,100 +190,19 @@
         {{end}}{{end}}<!-- End looping Groups slice-->
         {{end}}<!-- End Checking the slice-->
 
-        <section class="section-gap info-area" id="about">
-            <div class="container">
-                <div class="row d-flex justify-content-center">
-                    <div class="menu-content pb-40 col-lg-8">
-                        <div class="title text-center">
-                            <h1 class="mb-10">Few words about our Museum</h1>
-                            <p>Who are in extremely love with eco friendly system.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="single-info row mt-40">
-                    <div class="col-lg-6 col-md-12 mt-120 text-center no-padding info-left">
-                        <div class="info-thumb">
-                            <img src="../assets/img/pages/about-img.jpg" class="img-fluid" alt="">
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-12 no-padding info-rigth">
-                        <div class="info-content">
-                            <h2 class="pb-30">We Realize that <br>
-                                there are reduced <br>
-                                Wastege Stand out</h2>
-                            <p>
-                                inappropriate behavior is often laughed off as “boys will be boys,” women face higher
-                                conduct standards – especially in the workplace. That’s why it’s crucial that, as women.
-                            </p>
-                            <br>
-                            <p>
-                                inappropriate behavior is often laughed off as “boys will be boys,” women face higher
-                                conduct standards – especially in the workplace. That’s why it’s crucial that, as women.
-                                inappropriate behavior is often laughed off as “boys will be boys,” women face higher
-                                conduct standards – especially in the workplace. That’s why it’s crucial that, as women.
-                            </p>
-                            <br>
-                            <p>
-                                inappropriate behavior is often laughed off as “boys will be boys,” women face higher
-                                conduct standards – especially in the workplace. That’s why it’s crucial that, as women.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <div class="section-top-border">
             <h3>Groups Gallery</h3>
             <div class="row gallery-item">
+                {{with .GalleryImages}}
+                {{range .}}
                 <div class="col-md-4">
-                    <a href="../../assets/img/elements/g1.jpg" class="img-pop-up">
+                    <a href="data:image/jpeg;base64,{{.Gallery.Image}}" class="img-pop-up">
                         <div class="single-gallery-image"
-                             style="background: url(../../assets/img/elements/g1.jpg);"></div>
+                             style="background: url('data:image/jpeg;base64,{{.Gallery.Image}}');"></div>
                     </a>
                 </div>
-                <div class="col-md-4">
-                    <a href="../../assets/img/elements/g2.jpg" class="img-pop-up">
-                        <div class="single-gallery-image"
-                             style="background: url(../../assets/img/elements/g2.jpg);"></div>
-                    </a>
-                </div>
-                <div class="col-md-4">
-                    <a href="../../assets/img/elements/g3.jpg" class="img-pop-up">
-                        <div class="single-gallery-image"
-                             style="background: url(../../assets/img/elements/g3.jpg);"></div>
-                    </a>
-                </div>
-                <div class="col-md-6">
-                    <a href="../../assets/img/elements/g4.jpg" class="img-pop-up">
-                        <div class="single-gallery-image"
-                             style="background: url(../../assets/img/elements/g4.jpg);"></div>
-                    </a>
-                </div>
-                <div class="col-md-6">
-                    <a href="../../assets/img/elements/g5.jpg" class="img-pop-up">
-                        <div class="single-gallery-image"
-                             style="background: url(../../assets/img/elements/g5.jpg);"></div>
-                    </a>
-                </div>
-                <div class="col-md-4">
-                    <a href="../../assets/img/elements/g6.jpg" class="img-pop-up">
-                        <div class="single-gallery-image"
-                             style="background: url(../../assets/img/elements/g6.jpg);"></div>
-                    </a>
-                </div>
-                <div class="col-md-4">
-                    <a href="../../assets/img/elements/g7.jpg" class="img-pop-up">
-                        <div class="single-gallery-image"
-                             style="background: url(../../assets/img/elements/g7.jpg);"></div>
-                    </a>
-                </div>
-                <div class="col-md-4">
-                    <a href="../../assets/img/elements/g8.jpg" class="img-pop-up">
-                        <div class="single-gallery-image"
-                             style="background: url(../../assets/img/elements/g8.jpg);"></div>
-                    </a>
-                </div>
+                {{end}}
+                {{end}}
             </div>
         </div>
 

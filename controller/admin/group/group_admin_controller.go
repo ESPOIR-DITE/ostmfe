@@ -32,7 +32,7 @@ func GroupHome(app *config.Env) http.Handler {
 	r.Get("/picture/{groupId}", GroupPictureHandler(app))
 	r.Get("/edit/{groupId}", GroupEditHandler(app))
 
-	//r.Post("/create_image", CreateImageHandler(app))
+	r.Post("/create_pictures", CreateImageHandler(app))
 	r.Post("/create_history", CreateHistoryHandler(app))
 	r.Post("/update_pictures", UpdateImageHandler(app))
 	r.Post("/update_history", UpdateHistoryHandler(app))
@@ -307,49 +307,56 @@ func UpdateImageHandler(app *config.Env) http.HandlerFunc {
 	}
 }
 
-//func CreateImageHandler(app *config.Env) http.HandlerFunc {
-//	return func(w http.ResponseWriter, r *http.Request) {
-//		r.ParseForm()
-//		file, _, err := r.FormFile("file")
-//		groupId := r.PostFormValue("groupId")
-//		imageType := r.PostFormValue("imageType")
-//		if err != nil {
-//			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
-//		}
-//		myGroup, err := group_io.ReadGroup(groupId)
-//		if err != nil {
-//			fmt.Println(err, " could not read group")
-//			if app.Session.GetString(r.Context(), "user-create-error") != "" {
-//				app.Session.Remove(r.Context(), "user-create-error")
-//			}
-//			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-//			http.Redirect(w, r, "/admin_user/group", 301)
-//			return
-//		}
-//
-//		filesArray := []io.Reader{file}
-//		filesByteArray := misc.CheckFiles(filesArray)
-//		groupImage := group.GroupImage{"", "", groupId, imageType}
-//
-//		helper := group.GroupImageHelper{groupImage, filesByteArray}
-//		_, errr := group_io.CreateGroupImage(helper)
-//		if errr != nil {
-//			fmt.Println(errr, " error creating GroupImage")
-//			if app.Session.GetString(r.Context(), "user-create-error") != "" {
-//				app.Session.Remove(r.Context(), "user-create-error")
-//			}
-//			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-//			http.Redirect(w, r, "/admin_user/group/edit/"+groupId, 301)
-//			return
-//		}
-//		if app.Session.GetString(r.Context(), "creation-successful") != "" {
-//			app.Session.Remove(r.Context(), "creation-successful")
-//		}
-//		app.Session.Put(r.Context(), "creation-successful", "You have successfully created image(s) for the following Group  : "+myGroup.Name)
-//		http.Redirect(w, r, "/admin_user/group/edit/"+groupId, 301)
-//		return
-//	}
-//}
+func CreateImageHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		var content []byte
+		file, _, err := r.FormFile("file")
+		groupId := r.PostFormValue("groupId")
+		imageType := r.PostFormValue("imageType")
+		if err != nil {
+			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
+			http.Redirect(w, r, "/admin_user/group/edit/"+groupId, 301)
+			return
+		} else {
+			reader := bufio.NewReader(file)
+			content, _ = ioutil.ReadAll(reader)
+		}
+		myGroup, err := group_io.ReadGroup(groupId)
+		if err != nil {
+			fmt.Println(err, " could not read group")
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+			http.Redirect(w, r, "/admin_user/group", 301)
+			return
+		}
+
+		imageObject, err := image_io.CreateImage(image.Images{"", content, groupId})
+		if err != nil {
+			fmt.Println(err, " error creating Image")
+			http.Redirect(w, r, "/admin_user/group/edit/"+groupId, 301)
+		}
+		groupImage := group.GroupImage{"", imageObject.Id, groupId, imageType}
+		_, errr := group_io.CreateGroupImage(groupImage)
+		if errr != nil {
+			fmt.Println(errr, " error creating GroupImage")
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+			http.Redirect(w, r, "/admin_user/group/edit/"+groupId, 301)
+			return
+		}
+		if app.Session.GetString(r.Context(), "creation-successful") != "" {
+			app.Session.Remove(r.Context(), "creation-successful")
+		}
+		app.Session.Put(r.Context(), "creation-successful", "You have successfully created image(s) for the following Group  : "+myGroup.Name)
+		http.Redirect(w, r, "/admin_user/group/edit/"+groupId, 301)
+		return
+	}
+}
 
 func GroupEditHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

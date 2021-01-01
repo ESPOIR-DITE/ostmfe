@@ -23,7 +23,7 @@ function getTheMap(placeList) {
             'source': 'places',
             'layout': {
                 'icon-image': '{icon}-15',
-                'icon-allow-overlap': true
+                'icon-allow-overlap': truelo
             }
         });
 

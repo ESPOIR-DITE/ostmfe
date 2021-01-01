@@ -53,3 +53,14 @@ type HistoriesHelper struct {
 	Id      string `json:"id"`
 	History string `json:"history"`
 }
+
+type CategoryH struct {
+	Id          string `json:"id"`
+	Category    string `json:"category"`
+	Description string `json:"description"`
+}
+type HistoryCategory struct {
+	Id        string `json:"id"`
+	Category  string `json:"category"`
+	HistoryId string `json:"historyId"`
+}

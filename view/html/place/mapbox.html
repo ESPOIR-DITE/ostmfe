@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.css' rel='stylesheet' />
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.js'></script>
+</head>
+<body>
+<div id='map' style='width: 1900px; height: 990px;'></div>
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiZXNwb2lyLWRpdGUiLCJhIjoiY2tmaTZsdDBiMGpubzJzcDh2aXdodXlnayJ9.e6tqu6hLu5xlaSk84ERd9g';
+    var map = new mapboxgl.Map({
+        container: 'map',
+        zoom: 15,
+        center: [18.440777988132027, -34.19459834383511],
+        style: 'mapbox://styles/mapbox/streets-v11'
+    });
+    // create the popup
+    var popup = new mapboxgl.Popup({ offset: 25 }).setText(
+        'Construction on the Washington Monument began in 1848.'
+    );
+
+    //marker
+    var marker = new mapboxgl.Marker({
+        color: "#FFFFFF",
+        draggable: true
+    }).setLngLat([18.440777988132027, -34.19459834383511])
+        .addTo(map);
+    // The `click` event is an example of a `MapMouseEvent`.
+    // Set up an event listener on the map.
+    map.on('click','places' ,function(e) {
+// The event object (e) contains information like the
+// coordinates of the point on the map that was clicked.
+        console.log('A click event has occurred at ' + e.lngLat);
+    });
+
+</script>
+</body>
+
+</html>

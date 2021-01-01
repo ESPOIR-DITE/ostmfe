@@ -39,6 +39,23 @@ func GetGroupGallery(groupId string) []GroupGalleryImages {
 	return GalleryImagesList
 }
 
+/**
+Getting a gallery of a group by passing the groupId.
+*/
+func GetAllGroupGallery() []GroupGalleryImages {
+	var GalleryImagesList []GroupGalleryImages
+
+	groupGalleryImages, err := group_io.ReadGroupGalerys()
+	if err != nil {
+		fmt.Println(err, "error reading groupImage")
+		return GalleryImagesList
+	}
+	for _, groupGalleryImage := range groupGalleryImages {
+		GalleryImagesList = append(GalleryImagesList, GroupGalleryImages{GetGalleryImage(groupGalleryImage.GaleryId), groupGalleryImage})
+	}
+	return GalleryImagesList
+}
+
 func ReadHistoryWithImages() []HistoryAndProfile {
 	var historyAndProfile []HistoryAndProfile
 

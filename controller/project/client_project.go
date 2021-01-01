@@ -20,6 +20,7 @@ import (
 	"ostmfe/io/contribution_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
+	"ostmfe/io/pageData_io"
 	"ostmfe/io/project_io"
 	"path/filepath"
 	"strings"
@@ -191,10 +192,19 @@ func ReadSingleProjectHanler(app *config.Env) http.HandlerFunc {
 
 func homeHanler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		type PageData struct {
-			Projects []misc.ProjectContentsHome
+		var bannerImage string
+		pageBanner, err := pageData_io.ReadPageBannerWIthPageName("project-page")
+		if err != nil {
+			fmt.Println(err, " There is an error when reading people pageBanner")
+		} else {
+			bannerImage = misc.GetBannerImage(pageBanner.BannerId)
 		}
-		data := PageData{misc.GetProjectContentsHomes()}
+
+		type PageData struct {
+			Projects      []misc.ProjectContentsHome
+			ProjectBanner string
+		}
+		data := PageData{misc.GetProjectContentsHomes(), bannerImage}
 		files := []string{
 			app.Path + "project/projects.html",
 			app.Path + "base_templates/navigator.html",

@@ -13,6 +13,7 @@ import (
 	"ostmfe/io/collection_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
+	"ostmfe/io/pageData_io"
 )
 
 func Home(app *config.Env) http.Handler {
@@ -66,8 +67,9 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 		type PageData struct {
 			Collections     []CollectionData
 			CollectionTypes []collection.CollectionTypes
+			CollectionPage  CollectionPage
 		}
-		data := PageData{collections, collectionTypes}
+		data := PageData{collections, collectionTypes, getPageData()}
 		files := []string{
 			app.Path + "collection/collection.html",
 			app.Path + "base_templates/navigator.html",
@@ -167,4 +169,52 @@ func getColectionDataHistory(collectionId string) CollectionDataHistory {
 
 	collectionDataHistory = CollectionDataHistory{collection, profileImage, images, histories}
 	return collectionDataHistory
+}
+
+type CollectionPage struct {
+	Banner            string
+	SahoContent       string
+	ResourceContent   string
+	CollectionContent string
+}
+
+func getPageData() CollectionPage {
+	var banner string
+	var sahoContent string
+	var resourceContent string
+	var collectionContent string
+
+	page, err := pageData_io.ReadPageDataWIthName("collection-page")
+	if err != nil {
+		fmt.Println(err, " error reading page")
+	} else {
+		pageDateSectionObject, err := pageData_io.ReadPageSectionAllOf(page.Id)
+		if err != nil {
+			fmt.Println(err, " error reading page")
+		}
+		for _, pageDateSection := range pageDateSectionObject {
+			pageSection, err := pageData_io.ReadSection(pageDateSection.SectionId)
+			if err != nil {
+				fmt.Println(err, " error reading page")
+			} else {
+				if pageSection.SectionName == "sahoContent" {
+					fmt.Println(" sahoContent", pageSection)
+					sahoContent = misc.ConvertingToString(pageDateSection.Content)
+				}
+				if pageSection.SectionName == "resourceContent" {
+					fmt.Println(" resourceContent", pageSection)
+					resourceContent = misc.ConvertingToString(pageDateSection.Content)
+				}
+				if pageSection.SectionName == "collectionContent" {
+					fmt.Println(" collectionContent", pageSection)
+					collectionContent = misc.ConvertingToString(pageDateSection.Content)
+				}
+				if pageSection.SectionName == "banner" {
+					fmt.Println(" banner", pageSection)
+					banner = misc.ConvertingToString(pageDateSection.Content)
+				}
+			}
+		}
+	}
+	return CollectionPage{sahoContent, resourceContent, collectionContent, banner}
 }

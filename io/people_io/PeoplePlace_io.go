@@ -47,6 +47,32 @@ func ReadPeoplePlace(id string) (people.PeoplePlace, error) {
 	return entity, nil
 }
 
+func ReadPeoplePlaceByPlaceId(id string) (people.PeoplePlace, error) {
+	entity := people.PeoplePlace{}
+	resp, _ := api.Rest().Get(pplPlace + "PlaceId?id=" + id)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
+
+func ReadPeoplePlaceAllByPlaceId(id string) ([]people.PeoplePlace, error) {
+	entity := []people.PeoplePlace{}
+	resp, _ := api.Rest().Get(pplPlace + "findAllBy?PlaceId=" + id)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
+
 func ReadPeoplePlaceWithPeopleId(peopleId string) ([]people.PeoplePlace, error) {
 	entity := []people.PeoplePlace{}
 	resp, _ := api.Rest().Get(pplPlace + "readWithPeopleId?id=" + peopleId)

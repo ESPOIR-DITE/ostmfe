@@ -17,6 +17,7 @@ import (
 	"ostmfe/io/contribution_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
+	"ostmfe/io/pageData_io"
 	"time"
 )
 
@@ -150,15 +151,30 @@ func SingleHistoryHandler(app *config.Env) http.HandlerFunc {
 
 func homeHanler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		history, err := history_io.ReadHistorys()
+		var historyData []HistoryData
+		histories, err := history_io.ReadHistorys()
 		if err != nil {
 			fmt.Println(err, " error reading histories")
+		} else {
+			for _, history := range histories {
+				historyData = append(historyData, getHistoryData(history.Id))
+			}
+		}
+
+		var bannerImage string
+		pageBanner, err := pageData_io.ReadPageBannerWIthPageName("history-page")
+		if err != nil {
+			fmt.Println(err, " There is an error when reading people pageBanner")
+		} else {
+			bannerImage = misc.GetBannerImage(pageBanner.BannerId)
 		}
 
 		type PageData struct {
-			History []history2.History
+			History       []history2.History
+			HistoryData   []HistoryData
+			HistoryBanner string
 		}
-		data := PageData{history}
+		data := PageData{histories, historyData, bannerImage}
 		files := []string{
 			app.Path + "history/history.html",
 			app.Path + "base_templates/navigator.html",
