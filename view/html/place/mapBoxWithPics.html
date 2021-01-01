@@ -44,9 +44,10 @@
     <div class="col-lg-4 sidebar ScrollStyle" >
 
         <div class="single-widget protfolio-widget">
+            <br>
             <img id="placeImage" src="../../assets/img/blog/user2.jpg" alt="">
-            <a href="#"><h4 id="title">Adele Gonzalez</h4></a>
-            <p>
+            <a id="title-a"><h4 id="title">Adele Gonzalez</h4></a>
+            <p id="title-description">
                 MCSE boot camps have its supporters and
                 its detractors. Some people do not understand why you should have to spend money
                 on boot camp when you can get.
@@ -175,44 +176,6 @@
 
 <script>
     mapboxgl.accessToken = 'pk.eyJ1IjoiZXNwb2lyLWRpdGUiLCJhIjoiY2tmaTZsdDBiMGpubzJzcDh2aXdodXlnayJ9.e6tqu6hLu5xlaSk84ERd9g';
-    var geojson = {
-        'type': 'FeatureCollection',
-        'features': [
-            {
-                'type': 'Feature',
-                'properties': {
-                    'message': 'Foo',
-                    'iconSize': [60, 60]
-                },
-                'geometry': {
-                    'type': 'Point',
-                    'coordinates': [-66.324462890625, -16.024695711685304]
-                }
-            },
-            {
-                'type': 'Feature',
-                'properties': {
-                    'message': 'Bar',
-                    'iconSize': [50, 50]
-                },
-                'geometry': {
-                    'type': 'Point',
-                    'coordinates': [-61.2158203125, -15.97189158092897]
-                }
-            },
-            {
-                'type': 'Feature',
-                'properties': {
-                    'message': 'Baz',
-                    'iconSize': [40, 40]
-                },
-                'geometry': {
-                    'type': 'Point',
-                    'coordinates': [-63.29223632812499, -18.28151823530889]
-                }
-            }
-        ]
-    };
 
     var myPlaces = {{.PlaceData}};
 
@@ -230,10 +193,11 @@
     myPlaces.forEach(function (marker) {
 
         var logitudeVar = marker.Place.longitude;
+        var placeId = marker.Place.id;
         var title = marker.Place.title;
         var placeImage = marker.Image;
         var description = marker.Place.description;
-        console.log("myplace: "+marker.People)
+        console.log("image : ")
         var  trimedLongitude = logitudeVar.trim();
 // create a DOM element for the marker
         var el = document.createElement('div');
@@ -246,6 +210,8 @@
              console.log(description);
             //$('#title').text(description);
             document.getElementById("title").innerHTML = title;
+            document.getElementById("title-description").innerHTML = description;
+            document.getElementById("title-a").setAttribute("href","/place/"+placeId);
             document.getElementById("placeImage").removeAttribute("src");
             document.getElementById("placeImage").setAttribute("src","data:image/jpeg;base64,"+placeImage);
 
@@ -259,7 +225,7 @@
 
                 });
             }else {// Just clear.
-                document.getElementById("peoplePlace").removeAttribute("li");
+                document.getElementById("peoplePlace").innerHTML="";
             }
 
              //window.alert(description);

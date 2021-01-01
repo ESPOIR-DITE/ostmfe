@@ -197,7 +197,7 @@ func getPlaceGallery(placeId string) []string {
 type PlaceAggregatedDate struct {
 	Place   place.Place
 	Event   event.Event
-	Gallery image3.GaleryHelper
+	Gallery []string
 	People  []misc.PeopleData
 	Image   string
 }
@@ -205,7 +205,7 @@ type PlaceAggregatedDate struct {
 func getPlaceAggregatedData() []PlaceAggregatedDate {
 	var placeAggregated []PlaceAggregatedDate
 	var events event.Event
-	var gallery image3.GaleryHelper
+	var gallery []string
 	var peoples []misc.PeopleData
 	var image string
 
@@ -224,11 +224,11 @@ func getPlaceAggregatedData() []PlaceAggregatedDate {
 		}
 
 		//Gallery
-		PlaceGallery, err := place_io.ReadPlaceGaleryWithPlaceId(place.Id)
+		PlaceGallery, err := place_io.ReadAllByPlaceGallery(place.Id)
 		if err != nil {
 			fmt.Println(err, " error Gallery place")
 		} else {
-			gallery = getGallery(PlaceGallery.GalleryId)
+			gallery = getGallery(PlaceGallery)
 		}
 
 		//People
@@ -243,7 +243,7 @@ func getPlaceAggregatedData() []PlaceAggregatedDate {
 		if err != nil {
 			fmt.Println(err, " error image place")
 		} else {
-			image = misc.ConvertingToString(getImage(placeImage.ImageId).Image)
+			image = getImage(placeImage.ImageId).Id
 		}
 		placeAggregated = append(placeAggregated, PlaceAggregatedDate{place, events, gallery, peoples, image})
 	}
@@ -267,14 +267,19 @@ func getEvent(eventId string) event.Event {
 	}
 	return newEventObject
 }
-func getGallery(galleryId string) image3.GaleryHelper {
-	var imageHelper image3.GaleryHelper
-	imageobject, err := image_io.ReadGallery(galleryId)
-	if err != nil {
-		fmt.Println(err, " error gallery")
-		return imageHelper
+func getGallery(placeGalleries []place.PlaceGallery) []string {
+	var imageHelper []string
+
+	for _, placeGallerie := range placeGalleries {
+		imageobject, err := image_io.ReadGallery(placeGallerie.GalleryId)
+		if err != nil {
+			fmt.Println(err, " error gallery")
+		} else {
+			imageHelper = append(imageHelper, misc.ConvertingToString(imageobject.Image))
+		}
 	}
-	return image3.GaleryHelper{imageobject.Id, misc.ConvertingToString(imageobject.Image), imageobject.Description}
+
+	return imageHelper
 }
 func getPeople(pepleId string) people.People {
 	var people people.People

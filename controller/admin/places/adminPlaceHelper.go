@@ -3,8 +3,10 @@ package places
 import (
 	"fmt"
 	"ostmfe/controller/misc"
+	"ostmfe/domain/comment"
 	history2 "ostmfe/domain/history"
 	place2 "ostmfe/domain/place"
+	"ostmfe/io/comment_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
 	"ostmfe/io/place_io"
@@ -74,4 +76,32 @@ func GetPlaceEditable(placeId string) PlaceDataEditable {
 	}
 	placeDataEditable = PlaceDataEditable{place, images, profileImage, historyhelper}
 	return placeDataEditable
+}
+
+//PlaceComment and Place Gallery.
+
+func GetPlaceCommentsWithEventId(placeId string) []comment.CommentHelper2 {
+	var commentList []comment.CommentHelper2
+	placeComments, err := comment_io.ReadAllByPlaceId(placeId)
+	if err != nil {
+		fmt.Println(err, " error reading all the eventContribution")
+	} else {
+		for _, placeComment := range placeComments {
+			commentObject, err := comment_io.ReadComment(placeComment.CommentId)
+			if err != nil {
+				fmt.Println(err, " error reading all the Contribution")
+			}
+			commentObject2 := comment.CommentHelper2{commentObject.Id, commentObject.Email, commentObject.Name, misc.FormatDateMonth(commentObject.Date), misc.ConvertingToString(commentObject.Comment), getParentDeatils(commentObject.ParentCommentId), placeComment.Id}
+			commentList = append(commentList, commentObject2)
+		}
+	}
+	return commentList
+}
+func getParentDeatils(commentId string) comment.CommentHelper {
+	commentObject, err := comment_io.ReadComment(commentId)
+	if err != nil {
+		fmt.Println(err, " error reading all the Contribution")
+		return comment.CommentHelper{}
+	}
+	return comment.CommentHelper{commentObject.Id, commentObject.Email, commentObject.Name, misc.FormatDateMonth(commentObject.Date), misc.ConvertingToString(commentObject.Comment), commentObject.ParentCommentId}
 }

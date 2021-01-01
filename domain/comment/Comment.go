@@ -35,6 +35,11 @@ type CommentEvent struct {
 	EventId   string `json:"eventId"`
 	CommentId string `json:"commentId"`
 }
+type CommentPlace struct {
+	Id        string `json:"id"`
+	PlaceId   string `json:"placeId"`
+	CommentId string `json:"commentId"`
+}
 type CommentGroup struct {
 	Id        string `json:"id"`
 	GroupId   string `json:"groupId"`

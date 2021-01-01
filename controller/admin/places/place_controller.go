@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"ostmfe/config"
 	"ostmfe/controller/misc"
+	"ostmfe/domain/comment"
 	history2 "ostmfe/domain/history"
 	image2 "ostmfe/domain/image"
 	place2 "ostmfe/domain/place"
@@ -499,8 +500,10 @@ func EditPlacesHandler(app *config.Env) http.HandlerFunc {
 		type PageData struct {
 			PlaceData   PlaceDataEditable
 			SidebarData misc.SidebarData
+			Comments    []comment.CommentHelper2
+			Gallery     []misc.PlaceGalleryImages
 		}
-		data := PageData{placeDate, misc.GetSideBarData("place", "")}
+		data := PageData{placeDate, misc.GetSideBarData("place", ""), GetPlaceCommentsWithEventId(placeId), misc.GetPlaceGallery(placeId)}
 		files := []string{
 			app.Path + "admin/place/new_edit_place.html",
 			app.Path + "admin/template/navbar.html",
