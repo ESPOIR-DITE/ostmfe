@@ -46,7 +46,7 @@ func CreateComment(app *config.Env) http.HandlerFunc {
 		groupId := r.PostFormValue("groupId")
 
 		if name != "" && email != "" && message != "" {
-			commentObject := comment.Comment{"", email, name, misc.FormatDateTime(time.Now()), misc.ConvertToByteArray(message), ""}
+			commentObject := comment.Comment{"", email, name, misc.FormatDateTime(time.Now()), misc.ConvertToByteArray(message), "", false}
 			newComment, err := comment_io.CreateComment(commentObject)
 			if err != nil {
 				fmt.Println("error creating comment")

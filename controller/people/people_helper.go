@@ -83,12 +83,10 @@ func GetPeopleDataHistory(id string) PeopleDataHistory {
 		return peopleDataHistory
 	}
 	for _, peopleImage := range peopleImages {
-		if peopleImage.ImageType == "profile" || peopleImage.ImageType == "1" {
-			profileImage, err = image_io.ReadImage(peopleImage.ImageId)
-			if err != nil {
-				fmt.Println("could not read profile Image")
-				//return peopleDataHistory;
-			}
+		profileImage, err = image_io.ReadImage(peopleImage.ImageId)
+		if err != nil {
+			fmt.Println("could not read profile Image")
+			//return peopleDataHistory;
 		}
 		image, err := image_io.ReadImage(peopleImage.ImageId)
 		if err != nil {

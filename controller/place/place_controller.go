@@ -7,11 +7,13 @@ import (
 	"net/http"
 	"ostmfe/config"
 	"ostmfe/controller/misc"
+	"ostmfe/domain/comment"
 	"ostmfe/domain/event"
 	"ostmfe/domain/history"
 	image3 "ostmfe/domain/image"
 	"ostmfe/domain/people"
 	"ostmfe/domain/place"
+	"ostmfe/io/comment_io"
 	"ostmfe/io/event_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
@@ -38,12 +40,18 @@ func SinglePlaceHanler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			fmt.Println(err, "Error reading places")
 		}
+		count, err := comment_io.CountCommentPlace(placeId)
+		if err != nil {
+			fmt.Println(err, "Error counting place comments")
+		}
 		type PageData struct {
 			Places        []place.Place
 			PlaceData     PlaceSingleData
 			GalleryString []string
+			CommentNumber int64
+			Comments      []comment.CommentStack
 		}
-		data := PageData{places, getPlaceSingleData(placeId), getPlaceGallery(placeId)}
+		data := PageData{places, getPlaceSingleData(placeId), getPlaceGallery(placeId), count, GetPlaceComments(placeId)}
 		files := []string{
 			app.Path + "place/place_single.html",
 			app.Path + "base_templates/navigator.html",
@@ -196,17 +204,26 @@ func getPlaceGallery(placeId string) []string {
 
 type PlaceAggregatedDate struct {
 	Place   place.Place
-	Event   event.Event
+	Events  []event.Event
 	Gallery []string
-	People  []misc.PeopleData
+	People  []PeopleDataPlace
 	Image   string
+}
+
+//Get people data
+type PeopleDataPlace struct {
+	People     people.People
+	Image      image3.Images
+	Profession []people.Profession
+	History    history.History
+	Category   []people.Category
 }
 
 func getPlaceAggregatedData() []PlaceAggregatedDate {
 	var placeAggregated []PlaceAggregatedDate
-	var events event.Event
+	var events []event.Event
 	var gallery []string
-	var peoples []misc.PeopleData
+	var peoples []PeopleDataPlace
 	var image string
 
 	places, err := place_io.ReadPlaces()
@@ -216,11 +233,11 @@ func getPlaceAggregatedData() []PlaceAggregatedDate {
 	}
 	for _, place := range places {
 		//Event Place
-		eventPlace, err := event_io.ReadEventPlaceOf(place.Id)
+		eventPlace, err := event_io.ReadEventFindByPlaceId(place.Id)
 		if err != nil {
 			fmt.Println(err, " error Event place")
 		} else {
-			events = getEvent(eventPlace.EventId)
+			events = getEvents(eventPlace)
 		}
 
 		//Gallery
@@ -250,10 +267,93 @@ func getPlaceAggregatedData() []PlaceAggregatedDate {
 	return placeAggregated
 }
 
-func getPeopleWithPeoplePlace(peoplePlaces []people.PeoplePlace) []misc.PeopleData {
-	var peoples []misc.PeopleData
+//this method works as a bridge to allow extract
+//id list from eventPlace ids to form a list of EventIds.
+func getEvents(eventPlaces []event.EventPlace) []event.Event {
+	var eventIds []string
+	for _, eventPlace := range eventPlaces {
+		eventIds = append(eventIds, eventPlace.EventId)
+	}
+	return misc.GetEventListOfEventIdList(eventIds)
+}
+
+//GET A PEOPLE WITH ALL HIS DATA
+func GetPeopleDataPlace(peopleId string) PeopleDataPlace {
+	var peopleData PeopleDataPlace
+	var professions []people.Profession
+	var categoryList []people.Category
+	var imageList image3.Images
+	var history history.History
+	people, err := people_io.ReadPeople(peopleId)
+	if err != nil {
+		fmt.Println(err, "error reading peoples")
+		return peopleData
+	} else {
+		//getting the Images od this person
+		peopleImages, err := people_io.ReadPeopleImagewithPeopleId(people.Id)
+		if err != nil {
+			fmt.Println(err, "error reading peopleImage for peopleId: ", people.Id)
+		} else {
+			for _, peopleImage := range peopleImages {
+				images, err := image_io.ReadImage(peopleImage.ImageId)
+				if err != nil {
+					fmt.Println(err, "error reading peopleImage for peopleImageId: ", peopleImage.Id)
+				} else {
+					imageList = images
+				}
+			}
+		}
+
+		//Getting People proffesions
+		peopleProfession, err := people_io.ReadPeopleProfessionWithPplId(people.Id)
+		if err != nil {
+			fmt.Println(err, "error reading peopleProfession for peopleId: ", people.Id)
+		} else {
+			for _, peopleProfession := range peopleProfession {
+				profession, err := people_io.ReadProfession(peopleProfession.Profession)
+				if err != nil {
+					fmt.Println(err, "error reading Profession for peopleId: ", people.Id)
+				} else {
+					professions = append(professions, profession)
+				}
+			}
+		}
+
+		//Getting People history
+		peopleHistory, err := people_io.ReadPeopleHistoryWithPplId(people.Id)
+		if err != nil {
+			fmt.Println(err, "error reading people history for peopleId: ", people.Id)
+		} else {
+			history, err = history_io.ReadHistory(peopleHistory.HistoryId)
+			if err != nil {
+				fmt.Println(err, "error reading history: ", people.Id)
+			}
+		}
+
+		//Getting People category
+		peoplecategories, err := people_io.ReadPeopleCategoryWithPplId(people.Id)
+		if err != nil {
+			fmt.Println(err, "error reading people category for peopleId: ", people.Id)
+		} else {
+			for _, peoplecategory := range peoplecategories {
+				category, err := people_io.ReadCategory(peoplecategory.Id)
+				if err != nil {
+					fmt.Println(err, "error reading category for peopleId: ", peoplecategory.Id)
+				} else {
+					categoryList = append(categoryList, category)
+				}
+			}
+		}
+		peopleDataObject := PeopleDataPlace{people, imageList, professions, history, categoryList}
+		return peopleDataObject
+	}
+	return peopleData
+}
+
+func getPeopleWithPeoplePlace(peoplePlaces []people.PeoplePlace) []PeopleDataPlace {
+	var peoples []PeopleDataPlace
 	for _, peoplePlace := range peoplePlaces {
-		peoples = append(peoples, misc.GetPeopleData(peoplePlace.PeopleId))
+		peoples = append(peoples, GetPeopleDataPlace(peoplePlace.PeopleId))
 	}
 	return peoples
 }
@@ -298,4 +398,59 @@ func getImage(imageId string) image3.Images {
 		return image
 	}
 	return imageObject
+}
+
+func GetPlaceComments(placeId string) []comment.CommentStack {
+	var parentCommentStack []comment.CommentStack
+	var subCommentStack []comment.CommentHelper
+
+	for _, commentObject := range getComments(placeId) {
+		myComment, err := comment_io.ReadComment(commentObject.Id)
+		if err != nil {
+			fmt.Println("error reading Comment")
+		}
+		if myComment.ParentCommentId != "" {
+			subCommentStack = getSubComment(commentObject.Id)
+		}
+		parentCommentStack = append(parentCommentStack, comment.CommentStack{commentObject, subCommentStack})
+	}
+
+	fmt.Println("parentStack ", parentCommentStack)
+
+	return parentCommentStack
+}
+
+func getSubComment(parentComment string) []comment.CommentHelper {
+	var myComments []comment.CommentHelper
+	subComments, err := comment_io.ReadCommentWithParentId(parentComment)
+	if err != nil {
+		return myComments
+	}
+	for _, eventComment := range subComments {
+		if eventComment.ParentCommentId == parentComment && eventComment.Comment != nil {
+			commentHelper := comment.CommentHelper{eventComment.Id, eventComment.Email, eventComment.Name, misc.FormatDateMonth(eventComment.Date), misc.ConvertingToString(eventComment.Comment), eventComment.ParentCommentId, eventComment.Stat}
+			myComments = append(myComments, commentHelper)
+		}
+	}
+	return myComments
+}
+
+//This method returns a list of either parent or subComment
+func getComments(placeId string) []comment.CommentHelper {
+	var myCommentObject []comment.CommentHelper
+	placeComments, err := comment_io.ReadAllByPlaceId(placeId)
+	if err != nil {
+		fmt.Println("error reading place Comment")
+		return myCommentObject
+	}
+	for _, eventComment := range placeComments {
+		myComment, err := comment_io.ReadComment(eventComment.CommentId)
+		if err != nil {
+			fmt.Println("error reading Comment")
+		} else {
+			commentHelper := comment.CommentHelper{myComment.Id, myComment.Email, myComment.Name, misc.FormatDateMonth(myComment.Date), misc.ConvertingToString(myComment.Comment), myComment.ParentCommentId, myComment.Stat}
+			myCommentObject = append(myCommentObject, commentHelper)
+		}
+	}
+	return myCommentObject
 }

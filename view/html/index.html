@@ -229,7 +229,7 @@
         <div class="section-top-border">
             <div class="row">
 
-                {{if .PagePageSection.Notification}}
+                {{if .PagePageSection.ShareYourStory}}
                 <div class="title text-center" id="shareYourStory">
                     <script>
                         var div = document.getElementById('shareYourStory');
@@ -251,7 +251,6 @@
                     </h1>
                     <br>
                     <a data-toggle="modal" href="" data-target="#Contribution" class="genric-btn info radius e-large">Share</a>
-
                 </div>
                 {{end}}
             </div>
@@ -590,74 +589,50 @@
 
                 <form action="/visit/book" method="post" class="col-12">
                     <h5 class="modal-title" id="exampleModalLabel">Book a Tour</h5>
+                    <hr>
                     <div class="mt-10">
-                        <input type="text" name="name" placeholder="name" onfocus="this.placeholder = ''"
-                               onblur="this.placeholder = 'First Name'" required class="single-input">
+                        <input type="text" name="name" placeholder="Name" onfocus="this.placeholder = ''"
+                               onblur="this.placeholder = 'Name'" required class="single-input">
                     </div>
 
                     <div class="mt-10">
                         <input type="text" name="phoneNumber" placeholder="Phone Number" onfocus="this.placeholder = ''"
-                               onblur="this.placeholder = 'First Name'" required class="single-input">
+                               onblur="this.placeholder = 'Phone Number'" required class="single-input">
                     </div>
 
                     <div class="mt-10">
-                        <input type="text" name="fax" placeholder="fax Number" onfocus="this.placeholder = ''"
-                               onblur="this.placeholder = 'First Name'" required class="single-input">
+                        <input type="text" name="fax" placeholder="Name of Group, Organisation, School" onfocus="this.placeholder = ''"
+                               onblur="this.placeholder = 'Name of Group'" required class="single-input">
                     </div>
 
                     <div class="mt-10">
-                        <input type="email" name="email" placeholder="Email address" onfocus="this.placeholder = ''"
-                               onblur="this.placeholder = 'Email address'" required class="single-input">
+                        <input type="text" name="fax" placeholder="Language" onfocus="this.placeholder = ''"
+                               onblur="this.placeholder = 'Language'" required class="single-input">
                     </div>
 
-                    <div class="mt-10">
-                        <input type="date" name="date" placeholder="Date" onfocus="this.placeholder = ''"
-                               onblur="this.placeholder = 'Email address'" required class="single-input">
-                    </div>
-
-                    <br>
                     <div class="input-group-icon mt-10">
-                        <label>Booking Type</label>
+                        <label>Booking Purpose</label>
                         <div class="form-select" id="default-select">
                             <select id="bookingType">
-                                <option value="1">Private</option>
-                                <option value="2">School Tour</option>
-                                <option value="3">Group Tour</option>
+                                <option value="Education" selected>select the purpose</option>
+                                <option value="Education">Education</option>
+                                <option value="Leisure">Leisure</option>
                             </select>
                         </div>
                     </div>
 
-
-                    <div class="input-group-icon mt-10" id="gradeOrAge">
-                        <br>
-                        <label>Grade or Age</label>
-                        <div class="form-select" id="default-select">
-                            <select>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                                <option value="6">6</option>
-                                <option value="7">7</option>
-                            </select>
-                        </div>
-                        <br>
-                    </div>
-
-                    <br>
-                    <div class="input-group-icon mt-10">
-                        <label>Language</label>
-                        <div class="form-select" id="default-select">
-                            <select>
-                                <option value="1">English</option>
-                                <option value="2">French</option>
-                                <option value="3">Zulu</option>
-                                <option value="4">Xhosa</option>
-                            </select>
-                        </div>
-                    </div>
                     <div class="mt-10">
+                        <input type="text" name="country" placeholder="Country" onfocus="this.placeholder = ''"
+                               onblur="this.placeholder = 'Email address'" required class="single-input">
+                    </div>
+
+                    <div class="mt-10">
+                        <input type="text" name="province" placeholder="Province" onfocus="this.placeholder = ''"
+                               onblur="this.placeholder = 'Province'" required class="single-input">
+                    </div>
+
+                    <div class="mt-10">
+                        <label>Where did you hear about the Simon’s Town Museum ?</label>
                         <textarea class="single-textarea" placeholder="Message" onfocus="this.placeholder = ''"
                                   onblur="this.placeholder = 'Message'" required></textarea>
                     </div>

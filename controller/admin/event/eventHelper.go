@@ -32,7 +32,7 @@ func getParentDeatils(commentId string) comment.CommentHelper {
 		fmt.Println(err, " error reading all the Contribution")
 		return comment.CommentHelper{}
 	}
-	return comment.CommentHelper{commentObject.Id, commentObject.Email, commentObject.Name, misc.FormatDateMonth(commentObject.Date), misc.ConvertingToString(commentObject.Comment), commentObject.ParentCommentId}
+	return comment.CommentHelper{commentObject.Id, commentObject.Email, commentObject.Name, misc.FormatDateMonth(commentObject.Date), misc.ConvertingToString(commentObject.Comment), commentObject.ParentCommentId, commentObject.Stat}
 }
 
 func GetContributionData(eventId string) []contribution2.ContributionHelper {

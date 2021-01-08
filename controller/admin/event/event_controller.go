@@ -60,12 +60,24 @@ func EventHome(app *config.Env) http.Handler {
 	r.Get("/delete_people/{peopleId}/{eventId}", DeletepeopleEventHandler(app))
 	r.Get("/delete_group/{groupId}/{eventId}", DeleteGroupEventHandler(app))
 	r.Get("/delete_comment/{commentId}/{eventCommentId}", DeleteCommentEventHandler(app))
+	r.Get("/activate_comment/{commentId}/{eventId}", ActivateCommentHandler(app))
 
 	//Gallery
 	r.Post("/create-gallery", CreateEventGalleryHandler(app))
 	r.Get("/delete-gallery/{pictureId}/{eventId}/{eventGalleryId}", DeleteGalleryHandler(app))
 
 	return r
+}
+
+func ActivateCommentHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		commentId := chi.URLParam(r, "commentId")
+		eventId := chi.URLParam(r, "eventId")
+		result := misc.ActivateComment(commentId)
+		fmt.Print("Activation Result: ", result)
+		http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
+		return
+	}
 }
 
 func DeleteGalleryHandler(app *config.Env) http.HandlerFunc {

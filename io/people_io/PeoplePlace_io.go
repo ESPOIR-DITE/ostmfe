@@ -19,7 +19,6 @@ func CreatePeoplePlace(pPl people.PeoplePlace) (people.PeoplePlace, error) {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
-
 }
 func UpdatePeoplePlace(pPl people.PeoplePlace) (people.PeoplePlace, error) {
 	entity := people.PeoplePlace{}

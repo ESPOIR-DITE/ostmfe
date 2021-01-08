@@ -7,6 +7,7 @@ type Comment struct {
 	Date            string `json:"date"`
 	Comment         []byte `json:"comment"`
 	ParentCommentId string `json:"parentCommentId"`
+	Stat            bool   `json:"stat"`
 }
 
 type CommentHelper struct {
@@ -16,6 +17,7 @@ type CommentHelper struct {
 	Date            string `json:"date"`
 	Comment         string `json:"comment"`
 	ParentCommentId string `json:"parentCommentId"`
+	Stat            bool   `json:"stat"`
 }
 type CommentHelper2 struct {
 	Id              string `json:"id"`
@@ -54,6 +56,7 @@ type CommentPeople struct {
 	Id        string `json:"id"`
 	PeopleId  string `json:"peopleId"`
 	CommentId string `json:"commentId"`
+	Stat      string `json:"stat"`
 }
 type CommentProject struct {
 	Id        string `json:"id"`

@@ -34,8 +34,20 @@ func HistoryHome(app *config.Env) http.Handler {
 	//gallery
 	r.Post("/create-gallery", CreateEventHistoryHandler(app))
 	r.Get("/delete-gallery/{pictureId}/{historyId}/{historyGalleryId}", DeleteGalleryHandler(app))
+	r.Get("/activate_comment/{commentId}/{historyId}", ActivateCommentHandler(app))
 
 	return r
+}
+
+func ActivateCommentHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		commentId := chi.URLParam(r, "commentId")
+		historyId := chi.URLParam(r, "historyId")
+		result := misc.ActivateComment(commentId)
+		fmt.Print("Activation Result: ", result)
+		http.Redirect(w, r, "/admin_user/history/edit/"+historyId, 301)
+		return
+	}
 }
 
 func DeleteGalleryHandler(app *config.Env) http.HandlerFunc {

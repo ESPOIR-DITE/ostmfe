@@ -70,7 +70,7 @@ func ReadPeopleCategoryWithCategoryId(id string) ([]people.PeopleCategory, error
 }
 func DeletePeopleCategory(id string) (people.PeopleCategory, error) {
 	entity := people.PeopleCategory{}
-	resp, _ := api.Rest().Get(peoplecategoryURL + "delete?=" + id)
+	resp, _ := api.Rest().Get(peoplecategoryURL + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}

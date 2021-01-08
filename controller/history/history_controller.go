@@ -98,7 +98,7 @@ func CreateHistoryComment(app *config.Env) http.HandlerFunc {
 		historyId := r.PostFormValue("historyId")
 
 		if historyId != "" && email != "" && message != "" {
-			commentObject := comment.Comment{"", email, name, misc.FormatDateTime(time.Now()), misc.ConvertToByteArray(message), ""}
+			commentObject := comment.Comment{"", email, name, misc.FormatDateTime(time.Now()), misc.ConvertToByteArray(message), "", false}
 			newComment, err := comment_io.CreateComment(commentObject)
 			if err != nil {
 				fmt.Println("error creating comment")
@@ -282,7 +282,7 @@ func getComments(historyId string) []comment.CommentHelper {
 		if err != nil {
 			fmt.Println("error reading Comment")
 		} else {
-			commentHelper := comment.CommentHelper{myComment.Id, myComment.Email, myComment.Name, misc.FormatDateMonth(myComment.Date), misc.ConvertingToString(myComment.Comment), myComment.ParentCommentId}
+			commentHelper := comment.CommentHelper{myComment.Id, myComment.Email, myComment.Name, misc.FormatDateMonth(myComment.Date), misc.ConvertingToString(myComment.Comment), myComment.ParentCommentId, myComment.Stat}
 			myCommentObject = append(myCommentObject, commentHelper)
 		}
 	}
@@ -297,7 +297,7 @@ func getSubComment(parentComment string) []comment.CommentHelper {
 	}
 	for _, eventComment := range subComments {
 		if eventComment.ParentCommentId == parentComment && eventComment.Comment != nil {
-			commentHelper := comment.CommentHelper{eventComment.Id, eventComment.Email, eventComment.Name, misc.FormatDateMonth(eventComment.Date), misc.ConvertingToString(eventComment.Comment), eventComment.ParentCommentId}
+			commentHelper := comment.CommentHelper{eventComment.Id, eventComment.Email, eventComment.Name, misc.FormatDateMonth(eventComment.Date), misc.ConvertingToString(eventComment.Comment), eventComment.ParentCommentId, eventComment.Stat}
 			myComments = append(myComments, commentHelper)
 		}
 	}

@@ -122,7 +122,7 @@ func createProjectComment(app *config.Env) http.HandlerFunc {
 		projectId := r.PostFormValue("projectId")
 
 		if name != "" && email != "" && message != "" && projectId != "" {
-			commentObject := comment.Comment{"", email, name, misc.FormatDateTime(time.Now()), misc.ConvertToByteArray(message), ""}
+			commentObject := comment.Comment{"", email, name, misc.FormatDateTime(time.Now()), misc.ConvertToByteArray(message), "", false}
 			newComment, err := comment_io.CreateComment(commentObject)
 			if err != nil {
 				fmt.Println("error creating comment")

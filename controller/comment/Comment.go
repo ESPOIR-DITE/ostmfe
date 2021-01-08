@@ -41,7 +41,7 @@ func getGroupComment(groupId string) []comment.CommentHelper {
 
 		//fmt.Println("Id: ",myComment.Id,"\n Comment ParentId: ",myComment.ParentCommentId,"\n Comment: ",myComment.Comment)
 		if myComment.Comment != nil {
-			commentHelper := comment.CommentHelper{myComment.Id, myComment.Email, myComment.Name, misc.FormatDateMonth(myComment.Date), misc.ConvertingToString(myComment.Comment), myComment.ParentCommentId}
+			commentHelper := comment.CommentHelper{myComment.Id, myComment.Email, myComment.Name, misc.FormatDateMonth(myComment.Date), misc.ConvertingToString(myComment.Comment), myComment.ParentCommentId, myComment.Stat}
 			myCommentObject = append(myCommentObject, commentHelper)
 		}
 	}
@@ -78,7 +78,45 @@ func getProjectComment(projectId string) []comment.CommentHelper {
 			fmt.Println("error reading Comment")
 		}
 		if myComment.Comment != nil {
-			commentHelper := comment.CommentHelper{myComment.Id, myComment.Email, myComment.Name, misc.FormatDateMonth(myComment.Date), misc.ConvertingToString(myComment.Comment), myComment.ParentCommentId}
+			commentHelper := comment.CommentHelper{myComment.Id, myComment.Email, myComment.Name, misc.FormatDateMonth(myComment.Date), misc.ConvertingToString(myComment.Comment), myComment.ParentCommentId, myComment.Stat}
+			myCommentObject = append(myCommentObject, commentHelper)
+		}
+	}
+	return myCommentObject
+}
+
+func GetAllPeopleComments(peopleId string) []comment.CommentStack {
+	var parentCommentStack []comment.CommentStack
+	var subCommentStack []comment.CommentHelper
+
+	for _, commentObject := range getPeopleComments(peopleId) {
+		myComment, err := comment_io.ReadComment(commentObject.Id)
+		if err != nil {
+			fmt.Println("error reading Comment")
+		}
+		if myComment.ParentCommentId != "" && myComment.Comment != nil {
+			subCommentStack = getSubComment(commentObject.Id)
+		}
+		parentCommentStack = append(parentCommentStack, comment.CommentStack{commentObject, subCommentStack})
+	}
+
+	fmt.Println("parentStack ", parentCommentStack)
+
+	return parentCommentStack
+}
+func getPeopleComments(eventId string) []comment.CommentHelper {
+	var myCommentObject []comment.CommentHelper
+	eventComments, err := comment_io.ReadAllByPeopleId(eventId)
+	if err != nil {
+		fmt.Println("error reading event Comment")
+		return myCommentObject
+	}
+	for _, eventComment := range eventComments {
+		myComment, err := comment_io.ReadComment(eventComment.CommentId)
+		if err != nil {
+			fmt.Println("error reading Comment")
+		} else {
+			commentHelper := comment.CommentHelper{myComment.Id, myComment.Email, myComment.Name, misc.FormatDateMonth(myComment.Date), misc.ConvertingToString(myComment.Comment), myComment.ParentCommentId, myComment.Stat}
 			myCommentObject = append(myCommentObject, commentHelper)
 		}
 	}
@@ -113,7 +151,7 @@ func getSubComment(parentComment string) []comment.CommentHelper {
 	}
 	for _, eventComment := range subComments {
 		if eventComment.ParentCommentId == parentComment && eventComment.Comment != nil {
-			commentHelper := comment.CommentHelper{eventComment.Id, eventComment.Email, eventComment.Name, misc.FormatDateMonth(eventComment.Date), misc.ConvertingToString(eventComment.Comment), eventComment.ParentCommentId}
+			commentHelper := comment.CommentHelper{eventComment.Id, eventComment.Email, eventComment.Name, misc.FormatDateMonth(eventComment.Date), misc.ConvertingToString(eventComment.Comment), eventComment.ParentCommentId, eventComment.Stat}
 			myComments = append(myComments, commentHelper)
 		}
 	}
@@ -133,7 +171,7 @@ func getComments(eventId string) []comment.CommentHelper {
 		if err != nil {
 			fmt.Println("error reading Comment")
 		} else {
-			commentHelper := comment.CommentHelper{myComment.Id, myComment.Email, myComment.Name, misc.FormatDateMonth(myComment.Date), misc.ConvertingToString(myComment.Comment), myComment.ParentCommentId}
+			commentHelper := comment.CommentHelper{myComment.Id, myComment.Email, myComment.Name, misc.FormatDateMonth(myComment.Date), misc.ConvertingToString(myComment.Comment), myComment.ParentCommentId, myComment.Stat}
 			myCommentObject = append(myCommentObject, commentHelper)
 		}
 	}

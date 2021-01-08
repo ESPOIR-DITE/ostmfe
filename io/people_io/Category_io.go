@@ -46,6 +46,7 @@ func ReadCategory(id string) (people.Category, error) {
 }
 func DeleteCategory(id string) (people.Category, error) {
 	entity := people.Category{}
+	//fmt.Println("categoryId: ",id)
 	resp, _ := api.Rest().Get(categoryURl + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())

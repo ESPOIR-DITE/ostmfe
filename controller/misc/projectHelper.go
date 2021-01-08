@@ -51,5 +51,5 @@ func getParentDeatils(commentId string) comment.CommentHelper {
 		fmt.Println(err, " error reading all the Contribution")
 		return comment.CommentHelper{}
 	}
-	return comment.CommentHelper{commentObject.Id, commentObject.Email, commentObject.Name, FormatDateMonth(commentObject.Date), ConvertingToString(commentObject.Comment), commentObject.ParentCommentId}
+	return comment.CommentHelper{commentObject.Id, commentObject.Email, commentObject.Name, FormatDateMonth(commentObject.Date), ConvertingToString(commentObject.Comment), commentObject.ParentCommentId, commentObject.Stat}
 }

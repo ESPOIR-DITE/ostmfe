@@ -36,12 +36,10 @@ func GetGroupDataHistory(groupId string) GroupDataHistory {
 		return groupDataHistory
 	}
 	for _, groupImage := range groupImages {
-		if groupImage.Description == "profile" || groupImage.Description == "1" {
-			profile, err = image_io.ReadImage(groupImage.ImageId)
-			if err != nil {
-				fmt.Println("could not read profile Image")
-				return groupDataHistory
-			}
+		profile, err = image_io.ReadImage(groupImage.ImageId)
+		if err != nil {
+			fmt.Println("could not read profile Image")
+			return groupDataHistory
 		}
 		image, err := image_io.ReadImage(groupImage.ImageId)
 		if err != nil {

@@ -21,6 +21,12 @@
   <!-- Custom styles for this page -->
   <link href="../../assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
+  <script src="https://cdn.tiny.cloud/1/tmo7wwuvihuwqom08gjvonhdda8blx4on0n7jvm1i4pq2coh/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+  <script>
+    tinymce.init({
+      selector: '#mytextarea'
+    });
+    </script>
 </head>
 
 <body id="page-top">
@@ -257,40 +263,41 @@
                       <div class="text-center">
                         <h1 class="h4 text-gray-900 mb-4">Create People</h1>
                       </div>
-                      <form class="user" method="post" action="/admin_user/people/create_stp1">
+                      <form class="user" method="post" action="/admin_user/people/create_stp1" enctype="multipart/form-data">
 
                         <div class="form-group row">
                           <div class="col-sm-6">
                             <label>Person Name</label>
-                            <input type="text" name="name" class="form-control"placeholder="Noxolo" required>
+                            <input type="text" name="name" class="form-control"placeholder="ex: Noxolo" required>
                           </div>
                           <div class="col-sm-6">
                             <label>Surname</label>
-                            <input type="text" name="surname" class="form-control"  placeholder="NCeba" required>
+                            <input type="text" name="surname" class="form-control"  placeholder="ex: NCeba" required>
                           </div>
                         </div>
                         <div class="form-group row">
                           <div class="col-sm-6">
                             <label>Date Of Birth</label>
-                            <input type="date" name="b_date" class="form-control"  placeholder="CPUT" required>
+                            <input type="date" name="b_date" class="form-control"  required>
                           </div>
                           <div class="col-sm-6">
-                            <label>Date of Death</label>
-                            <input type="date" name="d_date" class="form-control"  placeholder="CPUT" required>
+                            <label>Date of Death<small> If the person is still alive, sont select any date leave this field empty.</small></label>
+                            <input type="date" name="d_date" class="form-control">
                           </div>
                         </div>
                         <div class="form-group row">
                           <div class="col-sm-6">
-                            <label>Profession</label>
-                            <input type="text" name="profession" class="form-control " id="exampleFirstName" placeholder="Art" required>
+                            <label>Profession <small> If this person had many profession please choose only one the main.</small></label>
+                            <input type="text" name="profession" class="form-control " id="exampleFirstName" placeholder="ex: Art" required>
                           </div>
                           <div class="col-sm-6">
                             <label>Origin</label>
-                            <input type="text" name="origin" class="form-control " id="exampleFirstName" placeholder="South Afrincain" required>
+                            <input type="text" name="origin" class="form-control " id="exampleFirstName" placeholder="Ex: South African" required>
                           </div>
                         </div>
-                        <div class="form-group">
-                          <label>Place <small>Please select a place that is related to this person</small> </label>
+                        <div class="form-group row">
+                          <div class="col-sm-6">
+                          <label>Place<small>Please select a place that is related to this person</small> </label>
                           <select name="placeId" class="browser-default custom-select" required>
                             <option selected>Choose a Place</option>
                             {{with .Places}}
@@ -299,10 +306,33 @@
                               {{end}}
                             {{end}}
                           </select>
+                          </div>
+
+                          <div class="col-sm-6">
+                            <label>Category<small></small> </label>
+                            <select name="categoryId" class="browser-default custom-select" required>
+                              <option selected>Choose a Category</option>
+                              {{with .Categories}}
+                                {{range .}}
+                                  <option value={{.Id}}>{{.Category}}</option>
+                                {{end}}
+                              {{end}}
+                            </select>
+                          </div>
                         </div>
                         <div class="form-group">
                           <label>Person Brief</label>
                           <textarea  name="brief" class="form-control"placeholder="short description of the person" required></textarea>
+                        </div>
+
+                        <div class="form-group ">
+                          <label>People Picture</label>
+                          <input type="file"name="file" class="form-control " id="file" placeholder="Project Name" required>
+                        </div>
+
+                        <div class="form-group">
+                          <label>Event History</label>
+                          <textarea id="mytextarea" class="form-control"  name="history"></textarea>
                         </div>
 
                         <button type="submit" class="btn btn-primary  btn-block">

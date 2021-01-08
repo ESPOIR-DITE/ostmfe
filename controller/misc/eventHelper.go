@@ -25,3 +25,16 @@ func GetEventGallery(eventId string) []EventGalleryImages {
 	}
 	return GalleryImagesList
 }
+
+//flexible for any request that needs a list of events by sending a list of eventIds
+func GetEventListOfEventIdList(eventIds []string) []event.Event {
+	var events []event.Event
+	for _, eventId := range eventIds {
+		eventObject, err := event_io.ReadEvent(eventId)
+		if err != nil {
+			fmt.Println(err, " error reading event")
+		}
+		events = append(events, event.Event{eventObject.Id, eventObject.Name, FormatDateMonth(eventObject.Date), eventObject.IsPast, eventObject.Description})
+	}
+	return events
+}

@@ -281,20 +281,19 @@
                     <tr>
                       <th>Number</th>
                       <th>Type Name</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
-                  <tfoot>
-                    <tr>
-                      <th>Number</th>
-                      <th>Position</th>
-                    </tr>
-                  </tfoot>
                   <tbody>
                   {{with .Peoples}}
                     {{range $i, $e := .}}
                     <tr>
                       <td>{{$i}}</td>
                       <td>{{.Category}}</td>
+                      <td><a href="/admin_user/people/delete-category/{{.Id}}"
+                             class="btn btn-google btn-user btn-block">
+                          <i class="fab fa-fw"></i> Delete
+                        </a></td>
                     </tr>
                   {{end}}
                   {{end}}

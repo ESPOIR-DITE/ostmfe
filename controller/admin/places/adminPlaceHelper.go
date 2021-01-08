@@ -4,11 +4,15 @@ import (
 	"fmt"
 	"ostmfe/controller/misc"
 	"ostmfe/domain/comment"
+	"ostmfe/domain/event"
 	history2 "ostmfe/domain/history"
+	"ostmfe/domain/people"
 	place2 "ostmfe/domain/place"
 	"ostmfe/io/comment_io"
+	"ostmfe/io/event_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
+	"ostmfe/io/people_io"
 	"ostmfe/io/place_io"
 )
 
@@ -103,5 +107,40 @@ func getParentDeatils(commentId string) comment.CommentHelper {
 		fmt.Println(err, " error reading all the Contribution")
 		return comment.CommentHelper{}
 	}
-	return comment.CommentHelper{commentObject.Id, commentObject.Email, commentObject.Name, misc.FormatDateMonth(commentObject.Date), misc.ConvertingToString(commentObject.Comment), commentObject.ParentCommentId}
+	return comment.CommentHelper{commentObject.Id, commentObject.Email, commentObject.Name, misc.FormatDateMonth(commentObject.Date), misc.ConvertingToString(commentObject.Comment), commentObject.ParentCommentId, commentObject.Stat}
+}
+
+//Getting all the PlacePeople Of a particular place.
+func GetAllPeoplePlace(placeId string) []people.People {
+	var peopleList []people.People
+	PeoplePlaces, err := people_io.ReadPeoplePlaceAllByPlaceId(placeId)
+	if err != nil {
+		fmt.Println(err, " error reading all PeoplePlace")
+		return peopleList
+	}
+	for _, PeoplePlace := range PeoplePlaces {
+		PeopleObejct, err := people_io.ReadPeople(PeoplePlace.PeopleId)
+		if err != nil {
+			fmt.Println(err, " error reading all People")
+		} else {
+			//We are putting the Id of the PeoplePlace into people id field so that we can be able to delete peoplePlace
+			peopleList = append(peopleList, people.People{PeoplePlace.Id, PeopleObejct.Name, PeopleObejct.Surname, misc.FormatDateMonth(PeopleObejct.BirthDate), PeopleObejct.DeathDate, PeopleObejct.Origin, PeopleObejct.Profession, PeopleObejct.Brief})
+		}
+	}
+	return peopleList
+}
+
+//Get All the event Of a Place
+func GetEventPlace(placeId string) []event.Event {
+	var events []event.Event
+	var eventIds []string
+	eventsPlace, err := event_io.ReadEventFindByPlaceId(placeId)
+	if err != nil {
+		fmt.Println(err, " error reading all eventPlaces")
+		return events
+	}
+	for _, eventPlace := range eventsPlace {
+		eventIds = append(eventIds, eventPlace.EventId)
+	}
+	return misc.GetEventListOfEventIdList(eventIds)
 }

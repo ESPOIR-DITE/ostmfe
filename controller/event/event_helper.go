@@ -106,11 +106,9 @@ func GetEventPeopleData(eventId string) []people.People {
 					fmt.Println(err, " error reading PeopleImage")
 				} else {
 					for _, peopleImage := range peopleImages {
-						if peopleImage.ImageType == "profile" || peopleImage.ImageType == "1" {
-							profileImage, err = image_io.ReadImage(peopleImage.ImageId)
-							if err != nil {
-								fmt.Println("could not read profile Image")
-							}
+						profileImage, err = image_io.ReadImage(peopleImage.ImageId)
+						if err != nil {
+							fmt.Println("could not read profile Image")
 						}
 					}
 				}

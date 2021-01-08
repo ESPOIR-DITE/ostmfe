@@ -38,11 +38,24 @@ func GroupHome(app *config.Env) http.Handler {
 	r.Post("/update_history", UpdateHistoryHandler(app))
 	r.Post("/update_details", UpdateDetailsHandler(app))
 
+	r.Get("/activate_comment/{commentId}/{groupId}", ActivateCommentHandler(app))
+
 	//Gallery
 	r.Post("/create-gallery", CreateEventGalleryHandler(app))
 	r.Get("/delete-gallery/{pictureId}/{groupId}/{groupGalleryId}", DeleteGalleryHandler(app))
 
 	return r
+}
+
+func ActivateCommentHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		commentId := chi.URLParam(r, "commentId")
+		groupId := chi.URLParam(r, "groupId")
+		result := misc.ActivateComment(commentId)
+		fmt.Print("Activation Result: ", result)
+		http.Redirect(w, r, "/admin_user/group/edit/"+groupId, 301)
+		return
+	}
 }
 
 func DeleteGalleryHandler(app *config.Env) http.HandlerFunc {

@@ -10,11 +10,15 @@ import (
 	"ostmfe/config"
 	"ostmfe/controller/misc"
 	"ostmfe/domain/comment"
+	"ostmfe/domain/event"
 	history2 "ostmfe/domain/history"
 	image2 "ostmfe/domain/image"
+	"ostmfe/domain/people"
 	place2 "ostmfe/domain/place"
+	"ostmfe/io/event_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
+	"ostmfe/io/people_io"
 	"ostmfe/io/place_io"
 	"time"
 )
@@ -37,10 +41,93 @@ func PlaceHome(app *config.Env) http.Handler {
 	r.Post("/update_details", UpdateDetailsHandler(app))
 	r.Post("/update_history", UpdateHistoryHandler(app))
 	r.Post("/create-gallery", CreatePlaceGalleryHandler(app))
+	r.Post("/create-people", CreatePlacePeopleHandler(app))
 
 	r.Get("/delete-gallery/{pictureId}/{placeId}/{PlaceGalleryId}", DeleteGalleryHandler(app))
+	r.Get("/delete-people/{peoplePlaceId}/{placeId}", DeletePeopleHandler(app))
+
+	r.Get("/activate_comment/{commentId}/{placeId}", ActivateCommentHandler(app))
 
 	return r
+}
+
+func ActivateCommentHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		commentId := chi.URLParam(r, "commentId")
+		placeId := chi.URLParam(r, "placeId")
+		result := misc.ActivateComment(commentId)
+		fmt.Print("Activation Result: ", result)
+		http.Redirect(w, r, "/admin_user/place/edit/"+placeId, 301)
+		return
+	}
+}
+
+func DeletePeopleHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		peoplePlaceId := chi.URLParam(r, "peoplePlaceId")
+		placeId := chi.URLParam(r, "placeId")
+
+		if peoplePlaceId != "" {
+			_, err := people_io.DeletePeoplePlace(peoplePlaceId)
+			if err != nil {
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/place/edit/"+placeId, 301)
+				return
+			}
+			if app.Session.GetString(r.Context(), "creation-successful") != "" {
+				app.Session.Remove(r.Context(), "creation-successful")
+			}
+			app.Session.Put(r.Context(), "creation-successful", "You have successfully deleted an event Group")
+			http.Redirect(w, r, "/admin_user/place/edit/"+placeId, 301)
+			return
+		}
+		fmt.Println("missing fields!")
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			app.Session.Remove(r.Context(), "user-create-error")
+		}
+		app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+		http.Redirect(w, r, "/admin_user/place/edit/"+placeId, 301)
+		return
+	}
+}
+
+func CreatePlacePeopleHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		peopleId := r.PostFormValue("peopleId")
+		placeId := r.PostFormValue("placeId")
+
+		fmt.Println("peopleId: ", peopleId, "  placeId: ", placeId)
+		if peopleId != "" && placeId != "" {
+			placePeopleObject := people.PeoplePlace{"", placeId, peopleId}
+			_, err := people_io.CreatePeoplePlace(placePeopleObject)
+			if err != nil {
+				fmt.Println(err, " error creating placePeople!")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/place/edit/"+placeId, 301)
+				return
+			}
+			if app.Session.GetString(r.Context(), "creation-successful") != "" {
+				app.Session.Remove(r.Context(), "creation-successful")
+			}
+			app.Session.Put(r.Context(), "creation-successful", "You have successfully deleted an event Group")
+			http.Redirect(w, r, "/admin_user/place/edit/"+placeId, 301)
+			return
+		}
+		fmt.Println("missing fields!")
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			app.Session.Remove(r.Context(), "user-create-error")
+		}
+		app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+		http.Redirect(w, r, "/admin_user/place/edit/"+placeId, 301)
+		return
+	}
 }
 
 func DeleteGalleryHandler(app *config.Env) http.HandlerFunc {
@@ -497,13 +584,27 @@ func EditPlacesHandler(app *config.Env) http.HandlerFunc {
 		placeId := chi.URLParam(r, "placeId")
 		placeDate := GetPlaceEditable(placeId)
 
+		peoples, err := people_io.ReadPeoples()
+		if err != nil {
+			fmt.Println(err, " error reading peoples")
+		}
+
+		Events, err := event_io.ReadEvents()
+		if err != nil {
+			fmt.Println(err, " error reading events")
+		}
+
 		type PageData struct {
 			PlaceData   PlaceDataEditable
 			SidebarData misc.SidebarData
 			Comments    []comment.CommentHelper2
 			Gallery     []misc.PlaceGalleryImages
+			Peoples     []people.People
+			AllPeople   []people.People
+			Events      []event.Event
+			AllEvents   []event.Event
 		}
-		data := PageData{placeDate, misc.GetSideBarData("place", ""), GetPlaceCommentsWithEventId(placeId), misc.GetPlaceGallery(placeId)}
+		data := PageData{placeDate, misc.GetSideBarData("place", ""), GetPlaceCommentsWithEventId(placeId), misc.GetPlaceGallery(placeId), GetAllPeoplePlace(placeId), peoples, Events, GetEventPlace(placeId)}
 		files := []string{
 			app.Path + "admin/place/new_edit_place.html",
 			app.Path + "admin/template/navbar.html",
@@ -747,7 +848,6 @@ func CreateStp1Handler(app *config.Env) http.HandlerFunc {
 			}
 
 			//image
-
 			imagePlaceObject := image2.Images{"", content, description}
 			imagePlace, err := image_io.CreateImage(imagePlaceObject)
 			if err != nil {
@@ -759,7 +859,6 @@ func CreateStp1Handler(app *config.Env) http.HandlerFunc {
 					fmt.Println(errr, " error creating placeImage")
 				}
 			}
-
 			//Here we are trying to make sure that newPlace.Id is not nil.
 			if newPlace.Id != "" {
 				fmt.Println("successful")
@@ -770,7 +869,6 @@ func CreateStp1Handler(app *config.Env) http.HandlerFunc {
 				http.Redirect(w, r, "/admin_user/place", 301)
 				return
 			}
-
 		}
 		fmt.Println("One of the field is missing or newPlace.Id is nil")
 		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {

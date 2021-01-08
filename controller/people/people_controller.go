@@ -6,18 +6,57 @@ import (
 	"html/template"
 	"net/http"
 	"ostmfe/config"
+	comment2 "ostmfe/controller/comment"
 	"ostmfe/controller/misc"
+	"ostmfe/domain/comment"
 	"ostmfe/domain/people"
+	"ostmfe/io/comment_io"
 	"ostmfe/io/pageData_io"
 	"ostmfe/io/people_io"
+	"time"
 )
 
 func Home(app *config.Env) http.Handler {
 	r := chi.NewRouter()
 	r.Get("/", homeHandler(app))
+	r.Post("/create-comment", CreateCommentHandler(app))
 	r.Get("/{peopleId}", PeopleHanler(app))
+	r.Get("/category/{peopleId}", PeopleCategoryHanler(app))
 
 	return r
+}
+
+func PeopleCategoryHanler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		peopleId := chi.URLParam(r, "peopleId")
+
+	}
+}
+
+func CreateCommentHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		r.ParseForm()
+		name := r.PostFormValue("name")
+		email := r.PostFormValue("email")
+		message := r.PostFormValue("message")
+		historyId := r.PostFormValue("historyId")
+
+		if historyId != "" && email != "" && message != "" {
+			commentObject := comment.Comment{"", email, name, misc.FormatDateTime(time.Now()), misc.ConvertToByteArray(message), "", false}
+			newComment, err := comment_io.CreateComment(commentObject)
+			if err != nil {
+				fmt.Println("error creating comment")
+			} else {
+				_, err := comment_io.CreateCommentPeople(comment.CommentPeople{"", historyId, newComment.Id, "false"})
+				if err != nil {
+					fmt.Println("error creating comment")
+				}
+				http.Redirect(w, r, "/history/single_history/"+historyId, 301)
+			}
+		}
+		http.Redirect(w, r, "/history/single_history/"+historyId, 301)
+	}
 }
 
 func PeopleHanler(app *config.Env) http.HandlerFunc {
@@ -32,16 +71,25 @@ func PeopleHanler(app *config.Env) http.HandlerFunc {
 			http.Redirect(w, r, "/people", 301)
 			return
 		}
+		peopleComment, err := comment_io.CountCommentPeople(peopleId)
+		if err != nil {
+			fmt.Print(err, " error counting people comments")
+		}
 		type PageData struct {
 			PeopleDataHistory PeopleDataHistory
 			GalleryString     []string
+			CommentNumber     int64
+			Comments          []comment.CommentStack
+			GalleryImages     []misc.PeopleGalleryImages
 		}
 
-		data := PageData{peopleDataHistory, GetpeopleGallery(peopleId)}
+		data := PageData{peopleDataHistory, GetpeopleGallery(peopleId), peopleComment, comment2.GetAllPeopleComments(peopleId), misc.GetPeopleGallery(peopleId)}
 		files := []string{
 			app.Path + "people/people_single.html",
 			app.Path + "base_templates/navigator.html",
 			app.Path + "base_templates/footer.html",
+			app.Path + "base_templates/client-gallery.html",
+			app.Path + "base_templates/comments.html",
 		}
 
 		ts, err := template.ParseFiles(files...)

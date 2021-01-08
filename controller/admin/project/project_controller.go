@@ -38,9 +38,20 @@ func ProjectHome(app *config.Env) http.Handler {
 	r.Get("/delete-gallery/{pictureId}/{projectId}/{projectGalleryPictureId}", DeleteGalleryHandler(app))
 
 	r.Get("/delete_project/{projectId}", DeleteProjectHandler(app))
+	r.Get("/activate_comment/{commentId}/{projectId}", ActivateCommentHandler(app))
+
 	return r
 }
-
+func ActivateCommentHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		commentId := chi.URLParam(r, "commentId")
+		projectId := chi.URLParam(r, "projectId")
+		result := misc.ActivateComment(commentId)
+		fmt.Print("Activation Result: ", result)
+		http.Redirect(w, r, "/admin_user/project/edit/"+projectId, 301)
+		return
+	}
+}
 func DeleteGalleryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		pictureId := chi.URLParam(r, "pictureId")
@@ -488,6 +499,7 @@ func CreateProjectHandler(app *config.Env) http.HandlerFunc {
 		file6, _, err := r.FormFile("file6")
 		project_name := r.PostFormValue("project_name")
 		description := r.PostFormValue("description")
+		mytextarea := r.PostFormValue("mytextarea")
 		if err != nil {
 			fmt.Println(err, "<<<<<< error reading file>>>>>>>")
 		}
@@ -497,7 +509,7 @@ func CreateProjectHandler(app *config.Env) http.HandlerFunc {
 
 		fmt.Println(project_name, "<<<Project Name|| description>>>", description)
 
-		if project_name != "" && description != "" {
+		if project_name != "" && description != "" && mytextarea != "" {
 			project := project2.Project{"", project_name, description}
 			new_project, err := project_io.CreateProject(project)
 			if err != nil {
@@ -506,10 +518,11 @@ func CreateProjectHandler(app *config.Env) http.HandlerFunc {
 					app.Session.Remove(r.Context(), "user-create-error")
 				}
 				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-				http.Redirect(w, r, "/admin_user/project/new", 301)
+				http.Redirect(w, r, "/admin_user/project", 301)
 				return
 			}
 
+			//project Image
 			projectImage := project2.ProjectImage{"", new_project.Id, "", ""}
 			helper := project2.ProjectImageHelper{filesByteArray, projectImage}
 			_, errr := project_io.CreateProjectImage(helper)
@@ -523,14 +536,26 @@ func CreateProjectHandler(app *config.Env) http.HandlerFunc {
 					app.Session.Remove(r.Context(), "user-create-error")
 				}
 				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-				http.Redirect(w, r, "/admin_user/project/new", 301)
+				http.Redirect(w, r, "/admin_user/project", 301)
 				return
+			}
+
+			historyObject := history2.Histories{"", misc.ConvertToByteArray(mytextarea)}
+			history, err := history_io.CreateHistorie(historyObject)
+			if err != nil {
+				fmt.Println(err, " error reading History")
+			} else {
+				projectHistoryObject := project2.ProjectHistory{"", new_project.Id, history.Id}
+				_, err := project_io.CreateProjectHistory(projectHistoryObject)
+				if err != nil {
+					fmt.Println(err, " error reading project History")
+				}
 			}
 			if app.Session.GetString(r.Context(), "creation-successful") != "" {
 				app.Session.Remove(r.Context(), "creation-successful")
 			}
 			app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new project : "+project_name)
-			http.Redirect(w, r, "/admin_user/project/new_history/"+new_project.Id, 301)
+			http.Redirect(w, r, "/admin_user/project", 301)
 			return
 			//event_name := r.PostFormValue("event_name")
 		}
@@ -540,7 +565,7 @@ func CreateProjectHandler(app *config.Env) http.HandlerFunc {
 			return
 		}
 		app.Session.Put(r.Context(), "creation-unknown-error", "You have encountered an unknown error, please try again")
-		http.Redirect(w, r, "/admin_user/project/new", 301)
+		http.Redirect(w, r, "/admin_user/project", 301)
 		return
 
 	}

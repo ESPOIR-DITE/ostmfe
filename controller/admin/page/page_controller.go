@@ -94,7 +94,7 @@ func UpdatePageSectionHandler(app *config.Env) http.HandlerFunc {
 		pageId := r.PostFormValue("pageId")
 
 		fmt.Println("pageSectionId", pageSectionId)
-		if pageSectionId != "" && content != "" && pageId != "" {
+		if pageSectionId != "" && pageId != "" {
 			pageSection, err := pageData_io.ReadPageSection(pageSectionId)
 			if err != nil {
 				fmt.Println(err, " error reading PageSection")

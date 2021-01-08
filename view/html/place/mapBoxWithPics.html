@@ -25,6 +25,21 @@
     </style>
 </head>
 <body>
+{{template "navigator"}}
+<section class="banner-area relative"   id="home" >
+    <div class="overlay overlay-bg"></div>
+    <div class="container">
+        <div class="row d-flex align-items-center justify-content-center">
+            <div class="about-content col-lg-12">
+                <h1 class="text-white">
+                    Places
+                </h1>
+                <p class="text-white link-nav"><a href="../index.html">Home </a> <span class="lnr lnr-arrow-right"></span>
+                    <a href="places_page.html"> Places</a></p>
+            </div>
+        </div>
+    </div>
+</section>
 <style>
     .marker {
         background-image: url('../../assets/img/marker-15.svg');
@@ -38,20 +53,20 @@
 </style>
 
 <div class="row">
-    <div class="col-lg-8 post-list blog-post-list">
+    <div class="col-lg-9 post-list blog-post-list">
         <div id="map"></div>
     </div>
-    <div class="col-lg-4 sidebar ScrollStyle" >
+    <div class="col-lg-3 sidebar ScrollStyle" >
 
         <div class="single-widget protfolio-widget">
             <br>
-            <img id="placeImage" src="../../assets/img/blog/user2.jpg" alt="">
-            <a id="title-a"><h4 id="title">Adele Gonzalez</h4></a>
+            <img id="placeImage" width="250px" src="../../assets/img/share_your_story.jpg" alt="">
+            <a  href="" data-toggle="modal" data-target="#Contribution" id="title-a"><h4 id="title"> Share your story about this place</h4></a>
             <p id="title-description">
-                MCSE boot camps have its supporters and
-                its detractors. Some people do not understand why you should have to spend money
-                on boot camp when you can get.
+                You may ba aware of an event that happened and is linked to a particular location that you know better in Simon's Town.
             </p>
+            <a id="shareBTN" data-toggle="modal" href="" data-target="#ContributionPlace" class="genric-btn info radius e-large">Share</a>
+            <a id="placeBTN" class="genric-btn info radius e-large" hidden>Read more</a>
             <ul>
                 <li><a href="#"><i class="fa fa-facebook"></i></a></li>
                 <li><a href="#"><i class="fa fa-twitter"></i></a></li>
@@ -61,7 +76,8 @@
         </div>
 
         <div class="single-widget category-widget">
-            <h4 class="title">People Linked to this place</h4>
+            <h4 class="title">Events Linked to this place</h4>
+            <h4 id="peopleTitle" ></h4>
             <ul id="peoplePlace">
                 <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Techlology</h6> <span>37</span></a></li>
                 <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Lifestyle</h6> <span>24</span></a></li>
@@ -74,76 +90,13 @@
         </div>
 
         <div class="single-widget recent-posts-widget">
-            <h4 class="title">Recent Posts</h4>
-            <div class="blog-list ">
-                <div class="single-recent-post d-flex flex-row">
-                    <div class="recent-thumb">
-                        <img class="img-fluid" src="../assets/img/blog/r1.jpg" alt="">
-                    </div>
-                    <div class="recent-details">
-                        <a href="blog-single.html">
-                            <h4>
-                                Home Audio Recording
-                                For Everyone
-                            </h4>
-                        </a>
-                        <p>
-                            02 hours ago
-                        </p>
-                    </div>
-                </div>
-                <div class="single-recent-post d-flex flex-row">
-                    <div class="recent-thumb">
-                        <img class="img-fluid" src="../assets/img/blog/r2.jpg" alt="">
-                    </div>
-                    <div class="recent-details">
-                        <a href="blog-single.html">
-                            <h4>
-                                Home Audio Recording
-                                For Everyone
-                            </h4>
-                        </a>
-                        <p>
-                            02 hours ago
-                        </p>
-                    </div>
-                </div>
-                <div class="single-recent-post d-flex flex-row">
-                    <div class="recent-thumb">
-                        <img class="img-fluid" src="../assets/img/blog/r3.jpg" alt="">
-                    </div>
-                    <div class="recent-details">
-                        <a href="blog-single.html">
-                            <h4>
-                                Home Audio Recording
-                                For Everyone
-                            </h4>
-                        </a>
-                        <p>
-                            02 hours ago
-                        </p>
-                    </div>
-                </div>
-                <div class="single-recent-post d-flex flex-row">
-                    <div class="recent-thumb">
-                        <img class="img-fluid" src="../assets/img/blog/r4.jpg" alt="">
-                    </div>
-                    <div class="recent-details">
-                        <a href="blog-single.html">
-                            <h4>
-                                Home Audio Recording
-                                For Everyone
-                            </h4>
-                        </a>
-                        <p>
-                            02 hours ago
-                        </p>
-                    </div>
-                </div>
+            <h4 class="title">People linked to this place</h4>
+            <div id="peopleArea">
+
             </div>
         </div>
 
-        <div class="single-widget category-widget">
+        <!--div class="single-widget category-widget">
             <h4 class="title">Post Archive</h4>
             <ul>
                 <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Dec '17</h6> <span>37</span></a></li>
@@ -154,9 +107,9 @@
                 <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Jul '17</h6> <span>09</span></a></li>
                 <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Jun '17</h6> <span>44</span></a></li>
             </ul>
-        </div>
+        </div-->
 
-        <div class="single-widget tags-widget">
+        <!--div class="single-widget tags-widget">
             <h4 class="title">Tag Clouds</h4>
             <ul>
                 <li><a href="#">Lifestyle</a></li>
@@ -169,17 +122,68 @@
                 <li><a href="#">Food</a></li>
                 <li><a href="#">Technology</a></li>
             </ul>
-        </div>
+        </div-->
 
     </div>
 </div>
+<div class="modal fade bd-example-modal-lg" id="ContributionPlace" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Contribute to this Project</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <p class="container">
+                <br>
+                Your contribution may consists of facts or events, archives or any tangible data patterning to this
+                Project.
+                We value your contribution and we need you to fill in bellow form so that we may also contact to learn
+                more from you.
+                We promise to protect you input and your identity. In case of any uncertainty and sensitivity of your
+                data that please
+                contact us on <b>simonstown@museum.co.za</b>.
+            </p>
+            <div class="container">
+                <form method="post" action="/project/contribution" enctype="multipart/form-data">
+                    <br>
+
+                    <input name="name" placeholder="Enter your name" onfocus="this.placeholder = ''"
+                           onblur="this.placeholder = 'Enter your name'" class="common-input mb-20 form-control"
+                           required="true" type="text">
+                    <input name="email" placeholder="Enter your email" onfocus="this.placeholder = ''"
+                           onblur="this.placeholder = 'Enter your email'" class="common-input mb-20 form-control"
+                           required="true" type="email">
+                    <input name="cellphone" placeholder="Enter your phone number" onfocus="this.placeholder = ''"
+                           onblur="this.placeholder = 'Enter your phone number'" class="common-input mb-20 form-control"
+                           required="" type="number">
+                    <input name="eventId" value="" type="hidden">
+
+                    <label class="text-sm-left">Please upload a contribution file of type:
+                        <small>pdf,jpg,doc,mp3,mp4</small></label>
+                    <input type="file" class="common-input mb-20 form-control" name="file"/>
+                    <textarea style="height: 200px" class="form-control mb-10" name="message" placeholder="Messege"
+                              onfocus="this.placeholder = ''" onblur="this.placeholder = 'Messege'"
+                              required="true"></textarea>
+
+                    <button type="submit" class="primary-btn mt-20 " href="#">Submit</button>
+
+                </form>
+            </div>
+            <div class="mt-20">
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <script>
     mapboxgl.accessToken = 'pk.eyJ1IjoiZXNwb2lyLWRpdGUiLCJhIjoiY2tmaTZsdDBiMGpubzJzcDh2aXdodXlnayJ9.e6tqu6hLu5xlaSk84ERd9g';
 
     var myPlaces = {{.PlaceData}};
 
-
+    console.log("the collection : "+myPlaces);
 
     var map = new mapboxgl.Map({
         container: 'map',
@@ -197,7 +201,9 @@
         var title = marker.Place.title;
         var placeImage = marker.Image;
         var description = marker.Place.description;
-        console.log("image : ")
+        var peopleData =marker.People;
+        var events = marker.Events;
+        console.log("image : "+event);
         var  trimedLongitude = logitudeVar.trim();
 // create a DOM element for the marker
         var el = document.createElement('div');
@@ -215,20 +221,34 @@
             document.getElementById("placeImage").removeAttribute("src");
             document.getElementById("placeImage").setAttribute("src","data:image/jpeg;base64,"+placeImage);
 
+            document.getElementById("shareBTN").setAttribute("hidden","true");
+            document.getElementById("placeBTN").removeAttribute("hidden");
+            document.getElementById("placeBTN").setAttribute("href","/place/"+placeId);
 
-
-            if(marker.People){
-                marker.People.forEach(function(value) {
+            //console.log("marker.People: "+marker.People);
+            if(peopleData){
+                peopleData.forEach(function(value) {
+                    var peopleId =value.People.id;
                     console.log(value);
-                    document.getElementById("peoplePlace").removeAttribute("li");
-                    document.getElementById("peoplePlace").innerHTML('<li><a href="/people/'+value.people.id+'" class="justify-content-between align-items-center d-flex"><h6>'+value.people.name+'</h6> <span>37</span></a></li>');
+                    document.getElementById("peopleTitle").innerHTML = "None";
+                    //document.getElementById("peoplePlace").removeAttribute("li");
+                    document.getElementById("peopleArea").innerHTML="";
+                    //document.getElementById("peoplePlace").innerHTML ='<li><a href="/people/'+value.People.id+'" class="justify-content-between align-items-center d-flex"><h6>'+value.People.name+'</h6> </a></li>';
+                    document.getElementById("peopleArea").innerHTML='<div class="blog-list "><div class="single-recent-post d-flex flex-row"><div class="recent-thumb"><a href="/people/'+value.People.id+'"><img class="img-fluid" width="150px" src="data:image/jpeg;base64,'+value.Image.id+'" alt=""></a></div><div class="recent-details"><a href="/people/'+value.People.id+'"><h4>'+value.People.brief+'</h4></a><p>'+value.People.name+'</p></div></div><br></div>';
 
                 });
             }else {// Just clear.
                 document.getElementById("peoplePlace").innerHTML="";
+                document.getElementById("peopleTitle").innerHTML = "None";
             }
-
-             //window.alert(description);
+            if(events){
+                events.forEach(function (event){
+                    console.log("event: "+event.id);
+                    document.getElementById("peoplePlace").innerHTML="";
+                    document.getElementById("peopleTitle").innerHTML = "";
+                    document.getElementById("peoplePlace").innerHTML ='<li><a href="/event/single/'+event.id+'" class="justify-content-between align-items-center d-flex"><h6>'+event.name+'</h6><span>'+event.date+'</span></a></li>';
+                });
+            }
         });
 
         el.addEventListener('mousemove', function () {

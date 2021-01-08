@@ -18,12 +18,12 @@
   <!-- Custom styles for this template-->
   <link href="../../assets/css/sb-admin-2.min.css" rel="stylesheet">
 
-  <script src="https://cdn.tiny.cloud/1/tmo7wwuvihuwqom08gjvonhdda8blx4on0n7jvm1i4pq2coh/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
-<script>
-  tinymce.init({
-    selector: '#mytextare'
-  });
-</script>
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+    <script>
+        tinymce.init({
+            selector: '#mytextare'
+        });
+    </script>
 
 </head>
 
@@ -230,7 +230,7 @@
 
           <!-- Page Heading -->
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Cards</h1>
+            <h1 class="h3 mb-0 text-gray-800">{{.People.People.Name}}</h1>
           </div>
 
           <div class="row">
@@ -334,32 +334,26 @@
                       <div class="col-lg-12">
                         <!-- Default Card Example -->
                         {{if .People.Images}}
-                          {{with .People.Images}}
-                            {{range $i,$e :=.}}
+
                               <div class="card mb-4">
-                                {{if eq $i 0 }}
                                   <div class="card-header py-3">
                                     <h6 class="m-0 font-weight-bold text-primary">First Project Image</h6>
                                   </div>
-                                {{else}}
-                                  <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Second Project Image</h6>
-                                  </div>
-                                {{end}}
+
                                 <div class="card-body">
-                                  {{if .Id}}
+                                  {{if .People.Images.Id}}
                                     <img class="card-img" style="width:100%;height:312px;"
                                          id='base64image'
 
-                                         src='data:image/jpeg;base64,{{.Id}}' alt=""/>
+                                         src='data:image/jpeg;base64,{{.People.Images.Id}}' alt=""/>
                                   {{end}}
                                   <div class="text-center">
                                     <h1 class="h4 text-gray-900 mb-4">You can update this image here</h1>
                                   </div>
                                   <form class="user"method="post" id="" action="/admin_user/people/update_image" enctype="multipart/form-data">
-                                    <input type="hidden"name="imageId" value="{{.ImageId}}" class="form-control " >
-                                    <input type="hidden"name="peopleImageId" value="{{.PeopleImageId}}" class="form-control " >
-                                    <input type="hidden"name="peopleId" value="{{$.People.People.Id}}" class="form-control " >
+                                    <input type="hidden"name="imageId" value="{{.People.Images.ImageId}}" class="form-control " >
+                                    <input type="hidden"name="peopleImageId" value="{{.People.Images.PeopleImageId}}" class="form-control " >
+                                    <input type="hidden"name="peopleId" value="{{.People.People.Id}}" class="form-control " >
                                     <div class="form-group row">
                                       <div class="col-sm-6">
                                         <select name="imageType" class="browser-default custom-select" required>
@@ -378,8 +372,6 @@
                                   </form>
                                 </div>
                               </div>
-                            {{end}}
-                          {{end}}
                         {{else}}
                           <div class="text-center">
                             <h1 class="h4 text-gray-900 mb-4">You have no pictures for this Project, Please Upload pictures</h1>
@@ -410,10 +402,10 @@
                     </div>
                   </div>
 
-                    <div class="col-lg-12 text-center">
+                    <div class="col-lg-6 text-center">
                         <hr>
                     <button id="toAdd" class="btn btn-primary btn-block col-lg-12" onclick="showAddPictureForm()">
-                        Add pictures
+                        Update picture
                     </button>
                     <form id="addPicture" class="user col-lg-12"method="post" action="/admin_user/people/add_pictures" enctype="multipart/form-data" hidden>
                         <div class="text-center">
@@ -423,15 +415,6 @@
                         <div class="form-group ">
                             <label>Project profile Picture</label>
                             <input type="file"name="file" class="form-control " id="file" placeholder="Project Name" required>
-                        </div>
-
-                        <div class="form-group  row" id="filesArea"></div>
-                        <div class="form-group row" >
-                            <div class="col-sm-6" >
-                                <button type="button" id="add_form_field" class="btn btn-primary btn-block">
-                                    Add a picture
-                                </button>
-                            </div>
                         </div>
 
                         <button type="submit" class="btn btn-primary btn-block">
@@ -515,11 +498,12 @@
             </div>
           </div>
 
+            <!---People Place and EVent---->
             <div class="card shadow mb-4">
                 <!-- Card Header - Accordion -->
                 <a href="#collapseCardPlace" class="d-block card-header py-3 btn-success" data-toggle="collapse"
                    role="button" aria-expanded="true" aria-controls="collapseCardExample">
-                    <h6 class="m-0 font-weight-bold" style="color: #0b0b0b">People Place</h6>
+                    <h6 class="m-0 font-weight-bold" style="color: #0b0b0b">People Place & Events</h6>
                 </a>
                 <!-- Card Content - Collapse -->
                 <div class="collapse " id="collapseCardPlace">
@@ -597,7 +581,7 @@
                                                     </table>
                                                     <a class="btn btn-primary btn-user btn-block text-white"
                                                        data-toggle="modal"
-                                                       data-target="#exampleModalUpdatePeoplePlace">
+                                                       data-target="#exampleModalUpdatePeopleEvent">
                                                         Add People
                                                     </a>
                                                 </div>
@@ -624,7 +608,7 @@
             <div class="collapse " id="collapseCardStep2">
               <div class="card-body"  >
                 {{if not .People.History.History}}
-                  <form method="post" action="/admin_user/people/update_history">
+                  <form method="post" action="/admin_user/people/create_history">
                     <div class="form-group" >
                       <input name="historyId" value="{{.People.History.Id}}" hidden>
                       <input name="peopleId" value="{{.People.People.Id}}" hidden>
@@ -655,7 +639,7 @@
                     <form method="post" action="/admin_user/people/update_history">
                       <div class="form-group" >
                         <input name="historyId" value="{{.People.History.Id}}" hidden>
-                        <input name="projectId" value="{{.People.People.Id}}" hidden>
+                        <input name="peopleId" value="{{.People.People.Id}}" hidden>
                         <div class="form-group" >
                           <label id="label" hidden style="color: steelblue">Add the new contents here<small> (You may copy from the previous. Remember this new content will override the previous)</small></label>
                           <textarea name="myArea" id="myArea" class="form-control" hidden>
@@ -676,6 +660,137 @@
               </div>
             </div>
           </div>
+
+            <!-- Comment Card -->
+            <div class="card shadow mb-4">
+                <!-- Card Header - Accordion -->
+                <a href="#commentCard" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+                   role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                    <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">People Comment</h6>
+                </a>
+                <!-- Card Content - Collapse -->
+                <div class="collapse " id="commentCard">
+
+
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>Nr</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Date</th>
+                                    <th>Comment</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {{with .Comments}}
+                                    {{range $i, $e := .}}
+                                        <tr>
+                                            <td>{{$i}}</td>
+                                            <td>{{.Name}}</td>
+                                            <td>{{.Email}}</td>
+                                            <td>{{.Date}}</td>
+                                            <td><small>{{.Comment}}</small></td>
+                                            <td>
+                                                <a class="btn btn-google btn-user btn-block" data-toggle="modal"
+                                                   onclick="deleteThePeopleCommentBTN({{.Id}},{{.BridgeId}},{{.Name}})"
+                                                   data-target="#exampleModalPeople">
+                                                    Delete
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {{end}}
+                                {{end}}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Gallery---->
+            <div class="card shadow mb-4">
+                <!-- Card Header - Accordion -->
+                <a href="#collapseGallery" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+                   role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                    <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Create new People gallery</h6>
+                </a>
+                <!-- Card Content - Collapse -->
+                <div class="collapse " id="collapseGallery">
+                    <div class="card-body p-0">
+                        <!-- Nested Row within Card Body -->
+                        <div class="row">
+
+                            <div class="col-lg-12">
+                                <div class="p-5">
+                                    <div class="text-center">
+                                        <h1 class="h4 text-gray-900 mb-4">New Picture</h1>
+                                    </div>
+                                    <form class="user" method="post" action="/admin_user/people/create-gallery" enctype="multipart/form-data">
+                                        <input type="hidden" name="placeId" value="{{.PeopleDetails.Id}}" class="form-control ">
+
+                                        <div class="form-group ">
+                                            <label>Description <small> Only 200 characters </small></label>
+                                            <textarea class="form-control" name="description" maxlength="200"></textarea>
+                                        </div>
+
+                                        <div class="form-group ">
+                                            <label>Picture</label>
+                                            <input type="file"name="file" class="form-control " id="file" placeholder="Project Name" required>
+                                            <label><small>This field should only contains a picture that says it all about this Person.</small></label>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary btn-block">
+                                            Next
+                                        </button>
+                                        <hr>
+                                        <a href="/admin_user" class="btn btn-google  btn-block">Cancel</a>
+                                    </form>
+                                    <hr>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row ">
+                            <div class="container ">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                        <thead>
+                                        <tr>
+                                            <th>Nr</th>
+                                            <th>Image</th>
+                                            <th>Image description</th>
+                                            <th>Action</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {{with .Gallery}}
+                                            {{range $i, $e := .}}
+                                                <tr>
+                                                    <td>{{$i}}</td>
+                                                    <td><img id='base64image' width="100px" src='data:image/jpeg;base64,{{.Gallery.Image}}' alt=""></td>
+                                                    <td>{{.Gallery.Description}}</td>
+                                                    <td><a href="/admin_user/group/delete-gallery/{{.Gallery.Id}}/{{.PlaceGallery.Id}}/{{$.PeopleGallery.PeopleId}}"
+                                                           class="btn btn-google btn-user btn-block">
+                                                            <i class="fab fa-fw"></i> Delete
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            {{end}}
+                                        {{end}}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
 
         </div>
         <!-- /.container-fluid -->
@@ -760,6 +875,42 @@
   </div>
 
 
+  <!--Update Event Place -->
+  <div class="modal fade" id="exampleModalUpdatePeopleEvent" tabindex="-1" role="dialog"
+       aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-success" id="exampleModalLongTitle">Updating People Event</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h3 class=" text-center"> Event Place</h3>
+          <form class="user" method="post" action="/admin_user/people/add_event">
+            <input type="hidden" name="peopleId" class="form-control" value="{{.PeopleDetails.Id}}" required>
+            <div class="form-group">
+              <label>Choose a Place that will replace</label>
+              <select name="eventId" id="modePlace" class="browser-default custom-select">
+                <option selected>Choose an Event </option>
+                {{with .Events}}
+                  {{range .}}
+                    <option title="{{.Description}}" value="{{.Id}}">{{.Name}}</option>
+                  {{end}}
+                {{end}}
+              </select>
+            </div>
+            <button type="submit" id="placeModelBtn" class="btn btn-primary btn-block" >
+              Submit
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
   <!-- Bootstrap core JavaScript-->
   <script src="../../assets/vendor/jquery/jquery.min.js"></script>
   <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -769,16 +920,20 @@
 
   <!-- Custom scripts for all pages-->
   <script src="../../assets/js/sb-admin-2.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+
 </body>
 <script>
+    $(document).ready(function() {
+        $('#mytextare').summernote();
+    });
     function showAddPictureForm() {
 $('#addPicture').removeAttr('hidden');
 $('#toAdd').attr('hidden','hidden')
     }
 function changeContents(content) {
-  tinymce.init({
-    selector: '#myArea'
-  });
+  $('#myArea').summernote();
+
   $('#updateButton').attr('hidden','hidden');
   $('#formUpdateButton').removeAttr('hidden');
   $('#myArea').removeAttr('hidden');
