@@ -27,7 +27,51 @@ func UserController(app *config.Env) http.Handler {
 	r.Post("/create", CreateUserHandler(app))
 	r.Post("/update_user", UpdateUserHandler(app))
 	r.Post("/update_history", UpdateUserHistoryHandler(app))
+	r.Post("/create_history", CreateHistoryHandler(app))
 	return r
+}
+
+func CreateHistoryHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		myArea := r.PostFormValue("myArea")
+		email := r.PostFormValue("userId")
+
+		fmt.Println(email, " and ", myArea)
+		userImageObject, err := user_io.ReadUserImageWithEmail(email)
+		if err != nil {
+			fmt.Println(err, " error reading user history. proceeding into creating")
+		}
+		if myArea != "" && email != "" {
+			history := history2.Histories{"", misc.ConvertToByteArray(myArea)}
+			historyResturn, err := history_io.CreateHistorie(history)
+			if err != nil {
+				fmt.Println(err, " error update history")
+			} else if userImageObject.Id != "" {
+				fmt.Println(" about to update userImage...", historyResturn.Id)
+				userHistories := user2.UserImage{userImageObject.Id, userImageObject.Email, historyResturn.Id, userImageObject.ImageId, userImageObject.Description}
+				_, err := user_io.UpdateUserImage(userHistories)
+				if err != nil {
+					fmt.Println(err, " error update user history")
+				}
+			} else {
+				fmt.Println(err, "no user Image for thsi user as been created. About to create userImage...")
+				userHistories := user2.UserImage{userImageObject.Id, userImageObject.Email, historyResturn.Id, userImageObject.ImageId, userImageObject.Description}
+				_, err := user_io.CreateUserImage(userHistories)
+				if err != nil {
+					fmt.Println(err, " error update user history")
+				}
+			}
+		}
+
+		fmt.Println("Creation of a new user history successful")
+		if app.Session.GetString(r.Context(), "creation-successful") != "" {
+			app.Session.Remove(r.Context(), "creation-successful")
+		}
+		app.Session.Put(r.Context(), "creation-successful", "You have successfully update")
+		http.Redirect(w, r, "/admin_user/users/edit/"+email, 301)
+		return
+	}
 }
 
 func UpdateUserHistoryHandler(app *config.Env) http.HandlerFunc {
@@ -135,6 +179,7 @@ func EditUserHandler(app *config.Env) http.HandlerFunc {
 		}
 
 		userId := chi.URLParam(r, "userId")
+		fmt.Println(userId, "  <<userId")
 
 		//Reading the user
 		user, err := user_io.ReadUser(userId)
@@ -480,11 +525,29 @@ func UpdateUserHandler(app *config.Env) http.HandlerFunc {
 			http.Redirect(w, r, "/admin_user/users/edit/"+email, 301)
 			return
 		}
-		if isfilether == true {
+		fmt.Println(isfilether, " <<isfilether")
+		if isfilether == true && imageId != "" {
 			imageObejct := image2.Images{imageId, content, ""}
 			_, err := image_io.UpdateImage(imageObejct)
 			if err != nil {
 				fmt.Println(err, " error updating image")
+			}
+			userImage := user2.UserImage{"", email, "", imageId, "1"}
+			_, errs := user_io.CreateUserImage(userImage)
+			if errs != nil {
+				fmt.Println(errs, " error updating UserImage")
+			}
+		} else if isfilether == true {
+			imageObejct := image2.Images{"", content, "1"}
+			imageReturn, err := image_io.CreateImage(imageObejct)
+			if err != nil {
+				fmt.Println(err, " error create image")
+			}
+			fmt.Println(imageReturn, " <<imageReturn")
+			userImage := user2.UserImage{"", email, "", imageReturn.Id, "1"}
+			_, errs := user_io.CreateUserImage(userImage)
+			if errs != nil {
+				fmt.Println(errs, " error create UserImage")
 			}
 		}
 

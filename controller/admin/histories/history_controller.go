@@ -10,8 +10,11 @@ import (
 	"net/http"
 	"ostmfe/config"
 	"ostmfe/controller/misc"
+	"ostmfe/domain/comment"
+	"ostmfe/domain/contribution"
 	history2 "ostmfe/domain/history"
 	"ostmfe/domain/image"
+	"ostmfe/io/comment_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
 )
@@ -575,11 +578,24 @@ func EditHistoryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		historyId := chi.URLParam(r, "historyId")
 
+		commentNumber, pendingcomments, activeComments := historyCommentCalculation(historyId)
 		type PageData struct {
-			HistoryData HistorySimpleData
-			SidebarData misc.SidebarData
+			HistoryData     HistorySimpleData
+			SidebarData     misc.SidebarData
+			Comments        []comment.CommentHelper2
+			Gallery         []misc.HistoryGalleryImages
+			CommentNumber   int64
+			PendingComments int64
+			ActiveComments  int64
+			Contritbution   []contribution.Contribution
 		}
-		data := PageData{GetHistorySimpleData(historyId), misc.GetSideBarData("history", "")}
+		data := PageData{GetHistorySimpleData(historyId),
+			misc.GetSideBarData("history", ""),
+			misc.GetHistoryComments(historyId), misc.GetHistoryGallery(historyId),
+			commentNumber,
+			pendingcomments,
+			activeComments,
+			GetContribution(historyId)}
 		files := []string{
 			app.Path + "admin/history/edit_history.html",
 			app.Path + "admin/template/navbar.html",
@@ -718,4 +734,31 @@ func CreateImageHelper(app *config.Env) http.HandlerFunc {
 			app.ErrorLog.Println(err.Error())
 		}
 	}
+}
+
+//With historyId, you get the commentNumber, pending, active.
+func historyCommentCalculation(historyId string) (commentNumber int64, pending int64, active int64) {
+	var commentNumbers int64 = 0
+	var pendings int64 = 0
+	var actives int64 = 0
+	historyComments, err := comment_io.ReadAllCommentHistory(historyId)
+	if err != nil {
+		fmt.Println(err, " error reading People comment")
+		return commentNumbers, pendings, actives
+	} else {
+		for _, historyComment := range historyComments {
+			comments, err := comment_io.ReadComment(historyComment.CommentId)
+			if err != nil {
+				fmt.Println(err, " error reading comment")
+			} else {
+				if comments.Stat == true {
+					actives++
+				} else {
+					pending++
+				}
+				commentNumber++
+			}
+		}
+	}
+	return commentNumbers, pendings, actives
 }

@@ -44,6 +44,20 @@ func ReadCommentPeople(id string) (comment.CommentPeople, error) {
 	}
 	return entity, nil
 }
+
+func ReadAllCommentPeopleWithPeopleId(peopleId string) ([]comment.CommentPeople, error) {
+	entity := []comment.CommentPeople{}
+	resp, _ := api.Rest().Get(commentpeopleURL + "readAllByPeopleId?peopleId=" + peopleId)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
+
 func CountCommentPeople(eventId string) (int64, error) {
 	var entity int64
 	resp, _ := api.Rest().Get(commenteventURL + "count?eventId=" + eventId)

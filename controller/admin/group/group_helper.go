@@ -127,3 +127,30 @@ func getParentDeatils(commentId string) comment.CommentHelper {
 	}
 	return comment.CommentHelper{commentObject.Id, commentObject.Email, commentObject.Name, misc.FormatDateMonth(commentObject.Date), misc.ConvertingToString(commentObject.Comment), commentObject.ParentCommentId, commentObject.Stat}
 }
+
+//With groupId, you get the commentNumber, pending, active.
+func groupCommentCalculation(groupId string) (commentNumber int64, pending int64, active int64) {
+	var commentNumbers int64 = 0
+	var pendings int64 = 0
+	var actives int64 = 0
+	peopleComments, err := comment_io.ReadAllByGroupId(groupId)
+	if err != nil {
+		fmt.Println(err, " error reading People comment")
+		return commentNumbers, pendings, actives
+	} else {
+		for _, peopleComment := range peopleComments {
+			comments, err := comment_io.ReadComment(peopleComment.CommentId)
+			if err != nil {
+				fmt.Println(err, " error reading comment")
+			} else {
+				if comments.Stat == true {
+					actives++
+				} else {
+					pending++
+				}
+				commentNumber++
+			}
+		}
+	}
+	return commentNumbers, pendings, actives
+}

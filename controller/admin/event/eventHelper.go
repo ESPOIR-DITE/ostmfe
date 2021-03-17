@@ -46,7 +46,7 @@ func GetContributionData(eventId string) []contribution2.ContributionHelper {
 			if err != nil {
 				fmt.Println(err, " error reading all the Contribution")
 			}
-			contributionList = append(contributionList, contribution2.ContributionHelper{contribution.Id, contribution.Email, contribution.Name, misc.FormatDateMonth(contribution.Date), contribution.PhoneNumber, misc.ConvertingToString(contribution.Description), misc.ConvertingToString(getContributionFile(contribution.Id).File)})
+			contributionList = append(contributionList, contribution2.ContributionHelper{contribution.Id, contribution.Email, contribution.Name, misc.FormatDateTime(contribution.Date), contribution.PhoneNumber, misc.ConvertingToString(contribution.Description)})
 		}
 	}
 	return contributionList

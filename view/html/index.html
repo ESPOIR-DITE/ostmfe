@@ -222,8 +222,7 @@
     </div>
 </section>
 <!-- End quote Area -->
-<br>
-<br>
+
 <div class="">
     <div class="container">
         <div class="section-top-border">
@@ -261,7 +260,8 @@
 <!-- start project Area -->
 <!-- 1. check if there is any projects in the list so that we can display this block-->
 {{if .Projects}}
-<section class="blog-posts-area pt-100">
+<section class="blog-posts-area">
+    <br>
     <div class="container">
         <div class="row">
             <div class="col-lg-8 post-list blog-post-list">
@@ -293,7 +293,7 @@
                                 <div class="col-lg-4">
                                     <div class="single-service">
                                         <img class="card-img" id='base64image'
-                                             width="500px"{{if .Picture}} src='data:image/jpeg;base64,{{.Picture}}' alt=""{{end}}/></a>
+                                             height="200px"{{if .Picture}} src='data:image/jpeg;base64,{{.Picture}}' alt=""{{end}}/></a>
                                         <h4><a href="/project/read_single/{{.ProjectId}}"><h4>{{.Title}}</h4></a></h4>
                                         <div class="overlay">
                                             <div class="text">
@@ -317,7 +317,8 @@
                 </div>
 
                 {{if .EventDataList}}
-                    <section class="section-gap">
+                    <section class="">
+                        <br>
                         <div class="">
                             <div class="container">
                                 <br>
@@ -408,26 +409,6 @@
             </div>
 
             <div class="col-lg-4 sidebar whole-wrap">
-                <!--div class="single-widget search-widget">
-                    <form class="example" action="#" style="margin:auto;max-width:300px">
-                        <input type="text" placeholder="Search Posts" name="search2">
-                        <button type="submit"><i class="fa fa-search"></i></button>
-                    </form>
-                </div-->
-
-                <!--div class="single-widget protfolio-widget">
-                    <img width="70%" src="../assets/img/share_your_story.jpg" alt="">
-                    <a class="julie" data-toggle="modal" href="" data-target="#Contribution"><h1>Share Your Story
-                            Here.</h1></a>
-                    <ul>
-                        <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                        <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                        <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-                        <li><a href="#"><i class="fa fa-behance"></i></a></li>
-                    </ul>
-                </div-->
-
-
                 <div class="single-widget tags-widget">
                     <h4 class="title">Museum Projects</h4>
                     <ul>
@@ -453,6 +434,16 @@
                 {{end}}
 
                 <div class="single-widget tags-widget">
+                    <h4 class="title">Simon's Town Places</h4>
+                    <ul>
+                        {{with .Places}}
+                        {{range .}}
+                        <li><a href="/place/{{.Id}}">{{.Title}}</a></li>
+                        {{end}}
+                        {{end}}
+                    </ul>
+                </div>
+                <div class="single-widget tags-widget">
                     <a href="/place"><h4>View an interactive Simon's town Map</h4></a>
                     <br>
                     <p>
@@ -462,7 +453,6 @@
                         <a href="/place" class="primary-btn text-uppercase text-center">View The Map</a>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -474,6 +464,7 @@
 <!-- End upcoming-event Area -->
 
 <!-- Start blog Area -->
+
 <section class="blog-area " id="blog">
     <div class="container">
         <div class="row d-flex justify-content-center">
@@ -562,6 +553,7 @@
         </div-->
     </div>
 </section>
+
 <!-- End blog Area -->
 
 <!-- Start gallery Area -->
@@ -601,39 +593,62 @@
                     </div>
 
                     <div class="mt-10">
-                        <input type="text" name="fax" placeholder="Name of Group, Organisation, School" onfocus="this.placeholder = ''"
+                        <input type="text" name="organisation" placeholder="Name of Group, Organisation, School" onfocus="this.placeholder = ''"
                                onblur="this.placeholder = 'Name of Group'" required class="single-input">
                     </div>
 
                     <div class="mt-10">
-                        <input type="text" name="fax" placeholder="Language" onfocus="this.placeholder = ''"
+                        <input type="text" name="language" placeholder="Language" onfocus="this.placeholder = ''"
                                onblur="this.placeholder = 'Language'" required class="single-input">
                     </div>
 
                     <div class="input-group-icon mt-10">
                         <label>Booking Purpose</label>
                         <div class="form-select" id="default-select">
-                            <select id="bookingType">
-                                <option value="Education" selected>select the purpose</option>
+                            <select id="bookingType" name="purpose">
+                                <option value="" selected>select the purpose</option>
                                 <option value="Education">Education</option>
                                 <option value="Leisure">Leisure</option>
                             </select>
                         </div>
                     </div>
-
+                    <div class="input-group-icon mt-10">
+                        <label>First time visit</label>
+                        <div class="form-select" id="default-select">
+                            <select id="bookingType" name="visitTime">
+                                <option value="Education" selected>select one option</option>
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="mt-10">
-                        <input type="text" name="country" placeholder="Country" onfocus="this.placeholder = ''"
-                               onblur="this.placeholder = 'Email address'" required class="single-input">
+                        <label>Special need of the group</label>
+                        <input type="text" name="need" placeholder="" onfocus="this.placeholder = ''"
+                               onblur="this.placeholder = 'Ex: view Collections'" required class="single-input">
                     </div>
 
                     <div class="mt-10">
+                        <label>Booking Date</label>
+                        <input type="date" name="date" placeholder="Date of visit" onfocus="this.placeholder = ''"
+                               onblur="this.placeholder = ''" required class="single-input">
+                    </div>
+
+                    <div class="mt-10">
+                        <label>Country of origin</label>
+                        <input type="text" name="country" placeholder="Country" onfocus="this.placeholder = ''"
+                               onblur="this.placeholder = 'Country'" required class="single-input">
+                    </div>
+
+                    <div class="mt-10">
+                        <label>Province of origin</label>
                         <input type="text" name="province" placeholder="Province" onfocus="this.placeholder = ''"
                                onblur="this.placeholder = 'Province'" required class="single-input">
                     </div>
 
                     <div class="mt-10">
                         <label>Where did you hear about the Simon’s Town Museum ?</label>
-                        <textarea class="single-textarea" placeholder="Message" onfocus="this.placeholder = ''"
+                        <textarea class="single-textarea" name="Message" placeholder="Message" onfocus="this.placeholder = ''"
                                   onblur="this.placeholder = 'Message'" required></textarea>
                     </div>
 
@@ -668,13 +683,25 @@
                     </div>
 
                     <div class="mt-10">
-                        <input type="text" name="fax" placeholder="fax Number" onfocus="this.placeholder = ''"
+                        <input type="text" name="organisation" placeholder="Name of Group, Organisation, School" onfocus="this.placeholder = ''"
                                onblur="this.placeholder = 'First Name'" required class="single-input">
                     </div>
 
                     <div class="mt-10">
-                        <input type="email" name="email" placeholder="Email address" onfocus="this.placeholder = ''"
+                        <input type="email" name="language" placeholder="Language" onfocus="this.placeholder = ''"
                                onblur="this.placeholder = 'Email address'" required class="single-input">
+                    </div>
+
+                    <br>
+                    <div class="input-group-icon mt-10">
+                        <label>Booking Purpose</label>
+                        <div class="form-select myinput" id="default-select">
+                            <select class="form-control" name="purpose">
+                                <option value="Education" selected>select the purpose</option>
+                                <option value="Education">Education</option>
+                                <option value="Leisure">Leisure</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="mt-10">
@@ -682,48 +709,14 @@
                                onblur="this.placeholder = 'Email address'" required class="single-input">
                     </div>
 
-                    <br>
-                    <div class="input-group-icon mt-10">
-                        <label>Booking Type</label>
-                        <div class="form-select" id="default-select">
-                            <select id="bookingType">
-                                <option value="1">Private</option>
-                                <option value="2">School Tour</option>
-                                <option value="3">Group Tour</option>
-                            </select>
-                        </div>
+                    <div class="mt-10">
+                        <input type="text" name="Country" placeholder="Country of Origin" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Country'" required class="single-input form-control myinput">
                     </div>
 
-
-                    <div class="input-group-icon mt-10" id="gradeOrAge">
-                        <br>
-                        <label>Grade or Age</label>
-                        <div class="form-select" id="default-select">
-                            <select>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                                <option value="6">6</option>
-                                <option value="7">7</option>
-                            </select>
-                        </div>
-                        <br>
+                    <div class="mt-10">
+                        <input type="text" name="province" placeholder="province" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Country'" required class="single-input form-control myinput">
                     </div>
 
-                    <br>
-                    <div class="input-group-icon mt-10">
-                        <label>Language</label>
-                        <div class="form-select" id="default-select">
-                            <select>
-                                <option value="1">English</option>
-                                <option value="2">French</option>
-                                <option value="3">Zulu</option>
-                                <option value="4">Xhosa</option>
-                            </select>
-                        </div>
-                    </div>
                     <div class="mt-10">
                         <textarea class="single-textarea" placeholder="Message" onfocus="this.placeholder = ''"
                                   onblur="this.placeholder = 'Message'" required></textarea>
@@ -761,7 +754,7 @@
                 contact us on <b>simonstown@museum.co.za</b>.
             </p>
             <div class="container">
-                <form method="post" action="/project/contribution" enctype="multipart/form-data">
+                <form method="post" action="/admin_user/contribution/new" enctype="multipart/form-data">
                     <br>
 
                     <input name="name" placeholder="Enter your name" onfocus="this.placeholder = ''"
@@ -773,13 +766,26 @@
                     <input name="cellphone" placeholder="Enter your phone number" onfocus="this.placeholder = ''"
                            onblur="this.placeholder = 'Enter your phone number'" class="common-input mb-20 form-control"
                            required="" type="number">
-                    <input name="eventId" value="" type="hidden">
 
+                    <div class="input-group-icon mt-10">
+                        <label>Select the format of file you want to submit</label>
+                        <div class="form-select common-input mb-20 form-control"  id="default-select">
+                            <select name="filetypeId" class="common-input mb-20 form-control">
+                                <option value="" selected>Select a format</option>
+                                {{with .FileTypes}}
+                                {{range .}}
+                                <option value="{{.Id}}">{{.FileType}}</option>
+                                {{end}}
+                                {{end}}
+                            </select>
+                        </div>
+                    </div>
                     <label class="text-sm-left">Please upload a contribution file of type:
                         <small>pdf,jpg,doc,mp3,mp4</small></label>
                     <input type="file" class="common-input mb-20 form-control" name="file"/>
-                    <textarea style="height: 200px" class="form-control mb-10" name="message" placeholder="Messege"
-                              onfocus="this.placeholder = ''" onblur="this.placeholder = 'Messege'"
+                    <label>Message</label>
+                    <textarea style="height: 200px" maxlength="150" class="form-control mb-10" name="message" placeholder="Message"
+                              onfocus="this.placeholder = ''" onblur="this.placeholder = 'Message'"
                               required="true"></textarea>
 
                     <button type="submit" class="primary-btn mt-20 " href="#">Submit</button>

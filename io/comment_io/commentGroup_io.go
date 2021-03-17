@@ -81,9 +81,9 @@ func ReadCommentGroups() ([]comment.CommentGroup, error) {
 	return entity, nil
 }
 
-func ReadAllByGroupId(eventId string) ([]comment.CommentGroup, error) {
+func ReadAllByGroupId(groupId string) ([]comment.CommentGroup, error) {
 	entity := []comment.CommentGroup{}
-	resp, _ := api.Rest().Get(commentgroupURL + "readAllByEventId?eventId=" + eventId)
+	resp, _ := api.Rest().Get(commentgroupURL + "readAllByEventId?eventId=" + groupId)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -94,7 +94,7 @@ func ReadAllByGroupId(eventId string) ([]comment.CommentGroup, error) {
 	return entity, nil
 }
 
-func ReadAllbyGroupId(projectId string) ([]comment.CommentGroup, error) {
+func ReadAllyGroupId(projectId string) ([]comment.CommentGroup, error) {
 	entity := []comment.CommentGroup{}
 	resp, _ := api.Rest().Get(commentgroupURL + "readAllByCommentId")
 	if resp.IsError() {

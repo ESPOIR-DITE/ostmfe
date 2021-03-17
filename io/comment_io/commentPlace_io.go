@@ -32,6 +32,20 @@ func UpdateCommentPlace(commentObject comment.CommentEvent) (comment.CommentEven
 	}
 	return entity, nil
 }
+
+func ReadAllCommentPlace(placeId string) ([]comment.CommentEvent, error) {
+	entity := []comment.CommentEvent{}
+	resp, _ := api.Rest().Get(commentplaceURL + "readAllByPlaceId?eventId=" + placeId)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
+
 func ReadCommentPlace(id string) (comment.CommentEvent, error) {
 	entity := comment.CommentEvent{}
 	resp, _ := api.Rest().Get(commentplaceURL + "read?id=" + id)

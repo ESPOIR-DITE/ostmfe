@@ -15,6 +15,7 @@ import (
 	"ostmfe/controller/misc"
 	museum "ostmfe/domain"
 	"ostmfe/domain/comment"
+	"ostmfe/domain/contribution"
 	event2 "ostmfe/domain/event"
 	"ostmfe/domain/group"
 	history2 "ostmfe/domain/history"
@@ -55,7 +56,9 @@ func EventHome(app *config.Env) http.Handler {
 	r.Post("/add_people", AddPeopleHandler(app))
 	r.Post("/add_group", AddGroupHandler(app))
 	r.Post("/update_event_place", UpdateEventPlaceHandler(app))
+	r.Post("/create-page-flow", CreatePageFlowHandler(app))
 
+	r.Get("/delete-page-fLow/{pageFlowId}/{eventId}", DeletePageFlowHandler(app))
 	r.Get("/delete/{eventId}", DeleteEventHandler(app))
 	r.Get("/delete_people/{peopleId}/{eventId}", DeletepeopleEventHandler(app))
 	r.Get("/delete_group/{groupId}/{eventId}", DeleteGroupEventHandler(app))
@@ -67,6 +70,42 @@ func EventHome(app *config.Env) http.Handler {
 	r.Get("/delete-gallery/{pictureId}/{eventId}/{eventGalleryId}", DeleteGalleryHandler(app))
 
 	return r
+}
+
+func DeletePageFlowHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+			return
+		}
+		pageFlowId := chi.URLParam(r, "pageFlowId")
+		eventId := chi.URLParam(r, "eventId")
+
+		_, err := event_io.DeleteEventPageFlow(pageFlowId)
+		if err != nil {
+			fmt.Println(err, " error deleting page flow!")
+		}
+		http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
+	}
+}
+
+func CreatePageFlowHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		eventId := r.PostFormValue("eventId")
+		pageFlowTitle := r.PostFormValue("pageFlowTitle")
+		scr := r.PostFormValue("scr")
+		fmt.Println(scr, "  src", pageFlowTitle, "  page flow", eventId, " eventId")
+		if scr != "" && eventId != "" && pageFlowTitle != "" {
+			_, err := event_io.CreateEventPageFlow(contribution.EventPageFlow{"", eventId, pageFlowTitle, scr})
+			if err != nil {
+				fmt.Println(err, " error creating page flow!")
+			}
+		}
+		fmt.Print("")
+		http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
+		return
+	}
 }
 
 func ActivateCommentHandler(app *config.Env) http.HandlerFunc {
@@ -1134,7 +1173,8 @@ func EventPicture(app *config.Env) http.HandlerFunc {
 		}
 		data := PageData{projects, partners, event, groups, backend_error, unknown_error}
 		files := []string{
-			app.Path + "admin/event/new_event_picture.html",
+			//app.Path + "admin/event/new_event_picture.html",
+			app.Path + "admin/event/event_history_picture.html",
 			app.Path + "admin/template/navbar.html",
 			app.Path + "admin/template/topbar.html",
 			app.Path + "base_templates/footer.html",
@@ -1155,6 +1195,7 @@ func EditEventsHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if !adminHelper.CheckAdminInSession(app, r) {
 			http.Redirect(w, r, "/administration/", 301)
+			return
 		}
 		eventId := chi.URLParam(r, "eventId")
 		event, err := event_io.ReadEvent(eventId)
@@ -1193,7 +1234,10 @@ func EditEventsHandler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			fmt.Println(err, " error reading all the groups")
 		}
-
+		pageFlows, err := event_io.ReadAllEventPageFlowByEventId(eventId)
+		if err != nil {
+			fmt.Println(err, " error reading all the pageflow")
+		}
 		type PageData struct {
 			Event       event2.Event
 			EventData   misc.EventData
@@ -1207,6 +1251,7 @@ func EditEventsHandler(app *config.Env) http.HandlerFunc {
 			Groups      []group.Groupes
 			Comments    []comment.CommentHelper2
 			Gallery     []misc.EventGalleryImages
+			PageFLow    []contribution.EventPageFlow
 		}
 		date := PageData{event,
 			eventData,
@@ -1219,7 +1264,8 @@ func EditEventsHandler(app *config.Env) http.HandlerFunc {
 			event3.GetGroupsData(eventId),
 			groups,
 			GetEventCommentsWithEventId(eventId),
-			misc.GetEventGallery(eventId)}
+			misc.GetEventGallery(eventId),
+			pageFlows}
 		files := []string{
 			app.Path + "admin/event/edit_event.html",
 			app.Path + "admin/template/navbar.html",
@@ -1411,8 +1457,9 @@ func CreateEventHandler(app *config.Env) http.HandlerFunc {
 		partner := r.PostFormValue("partner")
 		placeId := r.PostFormValue("placeId")
 		yearId := r.PostFormValue("year")
+		src := r.PostFormValue("src")
+		pageFlowTitle := r.PostFormValue("pageFlowTitle")
 		eventStatus := r.PostFormValue("eventStatus")
-		//peopleId := r.PostFormValue("people")
 		peopleIds := r.Form["peopleId"]
 
 		//fmt.Println("peopleId: ",peopleIds)
@@ -1434,6 +1481,14 @@ func CreateEventHandler(app *config.Env) http.HandlerFunc {
 				_, err := event_io.CreateEventPartener(eventPartner)
 				if err != nil {
 					fmt.Println(err, " error when creating event partner")
+				}
+			}
+			//Creation of pageFlow
+			if src != "" && pageFlowTitle != "" {
+				eventPageFlowObject := contribution.EventPageFlow{"", newEvent.Id, pageFlowTitle, src}
+				_, err := event_io.CreateEventPageFlow(eventPageFlowObject)
+				if err != nil {
+					fmt.Println(err, " error when creating eventPageFLow")
 				}
 			}
 			//Creating event year

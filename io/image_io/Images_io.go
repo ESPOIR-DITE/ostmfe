@@ -23,7 +23,6 @@ func CreateImage(img image.Images) (image.Images, error) {
 
 }
 func UpdateImage(img image.Images) (image.Images, error) {
-
 	entity := image.Images{}
 	resp, _ := api.Rest().SetBody(img).Post(imageURL + "update")
 	if resp.IsError() {
@@ -48,7 +47,6 @@ func ReadImage(id string) (image.Images, error) {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
-
 }
 func DeleteImage(id string) (image.Images, error) {
 

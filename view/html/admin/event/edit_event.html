@@ -516,12 +516,11 @@
                                 <form method="post" action="/admin_user/event/update_history">
                                     <div class="form-group">
                                         <input name="historyId" value="{{.EventData.History.Id}}" hidden>
-                                        <input name="eventId" value="{{.EventData.event.Id}}" hidden>
+                                        <input name="eventId" value="{{.EventData.Event.Id}}" hidden>
                                         <div class="form-group">
                                             <label>Add History</label>
                                             <textarea id="mytextare" class="form-control" name="myArea"></textarea>
                                         </div>
-
                                     </div>
                                     <div class="form-group text-center">
                                         <button class="btn btn-info" id="formUpdateButton" type="submit">update</button>
@@ -552,7 +551,6 @@
                                                         content will override the previous)</small></label>
                                                 <textarea name="myArea" id="myArea" class="form-control" hidden></textarea>
                                             </div>
-
                                         </div>
                                         <div class="form-group text-center">
                                             <button class="btn btn-warning" id="formUpdateButton" type="submit" hidden>
@@ -617,6 +615,85 @@
                                     {{end}}
                                     </tbody>
                                 </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!---Event PageFlow---->
+                <div class="card shadow mb-4">
+                    <!-- Card Header - Accordion -->
+                    <a href="#collapseFlow" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+                       role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                        <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Create new Event Page flow</h6>
+                    </a>
+                    <!-- Card Content - Collapse -->
+                    <div class="collapse " id="collapseFlow">
+                        <div class="card-body p-0">
+                            <!-- Nested Row within Card Body -->
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="p-5">
+                                        <div class="text-center">
+                                            <h1 class="h4 text-gray-900 mb-4">New PageFlow</h1>
+                                        </div>
+                                        <form class="user" method="post" action="/admin_user/event/create-page-flow" >
+                                            <input type="hidden" name="eventId" value="{{.EventData.Event.Id}}">
+                                            <div class="form-group row">
+                                                <div class="col-sm-6">
+                                                    <label>PageFlow Title</label>
+                                                    <input type="text" name="pageFlowTitle" class="form-control" placeholder="Descendant of slavery">
+                                                </div>
+
+                                                <div class="col-sm-6">
+                                                    <label>PageFlow src link <small> Optional field </small></label>
+                                                    <input type="text" name="scr" class="form-control" placeholder="Ex:https://museumeducation.pageflow.io/descendants-of-slavery/embed">
+                                                </div>
+                                            </div>
+
+                                            <button type="submit" class="btn btn-primary btn-block">
+                                                Next
+                                            </button>
+                                            <hr>
+                                            <a href="/admin_user" class="btn btn-google  btn-block">Cancel</a>
+                                        </form>
+                                        <hr>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row ">
+                                <div class="container ">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                            <thead>
+                                            <tr>
+                                                <th>Nr</th>
+                                                <th>Title</th>
+                                                <th>link</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {{with .PageFLow}}
+                                            {{range $i, $e := .}}
+                                            <tr>
+                                                <td>{{$i}}</td>
+                                                <td>{{.Title}}</td>
+                                                <td>{{.PageFlow}}</td>
+                                                <td><a href="/admin_user/event/delete-page-fLow/{{.Id}}/{{$.EventData.Event.Id}}"
+                                                       class="btn btn-google btn-user btn-block">
+                                                    <i class="fab fa-fw"></i> Delete
+                                                </a>
+                                                </td>
+                                            </tr>
+                                            {{end}}
+                                            {{end}}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 

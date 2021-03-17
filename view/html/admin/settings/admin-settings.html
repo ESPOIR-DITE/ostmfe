@@ -45,8 +45,8 @@
 
           <!-- Page Heading -->
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-            <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
+            <h1 class="h3 mb-0 text-gray-800">Setting</h1>
+            <a href="contribution/ipAddress" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> view IP Address</a>
           </div>
 
           <!-- Alert -->
@@ -58,7 +58,6 @@
 
           <!-- Content Row -->
           <div class="row">
-
             <!-- Earnings (Monthly) Card Example -->
             <div class="col-xl-3 col-md-6 mb-4">
               <div class="card border-left-primary shadow h-100 py-2">
@@ -82,8 +81,39 @@
                             </div>
                         </div>
                     </form>
+
+                  <br>
+                  <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                      <thead>
+                      <tr>
+                        <th>Nr</th>
+                        <th>file Type</th>
+                        <th>Action</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      {{with .ContributionTypes}}
+                      {{range $i, $e := .}}
+                      <tr>
+                        <td>{{$i}}</td>
+                        <td>{{.FileType}}</td>
+                        <td>
+                          <a class="btn btn-google btn-user btn-block" data-toggle="modal"
+                             onclick="deleteContributionFileType({{.Id}},{{.FileType}})"
+                             data-target="#deleteModel">
+                            Delete
+                          </a>
+                        </td>
+                      </tr>
+                      {{end}}
+                      {{end}}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
+
             </div>
 
             <!-- Earnings (Monthly) Card Example -->
@@ -509,6 +539,29 @@
     </div>
   </div>
 
+  <!--Delete warning Modal -->
+  <div class="modal fade" id="deleteModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-danger" id="exampleModalLongTitle">Warning</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h3 class="text-danger text-center"> About to delete the record of:</h3>
+          <h4 id="value" class="text-center"></h4>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-danger" id=""><a id="deleteBtn">Delete</a></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
   <!-- Bootstrap core JavaScript-->
   <script src="../../assets/vendor/jquery/jquery.min.js"></script>
   <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -525,7 +578,12 @@
   <!-- Page level custom scripts -->
   <script src="../../assets/js/demo/chart-area-demo.js"></script>
   <script src="../../assets/js/demo/chart-pie-demo.js"></script>
-
 </body>
+<script>
+  function deleteContributionFileType(id, name) {
+    $("#deleteBtn").attr('href', '/admin_user/contribution/delete-file-type/' + id);
+    $("#value").text(name);
+  }
+</script>
 
 </html>

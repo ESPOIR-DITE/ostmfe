@@ -10,7 +10,7 @@ import (
 
 func Home(app *config.Env) http.Handler {
 	r := chi.NewRouter()
-	r.Get("/", homeHanler(app))
+	r.Get("/", homeHandler(app))
 	//r.Use(middleware.LoginSession{SessionManager: app.Session}.RequireAuthenticatedUser)
 	//r.Get("/home", indexHanler(app))
 	//r.Get("/homeError", indexErrorHanler(app))
@@ -18,7 +18,7 @@ func Home(app *config.Env) http.Handler {
 	return r
 }
 
-func homeHanler(app *config.Env) http.HandlerFunc {
+func homeHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		projects := misc.GetProjectContentsHomes()
 		type PageData struct {

@@ -238,7 +238,7 @@
                         <div class="input-group-icon mt-10">
                             <label>Booking Purpose</label>
                             <div class="form-select myinput" id="default-select">
-                                <select class="form-control">
+                                <select class="form-control" name="purpose">
                                     <option value="Education" selected>select the purpose</option>
                                     <option value="Education">Education</option>
                                     <option value="Leisure">Leisure</option>
@@ -247,7 +247,7 @@
                         </div>
 
                         <div class="mt-10">
-                            <input type="text" name="Country" placeholder="Language" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Country'" required class="single-input form-control myinput">
+                            <input type="text" name="Country" placeholder="Country of Origin" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Country'" required class="single-input form-control myinput">
                         </div>
 
                         <div class="mt-10">
@@ -255,7 +255,7 @@
                         </div>
 
                         <div class="mt-10">
-                            <textarea class="single-textarea form-control myinput" placeholder="Message" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Message'" required></textarea>
+                            <textarea class="single-textarea form-control myinput"name="Message" maxlength="150" placeholder="Message" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Message'" required></textarea>
                         </div>
                         <button class="primary-btn mt-20 text-white" style="float: right;">Submit</button>
                     </form>

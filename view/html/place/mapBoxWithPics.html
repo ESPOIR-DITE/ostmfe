@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Add custom icons with Markers</title>
+    <title>Simon's Town Museum</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.css" rel="stylesheet" />
@@ -28,7 +28,7 @@
 {{template "navigator"}}
 <section class="banner-area relative"   id="home" >
     <div class="overlay overlay-bg"></div>
-    <div class="container">
+    <div class="container" style="height: 70px;">
         <div class="row d-flex align-items-center justify-content-center">
             <div class="about-content col-lg-12">
                 <h1 class="text-white">
@@ -42,13 +42,15 @@
 </section>
 <style>
     .marker {
-        background-image: url('../../assets/img/marker-15.svg');
+        /*background-image: url('../../assets/img/marker-15.svg');*/
+        background-image: url('../../assets/img/markers/pink.png');
         background-size: cover;
-        display: block;
-        border: none;
-        border-radius: 50%;
+        /*display: block;*/
+        /*border: none;*/
+        /*border-radius: 50%;*/
         cursor: pointer;
         padding: 0;
+        color: #00bfff;
     }
 </style>
 
@@ -124,7 +126,8 @@
             </ul>
         </div-->
 
-    </div>
+
+
 </div>
 <div class="modal fade bd-example-modal-lg" id="ContributionPlace" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
@@ -209,8 +212,9 @@
         var el = document.createElement('div');
         el.className = 'marker';
         // el.style.backgroundImage = '../../assets/img/marker-15.svg';
-        el.style.width = '40px';
-        el.style.height = '40px';
+        el.style.width = '45px';
+        el.style.height = '65px';
+        el.style.opacity = '90%';
 
         el.addEventListener('click', function () {
              console.log(description);

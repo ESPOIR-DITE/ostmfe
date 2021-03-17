@@ -157,10 +157,23 @@
     </li>
 
     <!-- Nav Item - Charts -->
-    <li class="nav-item {{if eq .SidebarData.Menu "contributor"}} active {{end}}">
+    <li class="nav-item {{if eq .SidebarData.Menu "setting"}} active {{end}}">
         <a class="nav-link" href="/admin_user/contribution">
             <i class="fas fa-fw fa-chart-area"></i>
-            <span>User Contribution</span></a>
+            <span>Settings</span></a>
+    </li>
+
+    <!-- Nav Item - Charts -->
+    <li class="nav-item {{if eq .SidebarData.Menu "contribution"}} active {{end}}">
+    <a class="nav-link" href="/admin_user/contribution/contribution">
+        <i class="fas fa-fw fa-chart-area"></i>
+        <span>Contribution</span></a>
+    </li>
+<!-- Nav Item - Charts -->
+    <li class="nav-item {{if eq .SidebarData.Menu "booking"}} active {{end}}">
+    <a class="nav-link" href="/admin_user/booking">
+        <i class="fas fa-fw fa-chart-area"></i>
+        <span>Bookings</span></a>
     </li>
 
     <!-- Nav Item - Tables -->

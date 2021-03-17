@@ -7,9 +7,9 @@ import (
 	"ostmfe/io/comment_io"
 )
 
-func GetProjectCommentsWithProjectId(eventId string) []comment.CommentHelper2 {
+func GetProjectCommentsWithProjectId(projectId string) []comment.CommentHelper2 {
 	var commentList []comment.CommentHelper2
-	projectComments, err := comment_io.ReadAllByProjectId(eventId)
+	projectComments, err := comment_io.ReadAllByProjectId(projectId)
 	if err != nil {
 		fmt.Println(err, " error reading all the eventContribution")
 	} else {
@@ -32,4 +32,30 @@ func getParentDeatils(commentId string) comment.CommentHelper {
 		return comment.CommentHelper{}
 	}
 	return comment.CommentHelper{commentObject.Id, commentObject.Email, commentObject.Name, misc.FormatDateMonth(commentObject.Date), misc.ConvertingToString(commentObject.Comment), commentObject.ParentCommentId, commentObject.Stat}
+}
+
+func projectCommentCalculation(projectId string) (commentNumber int64, pending int64, active int64) {
+	var commentNumbers int64 = 0
+	var pendings int64 = 0
+	var actives int64 = 0
+	historyComments, err := comment_io.ReadAllByProjectId(projectId)
+	if err != nil {
+		fmt.Println(err, " error reading Project comment")
+		return commentNumbers, pendings, actives
+	} else {
+		for _, historyComment := range historyComments {
+			comments, err := comment_io.ReadComment(historyComment.CommentId)
+			if err != nil {
+				fmt.Println(err, " error reading comment")
+			} else {
+				if comments.Stat == true {
+					actives++
+				} else {
+					pending++
+				}
+				commentNumber++
+			}
+		}
+	}
+	return commentNumbers, pendings, actives
 }

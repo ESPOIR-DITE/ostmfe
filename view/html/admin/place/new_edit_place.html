@@ -265,6 +265,86 @@
               </div>
             </div>
           </div>
+          <!---Event PageFlow---->
+          <div class="card shadow mb-4">
+            <!-- Card Header - Accordion -->
+            <a href="#collapseGallery" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+               role="button" aria-expanded="true" aria-controls="collapseCardExample">
+              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Create new Event Page flow</h6>
+            </a>
+            <!-- Card Content - Collapse -->
+            <div class="collapse " id="collapseGallery">
+              <div class="card-body p-0">
+                <!-- Nested Row within Card Body -->
+                <div class="row">
+
+                  <div class="col-lg-12">
+                    <div class="p-5">
+                      <div class="text-center">
+                        <h1 class="h4 text-gray-900 mb-4">New Picture</h1>
+                      </div>
+                      <form class="user" method="post" action="/admin_user/event/create-page-flow" >
+                        <input type="hidden" name="eventId" value="{{.EventData.Event.Id}}" class="form-control ">
+
+                        <div class="form-group row">
+                          <div class="col-sm-6">
+                            <label>PageFlow Title</label>
+                            <input type="text" name="pageFlowTitle" class="form-control" placeholder="Descendant of slavery">
+                          </div>
+
+                          <div class="col-sm-6">
+                            <label>PageFlow src link <small> Optional field </small></label>
+                            <input type="text" name="scr" class="form-control" placeholder="Ex:https://museumeducation.pageflow.io/descendants-of-slavery/embed">
+                          </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">
+                          Next
+                        </button>
+                        <hr>
+                        <a href="/admin_user" class="btn btn-google  btn-block">Cancel</a>
+                      </form>
+                      <hr>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row ">
+                  <div class="container ">
+                    <div class="table-responsive">
+                      <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                        <tr>
+                          <th>Nr</th>
+                          <th>Image</th>
+                          <th>Image description</th>
+                          <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{with .Gallery}}
+                        {{range $i, $e := .}}
+                        <tr>
+                          <td>{{$i}}</td>
+                          <td><img id='base64image' width="100px" src='data:image/jpeg;base64,{{.Gallery.Image}}' alt=""></td>
+                          <td>{{.Gallery.Description}}</td>
+                          <td><a href="/admin_user/group/delete-gallery/{{.Gallery.Id}}/{{.EventGallery.Id}}/{{$.EventData.Event.Id}}"
+                                 class="btn btn-google btn-user btn-block">
+                            <i class="fab fa-fw"></i> Delete
+                          </a>
+                          </td>
+                        </tr>
+                        {{end}}
+                        {{end}}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
 
           <!-- Comment Card -->
           <div class="card shadow mb-4">

@@ -44,14 +44,19 @@ func SinglePlaceHanler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			fmt.Println(err, "Error counting place comments")
 		}
+		pageFlow, err := place_io.ReadAllPlacePageFlowByPlaceId(placeId)
+		if err != nil {
+			fmt.Println(err, "Error counting place Page FLow")
+		}
 		type PageData struct {
 			Places        []place.Place
 			PlaceData     PlaceSingleData
-			GalleryString []string
+			GalleryString []image3.GaleryHelper
 			CommentNumber int64
 			Comments      []comment.CommentStack
+			PageFlows     []place.PlacePageFlow
 		}
-		data := PageData{places, getPlaceSingleData(placeId), getPlaceGallery(placeId), count, GetPlaceComments(placeId)}
+		data := PageData{places, getPlaceSingleData(placeId), getPlaceGallery(placeId), count, GetPlaceComments(placeId), pageFlow}
 		files := []string{
 			app.Path + "place/place_single.html",
 			app.Path + "base_templates/navigator.html",
@@ -153,7 +158,7 @@ func getPlaceSingleData(placeId string) PlaceSingleData {
 		fmt.Println(err, "Error reading imagePlaces")
 	} else {
 		for _, placeImage := range placeImages {
-			if placeImage.Description == "1" || placeImage.Description == "profile" {
+			if placeImage.Id != "" {
 				img, err := image_io.ReadImage(placeImage.ImageId)
 				if err != nil {
 					fmt.Println(err, "Error reading image")
@@ -184,8 +189,8 @@ func getPlaceSingleData(placeId string) PlaceSingleData {
 	return placeSingleData
 }
 
-func getPlaceGallery(placeId string) []string {
-	var picture []string
+func getPlaceGallery(placeId string) []image3.GaleryHelper {
+	var picture []image3.GaleryHelper
 	placeGallerys, err := place_io.ReadAllByPlaceGallery(placeId)
 	if err != nil {
 		fmt.Println(err, " error peopleGalleries.")
@@ -195,7 +200,7 @@ func getPlaceGallery(placeId string) []string {
 			if err != nil {
 				fmt.Println(err, " error gallery")
 			} else {
-				picture = append(picture, misc.ConvertingToString(gallery.Image))
+				picture = append(picture, image3.GaleryHelper{gallery.Id, misc.ConvertingToString(gallery.Image), gallery.Description})
 			}
 		}
 	}

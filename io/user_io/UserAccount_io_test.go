@@ -16,7 +16,7 @@ And make sure that the file you are testing and the test file should be in the f
 
 func TestCreateUserAccount(t *testing.T) {
 	// Creating an Object of type UserAccount
-	useAccountObject := user2.UserAccount{"espoirditekemena@gmail.com", time.Now(), "xxxyyy"}
+	useAccountObject := user2.UserAccount{"espoirditekemena@gmail.com", time.Now(), "1234"}
 	/***
 	Sending the Object to the back end
 	if err is not nil, that means something is wrong. the test should fail.

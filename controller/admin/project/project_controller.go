@@ -370,7 +370,6 @@ func ProjectUpdateHistoryHandler(app *config.Env) http.HandlerFunc {
 		return
 	}
 }
-
 func EditeProjectsHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		projectId := chi.URLParam(r, "projectId")
@@ -380,14 +379,24 @@ func EditeProjectsHandler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			fmt.Println(err, " Error reading project Details")
 		}
+		commentNumber, pendingcomments, activeComments := projectCommentCalculation(projectId)
 		type PageData struct {
-			Project        misc.ProjectEditable
-			ProjectDetails project2.Project
-			SidebarData    misc.SidebarData
-			Comments       []comment.CommentHelper2
-			Gallery        []misc.ProjectGalleryImages
+			Project         misc.ProjectEditable
+			ProjectDetails  project2.Project
+			SidebarData     misc.SidebarData
+			Comments        []comment.CommentHelper2
+			Gallery         []misc.ProjectGalleryImages
+			CommentNumber   int64
+			PendingComments int64
+			ActiveComments  int64
 		}
-		data := PageData{selectedProjest, projectDetails, misc.GetSideBarData("project", ""), GetProjectCommentsWithProjectId(projectId), misc.GetProjectGallery(projectId)}
+		data := PageData{selectedProjest,
+			projectDetails,
+			misc.GetSideBarData("project", ""),
+			GetProjectCommentsWithProjectId(projectId),
+			misc.GetProjectGallery(projectId),
+			commentNumber, pendingcomments, activeComments,
+		}
 		files := []string{
 			app.Path + "admin/project/edite_project.html",
 			app.Path + "admin/template/navbar.html",

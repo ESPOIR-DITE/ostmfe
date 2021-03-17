@@ -892,22 +892,37 @@ func EditPeopleHandler(app *config.Env) http.HandlerFunc {
 			fmt.Println(err, " error reading events")
 		}
 
+		commentNumber, pendingcomments, activeComments := peopleCommentCalculation(peopleId)
 		type PageDate struct {
-			PeopleDetails people2.People
-			People        PeopleEditable
-			SidebarData   misc.SidebarData
-			PeoplePlace   []place2.Place
-			Places        []place2.Place
-			Events        []event.Event
-			Comments      []comment.CommentHelper2
-			Gallery       []misc.PeopleGalleryImages
+			PeopleDetails   people2.People
+			People          PeopleEditable
+			SidebarData     misc.SidebarData
+			PeoplePlace     []place2.Place
+			Places          []place2.Place
+			Events          []event.Event
+			Comments        []comment.CommentHelper2
+			Gallery         []misc.PeopleGalleryImages
+			CommentNumber   int64
+			PendingComments int64
+			ActiveComments  int64
 		}
-		data := PageDate{people, peopleEditable, misc.GetSideBarData("people", "people"), peoplePlaces, places, events, misc.GetPeopleComments(peopleId), misc.GetPeopleGallery(peopleId)}
+		data := PageDate{people,
+			peopleEditable,
+			misc.GetSideBarData("people", "people"),
+			peoplePlaces,
+			places,
+			events,
+			misc.GetPeopleComments(peopleId),
+			misc.GetPeopleGallery(peopleId),
+			commentNumber,
+			pendingcomments,
+			activeComments}
 
 		files := []string{
 			app.Path + "admin/people/new_edite_people.html",
 			app.Path + "admin/template/navbar.html",
-			//app.Path + "base_templates/footer.html",
+			app.Path + "admin/template/cards.html",
+			app.Path + "admin/template/topbar.html",
 		}
 		ts, err := template.ParseFiles(files...)
 		if err != nil {

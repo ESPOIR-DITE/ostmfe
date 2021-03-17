@@ -1,16 +1,18 @@
 package booking
 
-import "time"
-
 type Booking struct {
-	Id             string    `json:"id"`
-	Date           time.Time `json:"date"`
-	Email          string    `json:"email"`
-	Address        string    `json:"address"`
-	NumberOfPeople int64     `json:"numberOfPeople"`
-	Age            int64     `json:"age"`
-	Grade          string    `json:"grade"`
-	FaxNumber      string    `json:"faxNumber"`
+	Id           string `json:"id"`
+	Name         string `json:"name"`
+	PhoneNumber  string `json:"phoneNumber"`
+	Organisation string `json:"organisation"`
+	Language     string `json:"language"`
+	Purpose      string `json:"purpose"`
+	Country      string `json:"country"`
+	Province     string `json:"province"`
+	Message      string `json:"message"`
+	Date         string `json:"date"`
+	IsFirstVisit bool   `json:"isFirstVisit"`
+	Need         string `json:"need"`
 }
 
 type BookingAddress struct {

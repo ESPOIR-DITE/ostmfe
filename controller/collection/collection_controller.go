@@ -7,9 +7,11 @@ import (
 	"net/http"
 	"ostmfe/config"
 	"ostmfe/controller/misc"
+	classroom2 "ostmfe/domain/classroom"
 	"ostmfe/domain/collection"
 	history2 "ostmfe/domain/history"
 	image2 "ostmfe/domain/image"
+	classroom3 "ostmfe/io/classroom"
 	"ostmfe/io/collection_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
@@ -64,12 +66,14 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 			fmt.Println(err, " error reading collection type")
 		}
 		collections := getCollectionDatas()
+
 		type PageData struct {
 			Collections     []CollectionData
 			CollectionTypes []collection.CollectionTypes
 			CollectionPage  CollectionPage
+			Classrooms      []classroom2.ClassroomHelper
 		}
-		data := PageData{collections, collectionTypes, getPageData()}
+		data := PageData{collections, collectionTypes, getPageData(), getClassroom()}
 		files := []string{
 			app.Path + "collection/collection.html",
 			app.Path + "base_templates/navigator.html",
@@ -85,6 +89,22 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 			app.ErrorLog.Println(err.Error())
 		}
 	}
+}
+
+//help to get formated classroom
+func getClassroom() []classroom2.ClassroomHelper {
+	var myClassroomList []classroom2.ClassroomHelper
+
+	classrooms, err := classroom3.ReadClassrooms()
+	if err != nil {
+		fmt.Println(err, " error reading classroom")
+	} else {
+		for _, classroom := range classrooms {
+			myClassroom := classroom2.ClassroomHelper{classroom.Id, classroom.Name, classroom.Description, misc.ConvertingToString(classroom.Details), misc.ConvertingToString(classroom.Icon)}
+			myClassroomList = append(myClassroomList, myClassroom)
+		}
+	}
+	return myClassroomList
 }
 
 type CollectionData struct {

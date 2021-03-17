@@ -120,21 +120,24 @@ func GetProjectContentsHomes() []ProjectContentsHome {
 		fmt.Println(err, " Error reading all the projects")
 		return projectContentsHomeObject
 	}
-	for _, project := range projects {
+	for index, project := range projects {
 		//fmt.Println(project.Title)
 		projectImage, err := project_io.ReadWithProjectIdProjectImage(project.Id)
 		if err != nil {
-			fmt.Println(err, " Can not find the following project in project image table: ", project.Title)
+			fmt.Println(err, " Can not find the following project in project image table: " /***, project.Title**/)
 		} else {
 			image, err = image_io.ReadImage(projectImage.ImageId)
 			//fmt.Println(image.Image)
 			if err != nil {
-				fmt.Println(err, " Can not find the following project image Id in Image table: ", projectImage.ImageId)
+				fmt.Println(err, " Can not find the following project image Id in Image table: ")
 			}
 		}
 		projectObject := ProjectContentsHome{project.Id, project.Title, image.Id, project.Description}
 		projectContentsHomeObject = append(projectContentsHomeObject, projectObject)
 		projectObject = ProjectContentsHome{}
+		if index == 2 {
+			break
+		}
 	}
 	return projectContentsHomeObject
 }
@@ -694,11 +697,11 @@ func GetSimpleEventData(limit int) []SimpleEventData {
 			if err != nil {
 				fmt.Println(err, " error reading events Images")
 			} else {
-				fmt.Println(" Looping eventImages")
+				//fmt.Println(" Looping eventImages")
 				for _, eventImage := range eventImages {
-					fmt.Println(" eventImage.Description: ", eventImage.Description)
+					//fmt.Println(" eventImage.Description: ", eventImage.Description)
 					if eventImage.Description == "1" || eventImage.Description == "profile" {
-						fmt.Println(" We have a profile Image")
+						//fmt.Println(" We have a profile Image")
 						profileImage, err = image_io.ReadImage(eventImage.ImageId)
 						if err != nil {
 							fmt.Println(err, " error reading profile event image")
@@ -708,19 +711,14 @@ func GetSimpleEventData(limit int) []SimpleEventData {
 			}
 			//we need to make sure that profileImage is not empty
 			if profileImage.Id != "" {
-				//fmt.Println(" profileImage.Id: ", profileImage.Id)
-				//Formating data
 				eventObject := event.Event{eventEntity.Id, eventEntity.Name, FormatDateMonth(eventEntity.Date), eventEntity.IsPast, eventEntity.Description}
 				eventData := SimpleEventData{eventObject, profileImage /** images**/}
 				eventDataList = append(eventDataList, eventData)
 				eventData = SimpleEventData{}
 				profileImage = image3.Images{}
 				eventObject = event.Event{}
-
-				//adding data to the correct list
-				//if CheckEventAndOdd(index)
 			}
-			fmt.Println("This error may occur if there is no events created error:  profileImage is empty")
+			//fmt.Println("This error may occur if there is no events created error:  profileImage is empty")
 
 			// we are putting limit here so that the loop should exit if the index reach the limited number
 			if index == limit {
@@ -754,7 +752,7 @@ func GetSimpleEventDataOfYear(yearId string) []SimpleEventData {
 			} else {
 				fmt.Println(" Looping eventImages")
 				for _, eventImage := range eventImages {
-					fmt.Println(" eventImage.Description: ", eventImage.Description)
+					//fmt.Println(" eventImage.Description: ", eventImage.Description)
 					if eventImage.Description == "1" || eventImage.Description == "profile" {
 						fmt.Println(" We have a profile Image")
 						profileImage, err = image_io.ReadImage(eventImage.ImageId)

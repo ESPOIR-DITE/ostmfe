@@ -64,7 +64,7 @@ func CreateContributionComment(app *config.Env) http.HandlerFunc {
 		cellphone := r.PostFormValue("cellphone")
 
 		if name != "" && email != "" && message != "" && historyId != "" {
-			contributionObject := contribution2.Contribution{"", email, name, misc.FormatDateTime(time.Now()), cellphone, misc.ConvertToByteArray(message)}
+			contributionObject := contribution2.Contribution{"", email, name, time.Now(), cellphone, misc.ConvertToByteArray(message)}
 
 			contribution, err := contribution_io.CreateContribution(contributionObject)
 			if err != nil {
@@ -76,7 +76,7 @@ func CreateContributionComment(app *config.Env) http.HandlerFunc {
 					_, _ = contribution_io.DeleteContribution(contribution.Id)
 					fmt.Println("error creating a new contribution")
 				} else {
-					contributionFileObject := contribution2.ContributionFile{"", contribution.Id, content, fileTypeId}
+					contributionFileObject := contribution2.ContributionFile{"", contribution.Id, content, fileTypeId, ""}
 					_, err := contribution_io.CreateContributionFile(contributionFileObject)
 					if err != nil {
 						fmt.Println("error creating contributionFile")

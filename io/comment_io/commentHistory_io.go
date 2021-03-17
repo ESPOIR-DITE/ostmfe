@@ -44,6 +44,20 @@ func ReadCommentHistory(id string) (comment.CommentHistory, error) {
 	}
 	return entity, nil
 }
+
+func ReadAllCommentHistory(historyId string) ([]comment.CommentHistory, error) {
+	entity := []comment.CommentHistory{}
+	resp, _ := api.Rest().Get(commenthistoryURL + "readAllByHistoryId?historyId=" + historyId)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
+
 func CountCommentHistory(eventId string) (int64, error) {
 	var entity int64
 	resp, _ := api.Rest().Get(commenthistoryURL + "count?eventId=" + eventId)

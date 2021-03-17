@@ -166,10 +166,19 @@
                                                         {{end}}
                                                     </select>
                                                 </div>
-
                                     </div>
 
+                                            <div class="form-group row">
+                                                <div class="col-sm-6">
+                                                <label>PageFlow Title</label>
+                                                <input type="text" name="pageFlowTitle" class="form-control" placeholder="Descendant of slavery">
+                                                </div>
 
+                                                <div class="col-sm-6">
+                                                    <label>PageFlow src link <small> Optional field </small></label>
+                                                    <input type="text" name="scr" class="form-control" placeholder="Ex:https://museumeducation.pageflow.io/descendants-of-slavery/embed">
+                                                </div>
+                                            </div>
 
                                             <div class="form-group ">
                                                 <label>Description <small> Only 150 characters </small></label>
@@ -361,6 +370,7 @@
 
 </body>
 <script>
+
     $(document).ready(function() {
         $('#multiple-checkboxes').multiselect({
             includeSelectAllOption: true,

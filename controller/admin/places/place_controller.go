@@ -10,11 +10,13 @@ import (
 	"ostmfe/config"
 	"ostmfe/controller/misc"
 	"ostmfe/domain/comment"
+	"ostmfe/domain/contribution"
 	"ostmfe/domain/event"
 	history2 "ostmfe/domain/history"
 	image2 "ostmfe/domain/image"
 	"ostmfe/domain/people"
 	place2 "ostmfe/domain/place"
+	"ostmfe/io/comment_io"
 	"ostmfe/io/event_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
@@ -42,6 +44,7 @@ func PlaceHome(app *config.Env) http.Handler {
 	r.Post("/update_history", UpdateHistoryHandler(app))
 	r.Post("/create-gallery", CreatePlaceGalleryHandler(app))
 	r.Post("/create-people", CreatePlacePeopleHandler(app))
+	r.Post("/create-page-flow", CreatePageFlowHandler(app))
 
 	r.Get("/delete-gallery/{pictureId}/{placeId}/{PlaceGalleryId}", DeleteGalleryHandler(app))
 	r.Get("/delete-people/{peoplePlaceId}/{placeId}", DeletePeopleHandler(app))
@@ -49,6 +52,25 @@ func PlaceHome(app *config.Env) http.Handler {
 	r.Get("/activate_comment/{commentId}/{placeId}", ActivateCommentHandler(app))
 
 	return r
+}
+
+func CreatePageFlowHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		placeId := r.PostFormValue("placeId")
+		pageFlowTitle := r.PostFormValue("pageFlowTitle")
+		scr := r.PostFormValue("scr")
+
+		if scr != "" && placeId != "" && pageFlowTitle != "" {
+			_, err := place_io.CreatePlacePageFlow(place2.PlacePageFlow{"", placeId, pageFlowTitle, scr})
+			if err != nil {
+				fmt.Println(err, " error creating page flow!")
+			}
+		}
+		fmt.Print("")
+		http.Redirect(w, r, "/admin_user/place/edit/"+placeId, 301)
+		return
+	}
 }
 
 func ActivateCommentHandler(app *config.Env) http.HandlerFunc {
@@ -593,18 +615,33 @@ func EditPlacesHandler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			fmt.Println(err, " error reading events")
 		}
-
-		type PageData struct {
-			PlaceData   PlaceDataEditable
-			SidebarData misc.SidebarData
-			Comments    []comment.CommentHelper2
-			Gallery     []misc.PlaceGalleryImages
-			Peoples     []people.People
-			AllPeople   []people.People
-			Events      []event.Event
-			AllEvents   []event.Event
+		pageFlows, err := place_io.ReadAllPlacePageFlowByPlaceId(placeId)
+		if err != nil {
+			fmt.Println(err, " error reading placePageFlow")
 		}
-		data := PageData{placeDate, misc.GetSideBarData("place", ""), GetPlaceCommentsWithEventId(placeId), misc.GetPlaceGallery(placeId), GetAllPeoplePlace(placeId), peoples, Events, GetEventPlace(placeId)}
+
+		commentNumber, pendingcomments, activeComments := placeCommentCalculation(placeId)
+		type PageData struct {
+			PlaceData       PlaceDataEditable
+			SidebarData     misc.SidebarData
+			Comments        []comment.CommentHelper2
+			Gallery         []misc.PlaceGalleryImages
+			Peoples         []people.People
+			AllPeople       []people.People
+			Events          []event.Event
+			AllEvents       []event.Event
+			CommentNumber   int64
+			PendingComments int64
+			ActiveComments  int64
+			PageFlows       []place2.PlacePageFlow
+		}
+		data := PageData{placeDate, misc.GetSideBarData("place", ""),
+			GetPlaceCommentsWithEventId(placeId), misc.GetPlaceGallery(placeId),
+			GetAllPeoplePlace(placeId), peoples, Events, GetEventPlace(placeId),
+			commentNumber,
+			pendingcomments,
+			activeComments,
+			pageFlows}
 		files := []string{
 			app.Path + "admin/place/new_edit_place.html",
 			app.Path + "admin/template/navbar.html",
@@ -656,6 +693,33 @@ func NewPlacesHandler(app *config.Env) http.HandlerFunc {
 			app.ErrorLog.Println(err.Error())
 		}
 	}
+}
+
+//With peopleId, you get the commentNumber, pending, active.
+func placeCommentCalculation(placeId string) (commentNumber int64, pending int64, active int64) {
+	var commentNumbers int64 = 0
+	var pendings int64 = 0
+	var actives int64 = 0
+	placeComments, err := comment_io.ReadAllCommentPlace(placeId)
+	if err != nil {
+		fmt.Println(err, " error reading People comment")
+		return commentNumbers, pendings, actives
+	} else {
+		for _, placeComment := range placeComments {
+			comments, err := comment_io.ReadComment(placeComment.CommentId)
+			if err != nil {
+				fmt.Println(err, " error reading comment")
+			} else {
+				if comments.Stat == true {
+					actives++
+				} else {
+					pending++
+				}
+				commentNumber++
+			}
+		}
+	}
+	return commentNumbers, pendings, actives
 }
 
 func PlacesHandler(app *config.Env) http.HandlerFunc {
@@ -810,6 +874,8 @@ func CreateStp1Handler(app *config.Env) http.HandlerFunc {
 		latlng := r.PostFormValue("latlng")
 		description := r.PostFormValue("description")
 		history := r.PostFormValue("history")
+		src := r.PostFormValue("src")
+		pageFlowTitle := r.PostFormValue("pageFlowTitle")
 
 		if err != nil {
 			fmt.Println(err, "<<<error reading file>>>>This error may happen if there is no picture selected>>>")
@@ -832,6 +898,14 @@ func CreateStp1Handler(app *config.Env) http.HandlerFunc {
 				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
 				http.Redirect(w, r, "/admin_user/place", 301)
 				return
+			}
+			//Creation of pageFlow
+			if src != "" && pageFlowTitle != "" {
+				eventPageFlowObject := contribution.EventPageFlow{"", newPlace.Id, pageFlowTitle, src}
+				_, err := event_io.CreateEventPageFlow(eventPageFlowObject)
+				if err != nil {
+					fmt.Println(err, " error when creating placePageFLow")
+				}
 			}
 
 			//History

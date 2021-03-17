@@ -74,7 +74,9 @@
             <div class="container-fluid">
 
                 <!-- Page Heading -->
-                {{template "cards" .}}
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Contributions</h1>
+                </div>
 
 
                 <!-- Add new -->
@@ -89,134 +91,12 @@
                     </div>
                 {{end}}
 
-                <div class="card shadow mb-4">
-                    <!-- Card Header - Accordion -->
-                    <a href="#collapseCardExample" class="d-block card-header py-3 btn-success" data-toggle="collapse"
-                       role="button" aria-expanded="true" aria-controls="collapseCardExample">
-                        <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Create a new Event</h6>
-                    </a>
-                    <!-- Card Content - Collapse -->
-                    <div class="collapse " id="collapseCardExample">
-                        <div class="card-body p-0">
-                            <!-- Nested Row within Card Body -->
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <div class="p-5">
-                                        <div class="text-center">
-                                            <h1 class="h4 text-gray-900 mb-4">New Event </h1>
-                                        </div>
-                                        <form class="user" method="post" action="/admin_user/event/create">
-                                            <div class="form-group row">
-                                                <div class="col-sm-6 mb-3 mb-sm-0">
-                                                    <label>Event Name</label>
-                                                    <input type="text" name="event_name" class="form-control"
-                                                           id="exampleFirstName" placeholder="Event Name" required>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <label>Date</label>
-                                                    <input type="date" name="date" class="form-control"
-                                                           id="exampleLastName" placeholder="Event date" required>
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <div class="col-sm-6">
-                                                    <label>Project</label>
-                                                    <select name="project" class="browser-default custom-select">
-                                                        <option selected>Choose a project</option>
-                                                        {{with .Projects}}
-                                                            {{range .}}
-                                                                <option value={{.Id}}>{{.Title}}</option>
-                                                            {{end}}
-                                                        {{end}}
-                                                    </select>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <label>Partner</label>
-                                                    <select name="partner" class="browser-default custom-select">
-                                                        <option selected>Choose a partner</option>
-                                                        {{with .Partners}}
-                                                            {{range .}}
-                                                                <option value={{.Id}}>{{.Name}}</option>
-                                                            {{end}}
-                                                        {{end}}
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group row">
-                                            <div class="col-sm-6">
-                                                <label>Places |<small> If the place is not in this list, kindly create one in place tab </small></label>
-                                                <select name="placeId" class="browser-default custom-select">
-                                                    <option selected>Choose a place</option>
-                                                    {{with .Places}}
-                                                        {{range .}}
-                                                            <option title="{{.Description}}" value={{.Id}}>{{.Title}}</option>
-                                                        {{end}}
-                                                    {{end}}
-                                                </select>
-                                            </div>
-
-                                                <div class="col-sm-6">
-                                                    <label>People |<small> You can select multiple people </small></label>
-                                                    <select  style="margin-bottom: 10px;" name="peopleId" class="" multiple data-live-search="true" id="multiple-checkboxes" multiple="multiple">
-                                                        {{with .Peoples}}
-                                                            {{range .}}
-                                                                <option title="{{.Brief}}" value={{.Id}}>{{.Name}}</option>
-                                                            {{end}}
-                                                        {{end}}
-                                                    </select>
-                                                </div>
-
-                                    </div>
-
-
-
-                                            <div class="form-group ">
-                                                <label>Description <small> Only 150 characters </small></label>
-                                                <textarea class="form-control" name="description" maxlength="200" required></textarea>
-                                            </div>
-
-                                            <div class="form-group row">
-                                                <div class="col-sm-6">
-                                                    <label>Year of starting event</label>
-                                                    <select name="year" class="browser-default custom-select">
-                                                        <option selected>Choose a starting year</option>
-                                                        {{with .Years}}
-                                                            {{range .}}
-                                                                <option value={{.Id}}>{{.Year}}</option>
-                                                            {{end}}
-                                                        {{end}}
-                                                    </select>
-                                                </div>
-
-                                                <div class="col-sm-6">
-                                                    <label>&nbsp;</label>
-                                                <div class="custom-control custom-checkbox small">
-                                                    <input type="checkbox" name="eventStatus" class=" browser-default custom-control-input" id="customCheck" >
-                                                    <label class="custom-control-label" for="customCheck">Past Event <small>Check if this event has been stopped to be hosted</small></label>
-                                                </div>
-                                                </div>
-                                            </div>
-                                            <button type="submit" class="btn btn-primary btn-block">
-                                                Next
-                                            </button>
-                                            <hr>
-                                            <a href="/admin_user" class="btn btn-google  btn-block">Cancel</a>
-                                        </form>
-                                        <hr>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
 
 
                 <!-- DataTales Example -->
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Event Table</h6>
+                        <h6 class="m-0 font-weight-bold text-primary">Contribution Table</h6>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -224,29 +104,57 @@
                                 <thead>
                                 <tr>
                                     <th>Nr</th>
-                                    <th>Event Name</th>
-                                    <th>Event Date</th>
+                                    <th>Media</th>
+                                    <th>Date</th>
+                                    <th>Contributor</th>
                                     <th>Action</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
 
                                 <tbody>
-                                {{with .Events}}
+                                {{with .Contributions}}
                                     {{range $i, $e := .}}
                                         <tr>
                                             <td>{{$i}}</td>
-                                            <td>{{.Name}}</td>
-                                            <td>{{.Date}}</td>
-                                            <td><a href="/admin_user/event/edit/{{.Id}}"
-                                                   class="btn btn-primary btn-user btn-block">
-                                                    Edit
-                                                </a>
+                                            <td ><!-- If the file is an audio-->
+                                                {{if eq .FileType "mp3"}}
+                                                <!--audio controls="controls" id="{{$i}}audio"  onload="getAudio({{.ContributionFile.File}},{{$i}})" loop>
+                                                    <source src="" id="{{$i}}" type="audio/mpeg">
+                                                    Your browser does not support the audio element.
+                                                </audio-->
+                                                <audio controls autoplay=""  name="media">
+                                                    <source src="http://159.69.222.82:9000/ostm/contribution-file/audio?id={{.ContributionFile.Id}}" type="audio/mp3">
+                                                    Your browser does not support the audio element.
+                                                </audio>
+
+                                                {{end}}
+                                                {{if eq .FileType "mp4"}}
+                                                <video controls  name="media">
+                                                    <source src="http://159.69.222.82:9000/ostm/contribution-file/video?id={{.ContributionFile.Id}}" type="video/mp4">
+                                                    Your browser does not support HTML video.
+                                                </video>
+                                                {{end}}
+                                                {{if eq .FileType "jpg"}}
+                                                    <img class="card-img"
+                                                         style="width:80px;" id='base64image'
+                                                         src='data:image/jpeg;base64,{{.ContributionFile.File}}' alt=""/>
+                                                {{end}}
+
+                                            </td>
+                                            <td>{{.Contribution.Date}}</td>
+                                            <td>{{.Contribution.Email}}</td>
+                                            <td>
+                                                <a class="btn btn-info btn-user btn-block" data-toggle="modal"
+                                                   onclick="getContributorData({{.}})"
+                                                   data-target="#viewContribution">
+                                                View
+                                            </a>
                                             </td>
                                             <td>
                                                 <a class="btn btn-google btn-user btn-block" data-toggle="modal"
-                                                   onclick="deleteTheEventBTN({{.Id}},{{.Name}})"
-                                                   data-target="#exampleModalEvent">
+                                                   onclick="deleteTheContributionBTN({{.Contribution.Id}},{{.ContributionFile.Id}},{{.Contribution.Name}})"
+                                                   data-target="#exampleModalContribution">
                                                    Delete
                                                 </a>
                                             </td>
@@ -286,8 +194,34 @@
     <i class="fas fa-angle-up"></i>
 </a>
 
+<!--View contribution -->
+<div class="modal fade" id="viewContribution" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-info" id="exampleModalLongTitle">View</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h3 class="text-info text-center"> Contribution Info:</h3>
+                <h4 id="value" class="text-center"></h4>
+                <div class="form-group ">
+                <textarea style="height: 200px" class="form-control text-lg-left" id="contributorInfo" ></textarea>
+                </div>
+            </div>
+<!--            <div class="modal-footer">-->
+<!--                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>-->
+<!--                <button type="button" class="btn btn-danger" id=""><a id="deleteBtn">Delete</a></button>-->
+<!--            </div>-->
+        </div>
+    </div>
+</div>
+
+
 <!--Delete warning Modal -->
-<div class="modal fade" id="exampleModalEvent" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="exampleModalContribution" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -298,11 +232,11 @@
             </div>
             <div class="modal-body">
                 <h3 class="text-danger text-center"> About to delete the record of:</h3>
-                <h4 id="value" class="text-center"></h4>
+                <h4 id="valuec" class="text-center"></h4>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-danger" id=""><a id="deleteBtn">Delete</a></button>
+                <button type="button" class="btn btn-danger" id=""><a id="deleteBtnc">Delete</a></button>
             </div>
         </div>
     </div>
@@ -366,9 +300,40 @@
             includeSelectAllOption: true,
         });
     });
-    function deleteTheEventBTN(id,name) {
-        $("#deleteBtn").attr('href','/admin_user/event/delete/'+id);
-        $("#value").text(name);
+    function deleteTheContributionBTN(contributionId,contributionFileId,name) {
+        $("#deleteBtnc").attr('href','/admin_user/contribution/delete-contribution/'+contributionId+"/"+contributionId);
+        $("#valuec").text(name);
+    }
+    function getAudioBytes(bytes) {
+        const data = bytes;
+        return new Uint8Array(data);
+    }
+    function getAudio(bytes,id) {
+        var sourceId = document.getElementById(id);
+        var audioId = document.getElementById(id+"audio");
+
+        const blob = new Blob([getAudioBytes(bytes)],{type:'audio/wav'});
+        const url = URL.createObjectURL(blob);
+
+        sourceId.src = url;
+        audioId.load();
+        audioId.play();
+    }
+    function getContributorData(data) {
+
+        console.log(data)
+        var textArea = document.getElementById("contributorInfo");
+        var date = data.Contribution.data;
+        var description = data.Contribution.description;
+        var email = data.Contribution.email;
+        var name = data.Contribution.name;
+        var phoneNumber = data.Contribution.phoneNumber;
+        var fileType = data.FileType;
+
+        var stringData = "Contributor:      "+name+"\nEmail:                 "+ email+"\nDate:                    "+date+"\nPhone Number:    "+phoneNumber+"\nType Of File:       "+fileType+"\nDescription:       "+description;
+
+        console.log(stringData);
+        textArea.innerHTML=stringData;
     }
 </script>
 

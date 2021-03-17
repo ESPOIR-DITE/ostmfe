@@ -375,14 +375,26 @@ func GroupEditHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		groupId := chi.URLParam(r, "groupId")
 
+		commentNumber, pendingcomments, activeComments := groupCommentCalculation(groupId)
+
 		type PageData struct {
-			Groups      GroupData
-			SidebarData misc.SidebarData
-			Gallery     []misc.GroupGalleryImages
-			Comments    []comment.CommentHelper2
+			Groups          GroupData
+			SidebarData     misc.SidebarData
+			Gallery         []misc.GroupGalleryImages
+			Comments        []comment.CommentHelper2
+			CommentNumber   int64
+			PendingComments int64
+			ActiveComments  int64
 		}
 
-		data := PageData{GetGroupData(groupId), misc.GetSideBarData("group", ""), misc.GetGroupGallery(groupId), GetGroupCommentsWithEventId(groupId)}
+		data := PageData{GetGroupData(groupId),
+			misc.GetSideBarData("group", ""),
+			misc.GetGroupGallery(groupId),
+			GetGroupCommentsWithEventId(groupId),
+			commentNumber,
+			pendingcomments,
+			activeComments}
+
 		files := []string{
 			app.Path + "admin/group/edit_group.html",
 			app.Path + "admin/template/navbar.html",

@@ -245,6 +245,21 @@
 				</div>
 			</section>
 			<!-- End blog-posts Area -->
+			<!-- Page flow -->
+        <div class="container">
+            {{with .PageFlow}}
+            {{range .}}
+            <div class="title text-center">
+                <h1 class="mb-10">{{.Title}}</h1>
+                <!--p>Who are in extremely love with eco friendly system.</p-->
+            </div>
+        <div >
+            <iframe width="100%"  height="400px" src="{{.PageFlow}}" allowfullscreen onmousewheel=" ">
+            </iframe>
+        </div>
+            {{end}}
+            {{end}}
+        </div>
 
         <!--event gallery--->
         <div class="container">

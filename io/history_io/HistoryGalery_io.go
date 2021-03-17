@@ -60,6 +60,19 @@ func ReadHistoryGalleryWithHistoryId(historyId string) (history.HistoryGalery, e
 	return entity, nil
 }
 
+func ReadAllHistoryGallery(historyId string) ([]history.HistoryGalery, error) {
+	entity := []history.HistoryGalery{}
+	resp, _ := api.Rest().Get(historygalleryURL + "readAllByHistoryId?historyId=" + historyId)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
+
 func CountHistoryGalleryWithHistoryId(historyId string) (history.HistoryGalery, error) {
 	entity := history.HistoryGalery{}
 	resp, _ := api.Rest().Get(historygalleryURL + "countByHistoryId?historyId=" + historyId)

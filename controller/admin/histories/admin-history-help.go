@@ -3,8 +3,10 @@ package histories
 import (
 	"fmt"
 	"ostmfe/controller/misc"
+	"ostmfe/domain/contribution"
 	"ostmfe/domain/history"
 	image3 "ostmfe/domain/image"
+	"ostmfe/io/contribution_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
 )
@@ -64,4 +66,21 @@ func GetHistorySimpleData(historyId string) HistorySimpleData {
 	historyObject := history.HistoryHelper{ourHistory.Id, ourHistory.Title, ourHistory.Description, misc.FormatDateMonth(ourHistory.Date)}
 	historySimpleData = HistorySimpleData{historyObject, images, profileImage, myHistories}
 	return historySimpleData
+}
+
+func GetContribution(historyId string) []contribution.Contribution {
+	var contributionList []contribution.Contribution
+	contributionHistories, err := contribution_io.ReadAllByHistoryId(historyId)
+	if err != nil {
+		fmt.Println(err, " error reading contributionHistory")
+		return contributionList
+	}
+	for _, contributionHistorie := range contributionHistories {
+		contributionObject, err := contribution_io.ReadContribution(contributionHistorie.Id)
+		if err != nil {
+			fmt.Println(err, " error reading contribution")
+		}
+		contributionList = append(contributionList, contributionObject)
+	}
+	return contributionList
 }

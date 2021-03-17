@@ -69,7 +69,7 @@ func GrouphomeHanler(app *config.Env) http.HandlerFunc {
 			Groups    []GroupData
 			Histories []misc.HistoryAndProfile
 		}
-		data := PageData{getGroupData(), misc.ReadHistoryWithImages()}
+		data := PageData{GetGroupData(), misc.ReadHistoryWithImages()}
 		files := []string{
 			app.Path + "about_us/group-home.html",
 			app.Path + "base_templates/navigator.html",
@@ -175,15 +175,15 @@ type GroupData struct {
 //With An eventId this method returns a groupEvent.
 
 //This method returns a list of groups with their picture.
-func getGroupData() []GroupData {
-	var goupDatas []GroupData
+func GetGroupData() []GroupData {
+	var groupDataList []GroupData
 	groups, err := group_io.ReadGroups()
 	if err != nil {
 		fmt.Println(err, " error reading groups")
-		return goupDatas
+		return groupDataList
 	}
-	for _, group := range groups {
-		groupImage, err := group_io.ReadGroupImageWithGroupId(group.Id)
+	for _, groupData := range groups {
+		groupImage, err := group_io.ReadGroupImageWithGroupId(groupData.Id)
 		if err != nil {
 			fmt.Println(err, " error reading groups image")
 		} else {
@@ -191,13 +191,13 @@ func getGroupData() []GroupData {
 			if err != nil {
 				fmt.Println(err, " error reading groups image")
 			} else {
-				groupDataObject := GroupData{group, image}
-				goupDatas = append(goupDatas, groupDataObject)
+				groupDataObject := GroupData{groupData, image}
+				groupDataList = append(groupDataList, groupDataObject)
 				groupDataObject = GroupData{}
 			}
 		}
 	}
-	return goupDatas
+	return groupDataList
 }
 
 type StaffData struct {
@@ -271,7 +271,7 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 			GalleryImages []misc.GroupGalleryImages
 		}
 
-		data := PageData{getGroupData(), getStaff(), getPageData("aboutUs"), bannerImage, misc.GetAllGroupGallery()}
+		data := PageData{GetGroupData(), getStaff(), getPageData("aboutUs"), bannerImage, misc.GetAllGroupGallery()}
 		files := []string{
 			app.Path + "about_us/about_us.html",
 			app.Path + "base_templates/navigator.html",

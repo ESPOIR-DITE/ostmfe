@@ -9,7 +9,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>SB Admin 2 - Tables</title>
+  <title>OSTM-Admin | Partner</title>
 
   <!-- Custom fonts for this template -->
   <link href="../../assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -226,7 +226,7 @@
 
           <!-- Page Heading -->
 
-          <a href="/admin_user/partner/new" class="btn btn-success btn-icon-split mb-4">
+          <a href="#" class="btn btn-success btn-icon-split mb-4">
                     <span class="icon text-white-50">
                       <i class="fas fa-check"></i>
                     </span>
@@ -237,7 +237,7 @@
           <div class="card shadow mb-4">
             <!-- Card Header - Accordion -->
             <a href="#collapseCardExample" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
-              <h6 class="m-0 font-weight-bold text-primary">Create a new role</h6>
+              <h6 class="m-0 font-weight-bold text-primary">Create a new Partner</h6>
             </a>
             <!-- Card Content - Collapse -->
             <div class="collapse " id="collapseCardExample">
@@ -256,13 +256,12 @@
                         </div>
                         <div class="form-group">
                           <label>description</label>
-                          <input type="url" name="url" class="form-control " id="exampleInputEmail" placeholder="www.link.co.za" required>
+                          <input type="url" name="url" class="form-control " id="exampleInputEmail" placeholder="https://www.partnerlink.co.za" required>
                         </div>
                         <div class="form-group">
                           <label>description</label>
-                          <textarea name="description" class="form-control " id="exampleInputEmail" placeholder="Email Address" required></textarea>
+                          <textarea name="description" class="form-control " id="exampleInputEmail"  required></textarea>
                         </div>
-
                         <button type="submit" class="btn btn-primary btn-block">
                           Submit
                         </button>
@@ -281,7 +280,7 @@
           <!-- DataTales Example -->
           <div class="card shadow mb-4">
             <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">User Table</h6>
+              <h6 class="m-0 font-weight-bold text-primary">Partner Table</h6>
             </div>
             <div class="card-body">
               <div class="table-responsive">
@@ -296,16 +295,6 @@
                       <th>Action</th>
                     </tr>
                   </thead>
-                  <tfoot>
-                    <tr>
-                      <th>Nr</th>
-                      <th>Name</th>
-                      <th>Description</th>
-                      <th>Link</th>
-                      <th>Action</th>
-                      <th>Action</th>
-                    </tr>
-                  </tfoot>
                   <tbody>
                   {{with .Partners}}
                   {{range $i, $e := .}}
@@ -321,7 +310,7 @@
                         </a>
                       </td>
                       <td><a class="btn btn-google btn-user btn-block" data-toggle="modal"
-                             onclick="deleteTheEventBTN({{.Id}},{{.Name}})"
+                             onclick="deletePartnerBTN({{.Id}},{{.Name}})"
                              data-target="#exampleModalDeletPartner">
                           Delete
                         </a>

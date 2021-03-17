@@ -7,36 +7,53 @@ import (
 	"net/http"
 	"ostmfe/config"
 	"ostmfe/controller/misc"
+	"ostmfe/domain/booking"
+	"ostmfe/io/booking_io"
 	"ostmfe/io/pageData_io"
 )
 
 func Home(app *config.Env) http.Handler {
 	r := chi.NewRouter()
-	r.Get("/", homeHanler(app))
-	r.Post("/book", BookHanler(app))
+	r.Get("/", homeHandler(app))
+	r.Post("/book", BookHandler(app))
 
 	return r
 }
 
-func BookHanler(app *config.Env) http.HandlerFunc {
+func BookHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 
-		//var newEvent event2.Event
-		//event_name := r.PostFormValue("event_name")
-		//date, _ := time.Parse(misc.YYYYMMDD_FORMAT, r.PostFormValue("date"))
-		//project := r.PostFormValue("project")
-		//description := r.PostFormValue("description")
-		//partner := r.PostFormValue("partner")
-		//latlng := r.PostFormValue("latlng")
-		//place := r.PostFormValue("place")
+		isFirstVisit := false
+
+		name := r.PostFormValue("name")
+		phoneNumber := r.PostFormValue("phoneNumber")
+		organisation := r.PostFormValue("organisation")
+		language := r.PostFormValue("language")
+		purpose := r.PostFormValue("purpose")
+		need := r.PostFormValue("need")
+		visitTime := r.PostFormValue("visitTime") // choose from first time or have visited before.
+		date := r.PostFormValue("date")
+		Country := r.PostFormValue("country")
+		province := r.PostFormValue("province")
+		message := r.PostFormValue("Message")
+
+		if visitTime != "yes" {
+			isFirstVisit = true
+		}
+		fmt.Println(isFirstVisit)
+		bookingObject := booking.Booking{"", name, phoneNumber, organisation, language, purpose, Country, province, message, date, isFirstVisit, need}
+		_, err := booking_io.CreateBooking(bookingObject)
+		if err != nil {
+			fmt.Println(err, " error create booking")
+		}
 
 		http.Redirect(w, r, "/visit", 301)
 		return
 	}
 }
 
-func homeHanler(app *config.Env) http.HandlerFunc {
+func homeHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		type PageData struct {

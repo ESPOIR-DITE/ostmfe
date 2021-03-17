@@ -5,6 +5,7 @@ import (
 	"ostmfe/controller/misc"
 	history2 "ostmfe/domain/history"
 	"ostmfe/domain/people"
+	"ostmfe/io/comment_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
 	"ostmfe/io/people_io"
@@ -68,4 +69,31 @@ func GetPeopleEditable(peopleId string) PeopleEditable {
 	}
 	peopleEditable = PeopleEditable{peopleToReturn, Images, historyToreturn}
 	return peopleEditable
+}
+
+//With peopleId, you get the commentNumber, pending, active.
+func peopleCommentCalculation(peopleIs string) (commentNumber int64, pending int64, active int64) {
+	var commentNumbers int64 = 0
+	var pendings int64 = 0
+	var actives int64 = 0
+	peopleComments, err := comment_io.ReadAllCommentPeopleWithPeopleId(peopleIs)
+	if err != nil {
+		fmt.Println(err, " error reading People comment")
+		return commentNumbers, pendings, actives
+	} else {
+		for _, peopleComment := range peopleComments {
+			comments, err := comment_io.ReadComment(peopleComment.CommentId)
+			if err != nil {
+				fmt.Println(err, " error reading comment")
+			} else {
+				if comments.Stat == true {
+					actives++
+				} else {
+					pending++
+				}
+				commentNumber++
+			}
+		}
+	}
+	return commentNumbers, pendings, actives
 }

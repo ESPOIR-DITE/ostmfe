@@ -65,10 +65,11 @@ func CreateContributionComment(app *config.Env) http.HandlerFunc {
 		name := r.PostFormValue("name")
 		email := r.PostFormValue("email")
 		message := r.PostFormValue("message")
+		fileId := r.PostFormValue("fileId")
 		cellphone := r.PostFormValue("cellphone")
 
-		if name != "" && email != "" && message != "" && eventId != "" {
-			contributionObject := contribution2.Contribution{"", email, name, misc.FormatDateTime(time.Now()), cellphone, misc.ConvertToByteArray(message)}
+		if name != "" && email != "" && message != "" && eventId != "" && fileId != "" {
+			contributionObject := contribution2.Contribution{"", email, name, time.Now(), cellphone, misc.ConvertToByteArray(message)}
 
 			contribution, err := contribution_io.CreateContribution(contributionObject)
 			if err != nil {
@@ -80,7 +81,7 @@ func CreateContributionComment(app *config.Env) http.HandlerFunc {
 					_, _ = contribution_io.DeleteContribution(contribution.Id)
 					fmt.Println("error creating a new contribution")
 				} else {
-					contributionFileObject := contribution2.ContributionFile{"", contribution.Id, content, fileTypeId}
+					contributionFileObject := contribution2.ContributionFile{"", contribution.Id, content, fileId, fileTypeId}
 					_, err := contribution_io.CreateContributionFile(contributionFileObject)
 					if err != nil {
 						fmt.Println("error creating contributionFile")
@@ -193,6 +194,10 @@ func EventHanler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			fmt.Println("error reading counting CommentEvent")
 		}
+		pageFlow, err := event_io.ReadAllEventPageFlowByEventId(eventId)
+		if err != nil {
+			fmt.Println("error reading event Page flow")
+		}
 
 		type PageData struct {
 			EventData     EventData
@@ -203,6 +208,7 @@ func EventHanler(app *config.Env) http.HandlerFunc {
 			CommentNumber int64
 			Comments      []comment.CommentStack
 			GalleryImages []misc.EventGalleryImages
+			PageFlow      []contribution2.EventPageFlow
 		}
 		data := PageData{eventdata,
 			GetEnventPlaceData(eventId),
@@ -212,6 +218,7 @@ func EventHanler(app *config.Env) http.HandlerFunc {
 			eventNumber,
 			comment2.GetEventComments(eventId),
 			misc.GetEventGallery(eventId),
+			pageFlow,
 		}
 		files := []string{
 			app.Path + "event/event_single.html",
