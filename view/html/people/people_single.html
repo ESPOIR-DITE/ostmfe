@@ -57,30 +57,34 @@
 						<div class="col-lg-8 post-list blog-post-list">
 							<div class="single-post">
                                 <img id='base64image' height="400px" src='data:image/jpeg;base64,{{.PeopleDataHistory.ProfileImage.Id}}' alt="">
-                                <hr>
+                                <br>
+                                <br>
+                                <h2>{{.PeopleDataHistory.People.Name}} - {{.PeopleDataHistory.People.Surname}}</h2>
+                                <br>
                                 <a href="#">
                                     {{if .PeopleDataHistory.People.Profession}}
                                         <h3>
-                                          Profession: <small> {{.PeopleDataHistory.People.Profession}}</small>
+                                          Profession <small> - {{.PeopleDataHistory.People.Profession}}</small>
                                         </h3>
                                     {{end}}
                                 </a>
-								<ul class="tags">
+                                <a>
                                     {{if .PeopleDataHistory.People.BirthDate}}
-									<li><a href="#">Birth Date: {{.PeopleDataHistory.People.BirthDate}}</a></li>
+                                    <h3>Birth Date <small>- {{.PeopleDataHistory.People.BirthDate}}</small> </h3>
                                     {{end}}
-                                    <br>
+                                </a>
+                                <a>
                                     {{if .PeopleDataHistory.People.DeathDate}}
-                                        <li><a href="#">Death Date: {{.PeopleDataHistory.People.DeathDate}}</a></li>
+                                    <h3>Death Date <small>- {{.PeopleDataHistory.People.DeathDate}}</small> </h3>
                                     {{end}}
-                                    <br>
-                                    {{if .PeopleDataHistory.People.BirthDate}}
-                                        <li><a href="#">Origin: {{.PeopleDataHistory.People.Origin}}</a></li>
+                                </a>
+                                <a>
+                                    {{if .PeopleDataHistory.People.Origin}}
+                                    <h3>Death Date <small>- {{.PeopleDataHistory.People.Origin}}</small> </h3>
                                     {{end}}
-								</ul>
-                                <br>
-                                    <h2>{{.PeopleDataHistory.People.Surname}}</h2>
-                                <br>
+                                    <hr>
+                                </a>
+
 								<div class="col-md-12" id="me">
                                     <script>
                                         var div= document.getElementById('me');
@@ -173,7 +177,7 @@
                                 <ul>
                                     {{with .PeopleDataHistory.Place}}
                                     {{range .}}
-                                    <li><a href="/place/{{.Id}}" class="justify-content-between align-items-center d-flex"><h6>{{.Title}}</h6></a></li>
+                                    <li><a href="/place/{{.Id}}" class="justify-content-between align-items-center d-flex"><h6>{{.Title}}</h6><i class="fa fa-map-marker"></i></a></li>
                                     {{end}}
                                     {{end}}
                                 </ul>

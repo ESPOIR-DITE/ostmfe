@@ -141,9 +141,12 @@
                             {{range .}}
                                 <div class="col-lg-4">
                                     <div class="single-service">
-                                        <img class="img-fluid" id='base64image' src='data:image/jpeg;base64,{{.Image.Id}}' alt="" height="250px"   >
-                                        <h3><a href="/people/{{.People.Id}}">{{.People.Name}}&nbsp; {{.People.Surname}}</a></h3>
-                                        <div class="overlay">
+                                        <img id='base64image' height="250px" width="200px" src='data:image/jpeg;base64,{{.Image.Id}}' alt="">
+
+                                        <h3>
+                                            <br>
+                                            <a href="/people/{{.People.Id}}">{{.People.Name}}&nbsp; {{.People.Surname}}</a></h3>
+                                        <div class="overlay text-center">
                                             <div class="text">
                                                 <p>{{.People.Brief}}</p>
                                                 <a href="/people/{{.People.Id}}"  class="text-uppercase primary-btn"

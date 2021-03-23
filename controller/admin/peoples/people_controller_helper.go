@@ -6,6 +6,7 @@ import (
 	history2 "ostmfe/domain/history"
 	"ostmfe/domain/people"
 	"ostmfe/io/comment_io"
+	"ostmfe/io/event_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
 	"ostmfe/io/people_io"
@@ -23,6 +24,10 @@ type PeopleImageHelperEditable struct {
 	Id            string
 	ImageId       string
 	PeopleImageId string
+}
+type EventPeopleData struct {
+	Id        string
+	EventName string
 }
 
 func GetPeopleEditable(peopleId string) PeopleEditable {
@@ -96,4 +101,22 @@ func peopleCommentCalculation(peopleIs string) (commentNumber int64, pending int
 		}
 	}
 	return commentNumbers, pendings, actives
+}
+
+func GetPeopleEvents(peopleId string) []EventPeopleData {
+	var eventPeopleObject []EventPeopleData
+
+	peopleEvents, err := event_io.ReadEventPeopleWithPeopleId(peopleId)
+	if err != nil {
+		fmt.Println(err, " error reading event people")
+		return eventPeopleObject
+	}
+	for _, peopleEvent := range peopleEvents {
+		event, err := event_io.ReadEvent(peopleEvent.EventId)
+		if err != nil {
+			fmt.Println(err, " error reading")
+		}
+		eventPeopleObject = append(eventPeopleObject, EventPeopleData{peopleEvent.Id, event.Name})
+	}
+	return eventPeopleObject
 }

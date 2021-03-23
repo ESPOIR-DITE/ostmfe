@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/go-chi/chi"
 	"html/template"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"ostmfe/config"
@@ -34,6 +33,7 @@ import (
 	"ostmfe/io/people_io"
 	"ostmfe/io/place_io"
 	"ostmfe/io/project_io"
+	"ostmfe/utile"
 )
 
 func EventHome(app *config.Env) http.Handler {
@@ -672,26 +672,28 @@ func CreateEventPictureEventHandler(app *config.Env) http.HandlerFunc {
 		if !adminHelper.CheckAdminInSession(app, r) {
 			http.Redirect(w, r, "/administration/", 301)
 		}
+		var content []byte
 		r.ParseForm()
 		file, _, err := r.FormFile("file")
-		file2, _, err := r.FormFile("file2")
-		file3, _, err := r.FormFile("file3")
-		file4, _, err := r.FormFile("file4")
-		file5, _, err := r.FormFile("file5")
-		file6, _, err := r.FormFile("file6")
 		eventId := r.PostFormValue("eventId")
+		imageType := r.PostFormValue("imageType")
 		if err != nil {
-			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
+			fmt.Println(err, "<<<error reading file>>>>This error may happen if there is no picture selected>>>")
+		} else {
+			reader := bufio.NewReader(file)
+			content, _ = ioutil.ReadAll(reader)
 		}
-		filesArray := []io.Reader{file, file2, file3, file4, file5, file6}
-		filesByteArray := misc.CheckFiles(filesArray)
 
 		if eventId != "" {
+			//creating EVentImage
+			imageObject, err := misc.CreateImageHelper(content, "")
+			if err != nil {
+				fmt.Println(err, " error creating a new image")
+			}
 
-			eventImageObject := event2.EventImage{"", "", eventId, ""}
-			eventImageHelper := event2.EventImageHelper{eventImageObject, filesByteArray}
+			eventImageObject := event2.EventImage{"", imageObject.Id, eventId, imageType, ""}
 
-			_, errx := event_io.CreateEventImg(eventImageHelper)
+			_, errx := event_io.CreateEventImg(eventImageObject)
 			if errx != nil {
 				fmt.Println(errx, " error creating Event Image")
 				if app.Session.GetString(r.Context(), "user-create-error") != "" {
@@ -724,22 +726,26 @@ func UpdatePicturesHandler(app *config.Env) http.HandlerFunc {
 			http.Redirect(w, r, "/administration/", 301)
 		}
 		r.ParseForm()
+		var content []byte
 		file, _, err := r.FormFile("file")
 		imageId := r.PostFormValue("imageId")
 		eventId := r.PostFormValue("eventId")
 		eventImageId := r.PostFormValue("eventImageId")
 		imageType := r.PostFormValue("imageType")
 		if err != nil {
-			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
+			fmt.Println(err, "<<<error reading file>>>>This error may happen if there is no picture selected>>>")
+		} else {
+			reader := bufio.NewReader(file)
+			content, _ = ioutil.ReadAll(reader)
 		}
-		filesArray := []io.Reader{file}
-		filesByteArray := misc.CheckFiles(filesArray)
-
+		imageObject, err := misc.CreateImageHelper(content, "")
+		if err != nil {
+			fmt.Println(err, " error creating a new image")
+		}
 		//Checking fields contents
-		if eventId != "" && imageId != "" && imageType != "" && eventImageId != "" {
-			eventImage := event2.EventImage{eventImageId, imageId, eventId, imageType}
-			eventImageHelper := event2.EventImageHelper{eventImage, filesByteArray}
-			_, err := event_io.UpdateEventImg(eventImageHelper)
+		if eventId != "" && imageId != "" && imageType != "" && eventImageId != "" && imageObject.Id != "" {
+			eventImage := event2.EventImage{eventImageId, imageId, eventId, imageType, ""}
+			_, err := event_io.UpdateEventImg(eventImage)
 			if err != nil {
 				fmt.Println(err, " error updating eventImage Helper")
 				if app.Session.GetString(r.Context(), "user-create-error") != "" {
@@ -771,25 +777,25 @@ func AddPictureHandler(app *config.Env) http.HandlerFunc {
 		if !adminHelper.CheckAdminInSession(app, r) {
 			http.Redirect(w, r, "/administration/", 301)
 		}
+		var content []byte
 		r.ParseForm()
 		file, _, err := r.FormFile("file")
-		file2, _, err := r.FormFile("file2")
-		file3, _, err := r.FormFile("file3")
-		file4, _, err := r.FormFile("file4")
-		file5, _, err := r.FormFile("file5")
-		file6, _, err := r.FormFile("file6")
 		eventId := r.PostFormValue("eventId")
+		imageType := r.PostFormValue("imageType")
 		if err != nil {
-			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
+			fmt.Println(err, "<<<error reading file>>>>This error may happen if there is no picture selected>>>")
+		} else {
+			reader := bufio.NewReader(file)
+			content, _ = ioutil.ReadAll(reader)
 		}
-		filesArray := []io.Reader{file, file2, file3, file4, file5, file6}
-		filesByteArray := misc.CheckFiles(filesArray)
 
-		if eventId != "" {
-			eventImageObject := event2.EventImage{"", "", eventId, ""}
-			eventImageHelper := event2.EventImageHelper{eventImageObject, filesByteArray}
-
-			_, errx := event_io.CreateEventImg(eventImageHelper)
+		imageObject, err := misc.CreateImageHelper(content, "")
+		if err != nil {
+			fmt.Println(err, " error creating a new image")
+		}
+		if eventId != "" && imageObject.Id != "" {
+			eventImageObject := event2.EventImage{"", imageObject.Id, eventId, imageType, ""}
+			_, errx := event_io.CreateEventImg(eventImageObject)
 			if errx != nil {
 				fmt.Println(errx, " error creating PeopleImage")
 				if app.Session.GetString(r.Context(), "user-create-error") != "" {
@@ -1027,26 +1033,25 @@ func CreateEventHistoryEventHandler(app *config.Env) http.HandlerFunc {
 
 		var histories history2.Histories
 		var eventHistory event2.EventHistory
+		var content []byte
 
 		file, _, err := r.FormFile("file")
-		file2, _, err := r.FormFile("file2")
-		file3, _, err := r.FormFile("file3")
-		file4, _, err := r.FormFile("file4")
-		file5, _, err := r.FormFile("file5")
-		file6, _, err := r.FormFile("file6")
 		mytextarea := r.PostFormValue("mytextarea")
 		eventId := r.PostFormValue("eventId")
+		imageType := r.PostFormValue("imageType")
 		//eventId := r.PostForm["groupId"]
 		groupIds := r.Form["groupId"]
 		if err != nil {
-			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
+			fmt.Println(err, "<<<error reading file>>>>This error may happen if there is no picture selected>>>")
+		} else {
+			reader := bufio.NewReader(file)
+			content, _ = ioutil.ReadAll(reader)
 		}
-		filesArray := []io.Reader{file, file2, file3, file4, file5, file6}
-		filesByteArray := misc.CheckFiles(filesArray)
 
 		//Creating EventHistory and HistoryId
 		//fmt.Println("eventIed: ", eventId, " test>>>>", mytextarea)
 		if eventId != "" && mytextarea != "" {
+
 			//Creating Histories Object
 			historyObject := history2.Histories{"", misc.ConvertToByteArray(mytextarea)}
 			histories, err = history_io.CreateHistorie(historyObject)
@@ -1080,9 +1085,19 @@ func CreateEventHistoryEventHandler(app *config.Env) http.HandlerFunc {
 		}
 
 		//creating EVentImage
-		eventImageObject := event2.EventImage{"", "", eventId, ""}
-		eventImageHelperObject := event2.EventImageHelper{eventImageObject, filesByteArray}
-		_, errx := event_io.CreateEventImg(eventImageHelperObject)
+		imageObject, err := misc.CreateImageHelper(content, "")
+		if err != nil {
+			fmt.Println(err, " error creating a new image")
+		}
+
+		imageTypeObject, err := image_io.ReadImageTypeWithName(utile.PROFILE)
+		if err != nil {
+			fmt.Println(err, " error reading imageTypeWIthName")
+		} else {
+			imageType = imageTypeObject.Name
+		}
+		eventImageObject := event2.EventImage{"", imageObject.Id, eventId, imageType, utile.PROFILE}
+		_, errx := event_io.CreateEventImg(eventImageObject)
 		/**
 		Rolling back
 		*/

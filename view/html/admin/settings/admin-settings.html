@@ -9,7 +9,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>OSTM Admin  - Dashboard</title>
+  <title>OSTM Admin  - Setting</title>
 
   <!-- Custom fonts for this template-->
   <link href="../../assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -58,7 +58,7 @@
 
           <!-- Content Row -->
           <div class="row">
-            <!-- Earnings (Monthly) Card Example -->
+            <!-- Contribution File -->
             <div class="col-xl-3 col-md-6 mb-4">
               <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body">
@@ -116,56 +116,48 @@
 
             </div>
 
-            <!-- Earnings (Monthly) Card Example -->
+            <!-- Place  Category -->
             <div class="col-xl-3 col-md-6 mb-4">
               <div class="card border-left-success shadow h-100 py-2">
                 <div class="card-body">
-                  <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Earnings (Annual)</div>
+                  <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Place Category</div>
 
-                    <form class="user" method="post" action="">
+                    <form class="user" method="post" action="/admin_user/contribution/place-category">
                         <div class="form-group">
                             <div class="col-sm-12">
-                                <label>Date</label>
-                                <input type="text" name="fileType" class="form-control"
-                                       id="exampleLastName" placeholder="File Type" required>
+                                <label>Category</label>
+                                <input type="text" name="placeCategory" class="form-control"  required>
                             </div>
                         </div>
 
                         <button type="submit" class="btn btn-primary btn-block">
                             Submit
                         </button>
-                        <hr>
-                        <a href="/admin_user" class="btn btn-google  btn-block">Cancel</a>
                     </form>
+                  <hr>
                   <div class="table-responsive">
                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                       <thead>
-                      <tr>
-                        <th>Nr</th>
-                        <th>file Type</th>
-                        <th>Action</th>
-
-                      </tr>
+                      <th>Nr</th>
+                      <th>category</th>
+                      <th>Action</th>
                       </thead>
-
                       <tbody>
-
+                      {{with .PlaceCategories}}
+                      {{range $i, $e := .}}
                       <tr>
-                        <td></td>
-                        <td></td>
-                        <td><a href="/admin_user/event-comment/edit/"
-                               class="btn btn-primary btn-user btn-block">
-                            Edit
-                          </a>
-                        </td>
+                        <td>{{$i}}</td>
+                        <td>{{.Name}}</td>
                         <td>
                           <a class="btn btn-google btn-user btn-block" data-toggle="modal"
-                             onclick="deleteTheEventContributionBTN()"
-                             data-target="#exampleModalEvent">
+                             onclick="deletePlaceCategory({{.Id}},{{.Name}})"
+                             data-target="#deleteModel">
                             Delete
                           </a>
                         </td>
                       </tr>
+                      {{end}}
+                      {{end}}
                       </tbody>
                     </table>
                   </div>
@@ -582,6 +574,10 @@
 <script>
   function deleteContributionFileType(id, name) {
     $("#deleteBtn").attr('href', '/admin_user/contribution/delete-file-type/' + id);
+    $("#value").text(name);
+  }
+  function deletePlaceCategory(id, name) {
+    $("#deleteBtn").attr('href', '/admin_user/contribution/delete-place-category/' + id);
     $("#value").text(name);
   }
 </script>

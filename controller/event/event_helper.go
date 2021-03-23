@@ -69,6 +69,21 @@ func GetEventData(eventId string) EventData {
 	}
 	return eventData
 }
+func getEventPlace(eventId string) string {
+	var place string
+	eventPlace, err := event_io.ReadEventPlaceOf(eventId)
+	if err != nil {
+		fmt.Println(err, " error reading eventPlace")
+		return place
+	}
+	placeObect, err := place_io.ReadPlace(eventPlace.PlaceId)
+	if err != nil {
+		fmt.Println(err, " error reading place")
+		return place
+	}
+	return placeObect.Title
+
+}
 
 //EventPlace
 func GetEnventPlaceData(eventId string) place2.Place {

@@ -8,8 +8,8 @@ import (
 
 const placeTypeURL = api.BASE_URL + "place_type/"
 
-func CreatePlaceType(history place2.PlaceHistories) (place2.PlaceHistories, error) {
-	entity := place2.PlaceHistories{}
+func CreatePlaceType(history place2.PlaceType) (place2.PlaceType, error) {
+	entity := place2.PlaceType{}
 
 	resp, _ := api.Rest().SetBody(history).Post(placeTypeURL + "create")
 	if resp.IsError() {
@@ -22,8 +22,8 @@ func CreatePlaceType(history place2.PlaceHistories) (place2.PlaceHistories, erro
 	return entity, nil
 }
 
-func UpdatePlaceType(history place2.PlaceHistories) (place2.PlaceHistories, error) {
-	entity := place2.PlaceHistories{}
+func UpdatePlaceType(history place2.PlaceType) (place2.PlaceType, error) {
+	entity := place2.PlaceType{}
 
 	resp, _ := api.Rest().SetBody(history).Post(placeTypeURL + "update")
 	if resp.IsError() {
@@ -35,8 +35,8 @@ func UpdatePlaceType(history place2.PlaceHistories) (place2.PlaceHistories, erro
 	}
 	return entity, nil
 }
-func ReadPlaceType(id string) (place2.PlaceHistories, error) {
-	entity := place2.PlaceHistories{}
+func ReadPlaceType(id string) (place2.PlaceType, error) {
+	entity := place2.PlaceType{}
 
 	resp, _ := api.Rest().Get(placeTypeURL + "read?id=" + id)
 	if resp.IsError() {
@@ -49,8 +49,8 @@ func ReadPlaceType(id string) (place2.PlaceHistories, error) {
 	return entity, nil
 }
 
-func ReadPlaceTypeOf(placeId string) (place2.PlaceHistories, error) {
-	entity := place2.PlaceHistories{}
+func ReadPlaceTypeOf(placeId string) (place2.PlaceType, error) {
+	entity := place2.PlaceType{}
 
 	resp, _ := api.Rest().Get(placeTypeURL + "readOf?id=" + placeId)
 	if resp.IsError() {
@@ -63,8 +63,8 @@ func ReadPlaceTypeOf(placeId string) (place2.PlaceHistories, error) {
 	return entity, nil
 }
 
-func DeletePlaceType(id string) (place2.PlaceHistories, error) {
-	entity := place2.PlaceHistories{}
+func DeletePlaceType(id string) (place2.PlaceType, error) {
+	entity := place2.PlaceType{}
 
 	resp, _ := api.Rest().Get(placeTypeURL + "delete?id=" + id)
 	if resp.IsError() {
@@ -76,8 +76,8 @@ func DeletePlaceType(id string) (place2.PlaceHistories, error) {
 	}
 	return entity, nil
 }
-func ReadPlaceTypes() ([]place2.PlaceHistories, error) {
-	entity := []place2.PlaceHistories{}
+func ReadPlaceTypes() ([]place2.PlaceType, error) {
+	entity := []place2.PlaceType{}
 
 	resp, _ := api.Rest().Get(placeTypeURL + "reads")
 	if resp.IsError() {

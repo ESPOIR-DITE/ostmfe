@@ -20,3 +20,7 @@ type GaleryHelper struct {
 	Image       string `json:"image"`
 	Description string `json:"description"`
 }
+type ImageType struct {
+	Id   string `json:"id"`
+	Name string `json:"name"`
+}

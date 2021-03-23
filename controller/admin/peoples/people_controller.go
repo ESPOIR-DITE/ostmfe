@@ -51,8 +51,22 @@ func PeopleHome(app *config.Env) http.Handler {
 	r.Post("/create-gallery", createPeopleGaller(app))
 	r.Get("/delete-gallery/{pictureId}/{peopleId}/{peopleGalleryPictureId}", DeleteGalleryHandler(app))
 	r.Get("/activate_comment/{commentId}/{peopleId}", ActivateCommentHandler(app))
+	r.Get("/delete_people/{eventPeopleId}/{peopleId}", DeleteEventPeopleHandler(app))
 
 	return r
+}
+
+func DeleteEventPeopleHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		eventPeopleId := chi.URLParam(r, "eventPeopleId")
+		peopleId := chi.URLParam(r, "peopleId")
+		_, err := event_io.DeleteEventPeople(eventPeopleId)
+		if err != nil {
+			app.ErrorLog.Println(err, " error when deleting event people.")
+		}
+		http.Redirect(w, r, "/admin_user/people/edit/"+peopleId, 301)
+		return
+	}
 }
 func ActivateCommentHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -109,8 +123,8 @@ func AddEventHandler(app *config.Env) http.HandlerFunc {
 		peopleId := r.PostFormValue("peopleId")
 		eventId := r.PostFormValue("eventId")
 		if eventId != "" && peopleId != "" {
-			peoplePlaceObejct := event.EventPeople{"", eventId, peopleId}
-			_, err := event_io.CreateEventPeople(peoplePlaceObejct)
+			peoplePlaceObject := event.EventPeople{"", eventId, peopleId}
+			_, err := event_io.CreateEventPeople(peoplePlaceObject)
 			if err != nil {
 				fmt.Println(err, " error creating Event People")
 				if app.Session.GetString(r.Context(), "user-create-error") != "" {
@@ -850,7 +864,7 @@ func CreatePeopleHandler(app *config.Env) http.HandlerFunc {
 					app.Session.Remove(r.Context(), "creation-successful")
 				}
 				app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new project : "+people.Name)
-				http.Redirect(w, r, "/admin_user/people/edit/"+people.Id, 301)
+				http.Redirect(w, r, "/admin_user/people", 301)
 				return
 			}
 		}
@@ -877,6 +891,16 @@ func EditPeopleHandler(app *config.Env) http.HandlerFunc {
 			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
 			http.Redirect(w, r, "/admin_user/people", 301)
 			return
+		}
+		var unknown_error string
+		var backend_error string
+		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
+			unknown_error = app.Session.GetString(r.Context(), "creation-unknown-error")
+			app.Session.Remove(r.Context(), "creation-unknown-error")
+		}
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			backend_error = app.Session.GetString(r.Context(), "user-create-error")
+			app.Session.Remove(r.Context(), "user-create-error")
 		}
 		places, err := place_io.ReadPlaces()
 		if err != nil {
@@ -905,6 +929,9 @@ func EditPeopleHandler(app *config.Env) http.HandlerFunc {
 			CommentNumber   int64
 			PendingComments int64
 			ActiveComments  int64
+			Backend_error   string
+			Unknown_error   string
+			EventPeople     []EventPeopleData
 		}
 		data := PageDate{people,
 			peopleEditable,
@@ -916,7 +943,11 @@ func EditPeopleHandler(app *config.Env) http.HandlerFunc {
 			misc.GetPeopleGallery(peopleId),
 			commentNumber,
 			pendingcomments,
-			activeComments}
+			activeComments,
+			backend_error,
+			unknown_error,
+			GetPeopleEvents(peopleId),
+		}
 
 		files := []string{
 			app.Path + "admin/people/new_edite_people.html",

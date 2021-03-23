@@ -82,7 +82,7 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			fmt.Println(err, " error reading all the project")
 		}
-		eventDataLeft := misc.GetSimpleEventData(3)
+		eventDataLeft := misc.GetSimpleEventData(2)
 
 		histories, err := history_io.ReadHistorys()
 		if err != nil {

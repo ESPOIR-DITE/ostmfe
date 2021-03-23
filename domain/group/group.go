@@ -20,6 +20,7 @@ type GroupImage struct {
 	Id          string `json:"id"`
 	ImageId     string `json:"imageId"`
 	GroupId     string `json:"groupId"`
+	ImageTypeId string `json:"imageTypeId"`
 	Description string `json:"description"`
 }
 type GroupImageHelper struct {

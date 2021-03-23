@@ -13,7 +13,9 @@ import (
 	"ostmfe/controller/admin/adminHelper"
 	"ostmfe/controller/misc"
 	"ostmfe/domain/contribution"
+	"ostmfe/domain/place"
 	"ostmfe/io/contribution_io"
+	"ostmfe/io/place_io"
 	"time"
 )
 
@@ -24,11 +26,70 @@ func Home(app *config.Env) http.Handler {
 	r.Get("/ipAddress", printIpAddressHandler(app))
 	r.Get("/delete-contribution/{contributionId}/{contributionFile}", DeleteContributionHandler(app))
 	r.Get("/delete-file-type/{fileTypeId}", DeleteFileTypeHanler(app))
+	r.Get("/delete-place-category/{placeCategory}", DeletePlaceCategoryHandler(app))
 	r.Get("/read-audio/{fileId}", ReadAudioFileHandler(app))
 	r.Post("/createFileType", CreateFileType(app))
 	r.Post("/new", CreateContribution(app))
+	r.Post("/place-category", CreatePlaceCategoryHandler(app))
 
 	return r
+}
+
+func DeletePlaceCategoryHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+			return
+		}
+		fileTypeId := chi.URLParam(r, "placeCategory")
+
+		if fileTypeId != "" {
+			_, err := place_io.DeletePlaceCategory(fileTypeId)
+			if err != nil {
+				fmt.Println(err, " error deleting place category.")
+			}
+		}
+		http.Redirect(w, r, "/admin_user/contribution", 301)
+		return
+	}
+}
+
+func CreatePlaceCategoryHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+			return
+		}
+		r.ParseForm()
+
+		placeCategory := r.FormValue("placeCategory")
+
+		if placeCategory != "" {
+			placeCategoryObject := place.PlaceCategory{"", placeCategory}
+			_, err := place_io.CreatePlaceCategory(placeCategoryObject)
+			if err != nil {
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, please try again later.")
+				fmt.Println(err, " error creating category.")
+			} else {
+				app.InfoLog.Println(" successfully created placeCategory")
+				if app.Session.GetString(r.Context(), "creation-successful") != "" {
+					app.Session.Remove(r.Context(), "creation-successful")
+				}
+				app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new PlaceType : ")
+			}
+		} else {
+			fmt.Println(" error creating category. Field missing.")
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, The field is empty.")
+		}
+		http.Redirect(w, r, "/admin_user/contribution", 301)
+		return
+	}
 }
 
 func printIpAddressHandler(app *config.Env) http.HandlerFunc {
@@ -71,7 +132,7 @@ func DeleteContributionHandler(app *config.Env) http.HandlerFunc {
 				}
 			}
 		}
-		http.Redirect(w, r, "/admin_user/contribution/contribution", 301)
+		http.Redirect(w, r, "/admin_user/contribution", 301)
 	}
 }
 
@@ -280,13 +341,19 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			fmt.Println("error reading contributions types")
 		}
+		placeCategories, err := place_io.ReadPlaceCategories()
+		if err != nil {
+			fmt.Println("error reading placeCategories")
+		}
+
 		type PageData struct {
 			Success_notice    string
 			SidebarData       misc.SidebarData
 			Contribution      []contribution.Contribution
 			ContributionTypes []contribution.ContributionFileType
+			PlaceCategories   []place.PlaceCategory
 		}
-		data := PageData{success_notice, misc.GetSideBarData("setting", ""), contributions, contributionFileTypes}
+		data := PageData{success_notice, misc.GetSideBarData("setting", ""), contributions, contributionFileTypes, placeCategories}
 		files := []string{
 			app.Path + "admin/settings/admin-settings.html",
 			app.Path + "admin/template/navbar.html",

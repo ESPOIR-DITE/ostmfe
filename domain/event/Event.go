@@ -12,6 +12,7 @@ type EventImage struct {
 	Id          string `json:"id"`
 	ImageId     string `json:"imageId"`
 	EventId     string `json:"eventId"`
+	ImageTypeId string `json:"imageTypeId"`
 	Description string `json:"description"`
 }
 

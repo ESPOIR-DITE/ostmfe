@@ -208,20 +208,21 @@ func getPlaceGallery(placeId string) []image3.GaleryHelper {
 }
 
 type PlaceAggregatedDate struct {
-	Place   place.Place
-	Events  []event.Event
-	Gallery []string
-	People  []PeopleDataPlace
-	Image   string
+	Place         place.Place
+	Events        []event.Event
+	Gallery       []string
+	People        []PeopleDataPlace
+	Image         string
+	PlaceCategory string
 }
 
 //Get people data
 type PeopleDataPlace struct {
-	People     people.People
-	Image      image3.Images
-	Profession []people.Profession
-	History    history.History
-	Category   []people.Category
+	People        people.People
+	Image         image3.Images
+	Profession    []people.Profession
+	History       history.History
+	PlaceCategory []people.Category
 }
 
 func getPlaceAggregatedData() []PlaceAggregatedDate {
@@ -230,6 +231,7 @@ func getPlaceAggregatedData() []PlaceAggregatedDate {
 	var gallery []string
 	var peoples []PeopleDataPlace
 	var image string
+	var PlaceCategory string
 
 	places, err := place_io.ReadPlaces()
 	if err != nil {
@@ -237,6 +239,7 @@ func getPlaceAggregatedData() []PlaceAggregatedDate {
 		return placeAggregated
 	}
 	for _, place := range places {
+		PlaceCategory = getPlaceCategory(place.Id)
 		//Event Place
 		eventPlace, err := event_io.ReadEventFindByPlaceId(place.Id)
 		if err != nil {
@@ -267,9 +270,25 @@ func getPlaceAggregatedData() []PlaceAggregatedDate {
 		} else {
 			image = getImage(placeImage.ImageId).Id
 		}
-		placeAggregated = append(placeAggregated, PlaceAggregatedDate{place, events, gallery, peoples, image})
+		placeAggregated = append(placeAggregated, PlaceAggregatedDate{place, events, gallery, peoples, image, PlaceCategory})
 	}
 	return placeAggregated
+}
+
+func getPlaceCategory(placeId string) string {
+	var placeCategoryObject string
+	PlaceType, err := place_io.ReadPlaceTypeOf(placeId)
+	if err != nil {
+		fmt.Println(err, " error reading Place Type")
+		return placeCategoryObject
+	}
+	placeCategory, err := place_io.ReadPlaceCategory(PlaceType.PlaceCategoryId)
+	if err != nil {
+		fmt.Println(err, " error reading Place category")
+	} else {
+		return placeCategory.Name
+	}
+	return placeCategoryObject
 }
 
 //this method works as a bridge to allow extract

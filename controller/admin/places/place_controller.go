@@ -920,19 +920,16 @@ func CreateStp1Handler(app *config.Env) http.HandlerFunc {
 					fmt.Println(err, " error creating a new placeHistory")
 				}
 			}
-
-			//image
-			imagePlaceObject := image2.Images{"", content, description}
-			imagePlace, err := image_io.CreateImage(imagePlaceObject)
+			imageObject, err := misc.CreateImageHelper(content, description)
 			if err != nil {
 				fmt.Println(err, " error creating a new image")
-			} else {
-				placeImageObject := place2.PlaceImage{"", newPlace.Id, imagePlace.Id, description}
-				_, errr := place_io.CreatePlaceImage(placeImageObject)
-				if errr != nil {
-					fmt.Println(errr, " error creating placeImage")
-				}
 			}
+			placeImageObject := place2.PlaceImage{"", newPlace.Id, imageObject.Id, description}
+			_, errr := place_io.CreatePlaceImage(placeImageObject)
+			if errr != nil {
+				fmt.Println(errr, " error creating placeImage")
+			}
+
 			//Here we are trying to make sure that newPlace.Id is not nil.
 			if newPlace.Id != "" {
 				fmt.Println("successful")
@@ -944,6 +941,7 @@ func CreateStp1Handler(app *config.Env) http.HandlerFunc {
 				return
 			}
 		}
+
 		fmt.Println("One of the field is missing or newPlace.Id is nil")
 		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
 			app.Session.Remove(r.Context(), "creation-unknown-error")
