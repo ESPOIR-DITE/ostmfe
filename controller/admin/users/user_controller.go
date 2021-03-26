@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"ostmfe/config"
+	"ostmfe/controller/admin/adminHelper"
 	"ostmfe/controller/misc"
 	history2 "ostmfe/domain/history"
 	image2 "ostmfe/domain/image"
@@ -33,6 +34,9 @@ func UserController(app *config.Env) http.Handler {
 
 func CreateHistoryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		r.ParseForm()
 		myArea := r.PostFormValue("myArea")
 		email := r.PostFormValue("userId")
@@ -76,6 +80,9 @@ func CreateHistoryHandler(app *config.Env) http.HandlerFunc {
 
 func UpdateUserHistoryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		r.ParseForm()
 		myArea := r.PostFormValue("myArea")
 		historyId := r.PostFormValue("historyId")
@@ -101,6 +108,9 @@ func UpdateUserHistoryHandler(app *config.Env) http.HandlerFunc {
 
 func DeleteUserHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		userId := chi.URLParam(r, "userId")
 
 		_, err := user_io.ReadUser(userId)
@@ -163,6 +173,9 @@ func DeleteUserHandler(app *config.Env) http.HandlerFunc {
 }
 func EditUserHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 
 		var role user2.Roles
 		var unknown_error string
@@ -263,6 +276,9 @@ func EditUserHandler(app *config.Env) http.HandlerFunc {
 
 func UserHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		var unknown_error string
 		var backend_error string
 		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
@@ -305,6 +321,9 @@ func UserHandler(app *config.Env) http.HandlerFunc {
 
 func NewUserHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		var unknown_error string
 		var backend_error string
 		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
@@ -339,6 +358,9 @@ func NewUserHandler(app *config.Env) http.HandlerFunc {
 
 func homeHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		var success_notice string
 		var Error string
 		if app.Session.GetString(r.Context(), "creation-successful") != "" {
@@ -381,6 +403,9 @@ we then send the object to the backend, if an error occurs we will redirect back
 */
 func CreateUserHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		r.ParseForm()
 		file, _, err := r.FormFile("file")
 		mytextarea := r.PostFormValue("mytextarea")
@@ -388,8 +413,6 @@ func CreateUserHandler(app *config.Env) http.HandlerFunc {
 		surname := r.PostFormValue("surname")
 		email := r.PostFormValue("email")
 		userRoleId := r.PostFormValue("userRoleId")
-		password := r.PostFormValue("password")
-
 		if err != nil {
 			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
 		}
@@ -418,7 +441,7 @@ func CreateUserHandler(app *config.Env) http.HandlerFunc {
 
 		fmt.Println(name, "<<name  surname>>", surname, "  email>>", email)
 
-		if name != "" && surname != "" && email != "" && userRoleId != "" && password != "" {
+		if name != "" && surname != "" && email != "" && userRoleId != "" {
 			//Creating user
 			user := user2.Users{email, name, surname}
 			newUser, err := user_io.CreateUser(user)
@@ -452,7 +475,7 @@ func CreateUserHandler(app *config.Env) http.HandlerFunc {
 
 			//Creating User Account
 
-			userAccountObject := user2.UserAccount{email, time.Now(), password}
+			userAccountObject := user2.UserAccount{email, time.Now(), ""}
 			_, err = user_io.CreateUserAccount(userAccountObject)
 			if err != nil {
 				//Here we deleting the user if userRole creation has failed.
@@ -495,6 +518,9 @@ func CreateUserHandler(app *config.Env) http.HandlerFunc {
 
 func UpdateUserHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		r.ParseForm()
 
 		var userRoleObejct user2.RoleOfUser

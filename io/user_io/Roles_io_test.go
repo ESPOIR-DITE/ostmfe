@@ -8,7 +8,7 @@ import (
 )
 
 func TestCreateRole(t *testing.T) {
-	role := user.Roles{"", "user 1", "minor privilages"}
+	role := user.Roles{"", "Admin", "minor privilages"}
 	result, err := CreateRole(role)
 	assert.Nil(t, err)
 	fmt.Println(result)

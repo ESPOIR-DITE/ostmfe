@@ -183,43 +183,44 @@
         </div>
         <div class="modal-body">
           <form class="user" method="post" action="/admin_user/users/create" enctype="multipart/form-data">
-            <div class="form-group row">
-              <div class="col-sm-6 mb-3 mb-sm-0">
-                <input type="text" class="form-control" id="exampleFirstName" name="name" placeholder="Name" required>
+            <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                  <input type="text" class="form-control" id="exampleFirstName" name="name" placeholder="Name" required>
+                </div>
+                <div class="form-group">
+                  <input type="text" class="form-control" id="exampleLastName"name="surname" placeholder="Surname" required>
               </div>
-              <div class="col-sm-6">
-                <input type="text" class="form-control" id="exampleLastName"name="surname" placeholder="Surname" required>
+
+              <div class="form-group">
+                  <input type="email" class="form-control" id="exampleInputEmail"name="email" placeholder="Email Address"required>
+                </div>
+
+
+
+                <div class="form-group">
+                  <label>User Role</label>
+                  <select name="userRoleId" class="browser-default custom-select" required>
+                    <option selected>Choose a role</option>
+                    {{with .Roles}}
+                      {{range .}}
+                        <option value={{.Id}}>{{.Role}}</option>
+                      {{end}}
+                    {{end}}
+                  </select>
+                </div>
+              <div class="form-group">
+                  <label>User profile Picture</label>
+                  <input type="file" accept=".jpg" name="file" class="form-control " id="file" placeholder="Project Name" required>
               </div>
             </div>
 
-            <div class="form-group row">
-              <div class="col-sm-6 mb-3 mb-sm-0">
-                <input type="email" class="form-control" id="exampleInputEmail"name="email" placeholder="Email Address"required>
-              </div>
-              <div class="col-sm-6 mb-3 mb-sm-0">
-                <input type="text" class="form-control" id="exampleInputEmail"name="password" placeholder="Password"required>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>User History</label>
+                <textarea id="mytextare" class="form-control"  name="mytextarea"></textarea>
               </div>
             </div>
-            <div class="form-group row">
-              <div class="col-sm-6 mb-3 mb-sm-0">
-                <label>User Role</label>
-                <select name="userRoleId" class="browser-default custom-select" required>
-                  <option selected>Choose a role</option>
-                  {{with .Roles}}
-                  {{range .}}
-                  <option value={{.Id}}>{{.Role}}</option>
-                  {{end}}
-                  {{end}}
-                </select>
-              </div>
-              <div class="col-sm-6 mb-3 mb-sm-0">
-                <label>User profile Picture</label>
-                <input type="file"name="file" class="form-control " id="file" placeholder="Project Name" required>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>User History</label>
-              <textarea id="mytextare" class="form-control"  name="mytextarea"></textarea>
             </div>
 
             <button type="submit" class="btn btn-primary btn-block">

@@ -27,7 +27,7 @@ import (
 func PeopleHome(app *config.Env) http.Handler {
 	r := chi.NewRouter()
 	r.Get("/", PeopleHandler(app))
-	r.Get("/people_category/new", NewPeopleCategoryHandler(app))
+
 	r.Get("/new", NewPeopleHandler(app))
 	r.Get("/new_stp2/{peopleId}", NewPeoplestp2Handler(app))
 	r.Get("/edit/{peopleId}", EditPeopleHandler(app))
@@ -38,7 +38,6 @@ func PeopleHome(app *config.Env) http.Handler {
 	r.Post("/create_stp2", CreatePeopleStp2Handler(app))
 	r.Post("/create_image", CreatePeopleImageHandler(app))
 
-	r.Post("/people_category/create", CreatePeopleCategoryHandler(app))
 	r.Post("/update_image", UpdatePeopleImageHandler(app))
 	r.Post("/update_details", UpdatePeopleDetailHandler(app))
 	r.Post("/update_history", UpdatePeopleHistoryHandler(app))
@@ -52,6 +51,9 @@ func PeopleHome(app *config.Env) http.Handler {
 	r.Get("/delete-gallery/{pictureId}/{peopleId}/{peopleGalleryPictureId}", DeleteGalleryHandler(app))
 	r.Get("/activate_comment/{commentId}/{peopleId}", ActivateCommentHandler(app))
 	r.Get("/delete_people/{eventPeopleId}/{peopleId}", DeleteEventPeopleHandler(app))
+
+	r.Get("/people_category/new", NewPeopleCategoryHandler(app))
+	r.Post("/people_category/create", CreatePeopleCategoryHandler(app))
 
 	return r
 }
@@ -566,7 +568,8 @@ func NewPeopleCategoryHandler(app *config.Env) http.HandlerFunc {
 		files := []string{
 			app.Path + "admin/people/peopleCategory.html",
 			app.Path + "admin/template/navbar.html",
-			app.Path + "base_templates/footer.html",
+			app.Path + "admin/template/topbar.html",
+			app.Path + "admin/template/cards.html",
 		}
 		ts, err := template.ParseFiles(files...)
 		if err != nil {
