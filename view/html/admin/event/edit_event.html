@@ -79,7 +79,7 @@
                                                             <h6 class="m-0 font-weight-bold text-primary">Event Picture</h6>
                                                         </div>
                                                         <div class="col-lg-6">
-                                                            <a class="float-right" href="#" data-toggle="modal" data-target="#updateImage">
+                                                            <a class="float-right" href="#" onclick="getImageId({{.ImageId}})" data-toggle="modal" data-target="#updateImage">
                                                                 <i class="fas fa-plus fa-sm fa-fw mr-2 text-gray-400"></i>
                                                                 Update
                                                             </a>
@@ -493,6 +493,7 @@
                                         <div class="form-group">
                                             <input name="historyId" value="{{.EventData.History.Id}}" hidden>
                                             <input name="projectId" value="{{.EventData.Event.Id}}" hidden>
+                                            <input name="eventId" value="{{.EventData.Event.Id}}" hidden>
                                             <div class="form-group">
                                                 <label id="label" hidden style="color: steelblue">Add the new contents
                                                     here<small> (You may copy from the previous. Remember this new
@@ -946,32 +947,19 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form class="user" method="post" id=""
+                <form class="user" method="post"
                       action="/admin_user/event/update_pictures"
                       enctype="multipart/form-data">
-                    <input type="hidden" name="eventId"
-                           value="{{.EventData.Event.Id}}"
-                           class="form-control ">
-                    <div class="form-group row">
-                        <div class="col-sm-5">
-                            <select name="imageType"
-                                    class="browser-default custom-select"
-                                    required>
-                                <option selected>Picture type</option>
-                                <option value="1">Profile image</option>
-                                <option value="2">Secondary Image
-                                </option>
-                            </select>
-                        </div>
-                        <div class="col-sm-5">
+                    <input type="hidden" name="eventId" value="{{.EventData.Event.Id}}" class="form-control ">
+                    <input type="hidden" id="imageId" name="imageId"  class="form-control ">
+
+                    <div class="form-group">
                             <input type="file" name="file"
                                    class="form-control" id="fileInput"
                                    onchange="fileToUpdate()" required>
-                        </div>
                     </div>
                     <button type="submit"
-                            class="btn btn-primary btn-block"
-                            id="completeBTN" hidden>Update
+                            class="btn btn-primary btn-block">Update
                     </button>
                 </form>
             </div>
@@ -1196,6 +1184,9 @@
     function deleteTheEventCommentBTN(commentId, bridgeId, name) {
         $("#deleteBtn").attr('href', '/admin_user/event/delete_comment/' + commentId + "/" + bridgeId);
         $("#value").text(name);
+    }
+    function getImageId(imageId) {
+        $("#imageId").val(imageId);
     }
 </script>
 

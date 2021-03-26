@@ -11,11 +11,15 @@ import (
 	"ostmfe/config"
 	"ostmfe/controller/misc"
 	"ostmfe/domain/comment"
+	"ostmfe/domain/event"
 	history2 "ostmfe/domain/history"
 	image2 "ostmfe/domain/image"
+	"ostmfe/domain/place"
 	project2 "ostmfe/domain/project"
+	"ostmfe/io/event_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
+	"ostmfe/io/place_io"
 	"ostmfe/io/project_io"
 )
 
@@ -33,6 +37,7 @@ func ProjectHome(app *config.Env) http.Handler {
 	r.Post("/update_details", ProjectUpdateDetails(app))
 
 	r.Post("/create_history", ProjectCreateHistoryHandler(app))
+	r.Post("/addPlace", AddPlaceHandler(app))
 	//Gallery
 	r.Post("/create-gallery", CreateGalleryHandler(app))
 	r.Get("/delete-gallery/{pictureId}/{projectId}/{projectGalleryPictureId}", DeleteGalleryHandler(app))
@@ -41,6 +46,20 @@ func ProjectHome(app *config.Env) http.Handler {
 	r.Get("/activate_comment/{commentId}/{projectId}", ActivateCommentHandler(app))
 
 	return r
+}
+
+//Todo finish this method.
+func AddPlaceHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		projectId := r.PostFormValue("projectId")
+		PlaceId := r.PostFormValue("PlaceId")
+		if PlaceId != "" && projectId != "" {
+
+		}
+		http.Redirect(w, r, "/admin_user/project/edit/"+projectId, 301)
+		return
+	}
 }
 func ActivateCommentHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -379,8 +398,18 @@ func EditeProjectsHandler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			fmt.Println(err, " Error reading project Details")
 		}
+		Places, err := place_io.ReadPlaces()
+		if err != nil {
+			fmt.Println(err, " Error reading places")
+		}
+		events, err := event_io.ReadEvents()
+		if err != nil {
+			fmt.Println(err, " Error reading events")
+		}
 		commentNumber, pendingcomments, activeComments := projectCommentCalculation(projectId)
 		type PageData struct {
+			Events          []event.Event
+			Places          []place.Place
 			Project         misc.ProjectEditable
 			ProjectDetails  project2.Project
 			SidebarData     misc.SidebarData
@@ -390,7 +419,9 @@ func EditeProjectsHandler(app *config.Env) http.HandlerFunc {
 			PendingComments int64
 			ActiveComments  int64
 		}
-		data := PageData{selectedProjest,
+		data := PageData{events,
+			Places,
+			selectedProjest,
 			projectDetails,
 			misc.GetSideBarData("project", ""),
 			GetProjectCommentsWithProjectId(projectId),
@@ -755,13 +786,17 @@ func ProjectUpdatePicturesHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 
+		var content []byte
 		file, _, err := r.FormFile("file")
 		projectId := r.PostFormValue("projectId")
 		imageId := r.PostFormValue("imageId")
-		projectImageId := r.PostFormValue("projectImageId")
-		imageType := r.PostFormValue("imageType")
+		//projectImageId := r.PostFormValue("projectImageId")
+		//imageType := r.PostFormValue("imageType")
 		if err != nil {
-			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
+			fmt.Println(err, "<<<error reading file>>>>This error may happen if there is no picture selected>>>")
+		} else {
+			reader := bufio.NewReader(file)
+			content, _ = ioutil.ReadAll(reader)
 		}
 		project, err := project_io.ReadProject(projectId)
 		if err != nil {
@@ -770,18 +805,14 @@ func ProjectUpdatePicturesHandler(app *config.Env) http.HandlerFunc {
 				app.Session.Remove(r.Context(), "user-create-error")
 			}
 			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-			http.Redirect(w, r, "/admin_user/project", 301)
+			http.Redirect(w, r, "/admin_user/project/", 301)
 			return
 		}
-		if imageId != "" && imageType != "" && projectImageId != "" {
-			filesArray := []io.Reader{file}
-			filesByteArray := misc.CheckFiles(filesArray)
-			projectImage := project2.ProjectImage{projectImageId, project.Id, imageId, imageType}
-
-			helper := project2.ProjectImageHelper{filesByteArray, projectImage}
-			_, errr := project_io.UpdateProjectImage(helper)
-			if errr != nil {
-				fmt.Println(errr, " error creating projectImage")
+		if imageId != "" && projectId != "" {
+			newImageObject := image2.Images{imageId, content, ""}
+			_, err := image_io.UpdateImage(newImageObject)
+			if err != nil {
+				fmt.Println(err, " error updating image")
 				if app.Session.GetString(r.Context(), "user-create-error") != "" {
 					app.Session.Remove(r.Context(), "user-create-error")
 				}
@@ -793,7 +824,7 @@ func ProjectUpdatePicturesHandler(app *config.Env) http.HandlerFunc {
 				app.Session.Remove(r.Context(), "creation-successful")
 			}
 			app.Session.Put(r.Context(), "creation-successful", "You have successfully updated the following project : "+project.Title)
-			http.Redirect(w, r, "/admin_user/project/"+project.Id, 301)
+			http.Redirect(w, r, "/admin_user/project/edit/"+project.Id, 301)
 			return
 		}
 

@@ -245,15 +245,17 @@
                                             <td>{{$i}}</td>
                                             <td>{{.Name}}</td>
                                             <td>{{.Date}}</td>
-                                            <td><a href="/admin_user/event/edit/{{.Id}}"
-                                                   class="btn btn-primary btn-user btn-block">
+                                            <td class="text-center"><a href="/admin_user/event/edit/{{.Id}}"
+                                                   class="btn btn-primary ">
+                                                <i class="fa fa-edit"></i>
                                                     Edit
                                                 </a>
                                             </td>
-                                            <td>
-                                                <a class="btn btn-google btn-user btn-block" data-toggle="modal"
+                                            <td class="text-center">
+                                                <a class="btn btn-google " data-toggle="modal"
                                                    onclick="deleteTheEventBTN({{.Id}},{{.Name}})"
                                                    data-target="#exampleModalEvent">
+                                                    <i class="fa fa-trash"></i>
                                                    Delete
                                                 </a>
                                             </td>

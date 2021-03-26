@@ -730,22 +730,24 @@ func UpdatePicturesHandler(app *config.Env) http.HandlerFunc {
 		file, _, err := r.FormFile("file")
 		imageId := r.PostFormValue("imageId")
 		eventId := r.PostFormValue("eventId")
-		eventImageId := r.PostFormValue("eventImageId")
-		imageType := r.PostFormValue("imageType")
+		//eventImageId := r.PostFormValue("eventImageId")
+		//imageType := r.PostFormValue("imageType")
 		if err != nil {
 			fmt.Println(err, "<<<error reading file>>>>This error may happen if there is no picture selected>>>")
 		} else {
 			reader := bufio.NewReader(file)
 			content, _ = ioutil.ReadAll(reader)
 		}
-		imageObject, err := misc.CreateImageHelper(content, "")
-		if err != nil {
-			fmt.Println(err, " error creating a new image")
-		}
+		//imageObject, err := misc.CreateImageHelper(content, "")
+		//if err != nil {
+		//	fmt.Println(err, " error creating a new image")
+		//}
 		//Checking fields contents
-		if eventId != "" && imageId != "" && imageType != "" && eventImageId != "" && imageObject.Id != "" {
-			eventImage := event2.EventImage{eventImageId, imageId, eventId, imageType, ""}
-			_, err := event_io.UpdateEventImg(eventImage)
+		if eventId != "" && imageId != "" {
+			newImageObject := image.Images{imageId, content, ""}
+			_, err := image_io.UpdateImage(newImageObject)
+			//eventImage := event2.EventImage{eventImageId, imageId, eventId, imageType, ""}
+			//_, err := event_io.UpdateEventImg(eventImage)
 			if err != nil {
 				fmt.Println(err, " error updating eventImage Helper")
 				if app.Session.GetString(r.Context(), "user-create-error") != "" {
@@ -957,16 +959,12 @@ func UpdateHistoryHandler(app *config.Env) http.HandlerFunc {
 		eventId := r.PostFormValue("eventId")
 		historyId := r.PostFormValue("historyId")
 
-		//checking if the EventtHistory exists
+		//checking if the EventHistory exists
 		_, err := history_io.ReadHistorie(historyId)
-		//fmt.Println(historyContent)
 		if err != nil {
 			fmt.Println(err, " could not read history")
 			fmt.Println(" proceeding into creation of a history.....")
 			history := history2.Histories{"", misc.ConvertToByteArray(historyContent)}
-
-			//fmt.Println("history Object: ", history)
-
 			newHistory, err := history_io.CreateHistorie(history)
 			if err != nil {
 				fmt.Println(err, " something went wrong! could not create history")
@@ -979,7 +977,7 @@ func UpdateHistoryHandler(app *config.Env) http.HandlerFunc {
 			}
 			fmt.Println("HistoryId created successfully ..")
 			fmt.Println(" proceeding into creation of a event_history.....")
-			eventHistory := event2.EventHistory{"", eventId, newHistory.Id}
+			eventHistory := event2.EventHistory{"", newHistory.Id, eventId}
 			_, errr := event_io.CreateEventHistory(eventHistory)
 			if errr != nil {
 				fmt.Println(err, " could not create eventHistory")
