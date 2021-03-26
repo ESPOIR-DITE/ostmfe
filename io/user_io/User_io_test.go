@@ -24,7 +24,7 @@ func TestReadUser(t *testing.T) {
 	fmt.Println("result", result)
 }
 func TestUpdateUser(t *testing.T) {
-	user := user3.Users{"espoirditekemena@gmail.com", "espoire", "ditekemena"}
+	user := user3.Users{"espoir@gmail.com", "espoire", "ditekemena"}
 	result, err := UpdateUser(user)
 	assert.Nil(t, err)
 	fmt.Println("result", result)

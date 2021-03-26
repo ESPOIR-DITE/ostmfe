@@ -36,7 +36,7 @@ func TestDeleteUserAccount(t *testing.T) {
 }
 
 func TestReadUserAccount(t *testing.T) {
-	result, err := ReadUserAccount("espoirditekemena@gmail.com")
+	result, err := ReadUserAccount("espoir@gmail.com")
 	assert.Nil(t, err)
 	fmt.Println("Result :", result)
 }
