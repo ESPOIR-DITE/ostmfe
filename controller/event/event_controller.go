@@ -1,19 +1,31 @@
 package event
 
 import (
+	"bufio"
 	"fmt"
 	"github.com/go-chi/chi"
 	"html/template"
+	"io/ioutil"
+	"mime/multipart"
 	"net/http"
 	"ostmfe/config"
+	comment2 "ostmfe/controller/comment"
 	"ostmfe/controller/misc"
 	museum "ostmfe/domain"
+	"ostmfe/domain/comment"
+	contribution2 "ostmfe/domain/contribution"
 	"ostmfe/domain/people"
 	place2 "ostmfe/domain/place"
 	"ostmfe/domain/project"
 	io2 "ostmfe/io"
+	"ostmfe/io/comment_io"
+	"ostmfe/io/contribution_io"
 	"ostmfe/io/event_io"
+	"ostmfe/io/pageData_io"
 	"ostmfe/io/project_io"
+	"path/filepath"
+	"strings"
+	"time"
 )
 
 func Home(app *config.Env) http.Handler {
@@ -21,7 +33,109 @@ func Home(app *config.Env) http.Handler {
 	r.Get("/", homeHanler(app))
 	r.Get("/single/{eventId}", EventHanler(app))
 	r.Get("/ofayear/{yearId}", EventOfAYearHanler(app))
+	r.Post("/create", CreateComment(app))
+	r.Post("/contribution", CreateContributionComment(app))
 	return r
+}
+
+func CreateContributionComment(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var content []byte
+		var isExtension bool
+		var fileTypeId string
+		r.ParseForm()
+		file, m, err := r.FormFile("file")
+		eventId := r.PostFormValue("eventId")
+		if err != nil {
+			fmt.Println(err, "<<<<<< error reading contribution file>>>>This error should happen>>>")
+		} else {
+			reader := bufio.NewReader(file)
+			content, _ = ioutil.ReadAll(reader)
+			//Check the file extension
+			isExtension, fileTypeId = getFileExtension(m)
+
+			fmt.Println("result from assement: ", isExtension)
+
+			if isExtension == false {
+				fmt.Println("error creating contribution")
+				fmt.Println("wrong file: ", m.Filename)
+				http.Redirect(w, r, "/event/single/"+eventId, 301)
+			}
+		}
+		name := r.PostFormValue("name")
+		email := r.PostFormValue("email")
+		message := r.PostFormValue("message")
+		fileId := r.PostFormValue("fileId")
+		cellphone := r.PostFormValue("cellphone")
+
+		if name != "" && email != "" && message != "" && eventId != "" && fileId != "" {
+			contributionObject := contribution2.Contribution{"", email, name, time.Now(), cellphone, misc.ConvertToByteArray(message)}
+
+			contribution, err := contribution_io.CreateContribution(contributionObject)
+			if err != nil {
+				fmt.Println("error creating a new contribution")
+			} else {
+				contributorEventObject := contribution2.ContributionEvent{"", contribution.Id, eventId, name}
+				_, err := contribution_io.CreateContributionEvent(contributorEventObject)
+				if err != nil {
+					_, _ = contribution_io.DeleteContribution(contribution.Id)
+					fmt.Println("error creating a new contribution")
+				} else {
+					contributionFileObject := contribution2.ContributionFile{"", contribution.Id, content, fileId, fileTypeId}
+					_, err := contribution_io.CreateContributionFile(contributionFileObject)
+					if err != nil {
+						fmt.Println("error creating contributionFile")
+					}
+				}
+			}
+		}
+		http.Redirect(w, r, "/event/single/"+eventId, 301)
+	}
+}
+
+func getFileExtension(fileData *multipart.FileHeader) (bool, string) {
+	var extension = filepath.Ext(fileData.Filename)
+	contributionFileTypes, err := contribution_io.ReadContributionFileTypes()
+	if err != nil {
+		fmt.Println("error reading contributionFileType")
+		return true, ""
+	} else {
+		for _, contributionFileType := range contributionFileTypes {
+			fmt.Println("extension: " + extension + " file extension: " + contributionFileType.FileType)
+			//t := strings.Trim(extension, ".")
+			t := strings.Replace(extension, ".", "", -1)
+			fmt.Println("extension2: " + t + " file extension: " + contributionFileType.FileType)
+			if t == contributionFileType.FileType {
+				return true, contributionFileType.Id
+			}
+		}
+	}
+	return false, ""
+}
+func CreateComment(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		r.ParseForm()
+		name := r.PostFormValue("name")
+		email := r.PostFormValue("email")
+		message := r.PostFormValue("message")
+		eventId := r.PostFormValue("eventId")
+
+		if name != "" && email != "" && message != "" {
+			commentObject := comment.Comment{"", email, name, misc.FormatDateTime(time.Now()), misc.ConvertToByteArray(message), "", false}
+			newComment, err := comment_io.CreateComment(commentObject)
+			if err != nil {
+				fmt.Println("error creating comment")
+			} else {
+				_, err := comment_io.CreateCommentEvent(comment.CommentEvent{"", eventId, newComment.Id})
+				if err != nil {
+					fmt.Println("error creating comment")
+				}
+				http.Redirect(w, r, "/event/single/"+eventId, 301)
+			}
+		}
+		http.Redirect(w, r, "/event/single/"+eventId, 301)
+	}
 }
 
 func EventOfAYearHanler(app *config.Env) http.HandlerFunc {
@@ -71,15 +185,41 @@ func EventOfAYearHanler(app *config.Env) http.HandlerFunc {
 func EventHanler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		eventId := chi.URLParam(r, "eventId")
-		eventdata := GetEventData(eventId)
-		type PageData struct {
-			EventData EventData
-			Place     place2.Place
-			Peoples   []people.People
-			GroupData []GroupData
-			Project   project.Project
+		if eventId == "" {
+			http.Redirect(w, r, "/", 301)
 		}
-		data := PageData{eventdata, GetEnventPlaceData(eventId), GetEventPeopleData(eventId), GetGroupsData(eventId), getEventProject(eventId)}
+		eventdata := GetEventData(eventId)
+
+		eventNumber, err := comment_io.CountCommentEvent(eventId)
+		if err != nil {
+			fmt.Println("error reading counting CommentEvent")
+		}
+		pageFlow, err := event_io.ReadAllEventPageFlowByEventId(eventId)
+		if err != nil {
+			fmt.Println("error reading event Page flow")
+		}
+
+		type PageData struct {
+			EventData     EventData
+			Place         place2.Place
+			Peoples       []people.People
+			GroupData     []GroupData
+			Project       project.Project
+			CommentNumber int64
+			Comments      []comment.CommentStack
+			GalleryImages []misc.EventGalleryImages
+			PageFlow      []contribution2.EventPageFlow
+		}
+		data := PageData{eventdata,
+			GetEnventPlaceData(eventId),
+			GetEventPeopleData(eventId),
+			GetGroupsData(eventId),
+			getEventProject(eventId),
+			eventNumber,
+			comment2.GetEventComments(eventId),
+			misc.GetEventGallery(eventId),
+			pageFlow,
+		}
 		files := []string{
 			app.Path + "event/event_single.html",
 			app.Path + "base_templates/navigator.html",
@@ -105,12 +245,22 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			fmt.Println(err, " error reading projects")
 		}
-		type PageData struct {
-			Events   []misc.SimpleEventData
-			Years    []YearData
-			Projects []project.Project
+
+		var bannerImage string
+		pageBanner, err := pageData_io.ReadPageBannerWIthPageName("event-page")
+		if err != nil {
+			fmt.Println(err, " There is an error when reading people pageBanner")
+		} else {
+			bannerImage = misc.GetBannerImage(pageBanner.BannerId)
 		}
-		data := PageData{events, getYearDate(), projects}
+
+		type PageData struct {
+			Events      []misc.SimpleEventData
+			Years       []YearData
+			Projects    []project.Project
+			EventBanner string
+		}
+		data := PageData{events, getYearDate(), projects, bannerImage}
 		files := []string{
 			app.Path + "event/events.html",
 			app.Path + "base_templates/navigator.html",
@@ -144,7 +294,7 @@ func getYearDate() []YearData {
 		//get the year event
 		for _, yearResult := range yearResults {
 			amount, err := event_io.CountEventYearWithYearId(yearResult.Id)
-			fmt.Println("Year with number of event: ",yearResult," number: ",amount)
+			fmt.Println("Year with number of event: ", yearResult, " number: ", amount)
 			if err != nil {
 				fmt.Println(err, "error reading year with yearId.")
 			} else {

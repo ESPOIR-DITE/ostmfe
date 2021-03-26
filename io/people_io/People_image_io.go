@@ -20,7 +20,19 @@ func CreatePeopleImage(pI people.PeopleImageHelper) (people.People_image, error)
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
+}
+func CreatePeopleImageX(pI people.People_image) (people.People_image, error) {
 
+	entity := people.People_image{}
+	resp, _ := api.Rest().SetBody(pI).Post(peopleImg + "createx")
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
 }
 func UpdatePeopleImage(pI people.PeopleImageHelper) (people.People_image, error) {
 
@@ -89,9 +101,9 @@ func DeletePeopleImage(id string) (people.People_image, error) {
 	return entity, nil
 
 }
-func ReadPeopleImages() (people.People_image, error) {
+func ReadPeopleImages() ([]people.People_image, error) {
 
-	entity := people.People_image{}
+	entity := []people.People_image{}
 	resp, _ := api.Rest().Get(peopleImg + "reads")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())

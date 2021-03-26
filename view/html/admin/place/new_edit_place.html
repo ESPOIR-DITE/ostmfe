@@ -18,7 +18,8 @@
   <!-- Custom styles for this template-->
   <link href="../../assets/css/sb-admin-2.min.css" rel="stylesheet">
 
-  <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet"><script>
+  <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+    <script>
 
   tinymce.init({
     selector: '#mytextare'
@@ -58,7 +59,7 @@
             <!-- Card Header - Accordion -->
             <a href="#collapseCardImage" class="d-block card-header py-3 btn-success" data-toggle="collapse"
                role="button" aria-expanded="true" aria-controls="collapseCardExample">
-              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Event Image</h6>
+              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Place Image</h6>
             </a>
             <!-- Card Content - Collapse -->
             <div class="collapse " id="collapseCardImage">
@@ -264,6 +265,389 @@
               </div>
             </div>
           </div>
+          <!---Event PageFlow---->
+          <div class="card shadow mb-4">
+            <!-- Card Header - Accordion -->
+            <a href="#collapseGallery" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+               role="button" aria-expanded="true" aria-controls="collapseCardExample">
+              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Create new Event Page flow</h6>
+            </a>
+            <!-- Card Content - Collapse -->
+            <div class="collapse " id="collapseGallery">
+              <div class="card-body p-0">
+                <!-- Nested Row within Card Body -->
+                <div class="row">
+
+                  <div class="col-lg-12">
+                    <div class="p-5">
+                      <div class="text-center">
+                        <h1 class="h4 text-gray-900 mb-4">New Picture</h1>
+                      </div>
+                      <form class="user" method="post" action="/admin_user/event/create-page-flow" >
+                        <input type="hidden" name="eventId" value="{{.EventData.Event.Id}}" class="form-control ">
+
+                        <div class="form-group row">
+                          <div class="col-sm-6">
+                            <label>PageFlow Title</label>
+                            <input type="text" name="pageFlowTitle" class="form-control" placeholder="Descendant of slavery">
+                          </div>
+
+                          <div class="col-sm-6">
+                            <label>PageFlow src link <small> Optional field </small></label>
+                            <input type="text" name="scr" class="form-control" placeholder="Ex:https://museumeducation.pageflow.io/descendants-of-slavery/embed">
+                          </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">
+                          Next
+                        </button>
+                        <hr>
+                        <a href="/admin_user" class="btn btn-google  btn-block">Cancel</a>
+                      </form>
+                      <hr>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row ">
+                  <div class="container ">
+                    <div class="table-responsive">
+                      <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                        <tr>
+                          <th>Nr</th>
+                          <th>Image</th>
+                          <th>Image description</th>
+                          <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{with .Gallery}}
+                        {{range $i, $e := .}}
+                        <tr>
+                          <td>{{$i}}</td>
+                          <td><img id='base64image' width="100px" src='data:image/jpeg;base64,{{.Gallery.Image}}' alt=""></td>
+                          <td>{{.Gallery.Description}}</td>
+                          <td><a href="/admin_user/group/delete-gallery/{{.Gallery.Id}}/{{.EventGallery.Id}}/{{$.EventData.Event.Id}}"
+                                 class="btn btn-google btn-user btn-block">
+                            <i class="fab fa-fw"></i> Delete
+                          </a>
+                          </td>
+                        </tr>
+                        {{end}}
+                        {{end}}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Comment Card -->
+          <div class="card shadow mb-4">
+            <!-- Card Header - Accordion -->
+            <a href="#commentCard" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+               role="button" aria-expanded="true" aria-controls="collapseCardExample">
+              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Place Comment</h6>
+            </a>
+            <!-- Card Content - Collapse -->
+            <div class="collapse " id="commentCard">
+
+
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                    <tr>
+                      <th>Nr</th>
+                      <th>Event Name</th>
+                      <th>Email</th>
+                      <th>Event Date</th>
+                      <th>Comment</th>
+                      <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{with .Comments}}
+                      {{range $i, $e := .}}
+                        <tr>
+                          <td>{{$i}}</td>
+                          <td>{{.Name}}</td>
+                          <td>{{.Email}}</td>
+                          <td>{{.Date}}</td>
+                          <td><small>{{.Comment}}</small></td>
+                          <td>
+                            <a class="btn btn-google btn-user btn-block" data-toggle="modal"
+                               onclick="deleteTheEventCommentBTN({{.Id}},{{.BridgeId}},{{.Name}})"
+                               data-target="#exampleModalEvent">
+                              Delete
+                            </a>
+                          </td>
+                        </tr>
+                      {{end}}
+                    {{end}}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!---Place Event---->
+          <div class="card shadow mb-4">
+            <!-- Card Header - Accordion -->
+            <a href="#collapseEvent" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+               role="button" aria-expanded="true" aria-controls="collapseCardExample">
+              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Add an event to this Place</h6>
+            </a>
+            <!-- Card Content - Collapse -->
+            <div class="collapse " id="collapseEvent">
+              <div class="card-body p-0">
+                <!-- Nested Row within Card Body -->
+                <div class="row">
+
+                  <div class="col-lg-6">
+                    <div class="p-5">
+                      <div class="text-center">
+                        <h1 class="h4 text-gray-900 mb-4">New Picture</h1>
+                      </div>
+                      <form class="user" method="post" action="/admin_user/place/create-event" enctype="multipart/form-data">
+                        <input type="hidden" name="placeId" value="{{.PlaceData.Place.Id}}" class="form-control ">
+
+                        <div class="form-group ">
+                          <label>Events</label>
+                          <select name="peopleId" class="browser-default custom-select">
+                            <option selected>Choose one event at a time</option>
+                            {{with .Events}}
+                            {{range .}}
+                            <option value={{.Id}}>{{.Name}}</option>
+                            {{end}}
+                            {{end}}
+                          </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">
+                          Next
+                        </button>
+                        <hr>
+                        <a href="/admin_user" class="btn btn-google  btn-block">Cancel</a>
+                      </form>
+                      <hr>
+                    </div>
+                  </div>
+
+                  <div class="col-lg-6">
+                    <div class="p-5">
+                      <div class="text-center">
+                        <h1 class="h4 text-gray-900 mb-4">Existing Event</h1>
+                      </div>
+                  <div class="container ">
+                    <div class="table-responsive">
+                      <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                        <tr>
+                          <th>Nr</th>
+                          <th>Name</th>
+                          <th>Date</th>
+                          <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{with .AllEvents}}
+                        {{range $i, $e := .}}
+                        <tr>
+                          <td>{{$i}}</td>
+                          <td>{{.Name}}</td>
+                          <td>{{.Date}}</td>
+                          <td><a href="/admin_user/place/delete-event/{{.Id}}/{{$.PlaceData.Place.Id}}"
+                                 class="btn btn-google btn-user btn-block">
+                            <i class="fab fa-fw"></i> Delete
+                          </a>
+                          </td>
+                        </tr>
+                        {{end}}
+                        {{end}}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!---Place Gallery---->
+          <div class="card shadow mb-4">
+            <!-- Card Header - Accordion -->
+            <a href="#collapseGallery" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+               role="button" aria-expanded="true" aria-controls="collapseCardExample">
+              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Create new Place gallery</h6>
+            </a>
+            <!-- Card Content - Collapse -->
+            <div class="collapse " id="collapseGallery">
+              <div class="card-body p-0">
+                <!-- Nested Row within Card Body -->
+                <div class="row">
+
+                  <div class="col-lg-12">
+                    <div class="p-5">
+                      <div class="text-center">
+                        <h1 class="h4 text-gray-900 mb-4">New Picture</h1>
+                      </div>
+                      <form class="user" method="post" action="/admin_user/place/create-gallery" enctype="multipart/form-data">
+                        <input type="hidden" name="placeId" value="{{.PlaceData.Place.Id}}" class="form-control ">
+
+                        <div class="form-group ">
+                          <label>Description <small> Only 200 characters </small></label>
+                          <textarea class="form-control" name="description" maxlength="200"></textarea>
+                        </div>
+
+                        <div class="form-group ">
+                          <label>Picture</label>
+                          <input type="file"name="file" class="form-control " id="file" placeholder="Project Name" required>
+                          <label><small>This field should only contains a picture that says it all about this place.</small></label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">
+                          Next
+                        </button>
+                        <hr>
+                        <a href="/admin_user" class="btn btn-google  btn-block">Cancel</a>
+                      </form>
+                      <hr>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row ">
+                  <div class="container ">
+                    <div class="table-responsive">
+                      <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                        <tr>
+                          <th>Nr</th>
+                          <th>Image</th>
+                          <th>Image description</th>
+                          <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{with .Gallery}}
+                          {{range $i, $e := .}}
+                            <tr>
+                              <td>{{$i}}</td>
+                              <td><img id='base64image' width="100px" src='data:image/jpeg;base64,{{.Gallery.Image}}' alt=""></td>
+                              <td>{{.Gallery.Description}}</td>
+                              <td><a href="/admin_user/group/delete-gallery/{{.Gallery.Id}}/{{.PlaceGallery.Id}}/{{$.PlaceData.Place.Id}}"
+                                     class="btn btn-google btn-user btn-block">
+                                  <i class="fab fa-fw"></i> Delete
+                                </a>
+                              </td>
+                            </tr>
+                          {{end}}
+                        {{end}}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+
+          <!-- Place People-->
+          <div class="card shadow mb-4">
+            <!-- Card Header - Accordion -->
+            <a href="#collapsePlacePeople" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+               role="button" aria-expanded="true" aria-controls="collapseCardExample">
+              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">People</h6>
+            </a>
+            <!-- Card Content - Collapse -->
+            <div class="collapse " id="collapsePlacePeople">
+              <div class="card-body p-0">
+                <!-- Nested Row within Card Body -->
+                <div class="row">
+
+                  <div class="col-lg-12">
+                    <div class="p-5">
+                      <div class="text-center">
+                        <h1 class="h4 text-gray-900 mb-4">Add People to this place</h1>
+                      </div>
+                      <form class="user" method="post" action="/admin_user/place/create-people" >
+                        <input type="hidden" name="placeId" value="{{.PlaceData.Place.Id}}" class="form-control ">
+
+                        <div class="form-group ">
+                          <label>Project</label>
+                          <select name="peopleId" class="browser-default custom-select">
+                            <option selected>Choose one Person at a time</option>
+                            {{with .AllPeople}}
+                              {{range .}}
+                                <option value={{.Id}}>{{.Name}}</option>
+                              {{end}}
+                            {{end}}
+                          </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">
+                          Next
+                        </button>
+                      </form>
+                      <hr>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row ">
+                  <div class="container ">
+                    <div class="text-center">
+                      <h1 class="h4 text-gray-900 mb-4">Existing People</h1>
+                    </div>
+                    <div class="table-responsive">
+                      <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                        <tr>
+                          <th>Nr</th>
+                          <th>Name</th>
+                          <th>Surname</th>
+                          <th>BirthDay</th>
+                          <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{with .Peoples}}
+                          {{range $i, $e := .}}
+                            <tr>
+                              <td>{{$i}}</td>
+                              <td>{{.Name}}</td>
+                              <td>{{.Surname}}</td>
+                              <td>{{.BirthDate}}</td>
+                              <td><a href="/admin_user/place/delete-people/{{.Id}}/{{$.PlaceData.Place.Id}}"
+                                     class="btn btn-google btn-user btn-block">
+                                  <i class="fab fa-fw"></i> Delete
+                                </a></td>
+                            </tr>
+                          {{end}}
+                        {{end}}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+
+
 
         </div>
         <!-- /.container-fluid -->

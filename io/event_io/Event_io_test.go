@@ -94,13 +94,36 @@ func TestReadEventGroupWithBoth(t *testing.T) {
 
 //Event Year
 func TestReadEventYears(t *testing.T) {
-	result,err := ReadEventYears()
+	result, err := ReadEventYears()
 	assert.Nil(t, err)
 	fmt.Println(result)
 }
 func TestCreateEventYear(t *testing.T) {
-	object := event2.EventYear{"","0000","000"}
-	result,err := CreateEventYear(object)
+	object := event2.EventYear{"", "0000", "000"}
+	result, err := CreateEventYear(object)
+	assert.Nil(t, err)
+	fmt.Println(result)
+}
+
+// Event people
+func TestCreateEventPeople(t *testing.T) {
+	object := event2.EventPeople{"", "0000", "000"}
+	result, err := CreateEventPeople(object)
+	assert.Nil(t, err)
+	fmt.Println(result)
+}
+func TestReadEventPeoples(t *testing.T) {
+	result, err := ReadEventPeoples()
+	assert.Nil(t, err)
+	fmt.Println(result)
+}
+func TestDeleteEventPeople(t *testing.T) {
+	result, err := DeleteEventPeople("EPF-06985c23-9abd-4b7d-9e0d-6038322382d9")
+	assert.Nil(t, err)
+	fmt.Println(result)
+}
+func TestReadEventPeopleWithPeopleId(t *testing.T) {
+	result, err := ReadEventPeopleWithPeopleId("PF-3ad971d3-d032-4c33-86ea-6c72c4f628a7")
 	assert.Nil(t, err)
 	fmt.Println(result)
 }

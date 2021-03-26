@@ -10,11 +10,16 @@ import (
 	"net/http"
 	"ostmfe/config"
 	"ostmfe/controller/misc"
+	"ostmfe/domain/comment"
+	"ostmfe/domain/event"
 	history2 "ostmfe/domain/history"
 	image2 "ostmfe/domain/image"
+	"ostmfe/domain/place"
 	project2 "ostmfe/domain/project"
+	"ostmfe/io/event_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
+	"ostmfe/io/place_io"
 	"ostmfe/io/project_io"
 )
 
@@ -32,9 +37,127 @@ func ProjectHome(app *config.Env) http.Handler {
 	r.Post("/update_details", ProjectUpdateDetails(app))
 
 	r.Post("/create_history", ProjectCreateHistoryHandler(app))
+	r.Post("/addPlace", AddPlaceHandler(app))
+	//Gallery
+	r.Post("/create-gallery", CreateGalleryHandler(app))
+	r.Get("/delete-gallery/{pictureId}/{projectId}/{projectGalleryPictureId}", DeleteGalleryHandler(app))
 
 	r.Get("/delete_project/{projectId}", DeleteProjectHandler(app))
+	r.Get("/activate_comment/{commentId}/{projectId}", ActivateCommentHandler(app))
+
 	return r
+}
+
+//Todo finish this method.
+func AddPlaceHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		projectId := r.PostFormValue("projectId")
+		PlaceId := r.PostFormValue("PlaceId")
+		if PlaceId != "" && projectId != "" {
+
+		}
+		http.Redirect(w, r, "/admin_user/project/edit/"+projectId, 301)
+		return
+	}
+}
+func ActivateCommentHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		commentId := chi.URLParam(r, "commentId")
+		projectId := chi.URLParam(r, "projectId")
+		result := misc.ActivateComment(commentId)
+		fmt.Print("Activation Result: ", result)
+		http.Redirect(w, r, "/admin_user/project/edit/"+projectId, 301)
+		return
+	}
+}
+func DeleteGalleryHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		pictureId := chi.URLParam(r, "pictureId")
+		projectId := chi.URLParam(r, "projectId")
+		projectGalleryPictureId := chi.URLParam(r, "projectGalleryPictureId")
+
+		//Deleting project
+		gallery, err := image_io.DeleteGalery(pictureId)
+		if err != nil {
+			fmt.Println("error deleting gallery")
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+			http.Redirect(w, r, "/admin_user/project/edit/"+projectId, 301)
+			return
+		} else {
+			_, err := project_io.DeleteProjectGallery(projectGalleryPictureId)
+			if err != nil {
+
+				fmt.Println("ROLLING BACK!!!")
+				_, err := image_io.UpdateGallery(gallery)
+				if err != nil {
+					fmt.Println("error updating gallery")
+				}
+
+				fmt.Println("error deleting project gallery")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/project/edit/"+projectId, 301)
+				return
+			}
+		}
+		fmt.Println(" successful deletion.")
+		app.Session.Put(r.Context(), "creation-successful", "You have successfully deleted: Project Gallery. ")
+		http.Redirect(w, r, "/admin_user/project/edit/"+projectId, 301)
+		return
+	}
+}
+
+func CreateGalleryHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var content []byte
+		r.ParseForm()
+		file, _, err := r.FormFile("file")
+		project := r.PostFormValue("project")
+		description := r.PostFormValue("description")
+		if err != nil {
+			fmt.Println(err, "<<<<<< error reading contribution file>>>>This error should happen>>>")
+		} else {
+			reader := bufio.NewReader(file)
+			content, _ = ioutil.ReadAll(reader)
+		}
+		if project != "" && description != "" {
+			galery := image2.Galery{"", content, description}
+			galleryObject, err := image_io.CreateGalery(galery)
+			if err != nil {
+				fmt.Println(err, " error creating gallery")
+			} else {
+				placeGallery := project2.ProjectGallery{"", project, galleryObject.Id}
+				_, err := project_io.CreateProjectGallery(placeGallery)
+				if err != nil {
+					fmt.Println(err, " error creating projectGallery")
+					if app.Session.GetString(r.Context(), "user-create-error") != "" {
+						app.Session.Remove(r.Context(), "user-create-error")
+					}
+					app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+					http.Redirect(w, r, "/admin_user/project/edit/"+project, 301)
+					return
+				}
+				if app.Session.GetString(r.Context(), "creation-successful") != "" {
+					app.Session.Remove(r.Context(), "creation-successful")
+				}
+				app.Session.Put(r.Context(), "creation-successful", "You have successfully deleted an event Group")
+				http.Redirect(w, r, "/admin_user/project/edit/"+project, 301)
+				return
+			}
+		}
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			app.Session.Remove(r.Context(), "user-create-error")
+		}
+		app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+		http.Redirect(w, r, "/admin_user/project/edit/"+project, 301)
+		return
+	}
 }
 
 func DeleteProjectHandler(app *config.Env) http.HandlerFunc {
@@ -266,7 +389,6 @@ func ProjectUpdateHistoryHandler(app *config.Env) http.HandlerFunc {
 		return
 	}
 }
-
 func EditeProjectsHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		projectId := chi.URLParam(r, "projectId")
@@ -276,12 +398,36 @@ func EditeProjectsHandler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			fmt.Println(err, " Error reading project Details")
 		}
-		type PageData struct {
-			Project        misc.ProjectEditable
-			ProjectDetails project2.Project
-			SidebarData    misc.SidebarData
+		Places, err := place_io.ReadPlaces()
+		if err != nil {
+			fmt.Println(err, " Error reading places")
 		}
-		data := PageData{selectedProjest, projectDetails, misc.GetSideBarData("project", "")}
+		events, err := event_io.ReadEvents()
+		if err != nil {
+			fmt.Println(err, " Error reading events")
+		}
+		commentNumber, pendingcomments, activeComments := projectCommentCalculation(projectId)
+		type PageData struct {
+			Events          []event.Event
+			Places          []place.Place
+			Project         misc.ProjectEditable
+			ProjectDetails  project2.Project
+			SidebarData     misc.SidebarData
+			Comments        []comment.CommentHelper2
+			Gallery         []misc.ProjectGalleryImages
+			CommentNumber   int64
+			PendingComments int64
+			ActiveComments  int64
+		}
+		data := PageData{events,
+			Places,
+			selectedProjest,
+			projectDetails,
+			misc.GetSideBarData("project", ""),
+			GetProjectCommentsWithProjectId(projectId),
+			misc.GetProjectGallery(projectId),
+			commentNumber, pendingcomments, activeComments,
+		}
 		files := []string{
 			app.Path + "admin/project/edite_project.html",
 			app.Path + "admin/template/navbar.html",
@@ -393,6 +539,7 @@ func CreateProjectHandler(app *config.Env) http.HandlerFunc {
 		file6, _, err := r.FormFile("file6")
 		project_name := r.PostFormValue("project_name")
 		description := r.PostFormValue("description")
+		mytextarea := r.PostFormValue("mytextarea")
 		if err != nil {
 			fmt.Println(err, "<<<<<< error reading file>>>>>>>")
 		}
@@ -402,7 +549,7 @@ func CreateProjectHandler(app *config.Env) http.HandlerFunc {
 
 		fmt.Println(project_name, "<<<Project Name|| description>>>", description)
 
-		if project_name != "" && description != "" {
+		if project_name != "" && description != "" && mytextarea != "" {
 			project := project2.Project{"", project_name, description}
 			new_project, err := project_io.CreateProject(project)
 			if err != nil {
@@ -411,10 +558,11 @@ func CreateProjectHandler(app *config.Env) http.HandlerFunc {
 					app.Session.Remove(r.Context(), "user-create-error")
 				}
 				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-				http.Redirect(w, r, "/admin_user/project/new", 301)
+				http.Redirect(w, r, "/admin_user/project", 301)
 				return
 			}
 
+			//project Image
 			projectImage := project2.ProjectImage{"", new_project.Id, "", ""}
 			helper := project2.ProjectImageHelper{filesByteArray, projectImage}
 			_, errr := project_io.CreateProjectImage(helper)
@@ -428,14 +576,26 @@ func CreateProjectHandler(app *config.Env) http.HandlerFunc {
 					app.Session.Remove(r.Context(), "user-create-error")
 				}
 				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-				http.Redirect(w, r, "/admin_user/project/new", 301)
+				http.Redirect(w, r, "/admin_user/project", 301)
 				return
+			}
+
+			historyObject := history2.Histories{"", misc.ConvertToByteArray(mytextarea)}
+			history, err := history_io.CreateHistorie(historyObject)
+			if err != nil {
+				fmt.Println(err, " error reading History")
+			} else {
+				projectHistoryObject := project2.ProjectHistory{"", new_project.Id, history.Id}
+				_, err := project_io.CreateProjectHistory(projectHistoryObject)
+				if err != nil {
+					fmt.Println(err, " error reading project History")
+				}
 			}
 			if app.Session.GetString(r.Context(), "creation-successful") != "" {
 				app.Session.Remove(r.Context(), "creation-successful")
 			}
 			app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new project : "+project_name)
-			http.Redirect(w, r, "/admin_user/project/new_history/"+new_project.Id, 301)
+			http.Redirect(w, r, "/admin_user/project", 301)
 			return
 			//event_name := r.PostFormValue("event_name")
 		}
@@ -445,7 +605,7 @@ func CreateProjectHandler(app *config.Env) http.HandlerFunc {
 			return
 		}
 		app.Session.Put(r.Context(), "creation-unknown-error", "You have encountered an unknown error, please try again")
-		http.Redirect(w, r, "/admin_user/project/new", 301)
+		http.Redirect(w, r, "/admin_user/project", 301)
 		return
 
 	}
@@ -626,13 +786,17 @@ func ProjectUpdatePicturesHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 
+		var content []byte
 		file, _, err := r.FormFile("file")
 		projectId := r.PostFormValue("projectId")
 		imageId := r.PostFormValue("imageId")
-		projectImageId := r.PostFormValue("projectImageId")
-		imageType := r.PostFormValue("imageType")
+		//projectImageId := r.PostFormValue("projectImageId")
+		//imageType := r.PostFormValue("imageType")
 		if err != nil {
-			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
+			fmt.Println(err, "<<<error reading file>>>>This error may happen if there is no picture selected>>>")
+		} else {
+			reader := bufio.NewReader(file)
+			content, _ = ioutil.ReadAll(reader)
 		}
 		project, err := project_io.ReadProject(projectId)
 		if err != nil {
@@ -641,18 +805,14 @@ func ProjectUpdatePicturesHandler(app *config.Env) http.HandlerFunc {
 				app.Session.Remove(r.Context(), "user-create-error")
 			}
 			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-			http.Redirect(w, r, "/admin_user/project", 301)
+			http.Redirect(w, r, "/admin_user/project/", 301)
 			return
 		}
-		if imageId != "" && imageType != "" && projectImageId != "" {
-			filesArray := []io.Reader{file}
-			filesByteArray := misc.CheckFiles(filesArray)
-			projectImage := project2.ProjectImage{projectImageId, project.Id, imageId, imageType}
-
-			helper := project2.ProjectImageHelper{filesByteArray, projectImage}
-			_, errr := project_io.UpdateProjectImage(helper)
-			if errr != nil {
-				fmt.Println(errr, " error creating projectImage")
+		if imageId != "" && projectId != "" {
+			newImageObject := image2.Images{imageId, content, ""}
+			_, err := image_io.UpdateImage(newImageObject)
+			if err != nil {
+				fmt.Println(err, " error updating image")
 				if app.Session.GetString(r.Context(), "user-create-error") != "" {
 					app.Session.Remove(r.Context(), "user-create-error")
 				}
@@ -664,7 +824,7 @@ func ProjectUpdatePicturesHandler(app *config.Env) http.HandlerFunc {
 				app.Session.Remove(r.Context(), "creation-successful")
 			}
 			app.Session.Put(r.Context(), "creation-successful", "You have successfully updated the following project : "+project.Title)
-			http.Redirect(w, r, "/admin_user/project/"+project.Id, 301)
+			http.Redirect(w, r, "/admin_user/project/edit/"+project.Id, 301)
 			return
 		}
 

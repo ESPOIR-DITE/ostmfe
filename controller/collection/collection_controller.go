@@ -7,12 +7,15 @@ import (
 	"net/http"
 	"ostmfe/config"
 	"ostmfe/controller/misc"
+	classroom2 "ostmfe/domain/classroom"
 	"ostmfe/domain/collection"
 	history2 "ostmfe/domain/history"
 	image2 "ostmfe/domain/image"
+	classroom3 "ostmfe/io/classroom"
 	"ostmfe/io/collection_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
+	"ostmfe/io/pageData_io"
 )
 
 func Home(app *config.Env) http.Handler {
@@ -63,11 +66,14 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 			fmt.Println(err, " error reading collection type")
 		}
 		collections := getCollectionDatas()
+
 		type PageData struct {
 			Collections     []CollectionData
 			CollectionTypes []collection.CollectionTypes
+			CollectionPage  CollectionPage
+			Classrooms      []classroom2.ClassroomHelper
 		}
-		data := PageData{collections, collectionTypes}
+		data := PageData{collections, collectionTypes, getPageData(), getClassroom()}
 		files := []string{
 			app.Path + "collection/collection.html",
 			app.Path + "base_templates/navigator.html",
@@ -83,6 +89,22 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 			app.ErrorLog.Println(err.Error())
 		}
 	}
+}
+
+//help to get formated classroom
+func getClassroom() []classroom2.ClassroomHelper {
+	var myClassroomList []classroom2.ClassroomHelper
+
+	classrooms, err := classroom3.ReadClassrooms()
+	if err != nil {
+		fmt.Println(err, " error reading classroom")
+	} else {
+		for _, classroom := range classrooms {
+			myClassroom := classroom2.ClassroomHelper{classroom.Id, classroom.Name, classroom.Description, misc.ConvertingToString(classroom.Details), misc.ConvertingToString(classroom.Icon)}
+			myClassroomList = append(myClassroomList, myClassroom)
+		}
+	}
+	return myClassroomList
 }
 
 type CollectionData struct {
@@ -167,4 +189,52 @@ func getColectionDataHistory(collectionId string) CollectionDataHistory {
 
 	collectionDataHistory = CollectionDataHistory{collection, profileImage, images, histories}
 	return collectionDataHistory
+}
+
+type CollectionPage struct {
+	Banner            string
+	SahoContent       string
+	ResourceContent   string
+	CollectionContent string
+}
+
+func getPageData() CollectionPage {
+	var banner string
+	var sahoContent string
+	var resourceContent string
+	var collectionContent string
+
+	page, err := pageData_io.ReadPageDataWIthName("collection-page")
+	if err != nil {
+		fmt.Println(err, " error reading page")
+	} else {
+		pageDateSectionObject, err := pageData_io.ReadPageSectionAllOf(page.Id)
+		if err != nil {
+			fmt.Println(err, " error reading page")
+		}
+		for _, pageDateSection := range pageDateSectionObject {
+			pageSection, err := pageData_io.ReadSection(pageDateSection.SectionId)
+			if err != nil {
+				fmt.Println(err, " error reading page")
+			} else {
+				if pageSection.SectionName == "sahoContent" {
+					fmt.Println(" sahoContent", pageSection)
+					sahoContent = misc.ConvertingToString(pageDateSection.Content)
+				}
+				if pageSection.SectionName == "resourceContent" {
+					fmt.Println(" resourceContent", pageSection)
+					resourceContent = misc.ConvertingToString(pageDateSection.Content)
+				}
+				if pageSection.SectionName == "collectionContent" {
+					fmt.Println(" collectionContent", pageSection)
+					collectionContent = misc.ConvertingToString(pageDateSection.Content)
+				}
+				if pageSection.SectionName == "banner" {
+					fmt.Println(" banner", pageSection)
+					banner = misc.ConvertingToString(pageDateSection.Content)
+				}
+			}
+		}
+	}
+	return CollectionPage{sahoContent, resourceContent, collectionContent, banner}
 }

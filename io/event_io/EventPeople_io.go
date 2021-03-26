@@ -87,7 +87,6 @@ func ReadEventPeopleWithPeopleId(peopleId string) ([]event.EventPeople, error) {
 	return entity, nil
 }
 func DeleteEventPeople(id string) (event.EventPeople, error) {
-
 	entity := event.EventPeople{}
 	resp, _ := api.Rest().Get(eventpeopleURL + "delete?id=" + id)
 	if resp.IsError() {

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"mime/multipart"
 	museum "ostmfe/domain"
 	"ostmfe/domain/collection"
 	"ostmfe/domain/event"
@@ -19,6 +20,7 @@ import (
 	user2 "ostmfe/domain/user"
 	io2 "ostmfe/io"
 	"ostmfe/io/collection_io"
+	"ostmfe/io/contribution_io"
 	"ostmfe/io/event_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
@@ -29,6 +31,7 @@ import (
 	"ostmfe/io/place_io"
 	"ostmfe/io/project_io"
 	"ostmfe/io/user_io"
+	"path/filepath"
 	"strings"
 	"time"
 )
@@ -45,7 +48,7 @@ Format date in yyyy-MM-dd HH:mm:ss
 */
 
 func FormatDateTime(date time.Time) string {
-	return date.Format(YYYMMDDTIME_FORMAT)
+	return date.Format(YYYYMMDD_FORMAT)
 }
 
 /****
@@ -117,21 +120,24 @@ func GetProjectContentsHomes() []ProjectContentsHome {
 		fmt.Println(err, " Error reading all the projects")
 		return projectContentsHomeObject
 	}
-	for _, project := range projects {
+	for index, project := range projects {
 		//fmt.Println(project.Title)
 		projectImage, err := project_io.ReadWithProjectIdProjectImage(project.Id)
 		if err != nil {
-			fmt.Println(err, " Can not find the following project in project image table: ", project.Title)
+			fmt.Println(err, " Can not find the following project in project image table: " /***, project.Title**/)
 		} else {
 			image, err = image_io.ReadImage(projectImage.ImageId)
 			//fmt.Println(image.Image)
 			if err != nil {
-				fmt.Println(err, " Can not find the following project image Id in Image table: ", projectImage.ImageId)
+				fmt.Println(err, " Can not find the following project image Id in Image table: ")
 			}
 		}
 		projectObject := ProjectContentsHome{project.Id, project.Title, image.Id, project.Description}
 		projectContentsHomeObject = append(projectContentsHomeObject, projectObject)
 		projectObject = ProjectContentsHome{}
+		if index == 2 {
+			break
+		}
 	}
 	return projectContentsHomeObject
 }
@@ -545,7 +551,7 @@ type EventData struct {
 	Place    place.Place
 	History  history2.HistoriesHelper
 	Peoples  []people2.People
-	Year museum.Years
+	Year     museum.Years
 }
 type EventImageHelperEditable struct {
 	Id           string
@@ -562,7 +568,7 @@ func GetEventDate(eventId string) EventData {
 	var imageHelper []EventImageHelperEditable
 	var historyHelper history2.HistoriesHelper
 	var peoples []people2.People
-	var year museum.Years;
+	var year museum.Years
 
 	theEvent, err := event_io.ReadEvent(eventId)
 	if err != nil {
@@ -601,11 +607,11 @@ func GetEventDate(eventId string) EventData {
 				}
 			}
 		}
-		eventYear,err :=event_io.ReadEventYearWithEventId(eventId)
+		eventYear, err := event_io.ReadEventYearWithEventId(eventId)
 		if err != nil {
 			fmt.Println(err, "error reading eventYear of: ", eventId)
-		}else{
-			year,err = io2.ReadYear(eventYear.YearId)
+		} else {
+			year, err = io2.ReadYear(eventYear.YearId)
 			if err != nil {
 				fmt.Println(err, "error reading Year of: ", eventId)
 			}
@@ -661,7 +667,7 @@ func GetEventDate(eventId string) EventData {
 
 	}
 	eventObejct := event.Event{theEvent.Id, theEvent.Name, FormatDateMonth(theEvent.Date), theEvent.IsPast, theEvent.Description}
-	eventDataObject := EventData{eventObejct, imageHelper, partners, project, place, historyHelper, peoples,year}
+	eventDataObject := EventData{eventObejct, imageHelper, partners, project, place, historyHelper, peoples, year}
 	return eventDataObject
 }
 
@@ -691,11 +697,11 @@ func GetSimpleEventData(limit int) []SimpleEventData {
 			if err != nil {
 				fmt.Println(err, " error reading events Images")
 			} else {
-				fmt.Println(" Looping eventImages")
+				//fmt.Println(" Looping eventImages")
 				for _, eventImage := range eventImages {
-					fmt.Println(" eventImage.Description: ", eventImage.Description)
+					//fmt.Println(" eventImage.Description: ", eventImage.Description)
 					if eventImage.Description == "1" || eventImage.Description == "profile" {
-						fmt.Println(" We have a profile Image")
+						//fmt.Println(" We have a profile Image")
 						profileImage, err = image_io.ReadImage(eventImage.ImageId)
 						if err != nil {
 							fmt.Println(err, " error reading profile event image")
@@ -705,18 +711,14 @@ func GetSimpleEventData(limit int) []SimpleEventData {
 			}
 			//we need to make sure that profileImage is not empty
 			if profileImage.Id != "" {
-				//fmt.Println(" profileImage.Id: ", profileImage.Id)
 				eventObject := event.Event{eventEntity.Id, eventEntity.Name, FormatDateMonth(eventEntity.Date), eventEntity.IsPast, eventEntity.Description}
 				eventData := SimpleEventData{eventObject, profileImage /** images**/}
 				eventDataList = append(eventDataList, eventData)
 				eventData = SimpleEventData{}
 				profileImage = image3.Images{}
 				eventObject = event.Event{}
-
-				//adding data to the correct list
-				//if CheckEventAndOdd(index)
 			}
-			fmt.Println("This error may occur if there is no events created error:  profileImage is empty")
+			//fmt.Println("This error may occur if there is no events created error:  profileImage is empty")
 
 			// we are putting limit here so that the loop should exit if the index reach the limited number
 			if index == limit {
@@ -750,7 +752,7 @@ func GetSimpleEventDataOfYear(yearId string) []SimpleEventData {
 			} else {
 				fmt.Println(" Looping eventImages")
 				for _, eventImage := range eventImages {
-					fmt.Println(" eventImage.Description: ", eventImage.Description)
+					//fmt.Println(" eventImage.Description: ", eventImage.Description)
 					if eventImage.Description == "1" || eventImage.Description == "profile" {
 						fmt.Println(" We have a profile Image")
 						profileImage, err = image_io.ReadImage(eventImage.ImageId)
@@ -799,4 +801,35 @@ func GetSideBarData(menu, submenu string) SidebarData {
 		return SidebarData{pageDataObject, menu, submenu}
 	}
 	return SidebarData{pageData, menu, submenu}
+}
+
+//This method help to get a contributor file type
+func GetFileExtension(fileData *multipart.FileHeader) (bool, string) {
+	var extension = filepath.Ext(fileData.Filename)
+	contributionFileTypes, err := contribution_io.ReadContributionFileTypes()
+	if err != nil {
+		fmt.Println("error reading contributionFileType")
+		return true, ""
+	} else {
+		for _, contributionFileType := range contributionFileTypes {
+			fmt.Println("extension: " + extension + " file extension: " + contributionFileType.FileType)
+			//t := strings.Trim(extension, ".")
+			t := strings.Replace(extension, ".", "", -1)
+			fmt.Println("extension2: " + t + " file extension: " + contributionFileType.FileType)
+			if t == contributionFileType.FileType {
+				return true, contributionFileType.Id
+			}
+		}
+	}
+	return false, ""
+}
+
+func GetGalleryImage(galleryId string) image3.GaleryHelper {
+	var galleryImage image3.GaleryHelper
+	gallery, err := image_io.ReadGallery(galleryId)
+	if err != nil {
+		fmt.Println(err, " error reading image")
+		return galleryImage
+	}
+	return image3.GaleryHelper{gallery.Id, ConvertingToString(gallery.Image), gallery.Description}
 }

@@ -1,0 +1,23 @@
+<!-- Start commentform Area -->
+{{define "reply-template"}}
+<section class="commentform-area pt-80">
+    <div class="container">
+        <h5 class="pb-50">Leave a Reply</h5>
+        <form method="post" action="">
+        <div class="row flex-row d-flex">
+            <div class="col-lg-4 col-md-6">
+                <input name="name" placeholder="Enter your name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your name'" class="common-input mb-20 form-control" required="" type="text">
+                <input name="email" placeholder="Enter your email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your email'" class="common-input mb-20 form-control" required="" type="email">
+                <input name="Subject" placeholder="Subject" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your Subject'" class="common-input mb-20 form-control" required="" type="text">
+
+            </div>
+            <div class="col-lg-8 col-md-6">
+                <textarea class="form-control mb-10" name="message" placeholder="Messege" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Messege'" required=""></textarea>
+                <a class="primary-btn mt-20" href="#">Comment</a>
+            </div>
+        </div>
+        </form>
+    </div>
+</section>
+<!-- End commentform Area -->
+{{end}}

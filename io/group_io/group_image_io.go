@@ -8,7 +8,7 @@ import (
 
 const groupimageURL = api.BASE_URL + "group_image/"
 
-func CreateGroupImage(myEvent group.GroupImageHelper) (group.GroupImage, error) {
+func CreateGroupImage(myEvent group.GroupImage) (group.GroupImage, error) {
 	entity := group.GroupImage{}
 	resp, _ := api.Rest().SetBody(myEvent).Post(groupimageURL + "create")
 	if resp.IsError() {

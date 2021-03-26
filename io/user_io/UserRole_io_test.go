@@ -3,6 +3,8 @@ package user_io
 import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	"net"
+	"os"
 	user2 "ostmfe/domain/user"
 	"testing"
 )
@@ -28,4 +30,13 @@ func TestDeleteUserRole(t *testing.T) {
 	result, err := UpdateUserRole(object)
 	assert.Nil(t, err)
 	fmt.Println("result", result)
+}
+func TestReadUserRole(t *testing.T) {
+	host, _ := os.Hostname()
+	addrs, _ := net.LookupIP(host)
+	for _, addr := range addrs {
+		if ipv4 := addr.To4(); ipv4 != nil {
+			fmt.Println("IPv4: ", ipv4)
+		}
+	}
 }

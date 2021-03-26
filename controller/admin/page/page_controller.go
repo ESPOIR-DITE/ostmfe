@@ -1,9 +1,11 @@
 package page
 
 import (
+	"bufio"
 	"fmt"
 	"github.com/go-chi/chi"
 	"html/template"
+	"io/ioutil"
 	"net/http"
 	"ostmfe/config"
 	"ostmfe/controller/misc"
@@ -21,7 +23,67 @@ func PageHome(app *config.Env) http.Handler {
 	r.Post("/create", CreatePageHandler(app))
 	r.Post("/update_section", UpdatePageSectionHandler(app))
 	r.Post("/create_section", CreatePageSectionHandler(app))
+	r.Post("/create_banner", CreatePageBannerHandler(app))
 	return r
+}
+
+func CreatePageBannerHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		var contentFile []byte
+		file, _, err := r.FormFile("file")
+		pageId := r.PostFormValue("pageId")
+		description := r.PostFormValue("description")
+		pageName := r.PostFormValue("pageName")
+		if err != nil {
+			fmt.Println(err, "<<<<<< error reading file>>>>This error should not happen>>>")
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+			http.Redirect(w, r, "/admin_user/page/edit/"+pageId, 301)
+			return
+		} else {
+			reader := bufio.NewReader(file)
+			contentFile, _ = ioutil.ReadAll(reader)
+		}
+
+		if description != "" && pageId != "" && pageName != "" {
+			bannerObject := pageData.Banner{"", contentFile}
+			banner, err := pageData_io.CreateBanner(bannerObject)
+			fmt.Println("banner: ", banner)
+			if err != nil {
+				fmt.Println(err, " error creating Banner")
+			}
+
+			pageBannerObject := pageData.PageBanner{"", pageName, description, banner.Id}
+			_, err = pageData_io.CreatePageBanner(pageBannerObject)
+			if err != nil {
+				fmt.Println(err, " error reading PageSection")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/page/edit/"+pageId, 301)
+				return
+			}
+			if app.Session.GetString(r.Context(), "creation-successful") != "" {
+				app.Session.Remove(r.Context(), "creation-successful")
+			}
+			fmt.Println(" successfully updated")
+			app.Session.Put(r.Context(), "creation-successful", "You have successfully create a section")
+			http.Redirect(w, r, "/admin_user/page/edit/"+pageId, 301)
+			return
+		}
+		fmt.Println(" error missing field")
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			app.Session.Remove(r.Context(), "user-create-error")
+		}
+		app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+		http.Redirect(w, r, "/admin_user/page", 301)
+		return
+
+	}
 }
 
 func UpdatePageSectionHandler(app *config.Env) http.HandlerFunc {
@@ -32,7 +94,7 @@ func UpdatePageSectionHandler(app *config.Env) http.HandlerFunc {
 		pageId := r.PostFormValue("pageId")
 
 		fmt.Println("pageSectionId", pageSectionId)
-		if pageSectionId != "" && content != "" && pageId != "" {
+		if pageSectionId != "" && pageId != "" {
 			pageSection, err := pageData_io.ReadPageSection(pageSectionId)
 			if err != nil {
 				fmt.Println(err, " error reading PageSection")
@@ -194,8 +256,9 @@ func EditePageHandler(app *config.Env) http.HandlerFunc {
 			Unknown_error      string
 			SidebarData        misc.SidebarData
 			PageAggregatedData PageAggregatedData
+			PageBanner         []misc.PageBannerData
 		}
-		data := PageData{backend_error, unknown_error, misc.GetSideBarData("page", pageId), GetPageAggregatedData(pageId)}
+		data := PageData{backend_error, unknown_error, misc.GetSideBarData("page", pageId), GetPageAggregatedData(pageId), misc.GetPageBannerData()}
 		files := []string{
 			app.Path + "admin/page/edit_page.html",
 			app.Path + "admin/template/navbar.html",
@@ -295,5 +358,4 @@ func GetPageAggregatedData(pageId string) PageAggregatedData {
 		}
 	}
 	return PageAggregatedData{page, pageSectionhelper, sections}
-
 }

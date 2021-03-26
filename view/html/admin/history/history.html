@@ -114,7 +114,7 @@
 
           <!-- DataTales Example -->
           <div class="card shadow mb-4">
-            <div class="card-header py-3">
+            <div class="card-header py-3">createHistory
               <h6 class="m-0 font-weight-bold text-primary">History Table</h6>
             </div>
             <div class="card-body">
@@ -207,6 +207,47 @@
         <div class="modal-footer">
           <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
           <a class="btn btn-primary" href="../login/login.html">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+ <!-- Logout Modal-->
+  <div class="modal fade" id="createHistory" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Ready to Leave?</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form class="user" method="post" action="/admin_user/history/create">
+            <div class="form-group">
+              <label>Title</label>
+              <input type="text" class="form-control " name="title" required>
+            </div>
+            <div class="form-group ">
+              <label>Description <small> Only 150 characters </small></label>
+              <textarea class="form-control" name="description" maxlength="200"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>History Date</label>
+              <input type="date" class="form-control" name="date" placeholder="">
+            </div>
+
+            <div class="form-group">
+              <label>History</label>
+              <textarea id="mytextare" class="form-control"  name="mytextarea">
+
+                 </textarea>
+            </div>
+
+            <button href="login.html" class="btn btn-primary btn-block">
+              Next
+            </button>
+          </form>
         </div>
       </div>
     </div>

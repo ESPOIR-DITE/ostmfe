@@ -19,6 +19,13 @@ type PlaceHistories struct {
 	PlaceId   string `json:"placeId"`
 	HistoryId string `json:"historyId"`
 }
+
+type PlaceGallery struct {
+	Id        string `json:"id"`
+	PlaceId   string `json:"placeId"`
+	GalleryId string `json:"galleryId"`
+}
+
 type PlaceImageHelper struct {
 	PlaceImage PlaceImage `json:"placeImage"`
 	Files      [][]byte   `json:"files"`
@@ -28,4 +35,18 @@ type PlacePlace struct {
 	PlaceId     string `json:"placeId"`
 	HistoryId   string `json:"historyId"`
 	Description string `json:"description"`
+}
+type PlacePageFlow struct {
+	Id       string `json:"id"`
+	PlaceId  string `json:"placeId"`
+	Title    string `json:"title"`
+	PageFlow string `json:"pageFlow"`
+}
+type PlaceCategory struct {
+	Id   string `json:"id"`
+	Name string `json:"name"`
+}
+type PlaceType struct {
+	PlaceId         string `json:"placeId"`
+	PlaceCategoryId string `json:"placeCategoryId"`
 }

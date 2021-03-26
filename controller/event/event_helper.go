@@ -69,6 +69,21 @@ func GetEventData(eventId string) EventData {
 	}
 	return eventData
 }
+func getEventPlace(eventId string) string {
+	var place string
+	eventPlace, err := event_io.ReadEventPlaceOf(eventId)
+	if err != nil {
+		fmt.Println(err, " error reading eventPlace")
+		return place
+	}
+	placeObect, err := place_io.ReadPlace(eventPlace.PlaceId)
+	if err != nil {
+		fmt.Println(err, " error reading place")
+		return place
+	}
+	return placeObect.Title
+
+}
 
 //EventPlace
 func GetEnventPlaceData(eventId string) place2.Place {
@@ -106,11 +121,9 @@ func GetEventPeopleData(eventId string) []people.People {
 					fmt.Println(err, " error reading PeopleImage")
 				} else {
 					for _, peopleImage := range peopleImages {
-						if peopleImage.ImageType == "profile" || peopleImage.ImageType == "1" {
-							profileImage, err = image_io.ReadImage(peopleImage.ImageId)
-							if err != nil {
-								fmt.Println("could not read profile Image")
-							}
+						profileImage, err = image_io.ReadImage(peopleImage.ImageId)
+						if err != nil {
+							fmt.Println("could not read profile Image")
 						}
 					}
 				}
@@ -124,7 +137,7 @@ func GetEventPeopleData(eventId string) []people.People {
 }
 
 type GroupData struct {
-	Group group.Groups
+	Group group.Groupes
 	Image image3.Images
 }
 

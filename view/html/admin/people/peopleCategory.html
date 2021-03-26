@@ -9,7 +9,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>SB Admin 2 - Tables</title>
+  <title>OSTM Admin  - People Category</title>
   <base href="/">
 
 
@@ -253,7 +253,7 @@
                       <form class="user"method="post" action="/admin_user/people/people_category/create">
                         <div class="form-group ">
                           <label>People Type name</label>
-                          <input type="text" name="category" class="form-control " id="file" placeholder="Project Name" required>
+                          <input type="text" name="category" class="form-control " id="file" placeholder="People Category" required>
                         </div>
                         <button type="submit" class="btn btn-primary btn-block">
                           Submit
@@ -281,23 +281,19 @@
                     <tr>
                       <th>Number</th>
                       <th>Type Name</th>
-                      <th>Description</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
-                  <tfoot>
-                    <tr>
-                      <th>Name</th>
-                      <th>Position</th>
-                      <th>Office</th>
-                    </tr>
-                  </tfoot>
                   <tbody>
                   {{with .Peoples}}
-                  {{range .}}
+                    {{range $i, $e := .}}
                     <tr>
-                      <td></td>
-                      <td>{{.Id}}</td>
+                      <td>{{$i}}</td>
                       <td>{{.Category}}</td>
+                      <td><a href="/admin_user/people/delete-category/{{.Id}}"
+                             class="btn btn-google btn-user btn-block">
+                          <i class="fab fa-fw"></i> Delete
+                        </a></td>
                     </tr>
                   {{end}}
                   {{end}}

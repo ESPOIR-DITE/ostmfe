@@ -47,7 +47,8 @@
             <div class="container-fluid">
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
                     <h1 class="h3 mb-0 text-gray-800">{{.EventData.Event.Name}} Event</h1>
-                    <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
+                    <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
                 </div>
 
 
@@ -64,177 +65,86 @@
                         <div class="card-body p-0">
                             <!-- Nested Row within Card Body -->
                             <div class="row">
-                                <div class="col-lg-6">
+
+                                <div class="col-md-6">
                                     <div class="p-5">
-                                        <div class="text-center">
-                                            <h1 class="h4 text-gray-900 mb-4">Event Picture </h1>
-                                        </div>
-                                        <div class="col-lg-12 row">
                                             <!-- Default Card Example -->
                                             {{if .EventData.Images}}
-                                                {{with .EventData.Images}}
-                                                    {{range $i,$e :=.}}
-                                                        <div class="card mb-4">
-                                                            {{if eq $i 0 }}
-                                                                <div class="card-header py-3">
-                                                                    <h6 class="m-0 font-weight-bold text-primary">First
-                                                                        Project Image</h6>
-                                                                </div>
-                                                            {{else}}
-                                                                <div class="card-header py-3">
-                                                                    <h6 class="m-0 font-weight-bold text-primary">Second
-                                                                        Project Image</h6>
-                                                                </div>
-                                                            {{end}}
-
-                                                            <div class="card-body">
-                                                                {{if .Id}}
-                                                                    <img class="card-img"
-                                                                         style="width:100%;height:312px;"
-                                                                         id='base64image'
-                                                                         src='data:image/jpeg;base64,{{.Id}}' alt=""/>
-                                                                    <a disabled="true"
-                                                                       class="btn btn-google btn-user btn-block disabled"
-                                                                       data-toggle="modal"
-                                                                       onclick="deleteEventImageBTN({{.ImageId}},{{$.EventData.Event.Id}},{{.EventImageId}},{{.Id}})"
-                                                                       data-target="#exampleModalProject"
-                                                                       disabled="true">
-                                                                        Delete
-                                                                    </a>
-                                                                {{end}}
-                                                                <div class="text-center">
-                                                                    <h1 class="h4 text-gray-900 mb-4">You can update
-                                                                        this image here</h1>
-                                                                </div>
-                                                                <form class="user" method="post" id=""
-                                                                      action="/admin_user/event/update_pictures"
-                                                                      enctype="multipart/form-data">
-                                                                    <input type="hidden" name="imageId"
-                                                                           value="{{.ImageId}}" class="form-control ">
-                                                                    <input type="hidden" name="eventImageId"
-                                                                           value="{{.EventImageId}}"
-                                                                           class="form-control ">
-                                                                    <input type="hidden" name="eventId"
-                                                                           value="{{$.EventData.Event.Id}}"
-                                                                           class="form-control ">
-                                                                    <div class="form-group row">
-                                                                        <div class="col-sm-6">
-                                                                            <select name="imageType"
-                                                                                    class="browser-default custom-select"
-                                                                                    required>
-                                                                                <option selected>Picture type</option>
-                                                                                <option value="1">Profile image</option>
-                                                                                <option value="2">Secondary Image
-                                                                                </option>
-                                                                            </select>
-                                                                        </div>
-                                                                        <div class="col-sm-6">
-                                                                            <input type="file" name="file"
-                                                                                   class="form-control" id="fileInput"
-                                                                                   onchange="fileToUpdate()" required>
-                                                                        </div>
-                                                                    </div>
-                                                                    <button type="submit"
-                                                                            class="btn btn-primary btn-block"
-                                                                            id="completeBTN" hidden>Update
-                                                                    </button>
-                                                                </form>
-
-                                                            </div>
+                                            {{with .EventData.Images}}
+                                            {{range $i,$e :=.}}
+                                            <div class="card mb-4">
+                                                <div class="card-header py-3">
+                                                    <div class="row" >
+                                                        <div class="col-lg-6">
+                                                            <h6 class="m-0 font-weight-bold text-primary">Event Picture</h6>
                                                         </div>
-                                                    {{end}}
-                                                {{end}}
-                                            {{else}}
-                                                <div class="text-center">
-                                                    <h1 class="h4 text-gray-900 mb-4">You have no pictures for this
-                                                        Event, Please Upload pictures</h1>
-                                                </div>
-                                                <form class="user" method="post"
-                                                      action="/admin_user/event/create-pictures"
-                                                      enctype="multipart/form-data">
-                                                    <input type="hidden" name="eventId" value="{{.EventData.Event.Id}}"
-                                                           required>
-                                                    <div class="form-group ">
-                                                        <label>Project profile Picture</label>
-                                                        <input type="file" name="file" class="form-control " id="file"
-                                                               placeholder="Project Name" required>
+                                                        <div class="col-lg-6">
+                                                            <a class="float-right" href="#" onclick="getImageId({{.ImageId}})" data-toggle="modal" data-target="#updateImage">
+                                                                <i class="fas fa-plus fa-sm fa-fw mr-2 text-gray-400"></i>
+                                                                Update
+                                                            </a>
+                                                        </div>
                                                     </div>
+                                                </div>
 
-                                                    <!--div class="form-group  row" id="filesArea"></div-->
-                                                    <!--div class="form-group row">
-                                                        <div class="col-sm-6">
-                                                            <button type="button" id="add_form_field"
-                                                                    class="btn btn-primary  btn-block">
-                                                                Add a picture
-                                                            </button>
-                                                        </div>
-                                                    </div-->
-
-                                                    <button type="submit" class="btn btn-primary btn-block">
-                                                        Add
-                                                    </button>
-                                                </form>
+                                                <div class="card-body">
+                                                    {{if .Id}}
+                                                    <img class="card-img"
+                                                         style="width:100%;height:312px;" id='base64image'
+                                                         src='data:image/jpeg;base64,{{.Id}}' alt=""/>
+                                                    <a disabled="true"
+                                                       class="btn btn-google btn-user btn-block disabled"
+                                                       data-toggle="modal"
+                                                       onclick="deleteEventImageBTN({{.ImageId}},{{$.EventData.Event.Id}},{{.EventImageId}},{{.Id}})"
+                                                       data-target="#exampleModalProject"
+                                                       disabled="true">
+                                                        Delete
+                                                    </a>
+                                                    {{end}}
+                                                </div>
+                                            </div>
                                             {{end}}
-                                        </div>
-                                        <hr>
+                                            {{end}}
+                                            {{else}}
+                                            <div class="text-center">
+                                                <h1 class="h4 text-gray-900 mb-4">You have no pictures for this
+                                                    Event, Please Upload pictures</h1>
+                                            </div>
+                                            <form class="user" method="post"
+                                                  action="/admin_user/event/create-pictures"
+                                                  enctype="multipart/form-data">
+                                                <input type="hidden" name="eventId" value="{{.EventData.Event.Id}}"
+                                                       required>
+                                                <div class="form-group ">
+                                                    <label>Project profile Picture</label>
+                                                    <input type="file" name="file" class="form-control " id="file"
+                                                           placeholder="Project Name" required>
+                                                </div>
+
+                                                <button type="submit" class="btn btn-primary btn-block">
+                                                    Add
+                                                </button>
+                                            </form>
+                                            {{end}}
+                                        <br>
                                     </div>
                                 </div>
 
-                                <div class="col-lg-12 text-center">
-                                    <hr>
-                                    <button id="toAdd" class="btn btn-primary btn-block col-lg-12"
-                                            onclick="showAddPictureForm()">
-                                        Add pictures
-                                    </button>
-                                    <form id="addPicture" class="user col-lg-12" method="post"
-                                          action="/admin_user/event/add_pictures" enctype="multipart/form-data" hidden>
-                                        <div class="text-center">
-                                            <h1 class="h4 text-gray-900 mb-4">Add Pictures</h1>
-                                        </div>
-                                        <input type="hidden" name="eventId" value="{{.EventData.Event.Id}}" required>
-                                        <div class="form-group ">
-                                            <label>Project profile Picture</label>
-                                            <input type="file" name="file" class="form-control " id="file"
-                                                   placeholder="Project Name" required>
-                                        </div>
-
-                                        <div class="form-group  row" id="filesArea"></div>
-                                        <div class="form-group row">
-                                            <div class="col-sm-6">
-                                                <button type="button" id="add_form_field"
-                                                        class="btn btn-primary btn-block">
-                                                    Add a picture
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <button type="submit" class="btn btn-primary btn-block">
-                                            Add
-                                        </button>
-                                        <hr>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!---Event Detail---->
-                <div class="card shadow mb-4">
-                    <!-- Card Header - Accordion -->
-                    <a href="#collapseCardDetails" class="d-block card-header py-3 btn-success" data-toggle="collapse"
-                       role="button" aria-expanded="true" aria-controls="collapseCardExample">
-                        <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Event Details</h6>
-                    </a>
-                    <!-- Card Content - Collapse -->
-                    <div class="collapse " id="collapseCardDetails">
-                        <div class="card-body p-0">
-                            <!-- Nested Row within Card Body -->
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <!-- Default Card Example -->
+                                <div class="col-md-6">
+                                    <div class="p-5">
                                     <div class="card mb-4">
                                         <div class="card-header py-3">
-                                            <h6 class="m-0 font-weight-bold text-primary"> Details</h6>
+                                            <div class="row" >
+                                                <div class="col-lg-6">
+                                                    <h6 class="m-0 font-weight-bold text-primary">Event Details</h6>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <a class="float-right" href="#" data-toggle="modal" data-target="#eventDetailsModal">
+                                                        <i class="fas fa-plus fa-sm fa-fw mr-2 text-gray-400"></i>
+                                                        Update
+                                                    </a>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="card-body">
                                             <form class="user" method="post" id=""
@@ -251,17 +161,17 @@
                                                 <div class="form-group row">
                                                     <div class="col-sm-6">
                                                         <label>Projects <small> This event is linked to the following
-                                                                project</small></label>
+                                                            project</small></label>
                                                         <select name="projectId" id="projectDrop"
                                                                 class="browser-default custom-select"
                                                                 onchange="checkSelectedProject({{.EventData.Projects.Id}})"
                                                                 required>
                                                             <option selected>No Project selected yet</option>
                                                             {{with .Projects}}
-                                                                {{range .}}
-                                                                    <option value="{{.Id}}"
-                                                                            {{if eq $.EventData.Projects.Id .Id}}selected{{end}}>{{.Title}}</option>
-                                                                {{end}}
+                                                            {{range .}}
+                                                            <option value="{{.Id}}"
+                                                                    {{if eq $.EventData.Projects.Id .Id}}selected{{end}}>{{.Title}}</option>
+                                                            {{end}}
                                                             {{end}}
                                                         </select>
                                                     </div>
@@ -276,12 +186,14 @@
                                                 <div class="form-group row">
                                                     <div class="col-sm-6">
                                                         <label>Year of starting event</label>
-                                                        <select name="year" id="yearField" class="browser-default custom-select" onchange="checkSelectedYear({{.EventData.Year.Id}})">
-                                                            <option selected>Choose a starting year </option>
+                                                        <select name="year" id="yearField"
+                                                                class="browser-default custom-select"
+                                                                onchange="checkSelectedYear({{.EventData.Year.Id}})">
+                                                            <option selected>Choose a starting year</option>
                                                             {{with .Years}}
-                                                                {{range .}}
-                                                                    <option value="{{.Id}}" {{if eq $.EventData.Year.Id .Id}} selected {{end}}>{{.Year}}</option>
-                                                                {{end}}
+                                                            {{range .}}
+                                                            <option value="{{.Id}}" {{if eq $.EventData.Year.Id .Id}} selected {{end}}>{{.Year}}</option>
+                                                            {{end}}
                                                             {{end}}
                                                         </select>
                                                     </div>
@@ -291,7 +203,8 @@
                                                         <div class="custom-control custom-checkbox small">
                                                             <input type="checkbox" name="eventStatus"
                                                                    class=" browser-default custom-control-input"
-                                                                   id="customCheck" {{if .EventData.Event.IsPast}}checked{{end}}>
+                                                                   id="customCheck"
+                                                                   {{if .EventData.Event.IsPast}}checked{{end}}>
                                                             <label class="custom-control-label" for="customCheck">Past
                                                                 Event <small>Check if this event has been stopped to be
                                                                     hosted</small></label>
@@ -310,201 +223,228 @@
                                             </form>
                                         </div>
                                     </div>
-
-                                    <!-- Basic Card Example -->
-                                    <div class="card  mb-4">
-
-                                        <div class="card-body row">
-
-                                            <div class="col-md-6">
-                                                <div class="card-header py-3">
-                                                    <h6 class="m-0 font-weight-bold text-primary">Event Place</h6>
-                                                </div>
-                                                <form class="user" method="post" id=""
-                                                      action="/admin_user/event/update_place">
-
-                                                    <input type="hidden" name="eventId" value="{{.EventData.Event.Id}}"
-                                                           class="form-control">
-                                                    <input type="hidden" name="PlaceId" value="{{.EventData.Place.Id}}"
-                                                           class="form-control">
-                                                    <div class="form-group">
-                                                        <label>Place Title</label>
-                                                        <input type="text" class="form-control" name="description"
-                                                               value="{{.EventData.Place.Title}}"
-                                                               placeholder="Location name" required disabled>
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <div class="form-group ">
-                                                            <label>Description <small> Only 150
-                                                                    characters </small></label>
-                                                            <textarea class="form-control" name="description"
-                                                                      maxlength="200" required
-                                                                      disabled>{{.EventData.Place.Description}}</textarea>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="form-group row">
-                                                        <div class="col-md-6">
-                                                            <a class="btn btn-primary  btn-block"
-                                                               href="admin_user/place/edit/{{.EventData.Place.Id}}">
-                                                                Edit Place
-                                                            </a>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <a class="btn btn-primary  btn-block text-white"
-                                                               data-toggle="modal"
-                                                               onclick="updateEventPlaceBTN({{.EventData.Event.Id}})"
-                                                               data-target="#exampleModalUpdateEventPlace">
-                                                                Update Event Place
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="card-header py-3">
-                                                    <h6 class="m-0 font-weight-bold text-primary">Event People</h6>
-                                                </div>
-                                                <div class="card-body">
-                                                <div class="table-responsive">
-                                                    <table class="table table-bordered" id="dataTable" width="100%"
-                                                           cellspacing="0">
-                                                        <thead>
-                                                        <tr>
-                                                            <th>Nr</th>
-                                                            <th>Name</th>
-                                                            <th>Surname</th>
-                                                            <th>Action</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        {{with .EventData.Peoples}}
-                                                            {{range $i, $e := .}}
-                                                                <tr>
-                                                                    <td>{{$i}}</td>
-                                                                    <td>{{.Name}}</td>
-                                                                    <td>{{.Surname}}</td>
-                                                                    <td>
-                                                                        <a href="/admin_user/event/delete_people/{{.Id}}/{{$.EventData.Event.Id}}"
-                                                                           class="btn btn-danger btn-user btn-block">
-                                                                            Remove
-                                                                        </a>
-                                                                    </td>
-                                                                </tr>
-                                                            {{end}}
-                                                        {{end}}
-
-                                                        </tbody>
-                                                    </table>
-                                                    <a class="btn btn-primary btn-user btn-block text-white"
-                                                           data-toggle="modal"
-                                                           onclick="updateEventPeopleBTN({{.EventData.Event.Id}})"
-                                                           data-target="#exampleModalUpdateEventPeople">
-                                                            Add People
-                                                        </a>
-                                                </div>
-                                                </div>
-                                            </div>
-                                        </div>
                                     </div>
-                                    <!-- Partner and group -->
-                                    <div class="card  mb-4">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                                        <div class="card-body row">
+                <!---Event Detail---->
+                <div class="card shadow mb-4">
+                    <!-- Card Header - Accordion -->
+                    <a href="#collapseCardDetails" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+                       role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                        <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Event Details</h6>
+                    </a>
+                    <!-- Card Content - Collapse -->
+                    <div class="collapse " id="collapseCardDetails">
+                        <div class="card-body p-0">
+                            <!-- Nested Row within Card Body -->
+                            <!-- Basic Card Example -->
+                            <div class="p-5">
+                            <div class="card  mb-4">
 
-                                            <div class="col-md-6">
-                                                <div class="card-header py-3">
-                                                    <h6 class="m-0 font-weight-bold text-primary">Partners</h6>
-                                                </div>
-                                                <div class="card-body">
-                                                    <div class="table-responsive">
-                                                        <table class="table table-bordered" id="dataTable" width="100%"
-                                                               cellspacing="0">
-                                                            <thead>
-                                                            <tr>
-                                                                <th>Nr</th>
-                                                                <th>Partner Name</th>
-                                                                <th>Link</th>
-                                                                <th>Action</th>
-                                                                <th>Action</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            {{with .EventData.Partners}}
-                                                                {{range $i, $e := .}}
-                                                                    <tr>
-                                                                        <td>{{$i}}</td>
-                                                                        <td>{{.Name}}</td>
-                                                                        <td>{{.Link}}</td>
-                                                                        <td><a href="/admin_user/event/edit/{{.Id}}"
-                                                                               class="btn btn-primary btn-user btn-block">
-                                                                                Edit
-                                                                            </a>
-                                                                        </td>
-                                                                        <td><a href="/admin_user/event/delete/{{.Id}}"
-                                                                               class="btn btn-danger btn-user btn-block">
-                                                                                 Delete
-                                                                            </a>
-                                                                        </td>
-                                                                    </tr>
-                                                                {{end}}
-                                                            {{end}}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
+                                <div class="card-body row">
+
+                                    <div class="col-md-6">
+                                        <div class="card-header py-3">
+                                            <h6 class="m-0 font-weight-bold text-primary">Event Place</h6>
+                                        </div>
+                                        <form class="user" method="post" id=""
+                                              action="/admin_user/event/update_place">
+
+                                            <input type="hidden" name="eventId" value="{{.EventData.Event.Id}}"
+                                                   class="form-control">
+                                            <input type="hidden" name="PlaceId" value="{{.EventData.Place.Id}}"
+                                                   class="form-control">
+                                            <div class="form-group">
+                                                <label>Place Title</label>
+                                                <input type="text" class="form-control" name="description"
+                                                       value="{{.EventData.Place.Title}}"
+                                                       placeholder="Location name" required disabled>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <div class="form-group ">
+                                                    <label>Description <small> Only 150
+                                                        characters </small></label>
+                                                    <textarea class="form-control" name="description"
+                                                              maxlength="200" required
+                                                              disabled>{{.EventData.Place.Description}}</textarea>
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-6">
-                                                <div class="card-header py-3">
-                                                    <h6 class="m-0 font-weight-bold text-primary">Event Group</h6>
-                                                </div>
-                                                <div class="card-body">
-                                                <div class="table-responsive">
-                                                    <table class="table table-bordered" id="dataTable" width="100%"
-                                                           cellspacing="0">
-                                                        <thead>
-                                                        <tr>
-                                                            <th>Nr</th>
-                                                            <th>Name</th>
-                                                            <th>Action</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        {{with .GroupData}}
-                                                            {{range $i, $e := .}}
-                                                                <tr>
-                                                                    <td>{{$i}}</td>
-                                                                    <td>{{.Group.Name}}</td>
-                                                                    <td>
-                                                                        <a href="/admin_user/event/delete_group/{{.Group.Id}}/{{$.EventData.Event.Id}}"
-                                                                           class="btn btn-google btn-user btn-block">
-                                                                             Remove
-                                                                        </a>
-                                                                    </td>
-                                                                </tr>
-                                                            {{end}}
-                                                        {{end}}
-
-                                                        </tbody>
-                                                    </table>
-                                                    <a class="btn btn-primary btn-user btn-block text-white"
-                                                       data-toggle="modal"
-                                                       onclick="updateEventGroupBTN({{.EventData.Event.Id}})"
-                                                       data-target="#exampleModalUpdateEventGroup">
-                                                        Add Group
+                                            <div class="form-group row">
+                                                <div class="col-md-6">
+                                                    <a class="btn btn-primary  btn-block"
+                                                       href="admin_user/place/edit/{{.EventData.Place.Id}}">
+                                                        <i class="fa fa-edit"></i>
+                                                        Edit Place
                                                     </a>
                                                 </div>
+                                                <div class="col-md-6">
+                                                    <a class="btn btn-primary  btn-block text-white"
+                                                       data-toggle="modal"
+                                                       onclick="updateEventPlaceBTN({{.EventData.Event.Id}})"
+                                                       data-target="#exampleModalUpdateEventPlace">
+                                                        Update Event Place
+                                                    </a>
                                                 </div>
                                             </div>
+                                        </form>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card-header py-3">
+                                            <h6 class="m-0 font-weight-bold text-primary">Event People</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered" id="dataTable" width="100%"
+                                                       cellspacing="0">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>Nr</th>
+                                                        <th>Name</th>
+                                                        <th>Surname</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {{with .EventData.Peoples}}
+                                                    {{range $i, $e := .}}
+                                                    <tr>
+                                                        <td>{{$i}}</td>
+                                                        <td>{{.Name}}</td>
+                                                        <td>{{.Surname}}</td>
+                                                        <td>
+                                                            <a href="/admin_user/event/delete_people/{{.Id}}/{{$.EventData.Event.Id}}"
+                                                               class="btn btn-danger btn-user btn-block">
+                                                                <i class="fa fa-trash-o"></i>
+                                                                Remove
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {{end}}
+                                                    {{end}}
 
+                                                    </tbody>
+                                                </table>
+                                                <a class="btn btn-primary btn-user btn-block text-white"
+                                                   data-toggle="modal"
+                                                   onclick="updateEventPeopleBTN({{.EventData.Event.Id}})"
+                                                   data-target="#exampleModalUpdateEventPeople">
+                                                    <i class="fa fa-plus-circle"></i>
+                                                    Add People
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
 
+                        </div>
+                        <div class="card-body p-0">
+                            <!-- Partner and group -->
+                            <div class="p-5">
+                            <div class="card  mb-4">
+
+                                <div class="card-body row">
+
+                                    <div class="col-md-6">
+                                        <div class="card-header py-3">
+                                            <h6 class="m-0 font-weight-bold text-primary">Partners</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered" id="dataTable" width="100%"
+                                                       cellspacing="0">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>Nr</th>
+                                                        <th>Partner Name</th>
+                                                        <th>Link</th>
+                                                        <th>Action</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {{with .EventData.Partners}}
+                                                    {{range $i, $e := .}}
+                                                    <tr>
+                                                        <td>{{$i}}</td>
+                                                        <td>{{.Name}}</td>
+                                                        <td>{{.Link}}</td>
+                                                        <td><a href="/admin_user/event/edit/{{.Id}}"
+                                                               class="btn btn-primary btn-user btn-block">
+                                                            <i class="fa fa-edit"></i>
+                                                            Edit
+                                                        </a>
+                                                        </td>
+                                                        <td><a href="/admin_user/event/delete/{{.Id}}"
+                                                               class="btn btn-danger btn-user btn-block">
+                                                            <i class="fa fa-trash"></i>
+                                                            Delete
+                                                        </a>
+                                                        </td>
+                                                    </tr>
+                                                    {{end}}
+                                                    {{end}}
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
 
+                                    <div class="col-md-6">
+                                        <div class="card-header py-3">
+                                            <h6 class="m-0 font-weight-bold text-primary">Event Group</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered" id="dataTable" width="100%"
+                                                       cellspacing="0">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>Nr</th>
+                                                        <th>Name</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {{with .GroupData}}
+                                                    {{range $i, $e := .}}
+                                                    <tr>
+                                                        <td>{{$i}}</td>
+                                                        <td>{{.Group.Name}}</td>
+                                                        <td>
+                                                            <a href="/admin_user/event/delete_group/{{.Group.Id}}/{{$.EventData.Event.Id}}"
+                                                               class="btn btn-google btn-user btn-block">
+                                                                <i class="fa fa-trash"></i>
+                                                                Remove
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {{end}}
+                                                    {{end}}
+
+                                                    </tbody>
+                                                </table>
+                                                <a class="btn btn-primary btn-user btn-block text-white"
+                                                   data-toggle="modal"
+                                                   onclick="updateEventGroupBTN({{.EventData.Event.Id}})"
+                                                   data-target="#exampleModalUpdateEventGroup">
+                                                    <i class="fa fa-plus-circle"></i>
+                                                    Add Group
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
                                 </div>
-                                <hr>
+                            </div>
                             </div>
                         </div>
                     </div>
@@ -524,12 +464,11 @@
                                 <form method="post" action="/admin_user/event/update_history">
                                     <div class="form-group">
                                         <input name="historyId" value="{{.EventData.History.Id}}" hidden>
-                                        <input name="eventId" value="{{.EventData.event.Id}}" hidden>
+                                        <input name="eventId" value="{{.EventData.Event.Id}}" hidden>
                                         <div class="form-group">
                                             <label>Add History</label>
                                             <textarea id="mytextare" class="form-control" name="myArea"></textarea>
                                         </div>
-
                                     </div>
                                     <div class="form-group text-center">
                                         <button class="btn btn-info" id="formUpdateButton" type="submit">update</button>
@@ -550,19 +489,17 @@
                                 </div>
                                 <hr>
                                 <div class="form-group">
-                                    <form method="post" action="/admin_user/people/update_history">
+                                    <form method="post" action="/admin_user/event/update_history">
                                         <div class="form-group">
                                             <input name="historyId" value="{{.EventData.History.Id}}" hidden>
                                             <input name="projectId" value="{{.EventData.Event.Id}}" hidden>
+                                            <input name="eventId" value="{{.EventData.Event.Id}}" hidden>
                                             <div class="form-group">
                                                 <label id="label" hidden style="color: steelblue">Add the new contents
                                                     here<small> (You may copy from the previous. Remember this new
                                                         content will override the previous)</small></label>
-                                                <textarea name="myArea" id="myArea" class="form-control" hidden>
-
-                          </textarea>
+                                                <textarea name="myArea" id="myArea" class="form-control" hidden></textarea>
                                             </div>
-
                                         </div>
                                         <div class="form-group text-center">
                                             <button class="btn btn-warning" id="formUpdateButton" type="submit" hidden>
@@ -582,9 +519,218 @@
                     </div>
                 </div>
 
+                <!-- Comment Card -->
+                <div class="card shadow mb-4">
+                    <!-- Card Header - Accordion -->
+                    <a href="#commentCard" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+                       role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                        <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Event Comment</h6>
+                    </a>
+                    <!-- Card Content - Collapse -->
+                    <div class="collapse " id="commentCard">
+
+
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                    <tr>
+                                        <th>Nr</th>
+                                        <th>Event Name</th>
+                                        <th>Email</th>
+                                        <th>Event Date</th>
+                                        <th>Comment</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {{with .Comments}}
+                                        {{range $i, $e := .}}
+                                            <tr>
+                                                <td>{{$i}}</td>
+                                                <td>{{.Name}}</td>
+                                                <td>{{.Email}}</td>
+                                                <td>{{.Date}}</td>
+                                                <td><small>{{.Comment}}</small></td>
+                                                <td>
+                                                    <a class="btn btn-google btn-user btn-block" data-toggle="modal"
+                                                       onclick="deleteTheEventCommentBTN({{.Id}},{{.BridgeId}},{{.Name}})"
+                                                       data-target="#exampleModalEvent">
+                                                        Delete
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {{end}}
+                                    {{end}}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!---Event PageFlow---->
+                <div class="card shadow mb-4">
+                    <!-- Card Header - Accordion -->
+                    <a href="#collapseFlow" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+                       role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                        <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Create new Event Page flow</h6>
+                    </a>
+                    <!-- Card Content - Collapse -->
+                    <div class="collapse " id="collapseFlow">
+                        <div class="card-body p-0">
+                            <!-- Nested Row within Card Body -->
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="p-5">
+                                        <div class="text-center">
+                                            <h1 class="h4 text-gray-900 mb-4">New PageFlow</h1>
+                                        </div>
+                                        <form class="user" method="post" action="/admin_user/event/create-page-flow" >
+                                            <input type="hidden" name="eventId" value="{{.EventData.Event.Id}}">
+                                            <div class="form-group row">
+                                                <div class="col-sm-6">
+                                                    <label>PageFlow Title</label>
+                                                    <input type="text" name="pageFlowTitle" class="form-control" placeholder="Descendant of slavery">
+                                                </div>
+
+                                                <div class="col-sm-6">
+                                                    <label>PageFlow src link <small> Optional field </small></label>
+                                                    <input type="text" name="scr" class="form-control" placeholder="Ex:https://museumeducation.pageflow.io/descendants-of-slavery/embed">
+                                                </div>
+                                            </div>
+
+                                            <button type="submit" class="btn btn-primary btn-block">
+                                                Next
+                                            </button>
+                                            <hr>
+                                            <a href="/admin_user" class="btn btn-google  btn-block">Cancel</a>
+                                        </form>
+                                        <hr>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row ">
+                                <div class="container ">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                            <thead>
+                                            <tr>
+                                                <th>Nr</th>
+                                                <th>Title</th>
+                                                <th>link</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {{with .PageFLow}}
+                                            {{range $i, $e := .}}
+                                            <tr>
+                                                <td>{{$i}}</td>
+                                                <td>{{.Title}}</td>
+                                                <td>{{.PageFlow}}</td>
+                                                <td><a href="/admin_user/event/delete-page-fLow/{{.Id}}/{{$.EventData.Event.Id}}"
+                                                       class="btn btn-google btn-user btn-block">
+                                                    <i class="fab fa-fw"></i> Delete
+                                                </a>
+                                                </td>
+                                            </tr>
+                                            {{end}}
+                                            {{end}}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!---Group Gallery---->
+                <div class="card shadow mb-4">
+                    <!-- Card Header - Accordion -->
+                    <a href="#collapseGallery" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+                       role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                        <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Create new Event gallery</h6>
+                    </a>
+                    <!-- Card Content - Collapse -->
+                    <div class="collapse " id="collapseGallery">
+                        <div class="card-body p-0">
+                            <!-- Nested Row within Card Body -->
+                            <div class="row">
+
+                                <div class="col-lg-12">
+                                    <div class="p-5">
+                                        <div class="text-center">
+                                            <h1 class="h4 text-gray-900 mb-4">New Picture</h1>
+                                        </div>
+                                        <form class="user" method="post" action="/admin_user/event/create-gallery" enctype="multipart/form-data">
+                                            <input type="hidden" name="eventId" value="{{.EventData.Event.Id}}" class="form-control ">
+
+                                            <div class="form-group ">
+                                                <label>Description <small> Only 200 characters </small></label>
+                                                <textarea class="form-control" name="description" maxlength="200"></textarea>
+                                            </div>
+
+                                            <div class="form-group ">
+                                                <label>Picture <small>Please use jpg format.</small></label>
+                                                <input type="file"name="file" class="form-control " id="file" placeholder="Project Name" required>
+                                                <label><small>This field should only contains a picture that says it all about this group.</small></label>
+                                            </div>
+
+                                            <button type="submit" class="btn btn-primary btn-block">
+                                                Next
+                                            </button>
+                                            <hr>
+                                            <a href="/admin_user" class="btn btn-google  btn-block">Cancel</a>
+                                        </form>
+                                        <hr>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row ">
+                                <div class="container ">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                            <thead>
+                                            <tr>
+                                                <th>Nr</th>
+                                                <th>Image</th>
+                                                <th>Image description</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {{with .Gallery}}
+                                                {{range $i, $e := .}}
+                                                    <tr>
+                                                        <td>{{$i}}</td>
+                                                        <td><img id='base64image' width="100px" src='data:image/jpeg;base64,{{.Gallery.Image}}' alt=""></td>
+                                                        <td>{{.Gallery.Description}}</td>
+                                                        <td><a href="/admin_user/group/delete-gallery/{{.Gallery.Id}}/{{.EventGallery.Id}}/{{$.EventData.Event.Id}}"
+                                                               class="btn btn-google btn-user btn-block">
+                                                                <i class="fab fa-fw"></i> Delete
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                {{end}}
+                                            {{end}}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
             </div>
             <!-- /.container-fluid -->
-
         </div>
         <!-- End of Main Content -->
 
@@ -703,7 +849,7 @@
             <div class="modal-body">
                 <h3 class=" text-center"> Group Event</h3>
                 <form class="user" method="post" action="/admin_user/event/add_group">
-                    <input type="hidden" name="EventId" class="form-control " id="EventIdGroup"  required>
+                    <input type="hidden" name="EventId" class="form-control " id="EventIdGroup" required>
                     <div class="form-group">
                         <label>Groups</label>
                         <select name="groupId" class="browser-default custom-select">
@@ -761,11 +907,161 @@
     </div>
 </div>
 
+<!--Contribution view -->
+<div class="modal fade" id="contributionView" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-success" id="exampleModalLongTitle">Contribution Data</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h3 class=" text-center"> Contribution </h3>
+                <form class="user" method="post" action="/admin_user/event/update_event_place">
+                    <div class="form-group ">
+                        <label>Description</label>
+                        <textarea id="contributionViewModel" class="form-control" name="description" minlength="200"
+                                  required></textarea>
+                    </div>
+                    <img class="card-img" style="width:100%;height:312px;" id='base64image' alt=""/>
+                    <button type="submit" id="placeModelBtn" class="btn btn-primary btn-block" disabled>
+                        Submit
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Update Image -->
+<div class="modal fade" id="updateImage" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-success">Update Image</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="user" method="post"
+                      action="/admin_user/event/update_pictures"
+                      enctype="multipart/form-data">
+                    <input type="hidden" name="eventId" value="{{.EventData.Event.Id}}" class="form-control ">
+                    <input type="hidden" id="imageId" name="imageId"  class="form-control ">
+
+                    <div class="form-group">
+                            <input type="file" name="file"
+                                   class="form-control" id="fileInput"
+                                   onchange="fileToUpdate()" required>
+                    </div>
+                    <button type="submit"
+                            class="btn btn-primary btn-block">Update
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Update Details -->
+<div class="modal fade" id="eventDetailsModal" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content modal-xl">
+            <div class="modal-header">
+                <h5 class="modal-title text-success">Update Event Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="user" method="post" id=""
+                      action="/admin_user/event/update_details">
+                    <input type="hidden" name="eventId" value="{{.EventData.Event.Id}}"
+                           class="form-control ">
+
+                    <div class="form-group ">
+                        <label>Event Name</label>
+                        <input type="text" class="form-control"
+                               value="{{.EventData.Event.Name}}" name="event_name"
+                               id="exampleFirstName" placeholder="Project Name">
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-sm-6">
+                            <label>Projects <small> This event is linked to the following
+                                project</small></label>
+                            <select name="projectId" id="projectDrop"
+                                    class="browser-default custom-select"
+                                    onchange="checkSelectedProject({{.EventData.Projects.Id}})"
+                                    required>
+                                <option selected>No Project selected yet</option>
+                                {{with .Projects}}
+                                {{range .}}
+                                <option value="{{.Id}}"
+                                        {{if eq $.EventData.Projects.Id .Id}}selected{{end}}>{{.Title}}</option>
+                                {{end}}
+                                {{end}}
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <label>Date</label>
+                            <input type="date" class="form-control"
+                                   value="{{.EventData.Event.Date}}" name="date"
+                                   id="exampleFirstName" placeholder="Project Name">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-sm-6">
+                            <label>Year of starting event</label>
+                            <select name="year" id="yearField"
+                                    class="browser-default custom-select"
+                                    onchange="checkSelectedYear({{.EventData.Year.Id}})">
+                                <option selected>Choose a starting year</option>
+                                {{with .Years}}
+                                {{range .}}
+                                <option value="{{.Id}}" {{if eq $.EventData.Year.Id .Id}} selected {{end}}>{{.Year}}</option>
+                                {{end}}
+                                {{end}}
+                            </select>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <label>&nbsp;</label>
+                            <div class="custom-control custom-checkbox small">
+                                <input type="checkbox" name="eventStatus"
+                                       class=" browser-default custom-control-input"
+                                       id="customCheck"
+                                       {{if .EventData.Event.IsPast}}checked{{end}}>
+                                <label class="custom-control-label" for="customCheck">Past
+                                    Event <small>Check if this event has been stopped to be
+                                        hosted</small></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group ">
+                        <label>Description <small> Only 150 characters </small></label>
+                        <textarea class="form-control" name="description"
+                                  maxlength="200">{{.EventData.Event.Description}}</textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        Complete
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!-- Bootstrap core JavaScript-->
 <script src="../../assets/vendor/jquery/jquery.min.js"></script>
 <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
 
 <!-- Core plugin JavaScript-->
 <script src="../../assets/vendor/jquery-easing/jquery.easing.min.js"></script>
@@ -828,7 +1124,7 @@
     };
     let checkSelectedYear = function (initialApplicantType) {
         const selectedApplicantType = $("#yearField").val();
-            initialApplicantType.localeCompare(selectedApplicantType)
+        initialApplicantType.localeCompare(selectedApplicantType)
     };
     let checkSelectedPlace = function (initialApplicantType) {
         const selectedApplicantType = $("#projectDrop").val();
@@ -874,6 +1170,24 @@
         $("#eventPlaceId").val(id);
     }
 
+    function deleteTheEventContributionBTN(id, name) {
+        $("#deleteBtn").attr('href', '/admin_user/event-contribution/delete/' + id);
+        $("#value").text(name);
+    }
+
+    function contributionViewBTN(massage, image) {
+        //$("#deleteBtn").attr('href','/admin_user/event-contribution/delete/'+id);
+        $("#contributionViewModel").text(massage);
+        $("#base64image").attr('src', 'data:image/jpeg;base64,' + image)
+    }
+
+    function deleteTheEventCommentBTN(commentId, bridgeId, name) {
+        $("#deleteBtn").attr('href', '/admin_user/event/delete_comment/' + commentId + "/" + bridgeId);
+        $("#value").text(name);
+    }
+    function getImageId(imageId) {
+        $("#imageId").val(imageId);
+    }
 </script>
 
 </html>

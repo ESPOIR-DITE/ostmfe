@@ -34,3 +34,10 @@ func TestReadUsers(t *testing.T) {
 	assert.Nil(t, err)
 	fmt.Println("result", result)
 }
+
+//Testi UserImage
+func TestReadUserImageWithEmail(t *testing.T) {
+	result, err := ReadUserImageWithEmail("espoir@gmail.com")
+	assert.Nil(t, err)
+	fmt.Println("result", result)
+}

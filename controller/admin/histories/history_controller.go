@@ -1,14 +1,20 @@
 package histories
 
 import (
+	"bufio"
 	"fmt"
 	"github.com/go-chi/chi"
 	"html/template"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"ostmfe/config"
 	"ostmfe/controller/misc"
+	"ostmfe/domain/comment"
+	"ostmfe/domain/contribution"
 	history2 "ostmfe/domain/history"
+	"ostmfe/domain/image"
+	"ostmfe/io/comment_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
 )
@@ -27,7 +33,111 @@ func HistoryHome(app *config.Env) http.Handler {
 	r.Post("/update_histories", UpdateHistoryHistoriessHandler(app))
 	r.Get("/delete_image/{imageId}/{historyId}", DeleteHistoryImage(app))
 	r.Get("/delete_history/{historyId}", DeleteHistoryHandler(app))
+
+	//gallery
+	r.Post("/create-gallery", CreateEventHistoryHandler(app))
+	r.Get("/delete-gallery/{pictureId}/{historyId}/{historyGalleryId}", DeleteGalleryHandler(app))
+	r.Get("/activate_comment/{commentId}/{historyId}", ActivateCommentHandler(app))
+
 	return r
+}
+
+func ActivateCommentHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		commentId := chi.URLParam(r, "commentId")
+		historyId := chi.URLParam(r, "historyId")
+		result := misc.ActivateComment(commentId)
+		fmt.Print("Activation Result: ", result)
+		http.Redirect(w, r, "/admin_user/history/edit/"+historyId, 301)
+		return
+	}
+}
+
+func DeleteGalleryHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		pictureId := chi.URLParam(r, "pictureId")
+		historyId := chi.URLParam(r, "historyId")
+		historyGalleryId := chi.URLParam(r, "historyGalleryId")
+
+		//Deleting project
+		gallery, err := image_io.DeleteGalery(pictureId)
+		if err != nil {
+			fmt.Println("error deleting gallery")
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+			http.Redirect(w, r, "/admin_user/history/edit/"+historyId, 301)
+			return
+		} else {
+			_, err := history_io.DeleteHistoryGallery(historyGalleryId)
+			if err != nil {
+				fmt.Println("error deleting people gallery")
+				fmt.Println("ROLLING BACK!!!")
+				_, err := image_io.UpdateGallery(gallery)
+				if err != nil {
+					fmt.Println("error updating gallery")
+				}
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/history/edit/"+historyId, 301)
+				return
+			}
+		}
+		fmt.Println(" successful deletion.")
+		app.Session.Put(r.Context(), "creation-successful", "You have successfully deleted: people Gallery. ")
+		http.Redirect(w, r, "/admin_user/history/edit/"+historyId, 301)
+		return
+	}
+}
+
+func CreateEventHistoryHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var content []byte
+		r.ParseForm()
+		file, _, err := r.FormFile("file")
+		historyId := r.PostFormValue("historyId")
+		description := r.PostFormValue("description")
+		if err != nil {
+			fmt.Println(err, "<<<<<< error reading contribution file>>>>This error should happen>>>")
+		} else {
+			reader := bufio.NewReader(file)
+			content, _ = ioutil.ReadAll(reader)
+		}
+		if historyId != "" && description != "" {
+			galery := image.Galery{"", content, description}
+			galleryObject, err := image_io.CreateGalery(galery)
+			if err != nil {
+				fmt.Println(err, " error creating gallery")
+			} else {
+				historyGalery := history2.HistoryGalery{"", historyId, galleryObject.Id}
+				_, err := history_io.CreateHistoryGallery(historyGalery)
+				if err != nil {
+					fmt.Println(err, " error creating GroupGallery")
+					if app.Session.GetString(r.Context(), "user-create-error") != "" {
+						app.Session.Remove(r.Context(), "user-create-error")
+					}
+					app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+					http.Redirect(w, r, "/admin_user/history/edit/"+historyId, 301)
+					return
+				}
+				if app.Session.GetString(r.Context(), "creation-successful") != "" {
+					app.Session.Remove(r.Context(), "creation-successful")
+				}
+				app.Session.Put(r.Context(), "creation-successful", "You have successfully deleted an event Group")
+				http.Redirect(w, r, "/admin_user/history/edit/"+historyId, 301)
+				return
+			}
+		}
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			app.Session.Remove(r.Context(), "user-create-error")
+		}
+		app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+		http.Redirect(w, r, "/admin_user/history/edit/"+historyId, 301)
+		return
+	}
 }
 
 func DeleteHistoryHandler(app *config.Env) http.HandlerFunc {
@@ -468,11 +578,24 @@ func EditHistoryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		historyId := chi.URLParam(r, "historyId")
 
+		commentNumber, pendingcomments, activeComments := historyCommentCalculation(historyId)
 		type PageData struct {
-			HistoryData HistorySimpleData
-			SidebarData misc.SidebarData
+			HistoryData     HistorySimpleData
+			SidebarData     misc.SidebarData
+			Comments        []comment.CommentHelper2
+			Gallery         []misc.HistoryGalleryImages
+			CommentNumber   int64
+			PendingComments int64
+			ActiveComments  int64
+			Contritbution   []contribution.Contribution
 		}
-		data := PageData{GetHistorySimpleData(historyId), misc.GetSideBarData("history", "")}
+		data := PageData{GetHistorySimpleData(historyId),
+			misc.GetSideBarData("history", ""),
+			misc.GetHistoryComments(historyId), misc.GetHistoryGallery(historyId),
+			commentNumber,
+			pendingcomments,
+			activeComments,
+			GetContribution(historyId)}
 		files := []string{
 			app.Path + "admin/history/edit_history.html",
 			app.Path + "admin/template/navbar.html",
@@ -611,4 +734,31 @@ func CreateImageHelper(app *config.Env) http.HandlerFunc {
 			app.ErrorLog.Println(err.Error())
 		}
 	}
+}
+
+//With historyId, you get the commentNumber, pending, active.
+func historyCommentCalculation(historyId string) (commentNumber int64, pending int64, active int64) {
+	var commentNumbers int64 = 0
+	var pendings int64 = 0
+	var actives int64 = 0
+	historyComments, err := comment_io.ReadAllCommentHistory(historyId)
+	if err != nil {
+		fmt.Println(err, " error reading People comment")
+		return commentNumbers, pendings, actives
+	} else {
+		for _, historyComment := range historyComments {
+			comments, err := comment_io.ReadComment(historyComment.CommentId)
+			if err != nil {
+				fmt.Println(err, " error reading comment")
+			} else {
+				if comments.Stat == true {
+					actives++
+				} else {
+					pending++
+				}
+				commentNumber++
+			}
+		}
+	}
+	return commentNumbers, pendings, actives
 }

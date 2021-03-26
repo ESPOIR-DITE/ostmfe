@@ -18,12 +18,12 @@
   <!-- Custom styles for this template-->
   <link href="../../assets/css/sb-admin-2.min.css" rel="stylesheet">
 
-  <script src="https://cdn.tiny.cloud/1/tmo7wwuvihuwqom08gjvonhdda8blx4on0n7jvm1i4pq2coh/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
-<script>
-  tinymce.init({
-    selector: '#mytextare'
-  });
-</script>
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+    <script>
+        tinymce.init({
+            selector: '#mytextare'
+        });
+    </script>
 
 </head>
 
@@ -63,255 +63,32 @@
           </form>
 
           <!-- Topbar Navbar -->
-          <ul class="navbar-nav ml-auto">
-
-            <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-            <li class="nav-item dropdown no-arrow d-sm-none">
-              <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="fas fa-search fa-fw"></i>
-              </a>
-              <!-- Dropdown - Messages -->
-              <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in" aria-labelledby="searchDropdown">
-                <form class="form-inline mr-auto w-100 navbar-search">
-                  <div class="input-group">
-                    <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
-                    <div class="input-group-append">
-                      <button class="btn btn-primary" type="button">
-                        <i class="fas fa-search fa-sm"></i>
-                      </button>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </li>
-
-            <!-- Nav Item - Alerts -->
-            <li class="nav-item dropdown no-arrow mx-1">
-              <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="fas fa-bell fa-fw"></i>
-                <!-- Counter - Alerts -->
-                <span class="badge badge-danger badge-counter">3+</span>
-              </a>
-              <!-- Dropdown - Alerts -->
-              <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="alertsDropdown">
-                <h6 class="dropdown-header">
-                  Alerts Center
-                </h6>
-                <a class="dropdown-item d-flex align-items-center" href="#">
-                  <div class="mr-3">
-                    <div class="icon-circle bg-primary">
-                      <i class="fas fa-file-alt text-white"></i>
-                    </div>
-                  </div>
-                  <div>
-                    <div class="small text-gray-500">December 12, 2019</div>
-                    <span class="font-weight-bold">A new monthly report is ready to download!</span>
-                  </div>
-                </a>
-                <a class="dropdown-item d-flex align-items-center" href="#">
-                  <div class="mr-3">
-                    <div class="icon-circle bg-success">
-                      <i class="fas fa-donate text-white"></i>
-                    </div>
-                  </div>
-                  <div>
-                    <div class="small text-gray-500">December 7, 2019</div>
-                    $290.29 has been deposited into your account!
-                  </div>
-                </a>
-                <a class="dropdown-item d-flex align-items-center" href="#">
-                  <div class="mr-3">
-                    <div class="icon-circle bg-warning">
-                      <i class="fas fa-exclamation-triangle text-white"></i>
-                    </div>
-                  </div>
-                  <div>
-                    <div class="small text-gray-500">December 2, 2019</div>
-                    Spending Alert: We've noticed unusually high spending for your account.
-                  </div>
-                </a>
-                <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
-              </div>
-            </li>
-
-            <!-- Nav Item - Messages -->
-            <li class="nav-item dropdown no-arrow mx-1">
-              <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="fas fa-envelope fa-fw"></i>
-                <!-- Counter - Messages -->
-                <span class="badge badge-danger badge-counter">7</span>
-              </a>
-              <!-- Dropdown - Messages -->
-              <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="messagesDropdown">
-                <h6 class="dropdown-header">
-                  Message Center
-                </h6>
-                <a class="dropdown-item d-flex align-items-center" href="#">
-                  <div class="dropdown-list-image mr-3">
-                    <img class="rounded-circle" src="https://source.unsplash.com/fn_BT9fwg_E/60x60" alt="">
-                    <div class="status-indicator bg-success"></div>
-                  </div>
-                  <div class="font-weight-bold">
-                    <div class="text-truncate">Hi there! I am wondering if you can help me with a problem I've been having.</div>
-                    <div class="small text-gray-500">Emily Fowler · 58m</div>
-                  </div>
-                </a>
-                <a class="dropdown-item d-flex align-items-center" href="#">
-                  <div class="dropdown-list-image mr-3">
-                    <img class="rounded-circle" src="https://source.unsplash.com/AU4VPcFN4LE/60x60" alt="">
-                    <div class="status-indicator"></div>
-                  </div>
-                  <div>
-                    <div class="text-truncate">I have the photos that you ordered last month, how would you like them sent to you?</div>
-                    <div class="small text-gray-500">Jae Chun · 1d</div>
-                  </div>
-                </a>
-                <a class="dropdown-item d-flex align-items-center" href="#">
-                  <div class="dropdown-list-image mr-3">
-                    <img class="rounded-circle" src="https://source.unsplash.com/CS2uCrpNzJY/60x60" alt="">
-                    <div class="status-indicator bg-warning"></div>
-                  </div>
-                  <div>
-                    <div class="text-truncate">Last month's report looks great, I am very happy with the progress so far, keep up the good work!</div>
-                    <div class="small text-gray-500">Morgan Alvarez · 2d</div>
-                  </div>
-                </a>
-                <a class="dropdown-item d-flex align-items-center" href="#">
-                  <div class="dropdown-list-image mr-3">
-                    <img class="rounded-circle" src="https://source.unsplash.com/Mv9hjnEUHR4/60x60" alt="">
-                    <div class="status-indicator bg-success"></div>
-                  </div>
-                  <div>
-                    <div class="text-truncate">Am I a good boy? The reason I ask is because someone told me that people say this to all dogs, even if they aren't good...</div>
-                    <div class="small text-gray-500">Chicken the Dog · 2w</div>
-                  </div>
-                </a>
-                <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
-              </div>
-            </li>
-
-            <div class="topbar-divider d-none d-sm-block"></div>
-
-            <!-- Nav Item - User Information -->
-            <li class="nav-item dropdown no-arrow">
-              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Valerie Luna</span>
-                <img class="img-profile rounded-circle" src="https://source.unsplash.com/QAB-WJcbgJk/60x60">
-              </a>
-              <!-- Dropdown - User Information -->
-              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="#">
-                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Profile
-                </a>
-                <a class="dropdown-item" href="#">
-                  <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Settings
-                </a>
-                <a class="dropdown-item" href="#">
-                  <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Activity Log
-                </a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Logout
-                </a>
-              </div>
-            </li>
-
-          </ul>
+            {{template "topbar" .}}
 
         </nav>
         <!-- End of Topbar -->
 
-        <!-- Begin Page Content -->
+        <!-- Alerts -->
         <div class="container-fluid">
 
           <!-- Page Heading -->
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Cards</h1>
+            <h1 class="h3 mb-0 text-gray-800">{{.People.People.Name}}</h1>
           </div>
 
-          <div class="row">
+          {{template "cards" .}}
 
-            <!-- Earnings (Monthly) Card Example -->
-            <div class="col-xl-3 col-md-6 mb-4">
-              <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                  <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Earnings (Monthly)</div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
-                    </div>
-                    <div class="col-auto">
-                      <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            {{if .Backend_error}}
+            <div class="text-center">
+                <h1 class="h4 text-gray-900 mb-4">{{.Backend_error}}</h1>
             </div>
+            {{end}}
 
-            <!-- Earnings (Monthly) Card Example -->
-            <div class="col-xl-3 col-md-6 mb-4">
-              <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                  <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Earnings (Annual)</div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
-                    </div>
-                    <div class="col-auto">
-                      <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            {{if .Unknown_error}}
+            <div class="text-center">
+                <h1 class="h4 text-gray-900 mb-4">{{.Unknown_error}}</h1>
             </div>
-
-            <!-- Earnings (Monthly) Card Example -->
-            <div class="col-xl-3 col-md-6 mb-4">
-              <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                  <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks</div>
-                      <div class="row no-gutters align-items-center">
-                        <div class="col-auto">
-                          <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
-                        </div>
-                        <div class="col">
-                          <div class="progress progress-sm mr-2">
-                            <div class="progress-bar bg-info" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-auto">
-                      <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Pending Requests Card Example -->
-            <div class="col-xl-3 col-md-6 mb-4">
-              <div class="card border-left-warning shadow h-100 py-2">
-                <div class="card-body">
-                  <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Pending Requests</div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
-                    </div>
-                    <div class="col-auto">
-                      <i class="fas fa-comments fa-2x text-gray-300"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+            {{end}}
 
           <!---People Images---->
 
@@ -328,58 +105,35 @@
                 <div class="row">
                   <div class="col-lg-6">
                     <div class="p-5">
-                      <div class="text-center">
-                        <h1 class="h4 text-gray-900 mb-4">People story and Picture </h1>
-                      </div>
                       <div class="col-lg-12">
                         <!-- Default Card Example -->
                         {{if .People.Images}}
-                          {{with .People.Images}}
-                            {{range $i,$e :=.}}
+
                               <div class="card mb-4">
-                                {{if eq $i 0 }}
                                   <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">First Project Image</h6>
+                                      <div class="row" >
+                                          <div class="col-lg-6">
+                                              <h6 class="m-0 font-weight-bold text-primary">People Image</h6>
+                                          </div>
+                                          <div class="col-lg-6">
+                                              <a class="float-right" href="#" data-toggle="modal" data-target="#updateImage">
+                                                  <i class="fas fa-plus fa-sm fa-fw mr-2 text-gray-400"></i>
+                                                  Update
+                                              </a>
+                                          </div>
+                                      </div>
                                   </div>
-                                {{else}}
-                                  <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Second Project Image</h6>
-                                  </div>
-                                {{end}}
+
                                 <div class="card-body">
-                                  {{if .Id}}
+                                  {{if .People.Images.Id}}
                                     <img class="card-img" style="width:100%;height:312px;"
                                          id='base64image'
 
-                                         src='data:image/jpeg;base64,{{.Id}}' alt=""/>
+                                         src='data:image/jpeg;base64,{{.People.Images.Id}}' alt=""/>
                                   {{end}}
-                                  <div class="text-center">
-                                    <h1 class="h4 text-gray-900 mb-4">You can update this image here</h1>
-                                  </div>
-                                  <form class="user"method="post" id="" action="/admin_user/people/update_image" enctype="multipart/form-data">
-                                    <input type="hidden"name="imageId" value="{{.ImageId}}" class="form-control " >
-                                    <input type="hidden"name="peopleImageId" value="{{.PeopleImageId}}" class="form-control " >
-                                    <input type="hidden"name="peopleId" value="{{$.People.People.Id}}" class="form-control " >
-                                    <div class="form-group row">
-                                      <div class="col-sm-6">
-                                        <select name="imageType" class="browser-default custom-select" required>
-                                          <option selected>Picture type</option>
-                                          <option value="1">Profile image</option>
-                                          <option value="2">Secondary Image</option>
-                                        </select>
-                                      </div>
-                                      <div class="col-sm-6">
-                                        <input type="file"name="file" class="form-control " required>
-                                      </div>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary btn-block">
-                                      Complete
-                                    </button>
-                                  </form>
+
                                 </div>
                               </div>
-                            {{end}}
-                          {{end}}
                         {{else}}
                           <div class="text-center">
                             <h1 class="h4 text-gray-900 mb-4">You have no pictures for this Project, Please Upload pictures</h1>
@@ -410,116 +164,105 @@
                     </div>
                   </div>
 
-                    <div class="col-lg-12 text-center">
-                        <hr>
-                    <button id="toAdd" class="btn btn-primary btn-block col-lg-12" onclick="showAddPictureForm()">
-                        Add pictures
-                    </button>
-                    <form id="addPicture" class="user col-lg-12"method="post" action="/admin_user/people/add_pictures" enctype="multipart/form-data" hidden>
-                        <div class="text-center">
-                            <h1 class="h4 text-gray-900 mb-4">Add Pictures</h1>
-                        </div>
-                        <input type="hidden"name="peopleId" value="{{.People.People.Id}}" required>
-                        <div class="form-group ">
-                            <label>Project profile Picture</label>
-                            <input type="file"name="file" class="form-control " id="file" placeholder="Project Name" required>
-                        </div>
+                    <div class="col-lg-6">
+                        <div class="p-5">
+                        <div class="col-lg-12">
+                            <!-- Default Card Example -->
+                            <div class="card mb-4">
+                                <div class="card-header py-3">
+                                    <div class="row" >
+                                        <div class="col-lg-6">
+                                            <h6 class="m-0 font-weight-bold text-primary">People Identity</h6>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <a class="float-right" href="#" data-toggle="modal" data-target="#peopleIdentityEditModal">
+                                                <i class="fas fa-plus fa-sm fa-fw mr-2 text-gray-400"></i>
+                                                Update
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center margin-bottom-2rem">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Person Name</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" >{{.People.People.Name}}</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-id-badge fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
 
-                        <div class="form-group  row" id="filesArea"></div>
-                        <div class="form-group row" >
-                            <div class="col-sm-6" >
-                                <button type="button" id="add_form_field" class="btn btn-primary btn-block">
-                                    Add a picture
-                                </button>
+                                    <div class="row no-gutters align-items-center margin-bottom-2rem">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Last Name</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" >
+                                                <p >{{.People.People.Surname}}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row no-gutters align-items-center margin-bottom-2rem">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Gender</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="theGender"></div>
+                                        </div>
+                                    </div>
+                                    <div class="row no-gutters align-items-center margin-bottom-2rem">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Profession</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" >{{.People.People.Profession}}</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-at fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+
+                                    <div class="row no-gutters align-items-center margin-bottom-2rem">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Origin</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" >{{.People.People.Origin}}</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-at fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Dates</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" >{{.People.People.BirthDate}} {{if ne .People.People.DeathDate "0001-01-01"}} - {{.People.People.DeathDate}} {{end}}</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+
+                                    <div class="row no-gutters align-items-center margin-bottom-2rem">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Brief</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" >{{.People.People.Brief}}</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-at fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-
-                        <button type="submit" class="btn btn-primary btn-block">
-                            Add
-                        </button>
                         <hr>
-                    </form>
+                        </div>
                     </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!---People Detail---->
-          <div class="card shadow mb-4">
-            <!-- Card Header - Accordion -->
-            <a href="#collapseCardDetails" class="d-block card-header py-3 btn-success" data-toggle="collapse"
-               role="button" aria-expanded="true" aria-controls="collapseCardExample">
-              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Details</h6>
-            </a>
-            <!-- Card Content - Collapse -->
-            <div class="collapse " id="collapseCardDetails">
-              <div class="card-body p-0">
-                <!-- Nested Row within Card Body -->
-                <div class="row">
-                      <div class="col-lg-12">
-                        <!-- Default Card Example -->
-                        <div class="card mb-4">
-                          <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">People Details</h6>
-                          </div>
-                          <div class="card-body">
-                            <form class="user"method="post" id="" action="/admin_user/people/update_details">
-
-                              <input type="hidden"name="peopleId" value="{{.People.People.Id}}" class="form-control " >
-
-                              <div class="form-group row">
-                                <div class="col-sm-6">
-                                  <label>Person Name</label>
-                                  <input type="text" name="name" class="form-control" value="{{.People.People.Name}}" required>
-                                </div>
-                                <div class="col-sm-6">
-                                  <label>Surname</label>
-                                  <input type="text" name="surname" class="form-control"  value="{{.People.People.Surname}}" required>
-                                </div>
-                              </div>
-                              <div class="form-group row">
-                                <div class="col-sm-6">
-                                  <label>Date Of Birth</label>
-                                  <input type="date" name="b_date" class="form-control"  value="{{.People.People.BirthDate}}" required>
-                                </div>
-                                <div class="col-sm-6">
-                                  <label>Date of Death</label>
-                                  <input type="date" name="d_date" class="form-control"  value="{{.People.People.DeathDate}}" required>
-                                </div>
-                              </div>
-                              <div class="form-group row">
-                                <div class="col-sm-6">
-                                  <label>Profession</label>
-                                  <input type="text" name="profession" class="form-control " value="{{.People.People.Profession}}" required>
-                                </div>
-                                <div class="col-sm-6">
-                                  <label>Origin</label>
-                                  <input type="text" name="origin" class="form-control " value="{{.People.People.Origin}}" required>
-                                </div>
-                              </div>
-                              <div class="form-group">
-                                <label>Person Brief</label>
-                                <textarea  name="brief" class="form-control" required>{{.People.People.Brief}}</textarea>
-                              </div>
-                              <button type="submit" class="btn btn-primary btn-block">
-                                Complete
-                              </button>
-                            </form>
-                          </div>
-                        </div>
-                      </div>
-                      <hr>
-                </div>
-              </div>
-            </div>
-          </div>
-
+            <!---People Place and EVent---->
             <div class="card shadow mb-4">
                 <!-- Card Header - Accordion -->
                 <a href="#collapseCardPlace" class="d-block card-header py-3 btn-success" data-toggle="collapse"
                    role="button" aria-expanded="true" aria-controls="collapseCardExample">
-                    <h6 class="m-0 font-weight-bold" style="color: #0b0b0b">People Place</h6>
+                    <h6 class="m-0 font-weight-bold" style="color: #0b0b0b">People Place & Events</h6>
                 </a>
                 <!-- Card Content - Collapse -->
                 <div class="collapse " id="collapseCardPlace">
@@ -556,7 +299,7 @@
                                                                     <td>{{.Title}}</td>
                                                                     <td>{{.Description}}</td>
                                                                     <td>
-                                                                        <a href="/admin_user/event/delete_people/{{.Id}}/"
+                                                                        <a href="/admin_user/people/delete_people/{{.Id}}/"
                                                                            class="btn btn-danger btn-user btn-block">
                                                                             Remove
                                                                         </a>
@@ -592,12 +335,26 @@
                                                         </tr>
                                                         </thead>
                                                         <tbody>
-
+                                                        {{with .EventPeople}}
+                                                        {{range $i, $e := .}}
+                                                        <tr>
+                                                            <td>{{$i}}</td>
+                                                            <td>{{.EventName}}</td>
+                                                            <td></td>
+                                                            <td>
+                                                                <a href="/admin_user/people/delete_people/{{.Id}}/{{$.People.People.Id}}"
+                                                                   class="btn btn-danger btn-user btn-block">
+                                                                    Remove
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                        {{end}}
+                                                        {{end}}
                                                         </tbody>
                                                     </table>
                                                     <a class="btn btn-primary btn-user btn-block text-white"
                                                        data-toggle="modal"
-                                                       data-target="#exampleModalUpdatePeoplePlace">
+                                                       data-target="#exampleModalUpdatePeopleEvent">
                                                         Add People
                                                     </a>
                                                 </div>
@@ -624,7 +381,7 @@
             <div class="collapse " id="collapseCardStep2">
               <div class="card-body"  >
                 {{if not .People.History.History}}
-                  <form method="post" action="/admin_user/people/update_history">
+                  <form method="post" action="/admin_user/people/create_history">
                     <div class="form-group" >
                       <input name="historyId" value="{{.People.History.Id}}" hidden>
                       <input name="peopleId" value="{{.People.People.Id}}" hidden>
@@ -655,7 +412,7 @@
                     <form method="post" action="/admin_user/people/update_history">
                       <div class="form-group" >
                         <input name="historyId" value="{{.People.History.Id}}" hidden>
-                        <input name="projectId" value="{{.People.People.Id}}" hidden>
+                        <input name="peopleId" value="{{.People.People.Id}}" hidden>
                         <div class="form-group" >
                           <label id="label" hidden style="color: steelblue">Add the new contents here<small> (You may copy from the previous. Remember this new content will override the previous)</small></label>
                           <textarea name="myArea" id="myArea" class="form-control" hidden>
@@ -676,6 +433,137 @@
               </div>
             </div>
           </div>
+
+            <!-- Comment Card -->
+            <div class="card shadow mb-4">
+                <!-- Card Header - Accordion -->
+                <a href="#commentCard" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+                   role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                    <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">People Comment</h6>
+                </a>
+                <!-- Card Content - Collapse -->
+                <div class="collapse " id="commentCard">
+
+
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>Nr</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Date</th>
+                                    <th>Comment</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {{with .Comments}}
+                                    {{range $i, $e := .}}
+                                        <tr>
+                                            <td>{{$i}}</td>
+                                            <td>{{.Name}}</td>
+                                            <td>{{.Email}}</td>
+                                            <td>{{.Date}}</td>
+                                            <td><small>{{.Comment}}</small></td>
+                                            <td>
+                                                <a class="btn btn-google btn-user btn-block" data-toggle="modal"
+                                                   onclick="deleteThePeopleCommentBTN({{.Id}},{{.BridgeId}},{{.Name}})"
+                                                   data-target="#exampleModalPeople">
+                                                    Delete
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {{end}}
+                                {{end}}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Gallery---->
+            <div class="card shadow mb-4">
+                <!-- Card Header - Accordion -->
+                <a href="#collapseGallery" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+                   role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                    <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Create new People gallery</h6>
+                </a>
+                <!-- Card Content - Collapse -->
+                <div class="collapse " id="collapseGallery">
+                    <div class="card-body p-0">
+                        <!-- Nested Row within Card Body -->
+                        <div class="row">
+
+                            <div class="col-lg-12">
+                                <div class="p-5">
+                                    <div class="text-center">
+                                        <h1 class="h4 text-gray-900 mb-4">New Picture</h1>
+                                    </div>
+                                    <form class="user" method="post" action="/admin_user/people/create-gallery" enctype="multipart/form-data">
+                                        <input type="hidden" name="placeId" value="{{.PeopleDetails.Id}}" class="form-control ">
+
+                                        <div class="form-group ">
+                                            <label>Description <small> Only 200 characters </small></label>
+                                            <textarea class="form-control" name="description" maxlength="200"></textarea>
+                                        </div>
+
+                                        <div class="form-group ">
+                                            <label>Picture</label>
+                                            <input type="file"name="file" class="form-control " id="file" placeholder="Project Name" required>
+                                            <label><small>This field should only contains a picture that says it all about this Person.</small></label>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary btn-block">
+                                            Next
+                                        </button>
+                                        <hr>
+                                        <a href="/admin_user" class="btn btn-google  btn-block">Cancel</a>
+                                    </form>
+                                    <hr>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row ">
+                            <div class="container ">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                        <thead>
+                                        <tr>
+                                            <th>Nr</th>
+                                            <th>Image</th>
+                                            <th>Image description</th>
+                                            <th>Action</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {{with .Gallery}}
+                                            {{range $i, $e := .}}
+                                                <tr>
+                                                    <td>{{$i}}</td>
+                                                    <td><img id='base64image' width="100px" src='data:image/jpeg;base64,{{.Gallery.Image}}' alt=""></td>
+                                                    <td>{{.Gallery.Description}}</td>
+                                                    <td><a href="/admin_user/group/delete-gallery/{{.Gallery.Id}}/{{.PlaceGallery.Id}}/{{$.PeopleGallery.PeopleId}}"
+                                                           class="btn btn-google btn-user btn-block">
+                                                            <i class="fab fa-fw"></i> Delete
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            {{end}}
+                                        {{end}}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
 
         </div>
         <!-- /.container-fluid -->
@@ -759,6 +647,172 @@
     </div>
   </div>
 
+  <!--Add people Image -->
+  <div class="modal fade" id="addImage" tabindex="-1" role="dialog"
+       aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-success" id="exampleModalLongTitle">Update People Image</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h3 class=" text-center"> Event Place</h3>
+            <form method="post" action="/admin_user/people/add_pictures" enctype="multipart/form-data" hidden>
+                <div class="text-center">
+                    <h1 class="h4 text-gray-900 mb-4">Add Pictures</h1>
+                </div>
+                <input type="hidden"name="peopleId" value="{{.People.People.Id}}" required>
+                <div class="form-group ">
+                    <label>Project profile Picture</label>
+                    <input type="file"name="file" class="form-control " id="file" placeholder="Project Name" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                    Add
+                </button>
+                <hr>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--Update people Image -->
+  <div class="modal fade" id="updateImage" tabindex="-1" role="dialog"
+       aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-success" id="exampleModalLongTitle">Update People Image</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form class="user"method="post" id="" action="/admin_user/people/update_image" enctype="multipart/form-data">
+                <input type="hidden"name="imageId" value="{{.People.Images.ImageId}}" class="form-control " >
+                <input type="hidden"name="peopleImageId" value="{{.People.Images.PeopleImageId}}" class="form-control " >
+                <input type="hidden"name="peopleId" value="{{.People.People.Id}}" class="form-control " >
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <select name="imageType" class="browser-default custom-select" required>
+                            <option selected>Picture type</option>
+                            <option value="1">Profile image</option>
+                            <option value="2">Secondary Image</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-6">
+                        <input type="file"name="file" class="form-control " required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">
+                    Complete
+                </button>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!--Update Event Place -->
+  <div class="modal fade" id="exampleModalUpdatePeopleEvent" tabindex="-1" role="dialog"
+       aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-success" id="exampleModalLongTitle">Updating People Event</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h3 class=" text-center"> Event Place</h3>
+          <form class="user" method="post" action="/admin_user/people/add_event">
+            <input type="hidden" name="peopleId" class="form-control" value="{{.PeopleDetails.Id}}" required>
+            <div class="form-group">
+              <label>Choose a Place that will replace</label>
+              <select name="eventId" id="modePlace" class="browser-default custom-select">
+                <option selected>Choose an Event </option>
+                {{with .Events}}
+                  {{range .}}
+                    <option title="{{.Description}}" value="{{.Id}}">{{.Name}}</option>
+                  {{end}}
+                {{end}}
+              </select>
+            </div>
+            <button type="submit" id="placeModelBtn" class="btn btn-primary btn-block" >
+              Submit
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--  People Identity edit Modal -->
+  <div class="modal fade" id="peopleIdentityEditModal" tabindex="-1" role="dialog" aria-labelledby="campusModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-xl" role="document">
+          <div class="modal-content modal-xl">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="campusModalLabel">Update People Identity</h5>
+                  <button class="close" onclick="resetFrom('peopleForm')" type="button" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">×</span>
+                  </button>
+              </div>
+
+              <div class="modal-body">
+                  <form class="user"method="post" action="/admin_user/people/update_details">
+
+                      <input type="hidden"name="peopleId" value="{{.People.People.Id}}" class="form-control " >
+
+                      <div class="form-group row">
+                          <div class="col-sm-6">
+                              <label>Person Name</label>
+                              <input type="text" name="name" class="form-control" value="{{.People.People.Name}}" required>
+                          </div>
+                          <div class="col-sm-6">
+                              <label>Surname</label>
+                              <input type="text" name="surname" class="form-control"  value="{{.People.People.Surname}}" required>
+                          </div>
+                      </div>
+                      <div class="form-group row">
+                          <div class="col-sm-6">
+                              <label>Date Of Birth</label>
+                              <input type="date" name="b_date" class="form-control"  value="{{.People.People.BirthDate}}" required>
+                          </div>
+                          <div class="col-sm-6">
+                              <label>Date of Death</label>
+                              <input type="date" name="d_date" class="form-control"  value="{{.People.People.DeathDate}}">
+                          </div>
+                      </div>
+                      <div class="form-group row">
+                          <div class="col-sm-6">
+                              <label>Profession</label>
+                              <input type="text" name="profession" class="form-control " value="{{.People.People.Profession}}" required>
+                          </div>
+                          <div class="col-sm-6">
+                              <label>Origin</label>
+                              <input type="text" name="origin" class="form-control " value="{{.People.People.Origin}}" required>
+                          </div>
+                      </div>
+                      <div class="form-group">
+                          <label>Person Brief</label>
+                          <textarea  name="brief" class="form-control" required>{{.People.People.Brief}}</textarea>
+                      </div>
+                      <button type="submit" class="btn btn-primary btn-block">
+                          Complete
+                      </button>
+                  </form>
+              </div>
+          </div>
+      </div>
+  </div>
+
+
 
   <!-- Bootstrap core JavaScript-->
   <script src="../../assets/vendor/jquery/jquery.min.js"></script>
@@ -769,16 +823,20 @@
 
   <!-- Custom scripts for all pages-->
   <script src="../../assets/js/sb-admin-2.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+
 </body>
 <script>
+    $(document).ready(function() {
+        $('#mytextare').summernote();
+    });
     function showAddPictureForm() {
 $('#addPicture').removeAttr('hidden');
 $('#toAdd').attr('hidden','hidden')
     }
 function changeContents(content) {
-  tinymce.init({
-    selector: '#myArea'
-  });
+  $('#myArea').summernote();
+
   $('#updateButton').attr('hidden','hidden');
   $('#formUpdateButton').removeAttr('hidden');
   $('#myArea').removeAttr('hidden');

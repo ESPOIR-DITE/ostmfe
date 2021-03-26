@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Admin OSTM | Event -Edit</title>
+    <base href="/">
+    <!-- Custom fonts for this template-->
+    <link href="../../assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+          rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="../../assets/css/sb-admin-2.min.css" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+
+
+</head>
+
+<body id="page-top">
+
+<!-- Page Wrapper -->
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    {{template "navbar" .}}
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- Main Content -->
+        <div id="content">
+
+            <!-- Topbar -->
+            {{template "topbar" .}}
+            <!-- End of Topbar -->
+
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">{{.Classroom.Name}}</h1>
+                </div>
+
+
+                <!---Event Images---->
+
+                <div class="card shadow mb-4">
+                    <!-- Card Header - Accordion -->
+                    <a href="#collapseCardImage" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+                       role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                        <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Classroom Image</h6>
+                    </a>
+                    <!-- Card Content - Collapse -->
+                    <div class="collapse " id="collapseCardImage">
+                        <div class="card-body p-0">
+                            <!-- Nested Row within Card Body -->
+                            <div class="row">
+
+                                <div class="p-5">
+                                    <div class="text-center">
+                                        <h1 class="h4 text-gray-900 mb-4">Event Picture </h1>
+                                    </div>
+                                    <div class=" row">
+                                        <!-- Default Card Example -->
+                                        {{if .Classroom.Icon}}
+                                        <div class="card col-md-6">
+                                            <div class="card-header py-3">
+                                                <h6 class="m-0 font-weight-bold text-primary">Image</h6>
+                                            </div>
+
+                                            <div class="card-body">
+                                                <img class="card-img"
+                                                     style="width:100%;height:312px;" id='base64image'
+                                                     src='data:image/jpeg;base64,{{.Classroom.Icon}}' alt=""/>
+                                                <a disabled="true"
+                                                   class="btn btn-google btn-user btn-block disabled"
+                                                   data-toggle="modal"
+                                                   onclick="deleteEventImageBTN({{Classroom.Id}})"
+                                                   data-target="#exampleModalProject"
+                                                   disabled="true">
+                                                    Delete
+                                                </a>
+
+                                                <div class="text-center">
+                                                    <h1 class="h4 text-gray-900 mb-4">You can update
+                                                        this image here</h1>
+                                                </div>
+                                                <form class="user" method="post" id=""
+                                                      action="/admin_user/event/update_pictures"
+                                                      enctype="multipart/form-data">
+                                                    <input type="hidden" name="imageId"
+                                                           value="{{.Classroom.Id}}" class="form-control ">
+
+                                                    <div class="form-group row">
+                                                        <div class="col-sm-5">
+                                                            <select name="imageType"
+                                                                    class="browser-default custom-select"
+                                                                    required>
+                                                                <option selected>Picture type</option>
+                                                                <option value="1">Profile image</option>
+                                                                <option value="2">Secondary Image
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-sm-5">
+                                                            <input type="file" name="file"
+                                                                   class="form-control" id="fileInput"
+                                                                   onchange="fileToUpdate()" required>
+                                                        </div>
+                                                    </div>
+                                                    <button type="submit"
+                                                            class="btn btn-primary btn-block"
+                                                            id="completeBTN" hidden>Update
+                                                    </button>
+                                                </form>
+
+                                            </div>
+                                        </div>
+                                        {{else}}
+                                        <div class="text-center">
+                                            <h1 class="h4 text-gray-900 mb-4">You have no pictures for this
+                                                Event, Please Upload pictures</h1>
+                                        </div>
+                                        <form class="user" method="post"
+                                              action="/admin_user/classroom/create-pictures"
+                                              enctype="multipart/form-data">
+                                            <input type="hidden" name="eventId" value="{{.Classroom.Id}}"
+                                                   required>
+                                            <div class="form-group ">
+                                                <label>Project profile Picture</label>
+                                                <input type="file" name="file" class="form-control " id="file"
+                                                       placeholder="Project Name" required>
+                                            </div>
+
+                                            <button type="submit" class="btn btn-primary btn-block">
+                                                Add
+                                            </button>
+                                        </form>
+                                        {{end}}
+                                    </div>
+                                    <br>
+                                </div>
+
+
+                                <div class="col-lg-12 text-center">
+                                    <hr>
+                                    <button id="toAdd" class="btn btn-primary btn-block col-lg-12"
+                                            onclick="showAddPictureForm()">
+                                        Add pictures
+                                    </button>
+                                    <form id="addPicture" class="user col-lg-12" method="post"
+                                          action="/admin_user/event/add_pictures" enctype="multipart/form-data" hidden>
+                                        <div class="text-center">
+                                            <h1 class="h4 text-gray-900 mb-4">Add Pictures</h1>
+                                        </div>
+                                        <input type="hidden" name="eventId" value="{{.EventData.Event.Id}}" required>
+                                        <div class="form-group ">
+                                            <label>Project profile Picture</label>
+                                            <input type="file" name="file" class="form-control " id="file"
+                                                   placeholder="Project Name" required>
+                                        </div>
+
+                                        <div class="form-group  row" id="filesArea"></div>
+                                        <div class="form-group row">
+                                            <div class="col-sm-6">
+                                                <button type="button" id="add_form_field"
+                                                        class="btn btn-primary btn-block">
+                                                    Add a picture
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-block">
+                                            Add
+                                        </button>
+                                        <br>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!---Event Detail---->
+                <div class="card shadow mb-4">
+                    <!-- Card Header - Accordion -->
+                    <a href="#collapseCardDetails" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+                       role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                        <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Classroom Details</h6>
+                    </a>
+                    <!-- Card Content - Collapse -->
+                    <div class="collapse " id="collapseCardDetails">
+                        <div class="card-body p-0">
+                            <!-- Nested Row within Card Body -->
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <!-- Default Card Example -->
+                                    <div class="card mb-4">
+                                        <div class="card-header py-3">
+                                            <h6 class="m-0 font-weight-bold text-primary"> Details</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <form class="user" method="post"
+                                                  action="/admin_user/classroom/update_details">
+                                                <input type="hidden" name="classroomId" value="{{.Classroom.Id}}"
+                                                       class="form-control ">
+
+                                                <div class="form-group ">
+                                                    <input type="text" class="form-control"
+                                                           value="{{.Classroom.Name}}" name="event_name"
+                                                           id="exampleFirstName" placeholder="Project Name">
+                                                </div>
+
+                                                <div class="form-group ">
+                                                    <label>Description <small> Only 150 characters </small></label>
+                                                    <textarea class="form-control" name="description"
+                                                              maxlength="200">{{.Classroom.Description}}</textarea>
+                                                </div>
+                                                <div class="form-group " id="me">
+                                                    <script>
+                                                        var div = document.getElementById('me');
+                                                        var myvalue = {
+                                                        {.
+                                                            Classroom.Details
+                                                        }
+                                                        }
+                                                        parseMe(myvalue);
+
+                                                        function parseMe(value) {
+                                                            div.innerHTML += value;
+                                                        }
+                                                    </script>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary btn-block">
+                                                    Update
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.container-fluid -->
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <span>Copyright &copy; OSTM 2019</span>
+                </div>
+            </div>
+        </footer>
+        <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+</div>
+<!-- End of Page Wrapper -->
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<!-- Logout Modal-->
+<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-primary" href="../login/login.html">Logout</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Delete warning Modal -->
+<div class="modal fade" id="exampleModalProject" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger" id="exampleModalLongTitle">Warning</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h3 class="text-danger text-center"> About to delete The Image</h3>
+                <img class="card-img" style="width:100%;height:312px;"
+                     id='base64image1'
+                     alt=""/>
+                <h4 id="value" class="text-center"></h4>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" id=""><a id="deleteBtn">Delete</a></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Add Event People -->
+<div class="modal fade" id="exampleModalUpdateEventPeople" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-success" id="exampleModalLongTitle">Updating People Event</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h3 class=" text-center"> People Event</h3>
+                <form class="user" method="post" action="/admin_user/event/add_people">
+                    <input type="hidden" name="EventId" class="form-control " id="eventId" required>
+                    <div class="form-group">
+                        <label>People</label>
+                        <select name="peopleId" class="browser-default custom-select">
+                            <option selected>Choose People</option>
+                            {{with .Peoples}}
+                            {{range .}}
+                            <option title="{{.Brief}}" value={{.Id}}>{{.Name}}</option>
+                            {{end}}
+                            {{end}}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        Submit
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Add Event Group -->
+<div class="modal fade" id="exampleModalUpdateEventGroup" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-success" id="exampleModalLongTitle">Updating People Event</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h3 class=" text-center"> Group Event</h3>
+                <form class="user" method="post" action="/admin_user/event/add_group">
+                    <input type="hidden" name="EventId" class="form-control " id="EventIdGroup" required>
+                    <div class="form-group">
+                        <label>Groups</label>
+                        <select name="groupId" class="browser-default custom-select">
+                            <option selected>Choose a Group</option>
+                            {{with .Groups}}
+                            {{range .}}
+                            <option title="{{.Description}}" value={{.Id}}>{{.Name}}</option>
+                            {{end}}
+                            {{end}}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        Submit
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Update Event Place -->
+<div class="modal fade" id="exampleModalUpdateEventPlace" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-success" id="exampleModalLongTitle">Updating Event Place</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h3 class=" text-center"> Event Place</h3>
+                <form class="user" method="post" action="/admin_user/event/update_event_place">
+                    <input type="hidden" name="EventId" class="form-control" id="eventPlaceId" required>
+                    <div class="form-group">
+                        <label>Choose a Place that will replace: {{.EventData.Place.Title}} </label>
+                        <select name="placeId" id="modePlace" onchange="checkSelectedPlace({{.EventData.Place.Id}})"
+                                onclick="ifplaceModelBtnClicker()" class="browser-default custom-select">
+                            <option selected>Choose a Place</option>
+                            {{with .Places}}
+                            {{range .}}
+                            <option title="{{.Description}}"
+                                    value="{{.Id}}" {{if eq $.EventData.Place.Id .Id}} selected{{end}}>{{.Title}}
+                            </option>
+                            {{end}}
+                            {{end}}
+                        </select>
+                    </div>
+                    <button type="submit" id="placeModelBtn" class="btn btn-primary btn-block" disabled>
+                        Submit
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Contribution view -->
+<div class="modal fade" id="contributionView" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-success" id="exampleModalLongTitle">Contribution Data</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h3 class=" text-center"> Contribution </h3>
+                <form class="user" method="post" action="/admin_user/event/update_event_place">
+                    <div class="form-group ">
+                        <label>Description</label>
+                        <textarea id="contributionViewModel" class="form-control" name="description" minlength="200"
+                                  required></textarea>
+                    </div>
+                    <img class="card-img" style="width:100%;height:312px;" id='base64image' alt=""/>
+                    <button type="submit" id="placeModelBtn" class="btn btn-primary btn-block" disabled>
+                        Submit
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap core JavaScript-->
+<script src="../../assets/vendor/jquery/jquery.min.js"></script>
+<script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="../../assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="../../assets/js/sb-admin-2.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+
+</body>
+<script>
+    function showAddPictureForm() {
+        $('#addPicture').removeAttr('hidden');
+        $('#toAdd').attr('hidden', 'hidden')
+    }
+
+    function changeContents(content) {
+        $('#myArea').summernote();
+
+        $('#updateButton').attr('hidden', 'hidden');
+        $('#formUpdateButton').removeAttr('hidden');
+        $('#myArea').removeAttr('hidden');
+        $('#label').removeAttr('hidden');
+    }
+
+
+    var max_fields = 6;
+    var wrapper = document.getElementById("filesArea");
+    var add_button = document.getElementById("add_form_field");
+
+    var x = 1;
+    $(add_button).click(function (e) {
+
+        e.preventDefault();
+        if (x < max_fields) {
+            x++;
+            $(wrapper).append('<div class="col-sm-6"> <input type="file"name="file' + x + '" class="form-control " id="file' + x + '" placeholder="Project Name" required> </div> <div class="col-sm-6"> <button type="button" id="btn' + x + '" class="btn btn-primary  btn-block" onclick="removeBTN(x)">Delete </button> <br></div> '); //add input box
+        } else {
+            alert('You Reached the limits')
+        }
+    });
+
+    $(wrapper).on("click", ".delete", function (e) {
+        e.preventDefault();
+        $(this).parent('div').remove();
+        x--;
+    });
+
+    function removeBTN(id) {
+        $('#file' + id + '').remove();
+        $('#btn' + id + '').remove();
+        id = null;
+    }
+
+
+    let checkSelectedProject = function (initialApplicantType) {
+        const selectedApplicantType = $("#projectDrop").val();
+        if (initialApplicantType.localeCompare(selectedApplicantType)) {
+        }
+    };
+    let checkSelectedYear = function (initialApplicantType) {
+        const selectedApplicantType = $("#yearField").val();
+        initialApplicantType.localeCompare(selectedApplicantType)
+    };
+    let checkSelectedPlace = function (initialApplicantType) {
+        const selectedApplicantType = $("#projectDrop").val();
+        if (initialApplicantType.localeCompare(selectedApplicantType)) {
+        }
+    };
+    let checkSelectedPartner = function (initialApplicantType) {
+        const selectedApplicantType = $("#partnerDrop").val();
+        if (initialApplicantType.localeCompare(selectedApplicantType)) {
+        }
+    };
+    let ifplaceModelBtnClicker = function () {
+        $('#placeModelBtn').attr('disabled', false);
+    }
+
+    function deleteEventImageBTN(imageId, eventId, eventImageId, image) {
+        $("#deleteBtn").attr('href', '/admin_user/event/delete_image/' + imageId + '/' + eventId + '/' + eventImageId);
+        $("#base64image1").attr('src', 'data:image/jpeg;base64,' + image);
+
+    }
+
+
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('#mytextare').summernote();
+    });
+    let fileToUpdate = function () {
+        //$('#completeBTN').attr();
+        $('#completeBTN').removeAttr('hidden');
+    }
+
+    function updateEventPeopleBTN(id) {
+        $("#eventId").val(id);
+    }
+
+    function updateEventGroupBTN(id) {
+        $("#EventIdGroup").val(id);
+    }
+
+    function updateEventPlaceBTN(id) {
+        $("#eventPlaceId").val(id);
+    }
+
+    function deleteTheEventContributionBTN(id, name) {
+        $("#deleteBtn").attr('href', '/admin_user/event-contribution/delete/' + id);
+        $("#value").text(name);
+    }
+
+    function contributionViewBTN(massage, image) {
+        //$("#deleteBtn").attr('href','/admin_user/event-contribution/delete/'+id);
+        $("#contributionViewModel").text(massage);
+        $("#base64image").attr('src', 'data:image/jpeg;base64,' + image)
+    }
+
+    function deleteTheEventCommentBTN(commentId, bridgeId, name) {
+        $("#deleteBtn").attr('href', '/admin_user/event/delete_comment/' + commentId + "/" + bridgeId);
+        $("#value").text(name);
+    }
+</script>
+
+</html>

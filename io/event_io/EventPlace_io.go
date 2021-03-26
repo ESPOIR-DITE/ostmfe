@@ -60,6 +60,20 @@ func ReadEventPlaceOf(eventId string) (event.EventPlace, error) {
 	}
 	return entity, nil
 }
+
+func ReadEventFindByPlaceId(placeId string) ([]event.EventPlace, error) {
+
+	entity := []event.EventPlace{}
+	resp, _ := api.Rest().Get(eventplaceURL + "findAllBy?PlaceId=" + placeId)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
 func DeleteEventPlace(id string) (event.EventPlace, error) {
 
 	entity := event.EventPlace{}

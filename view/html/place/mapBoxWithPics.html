@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Simon's Town Museum</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700" rel="stylesheet">
+    <!--
+    CSS
+    ============================================= -->
+    <link rel="stylesheet" href="../../assets/css/linearicons.css">
+    <link rel="stylesheet" href="../../assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../assets/css/bootstrap.css">
+    <link rel="stylesheet" href="../../assets/css/magnific-popup.css">
+    <link rel="stylesheet" href="../../assets/css/nice-select.css">
+    <link rel="stylesheet" href="../../assets/css/animate.min.css">
+    <link rel="stylesheet" href="../../assets/css/owl.carousel.css">
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <style>
+        body { margin: 0; padding: 0; }
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+        .ScrollStyle { max-height: 990px; overflow-y: scroll;}
+    </style>
+</head>
+<body>
+{{template "navigator"}}
+<section class="banner-area relative"   id="home" >
+    <div class="overlay overlay-bg"></div>
+    <div class="container" style="height: 70px;">
+        <div class="row d-flex align-items-center justify-content-center">
+            <div class="about-content col-lg-12">
+                <h1 class="text-white">
+                    Places
+                </h1>
+                <p class="text-white link-nav"><a href="../index.html">Home </a> <span class="lnr lnr-arrow-right"></span>
+                    <a href="places_page.html"> Places</a></p>
+            </div>
+        </div>
+    </div>
+</section>
+<style>
+    .marker {
+        /*background-image: url('../../assets/img/marker-15.svg');*/
+        background-image: url('../../assets/img/markers/pink.png');
+        background-size: cover;
+        /*display: block;*/
+        /*border: none;*/
+        /*border-radius: 50%;*/
+        cursor: pointer;
+        padding: 0;
+        color: #00bfff;
+    }
+</style>
+
+<div class="row">
+    <div class="col-lg-9 post-list blog-post-list">
+        <div id="map"></div>
+    </div>
+    <div class="col-lg-3 sidebar ScrollStyle" >
+
+        <div class="single-widget protfolio-widget">
+            <br>
+            <img id="placeImage" width="250px" src="../../assets/img/share_your_story.jpg" alt="">
+            <a  href="" data-toggle="modal" data-target="#Contribution" id="title-a"><h4 id="title"> Share your story about this place</h4></a>
+            <p id="title-description">
+                You may ba aware of an event that happened and is linked to a particular location that you know better in Simon's Town.
+            </p>
+            <a id="shareBTN" data-toggle="modal" href="" data-target="#ContributionPlace" class="genric-btn info radius e-large">Share</a>
+            <a id="placeBTN" class="genric-btn info radius e-large" hidden>Read more</a>
+            <ul>
+                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
+                <li><a href="#"><i class="fa fa-behance"></i></a></li>
+            </ul>
+        </div>
+
+        <div class="single-widget category-widget">
+            <h4 class="title">Events Linked to this place</h4>
+            <h4 id="peopleTitle" ></h4>
+            <ul id="peoplePlace">
+
+            </ul>
+        </div>
+
+        <div class="single-widget recent-posts-widget">
+            <h4 class="title">People linked to this place</h4>
+            <div id="peopleArea">
+
+            </div>
+        </div>
+
+        <!--div class="single-widget category-widget">
+            <h4 class="title">Post Archive</h4>
+            <ul>
+                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Dec '17</h6> <span>37</span></a></li>
+                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Nov '17</h6> <span>24</span></a></li>
+                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Oct '17</h6> <span>59</span></a></li>
+                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Sep '17</h6> <span>29</span></a></li>
+                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Aug '17</h6> <span>15</span></a></li>
+                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Jul '17</h6> <span>09</span></a></li>
+                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Jun '17</h6> <span>44</span></a></li>
+            </ul>
+        </div-->
+
+        <!--div class="single-widget tags-widget">
+            <h4 class="title">Tag Clouds</h4>
+            <ul>
+                <li><a href="#">Lifestyle</a></li>
+                <li><a href="#">Art</a></li>
+                <li><a href="#">Adventure</a></li>
+                <li><a href="#">Food</a></li>
+                <li><a href="#">Techlology</a></li>
+                <li><a href="#">Fashion</a></li>
+                <li><a href="#">Architecture</a></li>
+                <li><a href="#">Food</a></li>
+                <li><a href="#">Technology</a></li>
+            </ul>
+        </div-->
+
+
+
+</div>
+<div class="modal fade bd-example-modal-lg" id="ContributionPlace" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Contribute to this Project</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <p class="container">
+                <br>
+                Your contribution may consists of facts or events, archives or any tangible data patterning to this
+                Project.
+                We value your contribution and we need you to fill in bellow form so that we may also contact to learn
+                more from you.
+                We promise to protect you input and your identity. In case of any uncertainty and sensitivity of your
+                data that please
+                contact us on <b>simonstown@museum.co.za</b>.
+            </p>
+            <div class="container">
+                <form method="post" action="/project/contribution" enctype="multipart/form-data">
+                    <br>
+
+                    <input name="name" placeholder="Enter your name" onfocus="this.placeholder = ''"
+                           onblur="this.placeholder = 'Enter your name'" class="common-input mb-20 form-control"
+                           required="true" type="text">
+                    <input name="email" placeholder="Enter your email" onfocus="this.placeholder = ''"
+                           onblur="this.placeholder = 'Enter your email'" class="common-input mb-20 form-control"
+                           required="true" type="email">
+                    <input name="cellphone" placeholder="Enter your phone number" onfocus="this.placeholder = ''"
+                           onblur="this.placeholder = 'Enter your phone number'" class="common-input mb-20 form-control"
+                           required="" type="number">
+                    <input name="eventId" value="" type="hidden">
+
+                    <label class="text-sm-left">Please upload a contribution file of type:
+                        <small>pdf,jpg,doc,mp3,mp4</small></label>
+                    <input type="file" class="common-input mb-20 form-control" name="file"/>
+                    <textarea style="height: 200px" class="form-control mb-10" name="message" placeholder="Messege"
+                              onfocus="this.placeholder = ''" onblur="this.placeholder = 'Messege'"
+                              required="true"></textarea>
+
+                    <button type="submit" class="primary-btn mt-20 " href="#">Submit</button>
+
+                </form>
+            </div>
+            <div class="mt-20">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiZXNwb2lyLWRpdGUiLCJhIjoiY2tmaTZsdDBiMGpubzJzcDh2aXdodXlnayJ9.e6tqu6hLu5xlaSk84ERd9g';
+
+    var myPlaces = {{.PlaceData}};
+
+    console.log("the collection : "+myPlaces);
+
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [18.431896174363573,-34.19493744157412],
+        zoom: 10
+    });
+
+    // add markers to map
+   // geojson.features.forEach(function (marker) {
+    myPlaces.forEach(function (marker) {
+
+        var logitudeVar = marker.Place.longitude;
+        var placeId = marker.Place.id;
+        var title = marker.Place.title;
+        var placeImage = marker.Image;
+        var description = marker.Place.description;
+        var peopleData =marker.People;
+        var events = marker.Events;
+        console.log("image : "+event);
+        var  trimedLongitude = logitudeVar.trim();
+// create a DOM element for the marker
+        var el = document.createElement('div');
+        el.className = 'marker';
+        // el.style.backgroundImage = '../../assets/img/marker-15.svg';
+        // el.style.backgroundImage = url('../../assets/img/markers/pink.png');
+        //el.style.backgroundImage = "url('../../assets/img/markers/pink.png')";
+        getMarker(el,marker.PlaceCategory);
+        el.style.width = '45px';
+        el.style.height = '65px';
+        el.style.opacity = '90%';
+
+        el.addEventListener('click', function () {
+             console.log(description);
+            //$('#title').text(description);
+            document.getElementById("title").innerHTML = title;
+            document.getElementById("title-description").innerHTML = description;
+            document.getElementById("title-a").setAttribute("href","/place/"+placeId);
+            document.getElementById("placeImage").removeAttribute("src");
+            document.getElementById("placeImage").setAttribute("src","data:image/jpeg;base64,"+placeImage);
+
+            document.getElementById("shareBTN").setAttribute("hidden","true");
+            document.getElementById("placeBTN").removeAttribute("hidden");
+            document.getElementById("placeBTN").setAttribute("href","/place/"+placeId);
+
+            //console.log("marker.People: "+marker.People);
+            if(peopleData){
+                peopleData.forEach(function(value) {
+                    var peopleId =value.People.id;
+                    console.log(value);
+                    document.getElementById("peopleTitle").innerHTML = "None";
+                    //document.getElementById("peoplePlace").removeAttribute("li");
+                    document.getElementById("peopleArea").innerHTML="";
+                    //document.getElementById("peoplePlace").innerHTML ='<li><a href="/people/'+value.People.id+'" class="justify-content-between align-items-center d-flex"><h6>'+value.People.name+'</h6> </a></li>';
+                    document.getElementById("peopleArea").innerHTML='<div class="blog-list "><div class="single-recent-post d-flex flex-row"><div class="recent-thumb"><a href="/people/'+value.People.id+'"><img class="img-fluid" width="150px" src="data:image/jpeg;base64,'+value.Image.id+'" alt=""></a></div><div class="recent-details"><a href="/people/'+value.People.id+'"><h4>'+value.People.brief+'</h4></a><p>'+value.People.name+'</p></div></div><br></div>';
+
+                });
+            }else {// Just clear.
+                document.getElementById("peoplePlace").innerHTML="";
+                document.getElementById("peopleTitle").innerHTML = "None";
+            }
+            if(events){
+                events.forEach(function (event){
+                    console.log("event: "+event.id);
+                    document.getElementById("peoplePlace").innerHTML="";
+                    document.getElementById("peopleTitle").innerHTML = "";
+                    document.getElementById("peoplePlace").innerHTML ='<li><a href="/event/single/'+event.id+'" class="justify-content-between align-items-center d-flex"><h6>'+event.name+'</h6><span>'+event.date+'</span></a></li>';
+                });
+            }
+        });
+
+        el.addEventListener('mousemove', function () {
+            el.setAttribute('title',''+title);
+        });
+// add marker to map
+       var marker = new mapboxgl.Marker(el)
+            .setLngLat([marker.Place.latitude,trimedLongitude])
+            .addTo(map);
+    });
+
+    //Returns a proper marker
+    function getMarker(element,value) {
+        switch(value) {
+            case "Historical site":
+                element.style.backgroundImage = "url('../../assets/img/markers/black')";
+                break;
+            case "Forced Removal":
+                element.style.backgroundImage = "url('../../assets/img/markers/blue.png')";
+                break;
+              case "Simon’s town site":
+                  element.style.backgroundImage = "url('../../assets/img/markers/gray.png')";
+                  break;
+              case "Interviews":
+                  element.style.backgroundImage = "url('../../assets/img/markers/green.png')";
+                  break;
+            case "Superstars’ site":
+                element.style.backgroundImage = "url('../../assets/img/markers/pink.png')";
+                break;
+
+            default:
+                element.style.backgroundImage = "url('../../assets/img/markers/purple.png')";
+
+        }
+    }
+
+    function getPlaceData() {
+        var PlaceList ={{.Places}};
+        console.log(PlaceList);
+        var myPlaceList = [];
+        for (let placeList of PlaceList) {
+            console.log(placeList);
+            var logitude = placeList.longitude
+            var  trimedLongitude = logitude.trim();
+            myPlaceList.push( {
+                'type': 'FeatureCollection',
+                'features': {
+                        'type': 'Feature',
+                        'properties': {
+                            'message':'<strong>placeList.title</strong><p><a href="http://www.mtpleasantdc.com/makeitmtpleasant" target="_blank" title="Opens in a new window">Make it Mount Pleasant</a>placeList.description</p>',
+                            'iconSize': [60, 60]
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [trimedLongitude, placeList.latitude]
+                        }
+                }
+            });
+        }
+        return myPlaceList;
+    }
+
+    {{/*function getImage(placeId) {*/}}
+    {{/*    //var smothing*/}}
+    {{/*    var imageString = '{{.GetImage placeId}}'*/}}
+    {{/*    return {{if (call .GetImage )}}*/}}
+    {{/*}*/}}
+</script>
+
+</body>
+</html>

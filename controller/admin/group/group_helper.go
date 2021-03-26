@@ -3,11 +3,13 @@ package group
 import (
 	"fmt"
 	"ostmfe/controller/misc"
+	"ostmfe/domain/comment"
 	"ostmfe/domain/group"
 	history2 "ostmfe/domain/history"
 	image2 "ostmfe/domain/image"
 	partner2 "ostmfe/domain/partner"
 	project2 "ostmfe/domain/project"
+	"ostmfe/io/comment_io"
 	"ostmfe/io/group_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
@@ -16,7 +18,7 @@ import (
 )
 
 type GroupData struct {
-	Group   group.Groups
+	Group   group.Groupes
 	History history2.HistoriesHelper
 	Profile image2.Images
 	Images  []image2.ImagesHelper
@@ -98,4 +100,57 @@ func GetGroupData(groupId string) GroupData {
 	groupData = GroupData{group, historyObejct, profileImage, imageList, partnerList, projectList}
 
 	return groupData
+}
+
+func GetGroupCommentsWithEventId(eventId string) []comment.CommentHelper2 {
+	var commentList []comment.CommentHelper2
+	eventComments, err := comment_io.ReadAllByGroupId(eventId)
+	if err != nil {
+		fmt.Println(err, " error reading all the eventContribution")
+	} else {
+		for _, eventComment := range eventComments {
+			commentObject, err := comment_io.ReadComment(eventComment.CommentId)
+			if err != nil {
+				fmt.Println(err, " error reading all the Contribution")
+			}
+			commentObject2 := comment.CommentHelper2{commentObject.Id, commentObject.Email, commentObject.Name, misc.FormatDateMonth(commentObject.Date), misc.ConvertingToString(commentObject.Comment), getParentDeatils(commentObject.ParentCommentId), eventComment.Id}
+			commentList = append(commentList, commentObject2)
+		}
+	}
+	return commentList
+}
+func getParentDeatils(commentId string) comment.CommentHelper {
+	commentObject, err := comment_io.ReadComment(commentId)
+	if err != nil {
+		fmt.Println(err, " error reading all the Contribution")
+		return comment.CommentHelper{}
+	}
+	return comment.CommentHelper{commentObject.Id, commentObject.Email, commentObject.Name, misc.FormatDateMonth(commentObject.Date), misc.ConvertingToString(commentObject.Comment), commentObject.ParentCommentId, commentObject.Stat}
+}
+
+//With groupId, you get the commentNumber, pending, active.
+func groupCommentCalculation(groupId string) (commentNumber int64, pending int64, active int64) {
+	var commentNumbers int64 = 0
+	var pendings int64 = 0
+	var actives int64 = 0
+	peopleComments, err := comment_io.ReadAllByGroupId(groupId)
+	if err != nil {
+		fmt.Println(err, " error reading People comment")
+		return commentNumbers, pendings, actives
+	} else {
+		for _, peopleComment := range peopleComments {
+			comments, err := comment_io.ReadComment(peopleComment.CommentId)
+			if err != nil {
+				fmt.Println(err, " error reading comment")
+			} else {
+				if comments.Stat == true {
+					actives++
+				} else {
+					pending++
+				}
+				commentNumber++
+			}
+		}
+	}
+	return commentNumbers, pendings, actives
 }

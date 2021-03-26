@@ -101,7 +101,7 @@
                   Update
                 </button>
                 <hr>
-                <a href="/admin_user/users" class="btn btn-google  btn-block">Cancel</a>
+                <a href="/admin_user/users" class="btn btn-google  btn-block">Back</a>
               </form>
             </div>
           </div>
@@ -122,7 +122,7 @@
           {{if not .History.History}}
             <form method="post" action="/admin_user/users/create_history">
               <div class="form-group" >
-                <input name="historyId" value="{{.History.History.Id}}" hidden>
+                <input name="historyId" value="{{.History.Id}}" hidden>
                 <input name="userId" value="{{.User.Email}}" hidden>
                 <div class="form-group">
                   <label>Add History</label>
@@ -156,8 +156,7 @@
                   <div class="form-group" >
                     <label id="label" hidden style="color: steelblue">Add the new contents here<small> (You may copy from the previous. Remember this new content will override the previous)</small></label>
                     <textarea name="myArea" id="myArea" class="form-control" hidden>
-
-                          </textarea>
+                    </textarea>
                   </div>
 
                 </div>

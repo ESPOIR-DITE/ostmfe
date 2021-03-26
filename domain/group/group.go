@@ -1,10 +1,16 @@
 package group
 
-type Groups struct {
+type Groupes struct {
 	Id          string `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
 }
+type GroupGalery struct {
+	Id       string `json:"id"`
+	GroupId  string `json:"groupId"`
+	GaleryId string `json:"galeryId"`
+}
+
 type GroupHistory struct {
 	Id        string `json:"id"`
 	GroupId   string `json:"groupId"`
@@ -14,6 +20,7 @@ type GroupImage struct {
 	Id          string `json:"id"`
 	ImageId     string `json:"imageId"`
 	GroupId     string `json:"groupId"`
+	ImageTypeId string `json:"imageTypeId"`
 	Description string `json:"description"`
 }
 type GroupImageHelper struct {

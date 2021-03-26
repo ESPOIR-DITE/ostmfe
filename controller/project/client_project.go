@@ -1,29 +1,145 @@
 package project
 
 import (
+	"bufio"
 	"fmt"
 	"github.com/go-chi/chi"
 	"html/template"
+	"io/ioutil"
+	"mime/multipart"
 	"net/http"
 	"ostmfe/config"
+	comment2 "ostmfe/controller/comment"
 	"ostmfe/controller/misc"
+	"ostmfe/domain/comment"
+	contribution2 "ostmfe/domain/contribution"
 	history2 "ostmfe/domain/history"
 	"ostmfe/domain/image"
 	project2 "ostmfe/domain/project"
+	"ostmfe/io/comment_io"
+	"ostmfe/io/contribution_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
+	"ostmfe/io/pageData_io"
 	"ostmfe/io/project_io"
+	"path/filepath"
+	"strings"
+	"time"
 )
 
 func Home(app *config.Env) http.Handler {
 	r := chi.NewRouter()
 	r.Get("/", homeHanler(app))
 	r.Get("/read_single/{projectId}", ReadSingleProjectHanler(app))
+	r.Post("/comment", createProjectComment(app))
+	r.Post("/contribution", CreateContributionComment(app))
 	//r.Use(middleware.LoginSession{SessionManager: app.Session}.RequireAuthenticatedUser)
 	//r.Get("/home", indexHanler(app))
 	//r.Get("/homeError", indexErrorHanler(app))
 
 	return r
+}
+
+func CreateContributionComment(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var content []byte
+		var isExtension bool
+		var fileTypeId string
+		r.ParseForm()
+		file, m, err := r.FormFile("file")
+		projectId := r.PostFormValue("projectId")
+		if err != nil {
+			fmt.Println(err, "<<<<<< error reading contribution file>>>>This error should happen>>>")
+		} else {
+			reader := bufio.NewReader(file)
+			content, _ = ioutil.ReadAll(reader)
+			//Check the file extension
+			isExtension, fileTypeId = getFileExtension(m)
+
+			fmt.Println("result from assement: ", isExtension)
+
+			if isExtension == false {
+				fmt.Println("error creating contribution")
+				fmt.Println("wrong file: ", m.Filename)
+				http.Redirect(w, r, "/project/read_single/"+projectId, 301)
+			}
+		}
+		name := r.PostFormValue("name")
+		email := r.PostFormValue("email")
+		message := r.PostFormValue("message")
+		cellphone := r.PostFormValue("cellphone")
+
+		if name != "" && email != "" && message != "" && projectId != "" {
+			contributionObject := contribution2.Contribution{"", email, name, time.Now(), cellphone, misc.ConvertToByteArray(message)}
+
+			contribution, err := contribution_io.CreateContribution(contributionObject)
+			if err != nil {
+				fmt.Println("error creating a new contribution")
+			} else {
+				contributorEventObject := contribution2.ContributionProject{"", contribution.Id, projectId, name}
+				_, err := contribution_io.CreateContributionProject(contributorEventObject)
+				if err != nil {
+					_, _ = contribution_io.DeleteContribution(contribution.Id)
+					fmt.Println("error creating a new contribution")
+				} else {
+					contributionFileObject := contribution2.ContributionFile{"", contribution.Id, content, fileTypeId, ""}
+					_, err := contribution_io.CreateContributionFile(contributionFileObject)
+					if err != nil {
+						fmt.Println("error creating contributionFile")
+					}
+				}
+			}
+		}
+		http.Redirect(w, r, "/event/read_single/"+projectId, 301)
+	}
+}
+
+func getFileExtension(fileData *multipart.FileHeader) (bool, string) {
+	var extension = filepath.Ext(fileData.Filename)
+	contributionFileTypes, err := contribution_io.ReadContributionFileTypes()
+	if err != nil {
+		fmt.Println("error reading contributionFileType")
+		return true, ""
+	} else {
+		for _, contributionFileType := range contributionFileTypes {
+			fmt.Println("extension: " + extension + " file extension: " + contributionFileType.FileType)
+			//t := strings.Trim(extension, ".")
+			t := strings.Replace(extension, ".", "", -1)
+			fmt.Println("extension2: " + t + " file extension: " + contributionFileType.FileType)
+			if t == contributionFileType.FileType {
+				return true, contributionFileType.Id
+			}
+		}
+	}
+	return false, ""
+}
+func createProjectComment(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		name := r.PostFormValue("name")
+		email := r.PostFormValue("email")
+		message := r.PostFormValue("message")
+		projectId := r.PostFormValue("projectId")
+
+		if name != "" && email != "" && message != "" && projectId != "" {
+			commentObject := comment.Comment{"", email, name, misc.FormatDateTime(time.Now()), misc.ConvertToByteArray(message), "", false}
+			newComment, err := comment_io.CreateComment(commentObject)
+			if err != nil {
+				fmt.Println("error creating comment")
+			} else {
+				projectCommentObject := comment.CommentProject{"", projectId, newComment.Id}
+				_, err := comment_io.CreateCommentProject(projectCommentObject)
+				if err != nil {
+					fmt.Println("error creating comment")
+				}
+			}
+			http.Redirect(w, r, "/project/read_single/"+projectId, 301)
+			return
+		}
+		fmt.Println("error one field missing")
+		http.Redirect(w, r, "/project/read_single/"+projectId, 301)
+		return
+	}
 }
 
 func ReadSingleProjectHanler(app *config.Env) http.HandlerFunc {
@@ -39,17 +155,28 @@ func ReadSingleProjectHanler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			fmt.Println(err, " error reading projects")
 		}
+		commentNumber, err := comment_io.CountProjectComment(projectId)
+		if err != nil {
+			fmt.Println(err, " error reading projects comment Number")
+		}
+		projectComment := comment2.GetProjectComment(projectId)
+		//fmt.Println(" projectComment: ",projectComment)
 		type PageData struct {
 			ProjectDataHistory ProjectDataHistory
 			Projects           []project2.Project
+			Comments           []comment.CommentStack
+			CommentNumber      int64
+			//GalleryString      []string
+			GalleryImages []misc.ProjectGalleryImages
 		}
-		data := PageData{projectDataHistory, projects}
+		data := PageData{projectDataHistory, projects, projectComment, commentNumber, misc.GetProjectGallery(projectId)}
 
 		files := []string{
 			app.Path + "project/project_single.html",
 			app.Path + "base_templates/navigator.html",
 			app.Path + "base_templates/footer.html",
 			app.Path + "base_templates/comments.html",
+			//app.Path + "base_templates/reply-template.html",
 		}
 		ts, err := template.ParseFiles(files...)
 		if err != nil {
@@ -65,10 +192,19 @@ func ReadSingleProjectHanler(app *config.Env) http.HandlerFunc {
 
 func homeHanler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		type PageData struct {
-			Projects []misc.ProjectContentsHome
+		var bannerImage string
+		pageBanner, err := pageData_io.ReadPageBannerWIthPageName("project-page")
+		if err != nil {
+			fmt.Println(err, " There is an error when reading people pageBanner")
+		} else {
+			bannerImage = misc.GetBannerImage(pageBanner.BannerId)
 		}
-		data := PageData{misc.GetProjectContentsHomes()}
+
+		type PageData struct {
+			Projects      []misc.ProjectContentsHome
+			ProjectBanner string
+		}
+		data := PageData{misc.GetProjectContentsHomes(), bannerImage}
 		files := []string{
 			app.Path + "project/projects.html",
 			app.Path + "base_templates/navigator.html",
@@ -170,3 +306,21 @@ func getProjectDataHistory(projectId string) ProjectDataHistory {
 //	}
 //	return projectContentsHomeObject
 //}
+
+func getProjectGallery(projectId string) []string {
+	var picture []string
+	projectGallerys, err := project_io.ReadAllByProjectIdGallery(projectId)
+	if err != nil {
+		fmt.Println(err, " error peopleGalleries.")
+	} else {
+		for _, projectGallery := range projectGallerys {
+			gallery, err := image_io.ReadGallery(projectGallery.GalleryId)
+			if err != nil {
+				fmt.Println(err, " error gallery")
+			} else {
+				picture = append(picture, misc.ConvertingToString(gallery.Image))
+			}
+		}
+	}
+	return picture
+}

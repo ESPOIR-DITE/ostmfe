@@ -19,7 +19,6 @@ func CreatePeoplePlace(pPl people.PeoplePlace) (people.PeoplePlace, error) {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
-
 }
 func UpdatePeoplePlace(pPl people.PeoplePlace) (people.PeoplePlace, error) {
 	entity := people.PeoplePlace{}
@@ -37,6 +36,32 @@ func UpdatePeoplePlace(pPl people.PeoplePlace) (people.PeoplePlace, error) {
 func ReadPeoplePlace(id string) (people.PeoplePlace, error) {
 	entity := people.PeoplePlace{}
 	resp, _ := api.Rest().Get(pplPlace + "read?id=" + id)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
+
+func ReadPeoplePlaceByPlaceId(id string) (people.PeoplePlace, error) {
+	entity := people.PeoplePlace{}
+	resp, _ := api.Rest().Get(pplPlace + "PlaceId?id=" + id)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
+
+func ReadPeoplePlaceAllByPlaceId(id string) ([]people.PeoplePlace, error) {
+	entity := []people.PeoplePlace{}
+	resp, _ := api.Rest().Get(pplPlace + "findAllBy?PlaceId=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}

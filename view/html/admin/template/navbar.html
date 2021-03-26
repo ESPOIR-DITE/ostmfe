@@ -77,9 +77,6 @@
             <span>Place</span></a>
     </li>
 
-
-
-
     <li class="nav-item {{if eq .SidebarData.Menu "people"}} active {{end}}">
         <a class="nav-link collapsed " href="/admin_user/people" data-toggle="collapse" data-target="#collapsePeople" aria-expanded="true" aria-controls="collapseTwo">
             <i class="fas fa-fw fa-cog"></i>
@@ -140,8 +137,8 @@
         <div id="collapsePages" class="collapse {{if eq .SidebarData.Menu "page"}} show {{end}}" aria-labelledby="headingPages" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">client pages:</h6>
-                    <!a class="collapse-item" href="#">Create a page</a>
-                    <!--a class="collapse-item" href="/admin_user/page">Create a page</a-->
+                    <a class="collapse-item" href="#">Create a page</a>
+                    <a class="collapse-item" href="/admin_user/page">Create a page</a>
 
                 {{with .SidebarData.PageData}}
                     {{range .}}
@@ -153,10 +150,30 @@
     </li>
 
     <!-- Nav Item - Charts -->
-    <li class="nav-item">
-        <a class="nav-link" href="#">
+    <li class="nav-item {{if eq .SidebarData.Menu "slider"}} active {{end}}">
+        <a class="nav-link" href="/admin_user/slider">
             <i class="fas fa-fw fa-chart-area"></i>
-            <span>User Contribution</span></a>
+            <span>Home Slider</span></a>
+    </li>
+
+    <!-- Nav Item - Charts -->
+    <li class="nav-item {{if eq .SidebarData.Menu "setting"}} active {{end}}">
+        <a class="nav-link" href="/admin_user/contribution">
+            <i class="fas fa-fw fa-chart-area"></i>
+            <span>Settings</span></a>
+    </li>
+
+    <!-- Nav Item - Charts -->
+    <li class="nav-item {{if eq .SidebarData.Menu "contribution"}} active {{end}}">
+    <a class="nav-link" href="/admin_user/contribution/contribution">
+        <i class="fas fa-fw fa-chart-area"></i>
+        <span>Contribution</span></a>
+    </li>
+<!-- Nav Item - Charts -->
+    <li class="nav-item {{if eq .SidebarData.Menu "booking"}} active {{end}}">
+    <a class="nav-link" href="/admin_user/booking">
+        <i class="fas fa-fw fa-chart-area"></i>
+        <span>Bookings</span></a>
     </li>
 
     <!-- Nav Item - Tables -->

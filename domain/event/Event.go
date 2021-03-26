@@ -12,6 +12,7 @@ type EventImage struct {
 	Id          string `json:"id"`
 	ImageId     string `json:"imageId"`
 	EventId     string `json:"eventId"`
+	ImageTypeId string `json:"imageTypeId"`
 	Description string `json:"description"`
 }
 
@@ -58,4 +59,9 @@ type EventGroup struct {
 	Id      string `json:"id"`
 	EventId string `json:"eventId"`
 	GroupId string `json:"groupId"`
+}
+type EventGalery struct {
+	Id       string `json:"id"`
+	EventId  string `json:"eventId"`
+	GaleryId string `json:"galeryId"`
 }

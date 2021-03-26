@@ -56,6 +56,12 @@ type PeopleCategory struct {
 	PeopleId string `json:"peopleId"`
 	Category string `json:"category"`
 }
+type PeopleGalery struct {
+	Id       string `json:"id"`
+	PeopleId string `json:"peopleId"`
+	Galery   string `json:"galery"`
+}
+
 type Category struct {
 	Id       string `json:"id"`
 	Category string `json:"category"`

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>OSTM Admin | Slider</title>
+
+  <!-- Custom fonts for this template -->
+  <link href="../../assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="../../assets/css/sb-admin-2.min.css" rel="stylesheet">
+
+  <!-- Custom styles for this page -->
+  <link href="../../assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+  <script src="https://cdn.tiny.cloud/1/tmo7wwuvihuwqom08gjvonhdda8blx4on0n7jvm1i4pq2coh/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+
+  <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+
+</head>
+
+<body id="page-top">
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <!-- Sidebar -->
+    {{template "navbar" .}}
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+      <!-- Main Content -->
+      <div id="content">
+
+        <!-- Topbar -->
+        {{template "topbar" .}}
+        <!-- End of Topbar -->
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+
+          <!-- Page Heading -->
+          <!-- Add new -->
+          {{if .Backend_error}}
+            <div class="text-center alert-warning">
+              <a class="small" href="#">{{.Backend_error}}</a>
+            </div>
+          {{end}}
+          {{if .Unknown_error}}
+            <div class="text-center alert-warning">
+              <a class="small" href="#">{{.Unknown_error}}</a>
+            </div>
+          {{end}}
+
+          <div class="card shadow mb-4">
+            <!-- Card Header - Accordion -->
+            <a href="#collapseCardExample" class="d-block card-header py-3 btn-success" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
+              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Create a new Slider</h6>
+            </a>
+            <!-- Card Content - Collapse -->
+            <div class="collapse " id="collapseCardExample">
+              <div class="card-body p-0">
+                <!-- Nested Row within Card Body -->
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="p-5">
+                      {{if .Backend_error}}
+                        <div class="text-center alert-warning">
+                          <a class="small" href="#">{{.Backend_error}}</a>
+                        </div>
+                      {{end}}
+                      {{if .Unknown_error}}
+                        <div class="text-center alert-warning">
+                          <a class="small" href="#">{{.Unknown_error}}</a>
+                        </div>
+                      {{end}}
+                      <div class="text-center">
+                        <h1 class="h4 text-gray-900 mb-4">Slider</h1>
+                      </div>
+                      <form class="user" id="myform" method="post" action="/admin_user/slider/create" enctype="multipart/form-data">
+                        <div class="form-group ">
+                          <label>Slider Name</label>
+                          <input type="text" class="form-control" name="sliderName" id="exampleFirstName" placeholder="name">
+                        </div>
+                        <div class="form-group">
+                          <label>Slider Description <small> 150 Maximum characters limit</small></label>
+                          <textarea  class="form-control "  maxlength="150" style="height: 100px" name="description" id="exampleLastName" placeholder="Description"></textarea>
+                        </div>
+                        <div class="form-group">
+                          <label>Slider Message </label>
+                          <textarea  class="form-control " style="height: 200px" name="message" id="exampleLastName" placeholder="Description"></textarea>
+                        </div>
+
+                        <div class="form-group ">
+                          <label>Slider Image</label>
+                          <input type="file"name="file" class="form-control " id="file" required>
+                        </div>
+
+                        <br>
+
+
+                        <!--
+                        <div class="form-group  row" id="filesArea">
+
+
+                        </div>
+                        <div class="form-group row" >
+                          <div class="col-sm-6" >
+                            <button type="button" id="add_form_field" class="btn btn-primary btn-block">
+                              Add a picture
+                            </button>
+                          </div>
+
+                        </div>
+                        -->
+
+
+                        <button type="submit" class="btn btn-primary  btn-block">
+                          Submit
+                        </button>
+                        <hr>
+                        <a href="/admin_user" class="btn btn-google btn-block">
+                          <i class="fab"></i> Cancel
+                        </a>
+                      </form>
+                      <hr>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+
+          <h1 class="h3 mb-2 text-gray-800">Slider Table</h1>
+          <!-- DataTales Example -->
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary"></h6>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead>
+                    <tr>
+                      <th>Nr</th>
+                      <th>Image</th>
+                      <th>Slider Name</th>
+                      <th>Description</th>
+                      <th>Action</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {{with .Sliders}}
+                  {{range $i, $e := .}}
+                    <tr>
+                      <td>{{$i}}</td>
+                      <td><img class="card-img" id='base64image' width="100px"{{if .SliderImage}}src='data:image/jpeg;base64,{{.SliderImage}}' alt=""{{end}}/></td>
+                      <td>{{.SliderName}}</td>
+                      <td><small>{{.Description}}</small></td>
+                      <td><a href="#" class="btn btn-primary btn-user btn-block">
+                          Edit
+                        </a>
+                      </td>
+                      <td><a class="btn btn-google btn-user btn-block" href="/admin_user/slider/delete/{{.Id}}">
+                          Delete
+                        </a>
+                      </td>
+                    </tr>
+                  {{end}}
+                  {{end}}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <!-- /.container-fluid -->
+
+      </div>
+      <!-- End of Main Content -->
+
+      <!-- Footer -->
+      <footer class="sticky-footer bg-white">
+        <div class="container my-auto">
+          <div class="copyright text-center my-auto">
+            <span>Copyright &copy; Your Website 2019</span>
+          </div>
+        </div>
+      </footer>
+      <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+  <!-- Logout Modal-->
+  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+          <a class="btn btn-primary" href="../login/login.html">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--Delete warning Modal -->
+  <div class="modal fade" id="exampleModalProject" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-danger" id="exampleModalLongTitle">Warning</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h3 class="text-danger text-center"> About to delete the record of:</h3>
+          <h4 id="value" class="text-center"></h4>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-danger" id=""><a id="deleteBtn">Delete</a></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Bootstrap core JavaScript-->
+  <script src="../../assets/vendor/jquery/jquery.min.js"></script>
+  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="../../assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Custom scripts for all pages-->
+  <script src="../../assets/js/sb-admin-2.min.js"></script>
+
+  <!-- Page level plugins -->
+  <script src="../../assets/vendor/datatables/jquery.dataTables.min.js"></script>
+  <script src="../../assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+  <!-- Page level custom scripts -->
+  <script src="../../assets/js/demo/datatables-demo.js"></script>
+<script src="../../assets/js/customer/myFileHandling.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+
+</body>
+<script>
+  $('#mytextarea').summernote();
+
+  var max_fields = 6;
+  var wrapper = document.getElementById("filesArea");
+  var add_button = document.getElementById("add_form_field");
+
+  var x = 1;
+  $(add_button).click(function(e) {
+
+    e.preventDefault();
+    if (x < max_fields) {
+      x++;
+      $(wrapper).append('<div class="col-sm-6"> <input type="file"name="file'+x+'" class="form-control " id="file" placeholder="Project Name" required> </div> <div class="col-sm-6"> <button type="button" id="add_form_field" class="btn btn-primary  btn-block">Delete </button> <hr></div> '); //add input box
+    } else {
+      alert('You Reached the limits')
+    }
+  });
+
+  $(wrapper).on("click", ".delete", function(e) {
+    e.preventDefault();
+    $(this).parent('div').remove();
+    x--;
+  });
+</script>
+<script>
+  $(document).ready(function() {
+    $('#mytextarea').summernote();
+  });
+</script>
+<script>
+  function deleteProjectBTN(id,name) {
+    $("#deleteBtn").attr('href','/admin_user/project/delete_project/'+id);
+    $("#value").text(name);
+  }
+</script>
+</html>

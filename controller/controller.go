@@ -20,13 +20,21 @@ import (
 	"ostmfe/controller/project"
 	"ostmfe/controller/user"
 	"ostmfe/controller/visit"
+	"ostmfe/domain/contribution"
 	event2 "ostmfe/domain/event"
+	history2 "ostmfe/domain/history"
 	image3 "ostmfe/domain/image"
+	place2 "ostmfe/domain/place"
 	project2 "ostmfe/domain/project"
+	"ostmfe/domain/slider"
+	"ostmfe/io/contribution_io"
 	"ostmfe/io/event_io"
+	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
 	"ostmfe/io/pageData_io"
+	"ostmfe/io/place_io"
 	"ostmfe/io/project_io"
+	"ostmfe/io/slider_io"
 )
 
 func Controllers(env *config.Env) http.Handler {
@@ -64,32 +72,64 @@ type SimpleEventData struct {
 	Images       []image3.Images
 	//Location string
 }
-type PageData struct {
-	Projects      []misc.ProjectContentsHome
-	EventDataList []misc.SimpleEventData
-	//EventDataListLeft   []misc.SimpleEventData
-	AllProjects     []project2.Project
-	PagePageSection HomePageData
-	CheckOdds       func(index int) bool
-}
 
 func homeHanler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		projects := misc.GetProjectContentsHomes()
-
 		//var eventDataListLeft []EventData
 		//var eventDataListRight []EventData
-
 		allProjects, err := project_io.ReadProjects()
 		if err != nil {
 			fmt.Println(err, " error reading all the project")
 		}
-		eventdataLeft := misc.GetSimpleEventData(6)
+		eventDataLeft := misc.GetSimpleEventData(2)
 
-		date := PageData{projects,
-			eventdataLeft,
+		histories, err := history_io.ReadHistorys()
+		if err != nil {
+			fmt.Println(err, " error reading all the histories")
+		}
+		var sliderHelperList []slider.SliderHelper
+
+		sliders, err := slider_io.ReadSliders()
+		if err != nil {
+			fmt.Println(err, " error reading all the sliders")
+		} else {
+			for _, sliderContent := range sliders {
+				tempSliderObject := slider.SliderHelper{sliderContent.Id, sliderContent.SliderName, sliderContent.Description, misc.ConvertingToString(sliderContent.SliderMessage), misc.ConvertingToString(sliderContent.SliderImage)}
+				sliderHelperList = append(sliderHelperList, tempSliderObject)
+			}
+		}
+
+		filetypes, err := contribution_io.ReadContributionFileTypes()
+		if err != nil {
+			fmt.Println(err, " error reading all the filetypes")
+		}
+
+		//groupData := about_us.GetGroupData()
+		//fmt.Println(groupData,"<< group Data ")
+		Places, err := place_io.ReadPlaces()
+
+		type PageData struct {
+			Sliders       []slider.SliderHelper
+			Projects      []misc.ProjectContentsHome
+			Histories     []history2.History
+			EventDataList []misc.SimpleEventData
+			//EventDataListLeft   []misc.SimpleEventData
+			AllProjects     []project2.Project
+			PagePageSection HomePageData
+			FileTypes       []contribution.ContributionFileType
+			Places          []place2.Place
+			CheckOdds       func(index int) bool
+		}
+
+		date := PageData{sliderHelperList,
+			projects,
+			histories,
+			eventDataLeft,
 			allProjects,
 			GetPageData("HomePage"),
+			filetypes,
+			Places,
 			func(index int) bool {
 				if index%2 == 0 {
 					return true
@@ -129,6 +169,7 @@ type HomePageData struct {
 	ProjectIntro    string
 	EventIntro      string
 	ExhibitionIntro string
+	ShareYourStory  string
 }
 
 func GetPageData(pageName string) HomePageData {
@@ -136,6 +177,7 @@ func GetPageData(pageName string) HomePageData {
 	var projectintro string
 	var eventintro string
 	var exibitionintro string
+	var shareYourStory string
 
 	page, err := pageData_io.ReadPageDataWIthName(pageName)
 	if err != nil {
@@ -151,25 +193,29 @@ func GetPageData(pageName string) HomePageData {
 				fmt.Println(err, " error reading page")
 			} else {
 				if pageSection.SectionName == "Notification" {
-					fmt.Println(" Notification", pageSection)
+					//fmt.Println(" Notification", pageSection)
 					notification = misc.ConvertingToString(pageDateSection.Content)
 				}
 				if pageSection.SectionName == "ProjectIntro" {
-					fmt.Println(" ProjectIntro", pageSection)
+					//fmt.Println(" ProjectIntro", pageSection)
 					projectintro = misc.ConvertingToString(pageDateSection.Content)
 				}
 				if pageSection.SectionName == "EventIntro" {
-					fmt.Println(" EventIntro", pageSection)
+					//fmt.Println(" EventIntro", pageSection)
 					eventintro = misc.ConvertingToString(pageDateSection.Content)
 				}
 				if pageSection.SectionName == "ExhibitionIntro" {
-					fmt.Println(" exhibition", pageSection)
+					//fmt.Println(" exhibition", pageSection)
 					exibitionintro = misc.ConvertingToString(pageDateSection.Content)
+				}
+				if pageSection.SectionName == "shareYourStory" {
+					//fmt.Println(" exhibition", pageSection)
+					shareYourStory = misc.ConvertingToString(pageDateSection.Content)
 				}
 			}
 		}
 	}
-	return HomePageData{notification, projectintro, eventintro, exibitionintro}
+	return HomePageData{notification, projectintro, eventintro, exibitionintro, shareYourStory}
 }
 
 func GetEvents() []SimpleEventData {

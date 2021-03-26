@@ -6,7 +6,9 @@ import (
 	"net/http"
 	"ostmfe/config"
 	"ostmfe/controller/admin/adminHelper"
+	"ostmfe/controller/admin/booking"
 	collection2 "ostmfe/controller/admin/collection"
+	"ostmfe/controller/admin/contribution"
 	"ostmfe/controller/admin/event"
 	"ostmfe/controller/admin/group"
 	"ostmfe/controller/admin/histories"
@@ -15,6 +17,7 @@ import (
 	"ostmfe/controller/admin/peoples"
 	"ostmfe/controller/admin/places"
 	project3 "ostmfe/controller/admin/project"
+	"ostmfe/controller/admin/slider"
 	"ostmfe/controller/admin/users"
 	"ostmfe/controller/admin/year"
 	"ostmfe/controller/misc"
@@ -53,6 +56,10 @@ func Home(app *config.Env) http.Handler {
 	mux.Mount("/page", page.PageHome(app))
 
 	mux.Mount("/years", year.YearHome(app))
+
+	mux.Mount("/contribution", contribution.Home(app))
+	mux.Mount("/slider", slider.Home(app))
+	mux.Mount("/booking", booking.Home(app))
 
 	return mux
 }

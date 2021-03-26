@@ -9,18 +9,36 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>SB Admin 2 - Tables</title>
+  <title>OSTM - Places</title>
 
   <!-- Custom fonts for this template -->
-  <link href="../../assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="../../../assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
   <!-- Custom styles for this template -->
-  <link href="../../assets/css/sb-admin-2.min.css" rel="stylesheet">
+  <link href="../../../assets/css/sb-admin-2.min.css" rel="stylesheet">
 
   <!-- Custom styles for this page -->
-  <link href="../../assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+  <link href="../../../assets/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.js"></script>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.css" rel="stylesheet" />
+
+  <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+
+
+  <style>
+    canvas{
+      width: 600px;!important;
+      height: 400px;!important;
+    }
+
+    canvas-mapboxgl-canvas{
+      width: 1px;!important;
+      height: 1px;!important;
+    }
+
+  </style>
 </head>
 
 <body id="page-top">
@@ -57,61 +75,24 @@
             </div>
           {{end}}
 
-          <div class="card shadow mb-4">
-            <!-- Card Header - Accordion -->
-            <a href="#collapseCardExample" class="d-block card-header py-3 btn-success" data-toggle="collapse"
-               role="button" aria-expanded="true" aria-controls="collapseCardExample">
-              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Create a new Place</h6>
-            </a>
-            <!-- Card Content - Collapse -->
-            <div class="collapse " id="collapseCardExample">
-              <div class="card-body p-0">
-                <!-- Nested Row within Card Body -->
-                <div class="row">
-                  <div class="col-lg-7 d-none d-lg-block">
-                    <div class="map-wrap" style="width:100%; height: 100%;" id="map"></div>
-                  </div>
-                  <div class="col-lg-5">
-                    <div class="p-5">
-                      <div class="text-center">
-                        <h1 class="h4 text-gray-900 mb-4">New Place </h1>
-                      </div>
-                      <form class="user" method="post" action="/admin_user/place/create_stp1">
-                        <div class="form-group">
-                          <label>Place Title</label>
-                          <input type="text" class="form-control" name="title" id="exampleInputEmail" placeholder="Place name ex: la peirre tailler!" required>
-                        </div>
-                        <div class="form-group">
-                          <label>Place coordinates <small>Please click on the map</small> </label>
-                          <input type="text" class="form-control" name="latlng" id="latlng" required>
-                        </div>
-                        <div class="form-group ">
-                          <label>Description <small> Only 150 characters </small></label>
-                          <textarea class="form-control" name="description" maxlength="200"></textarea>
-                        </div>
 
-                        <button type="submit" class="btn btn-primary  btn-block">
-                          Next
-                        </button>
-                        <hr>
-                        <button href="/admin_user" class="btn btn-google  btn-block">
-                          <i class="fab fa-fw"></i> Cancel
-                        </button>
-                      </form>
-                      <hr>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </div>
 
 
           <!-- DataTales Example -->
           <div class="card shadow mb-4">
             <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">Place Table</h6>
+
+              <div class="row" >
+                <div class="col-lg-6">
+                  <h6 class="m-0 font-weight-bold text-primary">Places</h6>
+                </div>
+                <div class="col-lg-6">
+                  <a class="float-right" href="#" data-toggle="modal" data-target="#placeModal">
+                    <i class="fas fa-plus fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Add
+                  </a>
+                </div>
+              </div>
             </div>
             <div class="card-body">
               <div class="table-responsive">
@@ -127,17 +108,6 @@
                       <th>Action</th>
                     </tr>
                   </thead>
-                  <tfoot>
-                    <tr>
-                      <th>No</th>
-                      <th>Title</th>
-                      <th>Latitude</th>
-                      <th>Longitude</th>
-                      <th>description</th>
-                      <th>Action</th>
-                      <th>Action</th>
-                    </tr>
-                  </tfoot>
                   <tbody>
                   {{with .Places}}
                   {{range $i, $e := .}}
@@ -235,37 +205,137 @@
     </div>
   </div>
 
+  <!--  create new Place-->
+  <div class="modal fade" id="placeModal" tabindex="-1" role="dialog" aria-labelledby="campusModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content modal-xl">
+        <div class="modal-header">
+          <h5 class="modal-title" id="campusModalLabel">Add new Place</h5>
+          <button class="close" onclick="resetFrom('placeForm')" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+
+
+
+        <form class="user" method="post" id="placeForm" action="/admin_user/place/create_stp1" enctype="multipart/form-data">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="map-wrap" style=" height: 300px; width: 650px; margin: 15px;" id="mapxx"></div>
+            </div>
+            <div class="col-md-6">
+
+              <div class="form-group ">
+                <label>Place Title</label>
+                <input type="text" class="form-control" name="title" id="exampleInputEmail" placeholder="Place name ex: la peirre tailler!" required>
+              </div>
+
+              <div class="form-group ">
+                <label>Place coordinates <small>Please click on the map</small> </label>
+                <input type="text" class="form-control badge-warning" name="latlng" id="latlng" required>
+              </div>
+
+              <div class="form-group ">
+                <label>Description <small> Only 150 characters </small></label>
+                <textarea class="form-control" id="desc" name="description" maxlength="200"></textarea>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <div class="col-sm-6">
+              <label>PageFlow Title</label>
+              <input type="text" name="pageFlowTitle" class="form-control" placeholder="Descendant of slavery">
+            </div>
+
+            <div class="col-sm-6">
+              <label>PageFlow src link <small> Optional field </small></label>
+              <input type="text" name="scr" class="form-control" placeholder="Ex:https://museumeducation.pageflow.io/descendants-of-slavery/embed">
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <div class="col-sm-6">
+            <label>Project profile Picture</label>
+            <input type="file"name="file" class="form-control " id="file" placeholder="Project Name" required>
+            </div>
+
+              <div class="col-sm-6">
+                <label>Title</label><span class="required">*</span>
+                <select name="studentTitle" class="browser-default custom-select" required>
+                  <option selected>Choose Place Category</option>
+
+                  <option value=""></option>
+
+                </select>
+              </div>
+            </div>
+
+          <div class="form-group">
+            <label>Place History</label>
+            <textarea style="height: 200px" name="history" class="form-control" id="mytextare" placeholder="History...."></textarea>
+          </div>
+
+
+          <button type="submit" class="btn btn-primary  btn-block">
+            Next
+          </button>
+
+        </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
 
   <!-- Bootstrap core JavaScript-->
   <script src="../../assets/vendor/jquery/jquery.min.js"></script>
-  <script src="../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="../../../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
   <!-- Core plugin JavaScript-->
-  <script src="../../assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+  <script src="../../../assets/vendor/jquery-easing/jquery.easing.min.js"></script>
 
   <!-- Custom scripts for all pages-->
-  <script src="../../assets/js/sb-admin-2.min.js"></script>
+  <script src="../../../assets/js/sb-admin-2.min.js"></script>
 
   <!-- Page level plugins -->
-  <script src="../../assets/vendor/datatables/jquery.dataTables.min.js"></script>
-  <script src="../../assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+  <script src="../../../assets/vendor/datatables/jquery.dataTables.min.js"></script>
+  <script src="../../../assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
   <!-- Page level custom scripts -->
-  <script src="../../assets/js/demo/datatables-demo.js"></script>
+  <script src="../../../assets/js/demo/datatables-demo.js"></script>
   <!-- Custom map-->
-  <script src="../../assets/js/customer/mymap.js"></script>
-  <!-- Custom scripts for all pages-->
-  <script async defer
-          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA&callback=initMap">
-  </script>
 
+
+
+  <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 
 
 </body>
 <script>
+
+  $(document).ready(function() {
+    $('#mytextare').summernote();
+  });
   function deletePlaceBTN(id,name) {
     $("#deleteBtn").attr('href','/admin_user/place/delete/'+id);
     $("#value").text(name);
   }
+
+
+  mapboxgl.accessToken = 'pk.eyJ1IjoiZXNwb2lyLWRpdGUiLCJhIjoiY2tmaTZsdDBiMGpubzJzcDh2aXdodXlnayJ9.e6tqu6hLu5xlaSk84ERd9g';
+  var map = new mapboxgl.Map({
+    container: 'mapxx',
+    style: 'mapbox://styles/mapbox/streets-v11',
+    center: [18.431896174363573,-34.19493744157412],
+    zoom: 10
+  });
+
+  map.on('click', function (e) {
+    document.getElementById('latlng').value = e.lngLat.lng.toString()+','+e.lngLat.lat.toString();
+  });
 </script>
 </html>

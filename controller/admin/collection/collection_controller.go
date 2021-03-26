@@ -33,11 +33,11 @@ func CollectionHome(app *config.Env) http.Handler {
 	r.Get("/delete_picture/{imageId}/{collectionId}", DeletePictureHandler(app))
 	r.Post("/collectionType/update", UpdateColelctionTypeHandler(app))
 	r.Get("/delete/collectionType/{collectionId}", DeleteColelctionTypeHandler(app))
-	r.Get("/delete/collection/{collectionId}", DeleteColelctionHandler(app))
+	r.Get("/delete/collection/{collectionId}", DeleteCollectionHandler(app))
 	return r
 }
 
-func DeleteColelctionHandler(app *config.Env) http.HandlerFunc {
+func DeleteCollectionHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		collectionId := chi.URLParam(r, "collectionId")
 		fmt.Println(collectionId, " <<<collectionId")
@@ -59,7 +59,6 @@ func DeleteColelctionHandler(app *config.Env) http.HandlerFunc {
 			if err != nil {
 				fmt.Println(err, " error delete collection type")
 			}
-
 		}
 		_, err = collection_io.DeleteCollection(collection.Id)
 		if err != nil {

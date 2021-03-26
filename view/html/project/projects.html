@@ -15,8 +15,13 @@
 		<meta charset="UTF-8">
 		<!-- Site Title -->
 		<title>Simon's Town Museum</title>
+		<style>
+			.banner .overlay-bg {
+				background-color: rgba(0, 0, 0, 0.7);
+			}
+		</style>
 
-		<link href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700" rel="stylesheet"> 
+		<link href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700" rel="stylesheet">
 			<!--
 			CSS
 			============================================= -->
@@ -34,69 +39,54 @@
 		{{template "navigator" .}}
 
 			<!-- start banner Area -->
-			<section class="banner-area relative" id="home">	
+		<section {{if .ProjectBanner}} style="background: url('data:image/jpeg;base64,{{.ProjectBanner}}') center; width: 100%;background-size: cover;background-color: rgba(0, 0, 0, 0.7);" class="relative banner" {{else}}class="banner-area relative" {{end}}  id="home" >
 				<div class="overlay overlay-bg"></div>
 				<div class="container">
 					<div class="row d-flex align-items-center justify-content-center">
 						<div class="about-content col-lg-12">
 							<h1 class="text-white">
 								Projects
-							</h1>	
+							</h1>
 							<p class="text-white link-nav"><a href="/">Home </a>  <span class="lnr lnr-arrow-right"></span>  <a href="#"> projects</a></p>
-						</div>											
+						</div>
 					</div>
 				</div>
 			</section>
-			<!-- End banner Area -->	
-			
+			<!-- End banner Area -->
+
 			<!-- Start blog-posts Area -->
-			<section class="blog-posts-area section-gap">
-				<div class="container">
-					<div class="row">
-						<div class="col-lg-8 post-list blog-post-list">
+		<section class="service-area pt-100" id="about">
+			<div class="container">
+				<div class="row">
+						<div class="col-lg-8">
+							<div class="row">
 							{{with .Projects}}
 							{{range .}}
-							<div class="single-post">
-								<img class="img-fluid" id='base64image' width="400px" src='data:image/jpeg;base64,{{.Picture}}' alt="">
-
-								<a href="#">
-									<h1>
-										<a href="/project/read_single/{{.ProjectId}}"><h4>{{.Title}}</h4></a>
-									</h1>
-								</a>
-									<p>
-										{{.Description}}
-									</p>
-								<div class="bottom-meta">
-									<div class="user-details row align-items-center">
-										<div class="comment-wrap col-lg-6">
-											<ul>
-												<li><a href="#"><span class="lnr lnr-heart"></span>	4 likes</a></li>
-												<li><a href="#"><span class="lnr lnr-bubble"></span> 06 Comments</a></li>
-											</ul>
-										</div>
-										<div class="social-wrap col-lg-6">
-											<ul>
-												<li><a href="#"><i class="fa fa-facebook"></i></a></li>
-												<li><a href="#"><i class="fa fa-twitter"></i></a></li>
-												<li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-												<li><a href="#"><i class="fa fa-behance"></i></a></li>
-											</ul>
-											
+							<div class="col-lg-4">
+								<div class="single-service">
+									<img class="img-fluid" id='base64image' width="400px" src='data:image/jpeg;base64,{{.Picture}}' alt="">
+									<h4><a href="/project/read_single/{{.ProjectId}}"><h4>{{.Title}}</h4></a></h4>
+									<div class="overlay">
+										<div class="text">
+											<p>
+												{{.Description}}
+											</p>
+											<a href="/project/read_single/{{.ProjectId}}"  class="text-uppercase primary-btn"
+											>Read more</a>
 										</div>
 									</div>
 								</div>
 							</div>
 							{{end}}
 							{{end}}
-
+							</div>
 						</div>
 						<div class="col-lg-4 sidebar">
 							<div class="single-widget search-widget">
 								<form class="example" action="#" style="margin:auto;max-width:300px">
 								  <input type="text" placeholder="Search Posts" name="search2">
 								  <button type="submit"><i class="fa fa-search"></i></button>
-								</form>								
+								</form>
 							</div>
 
 							<!--
@@ -113,7 +103,7 @@
 									<li><a href="#"><i class="fa fa-twitter"></i></a></li>
 									<li><a href="#"><i class="fa fa-dribbble"></i></a></li>
 									<li><a href="#"><i class="fa fa-behance"></i></a></li>
-								</ul>								
+								</ul>
 							</div>
 							-->
 
@@ -148,7 +138,7 @@
 												02 hours ago
 											</p>
 										</div>
-									</div>	
+									</div>
 									<div class="single-recent-post d-flex flex-row">
 										<div class="recent-thumb">
 											<img class="img-fluid" src="../../assets/img/blog/r2.jpg" alt="">
@@ -164,7 +154,7 @@
 												02 hours ago
 											</p>
 										</div>
-									</div>	
+									</div>
 									<div class="single-recent-post d-flex flex-row">
 										<div class="recent-thumb">
 											<img class="img-fluid" src="../../assets/img/blog/r3.jpg" alt="">
@@ -180,7 +170,7 @@
 												02 hours ago
 											</p>
 										</div>
-									</div>	
+									</div>
 									<div class="single-recent-post d-flex flex-row">
 										<div class="recent-thumb">
 											<img class="img-fluid" src="../../assets/img/blog/r4.jpg" alt="">
@@ -196,8 +186,8 @@
 												02 hours ago
 											</p>
 										</div>
-									</div>																																					
-								</div>								
+									</div>
+								</div>
 							</div>
 
 							<div class="single-widget category-widget">
@@ -211,7 +201,7 @@
 									<li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Jul '17</h6> <span>09</span></a></li>
 									<li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Jun '17</h6> <span>44</span></a></li>
 								</ul>
-							</div>			
+							</div>
 
 							<div class="single-widget tags-widget">
 								<h4 class="title">Tag Clouds</h4>
@@ -226,18 +216,18 @@
 								 	<li><a href="#">Food</a></li>
 								 	<li><a href="#">Technology</a></li>
 								 </ul>
-							</div>				
+							</div>
 
 						</div>
 					</div>
-				</div>	
+				</div>
 			</section>
 			<!-- End blog-posts Area -->
-			
+
 
 			<!-- start footer Area -->
 		{{template "footer" .}}
-			<!-- End footer Area -->		
+			<!-- End footer Area -->
 
 			<script src="../../assets/js/vendor/jquery-2.2.4.min.js"></script>
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>

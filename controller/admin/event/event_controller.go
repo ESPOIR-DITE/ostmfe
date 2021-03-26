@@ -1,25 +1,30 @@
 package event
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
 	"github.com/go-chi/chi"
 	"html/template"
-	"io"
+	"io/ioutil"
 	"net/http"
 	"ostmfe/config"
 	"ostmfe/controller/admin/adminHelper"
 	event3 "ostmfe/controller/event"
 	"ostmfe/controller/misc"
 	museum "ostmfe/domain"
+	"ostmfe/domain/comment"
+	"ostmfe/domain/contribution"
 	event2 "ostmfe/domain/event"
 	"ostmfe/domain/group"
 	history2 "ostmfe/domain/history"
+	"ostmfe/domain/image"
 	partner2 "ostmfe/domain/partner"
 	"ostmfe/domain/people"
 	place2 "ostmfe/domain/place"
 	project2 "ostmfe/domain/project"
 	io2 "ostmfe/io"
+	"ostmfe/io/comment_io"
 	"ostmfe/io/event_io"
 	"ostmfe/io/group_io"
 	"ostmfe/io/history_io"
@@ -28,6 +33,7 @@ import (
 	"ostmfe/io/people_io"
 	"ostmfe/io/place_io"
 	"ostmfe/io/project_io"
+	"ostmfe/utile"
 )
 
 func EventHome(app *config.Env) http.Handler {
@@ -50,11 +56,206 @@ func EventHome(app *config.Env) http.Handler {
 	r.Post("/add_people", AddPeopleHandler(app))
 	r.Post("/add_group", AddGroupHandler(app))
 	r.Post("/update_event_place", UpdateEventPlaceHandler(app))
+	r.Post("/create-page-flow", CreatePageFlowHandler(app))
 
+	r.Get("/delete-page-fLow/{pageFlowId}/{eventId}", DeletePageFlowHandler(app))
 	r.Get("/delete/{eventId}", DeleteEventHandler(app))
 	r.Get("/delete_people/{peopleId}/{eventId}", DeletepeopleEventHandler(app))
 	r.Get("/delete_group/{groupId}/{eventId}", DeleteGroupEventHandler(app))
+	r.Get("/delete_comment/{commentId}/{eventCommentId}", DeleteCommentEventHandler(app))
+	r.Get("/activate_comment/{commentId}/{eventId}", ActivateCommentHandler(app))
+
+	//Gallery
+	r.Post("/create-gallery", CreateEventGalleryHandler(app))
+	r.Get("/delete-gallery/{pictureId}/{eventId}/{eventGalleryId}", DeleteGalleryHandler(app))
+
 	return r
+}
+
+func DeletePageFlowHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+			return
+		}
+		pageFlowId := chi.URLParam(r, "pageFlowId")
+		eventId := chi.URLParam(r, "eventId")
+
+		_, err := event_io.DeleteEventPageFlow(pageFlowId)
+		if err != nil {
+			fmt.Println(err, " error deleting page flow!")
+		}
+		http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
+	}
+}
+
+func CreatePageFlowHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		eventId := r.PostFormValue("eventId")
+		pageFlowTitle := r.PostFormValue("pageFlowTitle")
+		scr := r.PostFormValue("scr")
+		fmt.Println(scr, "  src", pageFlowTitle, "  page flow", eventId, " eventId")
+		if scr != "" && eventId != "" && pageFlowTitle != "" {
+			_, err := event_io.CreateEventPageFlow(contribution.EventPageFlow{"", eventId, pageFlowTitle, scr})
+			if err != nil {
+				fmt.Println(err, " error creating page flow!")
+			}
+		}
+		fmt.Print("")
+		http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
+		return
+	}
+}
+
+func ActivateCommentHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		commentId := chi.URLParam(r, "commentId")
+		eventId := chi.URLParam(r, "eventId")
+		result := misc.ActivateComment(commentId)
+		fmt.Print("Activation Result: ", result)
+		http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
+		return
+	}
+}
+
+func DeleteGalleryHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		pictureId := chi.URLParam(r, "pictureId")
+		eventId := chi.URLParam(r, "eventId")
+		eventGalleryId := chi.URLParam(r, "eventGalleryId")
+
+		//Deleting project
+		gallery, err := image_io.DeleteGalery(pictureId)
+		if err != nil {
+			fmt.Println("error deleting gallery")
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+			http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
+			return
+		} else {
+			_, err := event_io.DeleteEventGalery(eventGalleryId)
+			if err != nil {
+				fmt.Println("error deleting group gallery")
+				fmt.Println("ROLLING BACK!!!")
+				_, err := image_io.UpdateGallery(gallery)
+				if err != nil {
+					fmt.Println("error updating gallery")
+				}
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/eventId/edit/"+eventId, 301)
+				return
+			}
+		}
+		fmt.Println(" successful deletion.")
+		app.Session.Put(r.Context(), "creation-successful", "You have successfully deleted: group Gallery. ")
+		http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
+		return
+	}
+}
+
+func CreateEventGalleryHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var content []byte
+		r.ParseForm()
+		file, _, err := r.FormFile("file")
+		eventId := r.PostFormValue("eventId")
+		description := r.PostFormValue("description")
+		if err != nil {
+			fmt.Println(err, "<<<<<< error reading contribution file>>>>This error should happen>>>")
+		} else {
+			reader := bufio.NewReader(file)
+			content, _ = ioutil.ReadAll(reader)
+		}
+		if eventId != "" && description != "" {
+			galery := image.Galery{"", content, description}
+			galleryObject, err := image_io.CreateGalery(galery)
+			if err != nil {
+				fmt.Println(err, " error creating gallery")
+			} else {
+				eventGalery := event2.EventGalery{"", eventId, galleryObject.Id}
+				_, err := event_io.CreateEventGalery(eventGalery)
+				if err != nil {
+					fmt.Println(err, " error creating EventGallery")
+					if app.Session.GetString(r.Context(), "user-create-error") != "" {
+						app.Session.Remove(r.Context(), "user-create-error")
+					}
+					app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+					http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
+					return
+				}
+				if app.Session.GetString(r.Context(), "creation-successful") != "" {
+					app.Session.Remove(r.Context(), "creation-successful")
+				}
+				app.Session.Put(r.Context(), "creation-successful", "You have successfully deleted an event Group")
+				http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
+				return
+			}
+		}
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			app.Session.Remove(r.Context(), "user-create-error")
+		}
+		app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+		http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
+		return
+	}
+}
+
+func DeleteCommentEventHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
+		commentId := chi.URLParam(r, "commentId")
+		eventCommentId := chi.URLParam(r, "eventCommentId")
+
+		if eventCommentId != "" && commentId != "" {
+			eventComment, err := comment_io.ReadCommentEvent(eventCommentId)
+			if err != nil {
+				fmt.Println(err, " error deleting event")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/event", 301)
+				return
+			}
+			_, err2 := comment_io.DeleteComment(eventComment.CommentId)
+			if err2 != nil {
+				fmt.Println(err, " error deleting comment")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/event", 301)
+				return
+			}
+			_, err1 := comment_io.DeleteCommentEvent(eventComment.Id)
+			if err1 != nil {
+				fmt.Println(err, " error deleting event comment")
+			}
+
+			if app.Session.GetString(r.Context(), "creation-successful") != "" {
+				app.Session.Remove(r.Context(), "creation-successful")
+			}
+			app.Session.Put(r.Context(), "creation-successful", "You have successfully deleted an event Group")
+			http.Redirect(w, r, "/admin_user/event/edit/"+eventComment.EventId, 301)
+			return
+		}
+		fmt.Println(" error field missing")
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			app.Session.Remove(r.Context(), "user-create-error")
+		}
+		app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+		http.Redirect(w, r, "/admin_user/event", 301)
+		return
+
+	}
 }
 
 func DeleteGroupEventHandler(app *config.Env) http.HandlerFunc {
@@ -471,26 +672,28 @@ func CreateEventPictureEventHandler(app *config.Env) http.HandlerFunc {
 		if !adminHelper.CheckAdminInSession(app, r) {
 			http.Redirect(w, r, "/administration/", 301)
 		}
+		var content []byte
 		r.ParseForm()
 		file, _, err := r.FormFile("file")
-		file2, _, err := r.FormFile("file2")
-		file3, _, err := r.FormFile("file3")
-		file4, _, err := r.FormFile("file4")
-		file5, _, err := r.FormFile("file5")
-		file6, _, err := r.FormFile("file6")
 		eventId := r.PostFormValue("eventId")
+		imageType := r.PostFormValue("imageType")
 		if err != nil {
-			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
+			fmt.Println(err, "<<<error reading file>>>>This error may happen if there is no picture selected>>>")
+		} else {
+			reader := bufio.NewReader(file)
+			content, _ = ioutil.ReadAll(reader)
 		}
-		filesArray := []io.Reader{file, file2, file3, file4, file5, file6}
-		filesByteArray := misc.CheckFiles(filesArray)
 
 		if eventId != "" {
+			//creating EVentImage
+			imageObject, err := misc.CreateImageHelper(content, "")
+			if err != nil {
+				fmt.Println(err, " error creating a new image")
+			}
 
-			eventImageObject := event2.EventImage{"", "", eventId, ""}
-			eventImageHelper := event2.EventImageHelper{eventImageObject, filesByteArray}
+			eventImageObject := event2.EventImage{"", imageObject.Id, eventId, imageType, ""}
 
-			_, errx := event_io.CreateEventImg(eventImageHelper)
+			_, errx := event_io.CreateEventImg(eventImageObject)
 			if errx != nil {
 				fmt.Println(errx, " error creating Event Image")
 				if app.Session.GetString(r.Context(), "user-create-error") != "" {
@@ -523,22 +726,28 @@ func UpdatePicturesHandler(app *config.Env) http.HandlerFunc {
 			http.Redirect(w, r, "/administration/", 301)
 		}
 		r.ParseForm()
+		var content []byte
 		file, _, err := r.FormFile("file")
 		imageId := r.PostFormValue("imageId")
 		eventId := r.PostFormValue("eventId")
-		eventImageId := r.PostFormValue("eventImageId")
-		imageType := r.PostFormValue("imageType")
+		//eventImageId := r.PostFormValue("eventImageId")
+		//imageType := r.PostFormValue("imageType")
 		if err != nil {
-			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
+			fmt.Println(err, "<<<error reading file>>>>This error may happen if there is no picture selected>>>")
+		} else {
+			reader := bufio.NewReader(file)
+			content, _ = ioutil.ReadAll(reader)
 		}
-		filesArray := []io.Reader{file}
-		filesByteArray := misc.CheckFiles(filesArray)
-
+		//imageObject, err := misc.CreateImageHelper(content, "")
+		//if err != nil {
+		//	fmt.Println(err, " error creating a new image")
+		//}
 		//Checking fields contents
-		if eventId != "" && imageId != "" && imageType != "" && eventImageId != "" {
-			eventImage := event2.EventImage{eventImageId, imageId, eventId, imageType}
-			eventImageHelper := event2.EventImageHelper{eventImage, filesByteArray}
-			_, err := event_io.UpdateEventImg(eventImageHelper)
+		if eventId != "" && imageId != "" {
+			newImageObject := image.Images{imageId, content, ""}
+			_, err := image_io.UpdateImage(newImageObject)
+			//eventImage := event2.EventImage{eventImageId, imageId, eventId, imageType, ""}
+			//_, err := event_io.UpdateEventImg(eventImage)
 			if err != nil {
 				fmt.Println(err, " error updating eventImage Helper")
 				if app.Session.GetString(r.Context(), "user-create-error") != "" {
@@ -570,25 +779,25 @@ func AddPictureHandler(app *config.Env) http.HandlerFunc {
 		if !adminHelper.CheckAdminInSession(app, r) {
 			http.Redirect(w, r, "/administration/", 301)
 		}
+		var content []byte
 		r.ParseForm()
 		file, _, err := r.FormFile("file")
-		file2, _, err := r.FormFile("file2")
-		file3, _, err := r.FormFile("file3")
-		file4, _, err := r.FormFile("file4")
-		file5, _, err := r.FormFile("file5")
-		file6, _, err := r.FormFile("file6")
 		eventId := r.PostFormValue("eventId")
+		imageType := r.PostFormValue("imageType")
 		if err != nil {
-			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
+			fmt.Println(err, "<<<error reading file>>>>This error may happen if there is no picture selected>>>")
+		} else {
+			reader := bufio.NewReader(file)
+			content, _ = ioutil.ReadAll(reader)
 		}
-		filesArray := []io.Reader{file, file2, file3, file4, file5, file6}
-		filesByteArray := misc.CheckFiles(filesArray)
 
-		if eventId != "" {
-			eventImageObject := event2.EventImage{"", "", eventId, ""}
-			eventImageHelper := event2.EventImageHelper{eventImageObject, filesByteArray}
-
-			_, errx := event_io.CreateEventImg(eventImageHelper)
+		imageObject, err := misc.CreateImageHelper(content, "")
+		if err != nil {
+			fmt.Println(err, " error creating a new image")
+		}
+		if eventId != "" && imageObject.Id != "" {
+			eventImageObject := event2.EventImage{"", imageObject.Id, eventId, imageType, ""}
+			_, errx := event_io.CreateEventImg(eventImageObject)
 			if errx != nil {
 				fmt.Println(errx, " error creating PeopleImage")
 				if app.Session.GetString(r.Context(), "user-create-error") != "" {
@@ -640,25 +849,24 @@ func UpdateDetailsHandler(app *config.Env) http.HandlerFunc {
 			return
 		}
 		//updating event Year
-		if yearId!=""{
-			eventYearRead,err := event_io.ReadEventYearWithEventId(eventId)
-			if err!=nil{
-				eventYearNewObject := event2.EventYear{"",eventId,yearId}
-				_,err:= event_io.CreateEventYear(eventYearNewObject)
-				if err!=nil{
+		if yearId != "" {
+			eventYearRead, err := event_io.ReadEventYearWithEventId(eventId)
+			if err != nil {
+				eventYearNewObject := event2.EventYear{"", eventId, yearId}
+				_, err := event_io.CreateEventYear(eventYearNewObject)
+				if err != nil {
 					fmt.Println("could not create a new eventYear")
 				}
-			}else {
-				eventYearNewObject := event2.EventYear{eventYearRead.Id,eventId,yearId}
-				_,err:= event_io.CreateEventYear(eventYearNewObject)
-				if err!=nil{
+			} else {
+				eventYearNewObject := event2.EventYear{eventYearRead.Id, eventId, yearId}
+				_, err := event_io.CreateEventYear(eventYearNewObject)
+				if err != nil {
 					fmt.Println("could not update a new eventYear")
 				}
 			}
 		}
 
-
-		if projectId!=""{
+		if projectId != "" {
 			eventProject, err := event_io.ReadEventProjectWithEventId(eventId)
 			if err != nil {
 				fmt.Println("error reading Event project, this event may not had a project yet. proceeding into creating a project")
@@ -688,7 +896,6 @@ func UpdateDetailsHandler(app *config.Env) http.HandlerFunc {
 			http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
 			return
 		}
-
 
 		fmt.Println(" successfully updated")
 		app.Session.Put(r.Context(), "creation-successful", "You have successfully updating: Event Details. ")
@@ -752,16 +959,12 @@ func UpdateHistoryHandler(app *config.Env) http.HandlerFunc {
 		eventId := r.PostFormValue("eventId")
 		historyId := r.PostFormValue("historyId")
 
-		//checking if the EventtHistory exists
+		//checking if the EventHistory exists
 		_, err := history_io.ReadHistorie(historyId)
-		//fmt.Println(historyContent)
 		if err != nil {
 			fmt.Println(err, " could not read history")
 			fmt.Println(" proceeding into creation of a history.....")
 			history := history2.Histories{"", misc.ConvertToByteArray(historyContent)}
-
-			//fmt.Println("history Object: ", history)
-
 			newHistory, err := history_io.CreateHistorie(history)
 			if err != nil {
 				fmt.Println(err, " something went wrong! could not create history")
@@ -774,7 +977,7 @@ func UpdateHistoryHandler(app *config.Env) http.HandlerFunc {
 			}
 			fmt.Println("HistoryId created successfully ..")
 			fmt.Println(" proceeding into creation of a event_history.....")
-			eventHistory := event2.EventHistory{"", eventId, newHistory.Id}
+			eventHistory := event2.EventHistory{"", newHistory.Id, eventId}
 			_, errr := event_io.CreateEventHistory(eventHistory)
 			if errr != nil {
 				fmt.Println(err, " could not create eventHistory")
@@ -813,7 +1016,8 @@ func UpdateHistoryHandler(app *config.Env) http.HandlerFunc {
 		}
 		fmt.Println(" successfully updated")
 		app.Session.Put(r.Context(), "creation-successful", "You have successfully updating: "+event.Name+"  Event. ")
-		http.Redirect(w, r, "/admin_user/event", 301)
+		//http.Redirect(w, r, "/admin_user/event", 301)
+		http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
 		return
 	}
 }
@@ -827,26 +1031,25 @@ func CreateEventHistoryEventHandler(app *config.Env) http.HandlerFunc {
 
 		var histories history2.Histories
 		var eventHistory event2.EventHistory
+		var content []byte
 
 		file, _, err := r.FormFile("file")
-		file2, _, err := r.FormFile("file2")
-		file3, _, err := r.FormFile("file3")
-		file4, _, err := r.FormFile("file4")
-		file5, _, err := r.FormFile("file5")
-		file6, _, err := r.FormFile("file6")
 		mytextarea := r.PostFormValue("mytextarea")
 		eventId := r.PostFormValue("eventId")
+		imageType := r.PostFormValue("imageType")
 		//eventId := r.PostForm["groupId"]
 		groupIds := r.Form["groupId"]
 		if err != nil {
-			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
+			fmt.Println(err, "<<<error reading file>>>>This error may happen if there is no picture selected>>>")
+		} else {
+			reader := bufio.NewReader(file)
+			content, _ = ioutil.ReadAll(reader)
 		}
-		filesArray := []io.Reader{file, file2, file3, file4, file5, file6}
-		filesByteArray := misc.CheckFiles(filesArray)
 
 		//Creating EventHistory and HistoryId
 		//fmt.Println("eventIed: ", eventId, " test>>>>", mytextarea)
 		if eventId != "" && mytextarea != "" {
+
 			//Creating Histories Object
 			historyObject := history2.Histories{"", misc.ConvertToByteArray(mytextarea)}
 			histories, err = history_io.CreateHistorie(historyObject)
@@ -880,9 +1083,19 @@ func CreateEventHistoryEventHandler(app *config.Env) http.HandlerFunc {
 		}
 
 		//creating EVentImage
-		eventImageObject := event2.EventImage{"", "", eventId, ""}
-		eventImageHelperObject := event2.EventImageHelper{eventImageObject, filesByteArray}
-		_, errx := event_io.CreateEventImg(eventImageHelperObject)
+		imageObject, err := misc.CreateImageHelper(content, "")
+		if err != nil {
+			fmt.Println(err, " error creating a new image")
+		}
+
+		imageTypeObject, err := image_io.ReadImageTypeWithName(utile.PROFILE)
+		if err != nil {
+			fmt.Println(err, " error reading imageTypeWIthName")
+		} else {
+			imageType = imageTypeObject.Name
+		}
+		eventImageObject := event2.EventImage{"", imageObject.Id, eventId, imageType, utile.PROFILE}
+		_, errx := event_io.CreateEventImg(eventImageObject)
 		/**
 		Rolling back
 		*/
@@ -967,13 +1180,14 @@ func EventPicture(app *config.Env) http.HandlerFunc {
 			Projects      []project2.Project
 			Partners      []partner2.Partner
 			Event         event2.Event
-			Groups        []group.Groups
+			Groups        []group.Groupes
 			Backend_error string
 			Unknown_error string
 		}
 		data := PageData{projects, partners, event, groups, backend_error, unknown_error}
 		files := []string{
-			app.Path + "admin/event/new_event_picture.html",
+			//app.Path + "admin/event/new_event_picture.html",
+			app.Path + "admin/event/event_history_picture.html",
 			app.Path + "admin/template/navbar.html",
 			app.Path + "admin/template/topbar.html",
 			app.Path + "base_templates/footer.html",
@@ -994,6 +1208,7 @@ func EditEventsHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if !adminHelper.CheckAdminInSession(app, r) {
 			http.Redirect(w, r, "/administration/", 301)
+			return
 		}
 		eventId := chi.URLParam(r, "eventId")
 		event, err := event_io.ReadEvent(eventId)
@@ -1032,7 +1247,10 @@ func EditEventsHandler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			fmt.Println(err, " error reading all the groups")
 		}
-
+		pageFlows, err := event_io.ReadAllEventPageFlowByEventId(eventId)
+		if err != nil {
+			fmt.Println(err, " error reading all the pageflow")
+		}
 		type PageData struct {
 			Event       event2.Event
 			EventData   misc.EventData
@@ -1043,9 +1261,24 @@ func EditEventsHandler(app *config.Env) http.HandlerFunc {
 			Places      []place2.Place
 			Years       []museum.Years
 			GroupData   []event3.GroupData
-			Groups      []group.Groups
+			Groups      []group.Groupes
+			Comments    []comment.CommentHelper2
+			Gallery     []misc.EventGalleryImages
+			PageFLow    []contribution.EventPageFlow
 		}
-		date := PageData{event, eventData, projects, partners, misc.GetSideBarData("event", ""), peoples, places, years, event3.GetGroupsData(eventId), groups}
+		date := PageData{event,
+			eventData,
+			projects,
+			partners,
+			misc.GetSideBarData("event", ""),
+			peoples,
+			places,
+			years,
+			event3.GetGroupsData(eventId),
+			groups,
+			GetEventCommentsWithEventId(eventId),
+			misc.GetEventGallery(eventId),
+			pageFlows}
 		files := []string{
 			app.Path + "admin/event/edit_event.html",
 			app.Path + "admin/template/navbar.html",
@@ -1118,7 +1351,7 @@ func NewEventsHandler(app *config.Env) http.HandlerFunc {
 func EventsHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		fmt.Println("Session result: ",adminHelper.CheckAdminInSession(app, r))
+		fmt.Println("Session result: ", adminHelper.CheckAdminInSession(app, r))
 		if !adminHelper.CheckAdminInSession(app, r) {
 			http.Redirect(w, r, "/administration/", 301)
 		}
@@ -1237,8 +1470,9 @@ func CreateEventHandler(app *config.Env) http.HandlerFunc {
 		partner := r.PostFormValue("partner")
 		placeId := r.PostFormValue("placeId")
 		yearId := r.PostFormValue("year")
+		src := r.PostFormValue("src")
+		pageFlowTitle := r.PostFormValue("pageFlowTitle")
 		eventStatus := r.PostFormValue("eventStatus")
-		//peopleId := r.PostFormValue("people")
 		peopleIds := r.Form["peopleId"]
 
 		//fmt.Println("peopleId: ",peopleIds)
@@ -1260,6 +1494,14 @@ func CreateEventHandler(app *config.Env) http.HandlerFunc {
 				_, err := event_io.CreateEventPartener(eventPartner)
 				if err != nil {
 					fmt.Println(err, " error when creating event partner")
+				}
+			}
+			//Creation of pageFlow
+			if src != "" && pageFlowTitle != "" {
+				eventPageFlowObject := contribution.EventPageFlow{"", newEvent.Id, pageFlowTitle, src}
+				_, err := event_io.CreateEventPageFlow(eventPageFlowObject)
+				if err != nil {
+					fmt.Println(err, " error when creating eventPageFLow")
 				}
 			}
 			//Creating event year
@@ -1342,8 +1584,8 @@ func UpdateEventHandler(app *config.Env) http.HandlerFunc {
 		}
 
 		//checking if this event has been associated to a year
-		enventYear,errx :=event_io.ReadEventYearWithEventId(id)
-		if errx!=nil{
+		enventYear, errx := event_io.ReadEventYearWithEventId(id)
+		if errx != nil {
 			//Creating event year
 			if year != "" {
 				//fmt.Println("eventStatus: ",eventStatus)
@@ -1354,15 +1596,14 @@ func UpdateEventHandler(app *config.Env) http.HandlerFunc {
 				}
 			}
 
-		}else {// if this event has been already associated to a year now we need to update.
+		} else { // if this event has been already associated to a year now we need to update.
 			eventyearObject := event2.EventYear{"", enventYear.EventId, year}
-			fmt.Println("updating event year :",eventyearObject)
+			fmt.Println("updating event year :", eventyearObject)
 			_, err := event_io.UpdateEventYear(eventyearObject)
 			if err != nil {
 				fmt.Println(err, " error when creating event year")
 			}
 		}
-
 
 		//we checking if there is a need of updating
 		if event.Name != name && event.Id != id && event.Date != date {
