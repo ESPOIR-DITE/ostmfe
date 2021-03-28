@@ -284,7 +284,7 @@
                         <h1 class="h4 text-gray-900 mb-4">New Picture</h1>
                       </div>
                       <form class="user" method="post" action="/admin_user/event/create-page-flow" >
-                        <input type="hidden" name="eventId" value="{{.EventData.Event.Id}}" class="form-control ">
+                        <input type="hidden" name="eventId" value="{{.PlaceData.Place.Id}}" class="form-control ">
 
                         <div class="form-group row">
                           <div class="col-sm-6">
@@ -328,7 +328,7 @@
                           <td>{{$i}}</td>
                           <td><img id='base64image' width="100px" src='data:image/jpeg;base64,{{.Gallery.Image}}' alt=""></td>
                           <td>{{.Gallery.Description}}</td>
-                          <td><a href="/admin_user/group/delete-gallery/{{.Gallery.Id}}/{{.EventGallery.Id}}/{{$.EventData.Event.Id}}"
+                          <td><a href="/admin_user/group/delete-gallery/{{.Gallery.Id}}/{{.PlaceGallery.Id}}/{{$.PlaceData.Place.Id}}"
                                  class="btn btn-google btn-user btn-block">
                             <i class="fab fa-fw"></i> Delete
                           </a>
