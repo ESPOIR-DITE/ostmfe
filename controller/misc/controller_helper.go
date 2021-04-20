@@ -51,6 +51,15 @@ func FormatDateTime(date time.Time) string {
 	return date.Format(YYYYMMDD_FORMAT)
 }
 
+//For sorting event slices
+func ParseDateTime(date string) time.Time {
+	result, err := time.Parse(YYYYMMDD_FORMAT, date)
+	if err != nil {
+		return time.Time{}
+	}
+	return result
+}
+
 /****
 formating date with month name
 */
@@ -382,7 +391,7 @@ func GetPeopleDataList() []PeopleData {
 		}
 
 		//Getting People category
-		peoplecategories, err := people_io.ReadPeopleCategoryWithPplId(people.Id)
+		peoplecategories, err := people_io.ReadPeopleCategoryWithCategoryId(people.Id)
 		if err != nil {
 			fmt.Println(err, "error reading people category for peopleId: ", people.Id)
 		} else {
@@ -456,7 +465,7 @@ func GetPeopleData(peopleId string) PeopleData {
 		}
 
 		//Getting People category
-		peoplecategories, err := people_io.ReadPeopleCategoryWithPplId(people.Id)
+		peoplecategories, err := people_io.ReadPeopleCategoryWithCategoryId(people.Id)
 		if err != nil {
 			fmt.Println(err, "error reading people category for peopleId: ", people.Id)
 		} else {
@@ -687,46 +696,45 @@ func GetSimpleEventData(limit int) []SimpleEventData {
 	var profileImage image3.Images
 	var eventDataList []SimpleEventData
 
-	//Here we are reading all the events
-	events, err := event_io.ReadEvents()
+	//Here we are reading all upcoming the events
+	events, err := UpComingEvents()
 	if err != nil {
-		fmt.Println(err, " error reading events")
-	} else { //First loop
-		for index, eventEntity := range events {
-			eventImages, err := event_io.ReadEventImgOf(eventEntity.Id)
-			if err != nil {
-				fmt.Println(err, " error reading events Images")
-			} else {
-				//fmt.Println(" Looping eventImages")
-				for _, eventImage := range eventImages {
-					//fmt.Println(" eventImage.Description: ", eventImage.Description)
-					if eventImage.Description == "1" || eventImage.Description == "profile" {
-						//fmt.Println(" We have a profile Image")
-						profileImage, err = image_io.ReadImage(eventImage.ImageId)
-						if err != nil {
-							fmt.Println(err, " error reading profile event image")
-						}
+		return eventDataList
+	}
+	for index, eventEntity := range events {
+		eventImages, err := event_io.ReadEventImgOf(eventEntity.Id)
+		if err != nil {
+			fmt.Println(err, " error reading events Images")
+		} else {
+			//fmt.Println(" Looping eventImages")
+			for _, eventImage := range eventImages {
+				//fmt.Println(" eventImage.Description: ", eventImage.Description)
+				if eventImage.Description == "1" || eventImage.Description == "profile" {
+					//fmt.Println(" We have a profile Image")
+					profileImage, err = image_io.ReadImage(eventImage.ImageId)
+					if err != nil {
+						fmt.Println(err, " error reading profile event image")
 					}
 				}
 			}
-			//we need to make sure that profileImage is not empty
-			if profileImage.Id != "" {
-				eventObject := event.Event{eventEntity.Id, eventEntity.Name, FormatDateMonth(eventEntity.Date), eventEntity.IsPast, eventEntity.Description}
-				eventData := SimpleEventData{eventObject, profileImage /** images**/}
-				eventDataList = append(eventDataList, eventData)
-				eventData = SimpleEventData{}
-				profileImage = image3.Images{}
-				eventObject = event.Event{}
-			}
-			//fmt.Println("This error may occur if there is no events created error:  profileImage is empty")
-
-			// we are putting limit here so that the loop should exit if the index reach the limited number
-			if index == limit {
-				break
-			}
 		}
+		//we need to make sure that profileImage is not empty
+		if profileImage.Id != "" {
+			eventObject := event.Event{eventEntity.Id, eventEntity.Name, FormatDateMonth(eventEntity.Date), eventEntity.IsPast, eventEntity.Description}
+			eventData := SimpleEventData{eventObject, profileImage /** images**/}
+			eventDataList = append(eventDataList, eventData)
+			eventData = SimpleEventData{}
+			profileImage = image3.Images{}
+			eventObject = event.Event{}
+		}
+		//fmt.Println("This error may occur if there is no events created error:  profileImage is empty")
 
+		// we are putting limit here so that the loop should exit if the index reach the limited number
+		if index == limit {
+			break
+		}
 	}
+
 	return eventDataList
 }
 

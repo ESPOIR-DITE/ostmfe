@@ -95,7 +95,7 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 			fmt.Println(err, " error reading all the sliders")
 		} else {
 			for _, sliderContent := range sliders {
-				tempSliderObject := slider.SliderHelper{sliderContent.Id, sliderContent.SliderName, sliderContent.Description, misc.ConvertingToString(sliderContent.SliderMessage), misc.ConvertingToString(sliderContent.SliderImage)}
+				tempSliderObject := slider.SliderHelper{sliderContent.Id, sliderContent.SliderName, sliderContent.Description, misc.ConvertingToString(sliderContent.SliderImage)}
 				sliderHelperList = append(sliderHelperList, tempSliderObject)
 			}
 		}

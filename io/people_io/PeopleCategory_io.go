@@ -44,9 +44,21 @@ func ReadPeopleCategory(id string) (people.PeopleCategory, error) {
 	}
 	return entity, nil
 }
-func ReadPeopleCategoryWithPplId(id string) ([]people.PeopleCategory, error) {
+func ReadPeopleCategoriesWithPplId(id string) ([]people.PeopleCategory, error) {
 	entity := []people.PeopleCategory{}
-	resp, _ := api.Rest().Get(peoplecategoryURL + "readWithPplId?id=" + id)
+	resp, _ := api.Rest().Get(peoplecategoryURL + "readsWithPeopleId?id=" + id)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
+func ReadPeopleCategoryWithPplId(id string) (people.PeopleCategory, error) {
+	entity := people.PeopleCategory{}
+	resp, _ := api.Rest().Get(peoplecategoryURL + "readWithCategoryId?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -58,7 +70,7 @@ func ReadPeopleCategoryWithPplId(id string) ([]people.PeopleCategory, error) {
 }
 func ReadPeopleCategoryWithCategoryId(id string) ([]people.PeopleCategory, error) {
 	entity := []people.PeopleCategory{}
-	resp, _ := api.Rest().Get(peoplecategoryURL + "readWithCategoryId?id=" + id)
+	resp, _ := api.Rest().Get(peoplecategoryURL + "findAllBy?categoryId=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}

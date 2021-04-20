@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"ostmfe/config"
+	"ostmfe/controller/admin/adminHelper"
 	"ostmfe/controller/misc"
 	"ostmfe/domain/comment"
 	"ostmfe/domain/contribution"
@@ -38,6 +39,7 @@ func PlaceHome(app *config.Env) http.Handler {
 
 	//r.Post("/create_image", CreatePlaceImage(app))
 	r.Post("/create_history", CreateHistoryHandler(app))
+	r.Post("/create_image", CreateImageHandler(app))
 
 	r.Post("/update_pictures", UpdatePictureHandler(app))
 	r.Post("/update_details", UpdateDetailsHandler(app))
@@ -47,11 +49,88 @@ func PlaceHome(app *config.Env) http.Handler {
 	r.Post("/create-page-flow", CreatePageFlowHandler(app))
 
 	r.Get("/delete-gallery/{pictureId}/{placeId}/{PlaceGalleryId}", DeleteGalleryHandler(app))
+	r.Get("/delete-pageFlow/{placePageFlowId}/{placeId}", DeletePageFlowHandler(app))
 	r.Get("/delete-people/{peoplePlaceId}/{placeId}", DeletePeopleHandler(app))
 
 	r.Get("/activate_comment/{commentId}/{placeId}", ActivateCommentHandler(app))
 
 	return r
+}
+
+func DeletePageFlowHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		placePageFlowId := chi.URLParam(r, "placePageFlowId")
+		placeId := chi.URLParam(r, "placeId")
+
+		//Deleting project
+		_, err := place_io.DeletePlacePageFlow(placePageFlowId)
+		if err != nil {
+			fmt.Println("error deleting Place Page FLow")
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+			http.Redirect(w, r, "/admin_user/place/edit/"+placeId, 301)
+			return
+		}
+		fmt.Println(" successful deletion.")
+		app.Session.Put(r.Context(), "creation-successful", "You have successfully deleted: Project Gallery. ")
+		http.Redirect(w, r, "/admin_user/place/edit/"+placeId, 301)
+		return
+	}
+}
+
+func CreateImageHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		file, _, err := r.FormFile("file")
+		PlaceId := r.PostFormValue("placeId")
+		if err != nil {
+			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
+		}
+		if PlaceId != "" {
+			reader := bufio.NewReader(file)
+			content, _ := ioutil.ReadAll(reader)
+
+			imageObject := image2.Images{"", content, "created on: " + misc.FormatDateTime(time.Now())}
+			imageRetun, errr := image_io.CreateImage(imageObject)
+			if errr != nil {
+				fmt.Println(errr, " error updating placeImage")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/place/edit/"+PlaceId, 301)
+				return
+			}
+			placeTypeObject, err := image_io.ReadImageTypeWithName("Profile")
+			if err != nil {
+				fmt.Println(err, " error reading ImageType by Name")
+			}
+
+			//fmt.Println("image Object :",imageRetun.Id," description :",imageRetun.Description)
+			placeImageObject := place2.PlaceImage{"", PlaceId, imageRetun.Id, placeTypeObject.Id}
+			_, err = place_io.CreatePlaceImage(placeImageObject)
+			if err != nil {
+				fmt.Println(err, " error creating place Image")
+			}
+
+			if app.Session.GetString(r.Context(), "creation-successful") != "" {
+				app.Session.Remove(r.Context(), "creation-successful")
+			}
+			app.Session.Put(r.Context(), "creation-successful", "You have successfully created a Place ")
+			http.Redirect(w, r, "/admin_user/place/edit/"+PlaceId, 301)
+			return
+		}
+		fmt.Println("one field is empty")
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			app.Session.Remove(r.Context(), "user-create-error")
+		}
+		app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+		http.Redirect(w, r, "/admin_user/place/edit/"+PlaceId, 301)
+		return
+
+	}
 }
 
 func CreatePageFlowHandler(app *config.Env) http.HandlerFunc {
@@ -385,6 +464,7 @@ func UpdateDetailsHandler(app *config.Env) http.HandlerFunc {
 		r.ParseForm()
 		placeTitle := r.PostFormValue("placeTitle")
 		placeId := r.PostFormValue("placeId")
+		placeCategory := r.PostFormValue("category")
 		description := r.PostFormValue("description")
 
 		place, err := place_io.ReadPlace(placeId)
@@ -396,6 +476,14 @@ func UpdateDetailsHandler(app *config.Env) http.HandlerFunc {
 			app.Session.Put(r.Context(), "user-create-error", "An error has occurred due to selected Place, Please try again late")
 			http.Redirect(w, r, "/admin_user/place/edit/"+placeId, 301)
 			return
+		}
+		app.InfoLog.Println("category: ", placeCategory)
+		if placeCategory != "" {
+			placeTypeObject := place2.PlaceType{placeId, placeCategory}
+			_, err = place_io.CreatePlaceType(placeTypeObject)
+			if err != nil {
+				fmt.Println(err, " error when creating placeType")
+			}
 		}
 
 		//TODO latutude and longitude should come from the fields
@@ -431,12 +519,9 @@ func UpdateDetailsHandler(app *config.Env) http.HandlerFunc {
 func UpdatePictureHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
-
 		file, _, err := r.FormFile("file")
 		PlaceId := r.PostFormValue("PlaceId")
 		imageId := r.PostFormValue("imageId")
-		placeImageId := r.PostFormValue("placeImageId")
-		imageType := r.PostFormValue("imageType")
 		if err != nil {
 			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
 		}
@@ -450,14 +535,14 @@ func UpdatePictureHandler(app *config.Env) http.HandlerFunc {
 			http.Redirect(w, r, "/admin_user/place", 301)
 			return
 		}
-		if imageId != "" && imageType != "" && placeImageId != "" {
+		if imageId != "" {
 			reader := bufio.NewReader(file)
 			content, _ := ioutil.ReadAll(reader)
 
 			imageObject := image2.Images{imageId, content, "updated on: " + misc.FormatDateTime(time.Now())}
 			_, errr := image_io.UpdateImage(imageObject)
 			if errr != nil {
-				fmt.Println(errr, " error creating placeImage")
+				fmt.Println(errr, " error updating placeImage")
 				if app.Session.GetString(r.Context(), "user-create-error") != "" {
 					app.Session.Remove(r.Context(), "user-create-error")
 				}
@@ -482,55 +567,6 @@ func UpdatePictureHandler(app *config.Env) http.HandlerFunc {
 
 	}
 }
-
-//func CreatePlaceImage(app *config.Env) http.HandlerFunc {
-//	return func(w http.ResponseWriter, r *http.Request) {
-//		r.ParseForm()
-//		file, _, err := r.FormFile("file")
-//		file2, _, err := r.FormFile("file2")
-//		file3, _, err := r.FormFile("file3")
-//		file4, _, err := r.FormFile("file4")
-//		file5, _, err := r.FormFile("file5")
-//		file6, _, err := r.FormFile("file6")
-//		placeId := r.PostFormValue("placeId")
-//		imageType := r.PostFormValue("imageType")
-//		if err != nil {
-//			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
-//		}
-//		place, err := place_io.ReadPlace(placeId)
-//		if err != nil {
-//			fmt.Println(err, " could not read project Line: 113")
-//			if app.Session.GetString(r.Context(), "user-create-error") != "" {
-//				app.Session.Remove(r.Context(), "user-create-error")
-//			}
-//			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-//			http.Redirect(w, r, "/admin_user/place/edit/"+placeId, 301)
-//			return
-//		}
-//
-//		filesArray := []io.Reader{file, file2, file3, file4, file5, file6}
-//		filesByteArray := misc.CheckFiles(filesArray)
-//		placeImage := place2.PlaceImage{"", placeId, "", imageType}
-//
-//		helper := place2.PlaceImageHelper{placeImage, filesByteArray}
-//		_, errr := place_io.CreatePlaceImage(helper)
-//		if errr != nil {
-//			fmt.Println(errr, " error creating PlaceImage")
-//			if app.Session.GetString(r.Context(), "user-create-error") != "" {
-//				app.Session.Remove(r.Context(), "user-create-error")
-//			}
-//			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-//			http.Redirect(w, r, "/admin_user/place/edit/"+placeId, 301)
-//			return
-//		}
-//		if app.Session.GetString(r.Context(), "creation-successful") != "" {
-//			app.Session.Remove(r.Context(), "creation-successful")
-//		}
-//		app.Session.Put(r.Context(), "creation-successful", "You have successfully created image(s) for the following Place  : "+place.Title)
-//		http.Redirect(w, r, "/admin_user/place/edit/"+placeId, 301)
-//		return
-//	}
-//}
 
 func DeletePlacesHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -603,6 +639,20 @@ func DeletePlacesHandler(app *config.Env) http.HandlerFunc {
 
 func EditPlacesHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
+		var placeCategory place2.PlaceCategory
+		var unknown_error string
+		var backend_error string
+		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
+			unknown_error = app.Session.GetString(r.Context(), "creation-unknown-error")
+			app.Session.Remove(r.Context(), "creation-unknown-error")
+		}
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			backend_error = app.Session.GetString(r.Context(), "user-create-error")
+			app.Session.Remove(r.Context(), "user-create-error")
+		}
 		placeId := chi.URLParam(r, "placeId")
 		placeDate := GetPlaceEditable(placeId)
 
@@ -619,7 +669,15 @@ func EditPlacesHandler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			fmt.Println(err, " error reading placePageFlow")
 		}
+		placeCategory, err = misc.GetPlaceCategory(placeId)
+		if err != nil {
+			fmt.Println(err, " error reading placeCategory")
+		}
 
+		placeCategories, err := place_io.ReadPlaceCategories()
+		if err != nil {
+			app.InfoLog.Println("error reading Places Category: ", err)
+		}
 		commentNumber, pendingcomments, activeComments := placeCommentCalculation(placeId)
 		type PageData struct {
 			PlaceData       PlaceDataEditable
@@ -634,6 +692,10 @@ func EditPlacesHandler(app *config.Env) http.HandlerFunc {
 			PendingComments int64
 			ActiveComments  int64
 			PageFlows       []place2.PlacePageFlow
+			Backend_error   string
+			Unknown_error   string
+			PlaceCategories []place2.PlaceCategory
+			PlaceCategory   place2.PlaceCategory
 		}
 		data := PageData{placeDate, misc.GetSideBarData("place", ""),
 			GetPlaceCommentsWithEventId(placeId), misc.GetPlaceGallery(placeId),
@@ -641,7 +703,12 @@ func EditPlacesHandler(app *config.Env) http.HandlerFunc {
 			commentNumber,
 			pendingcomments,
 			activeComments,
-			pageFlows}
+			pageFlows,
+			backend_error,
+			unknown_error,
+			placeCategories,
+			placeCategory,
+		}
 		files := []string{
 			app.Path + "admin/place/new_edit_place.html",
 			app.Path + "admin/template/navbar.html",
@@ -738,13 +805,23 @@ func PlacesHandler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			app.InfoLog.Println("error reading Places: ", err)
 		}
-		type PageData struct {
-			Backend_error string
-			Unknown_error string
-			Places        []place2.Place
-			SidebarData   misc.SidebarData
+		placeCategories, err := place_io.ReadPlaceCategories()
+		if err != nil {
+			app.InfoLog.Println("error reading Places Category: ", err)
 		}
-		data := PageData{backend_error, unknown_error, places, misc.GetSideBarData("place", "")}
+		type PageData struct {
+			Backend_error   string
+			Unknown_error   string
+			Places          []place2.Place
+			SidebarData     misc.SidebarData
+			PlaceCategories []place2.PlaceCategory
+		}
+		data := PageData{backend_error,
+			unknown_error,
+			places,
+			misc.GetSideBarData("place", ""),
+			placeCategories,
+		}
 		files := []string{
 			app.Path + "admin/place/places.html",
 			app.Path + "admin/template/navbar.html",
@@ -762,115 +839,13 @@ func PlacesHandler(app *config.Env) http.HandlerFunc {
 	}
 }
 
-//func CreatePlaceStp2Handler(app *config.Env) http.HandlerFunc {
-//	return func(w http.ResponseWriter, r *http.Request) {
-//		r.ParseForm()
-//		//fileslist := r.Form["file"]
-//		file, _, err := r.FormFile("file")
-//		file2, _, err := r.FormFile("file2")
-//		file3, _, err := r.FormFile("file3")
-//		file4, _, err := r.FormFile("file4")
-//		file5, _, err := r.FormFile("file5")
-//		file6, _, err := r.FormFile("file6")
-//		history := r.PostFormValue("history")
-//		placeId := r.PostFormValue("placeId")
-//		description := r.PostFormValue("description")
-//		var placeHistory place2.PlaceHistories
-//		if err != nil {
-//			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
-//		}
-//
-//		filesArray := []io.Reader{file, file2, file3, file4, file5, file6}
-//		filesByteArray := misc.CheckFiles(filesArray)
-//
-//		//History
-//		historiesObject := history2.Histories{"", misc.ConvertToByteArray(history)}
-//		histories, err := history_io.CreateHistorie(historiesObject)
-//		if err != nil {
-//			fmt.Println(err, " error creating a new History")
-//		} else {
-//			placeHistoryObject := place2.PlaceHistories{"", placeId, histories.Id}
-//			placeHistory, err = place_io.CreatePlaceHistpory(placeHistoryObject)
-//			if err != nil {
-//				fmt.Println(err, " error creating a new placeHistory")
-//				if app.Session.GetString(r.Context(), "user-create-error") != "" {
-//					app.Session.Remove(r.Context(), "user-create-error")
-//				}
-//				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-//				http.Redirect(w, r, "/admin_user/place/new_stp2/"+placeId, 301)
-//				return
-//			}
-//		}
-//
-//		placeImageObejct := place2.PlaceImage{"", placeId, "", description}
-//		placeImageHelper := place2.PlaceImageHelper{placeImageObejct, filesByteArray}
-//		_, errr := place_io.CreatePlaceImage(placeImageHelper)
-//		if errr != nil {
-//			fmt.Println(errr, " error creating projectImage")
-//			_, err := place_io.DeletePlaceHistpory(placeHistory.Id)
-//			if err != nil {
-//				fmt.Println(err, " error deleting Place HistoryId")
-//			}
-//			if app.Session.GetString(r.Context(), "user-create-error") != "" {
-//				app.Session.Remove(r.Context(), "user-create-error")
-//			}
-//			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-//			http.Redirect(w, r, "/admin_user/place/new_stp2/"+placeId, 301)
-//			return
-//		}
-//		place, err := place_io.ReadPlace(placeId)
-//		if err != nil {
-//			fmt.Println(err, " error reading Place Line: 121")
-//		}
-//		if app.Session.GetString(r.Context(), "creation-successful") != "" {
-//			app.Session.Remove(r.Context(), "creation-successful")
-//		}
-//		app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new place : "+place.Title)
-//		http.Redirect(w, r, "/admin_user/place", 301)
-//		return
-//	}
-//}
-
-//func NewPlaceStp2Handler(app *config.Env) http.HandlerFunc {
-//	return func(w http.ResponseWriter, r *http.Request) {
-//		placeId := chi.URLParam(r, "placeId")
-//		place, err := place_io.ReadPlace(placeId)
-//		if err != nil {
-//			fmt.Println(err, " error reading the Place")
-//			if app.Session.GetString(r.Context(), "user-read-error") != "" {
-//				app.Session.Remove(r.Context(), "user-read-error")
-//			}
-//			app.Session.Put(r.Context(), "user-read-error", "An error has occurred, Please try again late")
-//			http.Redirect(w, r, "/admin_user/place/new", 301)
-//			return
-//		}
-//		type PageData struct {
-//			Place place2.Place
-//		}
-//		data := PageData{place}
-//		files := []string{
-//			app.Path + "admin/place/image_place.html",
-//			//app.Path + "admin/template/navbar.html",
-//			//app.Path + "base_templates/footer.html",
-//		}
-//		ts, err := template.ParseFiles(files...)
-//		if err != nil {
-//			app.ErrorLog.Println(err.Error())
-//			return
-//		}
-//		err = ts.Execute(w, data)
-//		if err != nil {
-//			app.ErrorLog.Println(err.Error())
-//		}
-//	}
-//}
-
 func CreateStp1Handler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		var content []byte
 		file, _, err := r.FormFile("file")
 		title := r.PostFormValue("title")
+		category := r.PostFormValue("category")
 		latlng := r.PostFormValue("latlng")
 		description := r.PostFormValue("description")
 		history := r.PostFormValue("history")
@@ -885,7 +860,7 @@ func CreateStp1Handler(app *config.Env) http.HandlerFunc {
 		}
 
 		fmt.Println(title, "<<<title|| latlng>>>>", latlng, "  description>>>", description)
-		if title != "" && latlng != "" {
+		if title != "" && latlng != "" && category != "" {
 			latitude, longitude := misc.SeparateLatLng(latlng)
 			fmt.Println("latitude: ", latitude, "longitude: ", longitude)
 			place := place2.Place{"", title, latitude, longitude, description}
@@ -906,6 +881,11 @@ func CreateStp1Handler(app *config.Env) http.HandlerFunc {
 				if err != nil {
 					fmt.Println(err, " error when creating placePageFLow")
 				}
+			}
+			placeTypeObject := place2.PlaceType{newPlace.Id, category}
+			_, err = place_io.CreatePlaceType(placeTypeObject)
+			if err != nil {
+				fmt.Println(err, " error when creating placeType")
 			}
 
 			//History

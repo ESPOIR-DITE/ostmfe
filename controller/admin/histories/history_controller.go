@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"ostmfe/config"
+	"ostmfe/controller/admin/adminHelper"
 	"ostmfe/controller/misc"
 	"ostmfe/domain/comment"
 	"ostmfe/domain/contribution"
@@ -36,14 +37,66 @@ func HistoryHome(app *config.Env) http.Handler {
 
 	//gallery
 	r.Post("/create-gallery", CreateEventHistoryHandler(app))
+	r.Post("/create-page-flow", CreatePageFlowHandler(app))
+	r.Get("/delete-pageFlow/{historyPageFlowId}/{historyId}", DeletePageFlowHandler(app))
 	r.Get("/delete-gallery/{pictureId}/{historyId}/{historyGalleryId}", DeleteGalleryHandler(app))
 	r.Get("/activate_comment/{commentId}/{historyId}", ActivateCommentHandler(app))
-
 	return r
+}
+
+func DeletePageFlowHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
+		historyPageFlowId := chi.URLParam(r, "historyPageFlowId")
+		historyId := chi.URLParam(r, "historyId")
+
+		_, err := history_io.DeleteHistoryPageFLow(historyPageFlowId)
+		if err != nil {
+			fmt.Println("error deleting History Page FLow")
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+			http.Redirect(w, r, "/admin_user/history/edit/"+historyId, 301)
+			return
+		}
+		fmt.Println(" successful deletion.")
+		app.Session.Put(r.Context(), "creation-successful", "You have successfully deleted: Project Gallery. ")
+		http.Redirect(w, r, "/admin_user/history/edit/"+historyId, 301)
+		return
+	}
+}
+
+func CreatePageFlowHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
+		r.ParseForm()
+		historyId := r.PostFormValue("historyId")
+		pageFlowTitle := r.PostFormValue("pageFlowTitle")
+		scr := r.PostFormValue("scr")
+
+		if scr != "" && historyId != "" && pageFlowTitle != "" {
+			_, err := history_io.CreateHistoryPageFLow(history2.HistoryPageFlow{"", pageFlowTitle, historyId, scr})
+			if err != nil {
+				fmt.Println(err, " error creating page flow!")
+			}
+		} else {
+			app.ErrorLog.Print("Error creating HistoryPageFlow")
+		}
+		http.Redirect(w, r, "/admin_user/history/edit/"+historyId, 301)
+		return
+	}
 }
 
 func ActivateCommentHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		commentId := chi.URLParam(r, "commentId")
 		historyId := chi.URLParam(r, "historyId")
 		result := misc.ActivateComment(commentId)
@@ -55,6 +108,9 @@ func ActivateCommentHandler(app *config.Env) http.HandlerFunc {
 
 func DeleteGalleryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		pictureId := chi.URLParam(r, "pictureId")
 		historyId := chi.URLParam(r, "historyId")
 		historyGalleryId := chi.URLParam(r, "historyGalleryId")
@@ -95,6 +151,9 @@ func DeleteGalleryHandler(app *config.Env) http.HandlerFunc {
 
 func CreateEventHistoryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		var content []byte
 		r.ParseForm()
 		file, _, err := r.FormFile("file")
@@ -142,6 +201,9 @@ func CreateEventHistoryHandler(app *config.Env) http.HandlerFunc {
 
 func DeleteHistoryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		historyId := chi.URLParam(r, "historyId")
 
 		//Check if the history tobe updated exists
@@ -252,6 +314,9 @@ func UpdateHistoryHistoriessHandler(app *config.Env) http.HandlerFunc {
 
 func CreateHistoriesImageHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		r.ParseForm()
 		historyId := r.PostFormValue("historyId")
 		myArea := r.PostFormValue("myArea")
@@ -310,6 +375,9 @@ func CreateHistoriesImageHandler(app *config.Env) http.HandlerFunc {
 
 func UpdateHistoryDetailsHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		r.ParseForm()
 		historyId := r.PostFormValue("historyId")
 		historyTitle := r.PostFormValue("historyTitle")
@@ -360,6 +428,9 @@ func UpdateHistoryDetailsHandler(app *config.Env) http.HandlerFunc {
 
 func DeleteHistoryImage(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		historyId := chi.URLParam(r, "historyId")
 		imageId := chi.URLParam(r, "imageId")
 
@@ -416,6 +487,9 @@ func DeleteHistoryImage(app *config.Env) http.HandlerFunc {
 
 func UpdateHistoryImageHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		r.ParseForm()
 		file, _, err := r.FormFile("file")
 		historyId := r.PostFormValue("historyId")
@@ -473,6 +547,9 @@ func UpdateHistoryImageHandler(app *config.Env) http.HandlerFunc {
 
 func CreateHistoryImageHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		r.ParseForm()
 		file, _, err := r.FormFile("file")
 		historyId := r.PostFormValue("historyId")
@@ -517,6 +594,9 @@ func CreateHistoryImageHandler(app *config.Env) http.HandlerFunc {
 
 func CreateHistpory(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		r.ParseForm()
 		title := r.PostFormValue("title")
 		description := r.PostFormValue("description")
@@ -576,7 +656,12 @@ func CreateHistpory(app *config.Env) http.HandlerFunc {
 }
 func EditHistoryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		historyId := chi.URLParam(r, "historyId")
+
+		pageFlow, err := history_io.ReadHistoryPageFLowsWithHistoryId(historyId)
 
 		commentNumber, pendingcomments, activeComments := historyCommentCalculation(historyId)
 		type PageData struct {
@@ -588,6 +673,7 @@ func EditHistoryHandler(app *config.Env) http.HandlerFunc {
 			PendingComments int64
 			ActiveComments  int64
 			Contritbution   []contribution.Contribution
+			PageFlows       []history2.HistoryPageFlow
 		}
 		data := PageData{GetHistorySimpleData(historyId),
 			misc.GetSideBarData("history", ""),
@@ -595,7 +681,8 @@ func EditHistoryHandler(app *config.Env) http.HandlerFunc {
 			commentNumber,
 			pendingcomments,
 			activeComments,
-			GetContribution(historyId)}
+			GetContribution(historyId),
+			pageFlow}
 		files := []string{
 			app.Path + "admin/history/edit_history.html",
 			app.Path + "admin/template/navbar.html",
@@ -617,6 +704,9 @@ func EditHistoryHandler(app *config.Env) http.HandlerFunc {
 
 func NewHistoryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		var unknown_error string
 		var backend_error string
 		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
@@ -653,6 +743,9 @@ func NewHistoryHandler(app *config.Env) http.HandlerFunc {
 
 func HistoryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		var unknown_error string
 		var backend_error string
 		var historieList []history2.History
@@ -701,6 +794,9 @@ func HistoryHandler(app *config.Env) http.HandlerFunc {
 
 func CreateImageHelper(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		historyId := chi.URLParam(r, "historyId")
 
 		history, err := history_io.ReadHistory(historyId)

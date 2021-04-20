@@ -8,10 +8,10 @@ import (
 
 const placeTypeURL = api.BASE_URL + "place_type/"
 
-func CreatePlaceType(history place2.PlaceType) (place2.PlaceType, error) {
+func CreatePlaceType(placeType place2.PlaceType) (place2.PlaceType, error) {
 	entity := place2.PlaceType{}
 
-	resp, _ := api.Rest().SetBody(history).Post(placeTypeURL + "create")
+	resp, _ := api.Rest().SetBody(placeType).Post(placeTypeURL + "create")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -22,10 +22,10 @@ func CreatePlaceType(history place2.PlaceType) (place2.PlaceType, error) {
 	return entity, nil
 }
 
-func UpdatePlaceType(history place2.PlaceType) (place2.PlaceType, error) {
+func UpdatePlaceType(placeType place2.PlaceType) (place2.PlaceType, error) {
 	entity := place2.PlaceType{}
 
-	resp, _ := api.Rest().SetBody(history).Post(placeTypeURL + "update")
+	resp, _ := api.Rest().SetBody(placeType).Post(placeTypeURL + "update")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}

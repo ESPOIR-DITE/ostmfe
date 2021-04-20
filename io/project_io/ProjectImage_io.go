@@ -8,7 +8,7 @@ import (
 
 const projectimageURL = api.BASE_URL + "project_Image/"
 
-func CreateProjectImage(helper project.ProjectImageHelper) (project.ProjectImage, error) {
+func CreateProjectImage(helper project.ProjectImage) (project.ProjectImage, error) {
 	entity := project.ProjectImage{}
 	resp, _ := api.Rest().SetBody(helper).Post(projectimageURL + "create")
 	if resp.IsError() {

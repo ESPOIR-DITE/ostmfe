@@ -19,11 +19,7 @@
   <link href="../../assets/css/sb-admin-2.min.css" rel="stylesheet">
 
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
-    <script>
-        tinymce.init({
-            selector: '#mytextare'
-        });
-    </script>
+
 
 </head>
 
@@ -192,7 +188,7 @@
                                             <i class="fas fa-id-badge fa-2x text-gray-300"></i>
                                         </div>
                                     </div>
-
+<br>
                                     <div class="row no-gutters align-items-center margin-bottom-2rem">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Last Name</div>
@@ -201,12 +197,14 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <br>
                                     <div class="row no-gutters align-items-center margin-bottom-2rem">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Gender</div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800" id="theGender"></div>
                                         </div>
                                     </div>
+                                    <br>
                                     <div class="row no-gutters align-items-center margin-bottom-2rem">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Profession</div>
@@ -217,6 +215,7 @@
                                         </div>
                                     </div>
 
+                                    <br>
                                     <div class="row no-gutters align-items-center margin-bottom-2rem">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Origin</div>
@@ -226,6 +225,17 @@
                                             <i class="fas fa-at fa-2x text-gray-300"></i>
                                         </div>
                                     </div>
+                                    <br>
+                                    <div class="row no-gutters align-items-center margin-bottom-2rem">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Category</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" >{{.Category.Category}}</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-at fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                    <br>
 
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
@@ -236,7 +246,7 @@
                                             <i class="fas fa-calendar fa-2x text-gray-300"></i>
                                         </div>
                                     </div>
-
+                                    <br>
                                     <div class="row no-gutters align-items-center margin-bottom-2rem">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Brief</div>
@@ -792,12 +802,27 @@
                       <div class="form-group row">
                           <div class="col-sm-6">
                               <label>Profession</label>
-                              <input type="text" name="profession" class="form-control " value="{{.People.People.Profession}}" required>
+                              <input type="text" name="profession" class="form-control " value="{{.People.People.Profession}}" >
                           </div>
                           <div class="col-sm-6">
                               <label>Origin</label>
-                              <input type="text" name="origin" class="form-control " value="{{.People.People.Origin}}" required>
+                              <input type="text" name="origin" class="form-control " value="{{.People.People.Origin}}" >
                           </div>
+                      </div>
+                      <div class="form-group">
+                          <label>Category<small></small> </label>
+                          <select name="categoryId" class="browser-default custom-select" required>
+                              {{if .Category.Category}}
+                              <option selected>{{.Category.Category}}</option>
+                              {{else}}
+                              {{end}}
+                              <option selected>Choose a Category</option>
+                              {{with .Categories}}
+                              {{range .}}
+                              <option value={{.Id}}>{{.Category}}</option>
+                              {{end}}
+                              {{end}}
+                          </select>
                       </div>
                       <div class="form-group">
                           <label>Person Brief</label>

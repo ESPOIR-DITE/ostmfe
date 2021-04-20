@@ -117,14 +117,16 @@
                       <td>{{.Latitude}}</td>
                       <td>{{.Longitude}}</td>
                       <td>{{.Description}}</td>
-                      <td><a href="/admin_user/place/edit/{{.Id}}" class="btn btn-primary btn-user btn-block">
+                      <td class="text-center"><a href="/admin_user/place/edit/{{.Id}}" class="btn btn-primary btn-user btn-block">
+                        <i class="fa fa-edit"></i>
                           Edit
                         </a>
                       </td>
-                      <td>
+                      <td class="text-center">
                         <a class="btn btn-danger btn-user btn-block text-white" data-toggle="modal"
                            onclick="deletePlaceBTN({{.Id}},{{.Title}})"
                            data-target="#exampleModalPlace">
+                          <i class="fa fa-trash"></i>
                           Delete
                         </a>
                       </td>
@@ -265,11 +267,13 @@
 
               <div class="col-sm-6">
                 <label>Title</label><span class="required text-danger">*</span>
-                <select name="studentTitle" class="browser-default custom-select" required>
+                <select name="category" class="browser-default custom-select" required>
                   <option selected>Choose Place Category</option>
-
-                  <option value=""></option>
-
+                  {{with .PlaceCategories}}
+                  {{range .}}
+                  <option value="{{.Id}}">{{.Name}}</option>
+                  {{end}}
+                  {{end}}
                 </select>
               </div>
             </div>

@@ -125,12 +125,17 @@ func SingleHistoryHandler(app *config.Env) http.HandlerFunc {
 			fmt.Println("error reading CommentEvent")
 		}
 
+		historyPageFlow, err := history_io.ReadHistoryPageFLowsWithHistoryId(historyId)
+		if err != nil {
+			fmt.Println("error reading History page flow")
+		}
 		type PageData struct {
 			History       HistoryData
 			CommentNumber int64
 			Comments      []comment.CommentStack
+			PageFlows     []history2.HistoryPageFlow
 		}
-		data := PageData{getHistoryData(historyId), commentNumber, getHistoryComments(historyId)}
+		data := PageData{getHistoryData(historyId), commentNumber, getHistoryComments(historyId), historyPageFlow}
 		files := []string{
 			app.Path + "history/history_single.html",
 			app.Path + "base_templates/navigator.html",
@@ -169,12 +174,14 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 			bannerImage = misc.GetBannerImage(pageBanner.BannerId)
 		}
 
+		pageDate := getPageData("history-page")
 		type PageData struct {
 			History       []history2.History
 			HistoryData   []HistoryData
 			HistoryBanner string
+			PageData      string
 		}
-		data := PageData{histories, historyData, bannerImage}
+		data := PageData{histories, historyData, bannerImage, pageDate}
 		files := []string{
 			app.Path + "history/history.html",
 			app.Path + "base_templates/navigator.html",
@@ -302,4 +309,31 @@ func getSubComment(parentComment string) []comment.CommentHelper {
 		}
 	}
 	return myComments
+}
+
+func getPageData(pageName string) string {
+	var historyPageData string
+
+	page, err := pageData_io.ReadPageDataWIthName(pageName)
+	if err != nil {
+		fmt.Println(err, " error reading page, this may not exist")
+		return historyPageData
+	} else {
+		pageDateSectionObject, err := pageData_io.ReadPageSectionAllOf(page.Id)
+		if err != nil {
+			fmt.Println(err, " error reading page")
+		}
+		for _, pageDateSection := range pageDateSectionObject {
+			pageSection, err := pageData_io.ReadSection(pageDateSection.SectionId)
+			if err != nil {
+				fmt.Println(err, " error reading page")
+			} else {
+				if pageSection.SectionName == "welcome" {
+					//fmt.Println(" Introduction",pageSection)
+					historyPageData = misc.ConvertingToString(pageDateSection.Content)
+				}
+			}
+		}
+	}
+	return historyPageData
 }

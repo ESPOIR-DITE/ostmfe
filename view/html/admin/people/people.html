@@ -166,7 +166,7 @@
     <div class="modal-dialog modal-xl" role="document">
       <div class="modal-content modal-xl">
         <div class="modal-header">
-          <h5 class="modal-title" id="campusModalLabel">Add new Place</h5>
+          <h5 class="modal-title" id="campusModalLabel">Add new People</h5>
           <button class="close" onclick="resetFrom('peopleForm')" type="button" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">×</span>
           </button>
@@ -188,7 +188,7 @@
             <div class="form-group row">
               <div class="col-sm-6">
                 <label>Date Of Birth</label>
-                <input type="date" name="b_date" class="form-control"  required>
+                <input type="date" name="b_date" class="form-control"  >
               </div>
               <div class="col-sm-6">
                 <label>Date of Death.<small class="text-warning"> If the person is still alive, leave this field empty.</small></label>
@@ -198,17 +198,17 @@
             <div class="form-group row">
               <div class="col-sm-6">
                 <label>Profession <small class="text-warning"> If this person had many profession please choose only one, the main.</small></label>
-                <input type="text" name="profession" class="form-control " id="exampleFirstName" placeholder="ex: Art" required>
+                <input type="text" name="profession" class="form-control " id="exampleFirstName" placeholder="ex: Art" >
               </div>
               <div class="col-sm-6">
                 <label>Origin</label>
-                <input type="text" name="origin" class="form-control " id="exampleFirstName" placeholder="Ex: South African" required>
+                <input type="text" name="origin" class="form-control " id="exampleFirstName" placeholder="Ex: South African" >
               </div>
             </div>
             <div class="form-group row">
               <div class="col-sm-6">
                 <label>Place<small>Please select a place that is related to this person</small> </label>
-                <select name="placeId" class="browser-default custom-select" required>
+                <select name="placeId" class="browser-default custom-select" >
                   <option selected>Choose a Place</option>
                   {{with .Places}}
                   {{range .}}
@@ -242,7 +242,7 @@
 
 
             <div class="form-group">
-              <label>Place History</label>
+              <label>History</label>
               <textarea style="height: 200px" name="history" class="form-control" id="mytextare" placeholder="History...."></textarea>
             </div>
 

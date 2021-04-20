@@ -26,6 +26,7 @@ type PeopleBriefData struct {
 /**
 This method returns all the people's data only for those that have pictures.
 */
+
 func GetPeopleBriefData() []PeopleBriefData {
 	var peopleBriefDatas []PeopleBriefData
 	var image image3.Images

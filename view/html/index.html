@@ -16,8 +16,11 @@
     <!-- Site Title -->
     <title>Simon's Town Museum</title>
     <style>
-        .banner .overlay-bg {
+        .overlay-b {
             background-color: rgba(0, 0, 0, 0.7);
+        }
+        a.julie:hover {
+            color: #1cc88a;
         }
     </style>
     <base href="/">
@@ -34,18 +37,13 @@
     <link rel="stylesheet" href="../assets/css/animate.min.css">
     <link rel="stylesheet" href="../assets/css/owl.carousel.css">
     <link rel="stylesheet" href="../assets/css/main.css">
-    <style>
-        a.julie:hover {
-            color: #1cc88a;
-        }
-    </style>
 </head>
 <body>
 
 {{template "navigator" .}}
 
 <section class=" relative" id="home">
-    <div class="overlay overlay-bg"></div>
+    <div class="overlay overlay-b"></div>
     <div class="carousel slide" id="main-carousel" data-ride="carousel">
         <ol class="carousel-indicators">
             <li data-target="#main-carousel" data-slide-to="0" class="active"></li>
@@ -54,17 +52,18 @@
         </ol><!-- /.carousel-indicators -->
 
         <div class="carousel-inner ">
+            {{if not .Sliders}}
             <div class="carousel-item active">
                 <img class="d-block img-fluid" src="../assets/img/protestWithFilter.png" alt="">
                 <div class="carousel-caption d-none d-md-block primary-border"
-                     style="background-color: #4e555b; opacity: 85%">
-                    <h1 class="text-white">Mountain</h1>
+                     style="background-color: #051625; opacity: 85%">
+                    <h1 class="text-white font-weight-light font-italic">Mountain</h1>
                 </div>
             </div>
             <div class="carousel-item">
                 <img class="d-block img-fluid" src="../assets/img/schoutWithFilter.png" alt="">
                 <div class="carousel-caption d-none d-md-block primary-border "
-                     style="background-color: #4e555b; opacity: 85%; ">
+                     style="background-color: #051625; opacity: 85%; ">
                     <h3 class="text-white">Mountain</h3>
                     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci esse vitae exercitationem
                         fugit, numquam minus!</p>
@@ -72,23 +71,25 @@
             </div>
             <div class="carousel-item banner">
                 <img class="d-block img-fluid" src="../assets/img/simonsTownWithFilter.png" alt="">
-                <div class="carousel-caption d-none d-md-block" style="background-color: #4e555b; opacity: 85%">
+                <div class="carousel-caption d-none d-md-block" style="background-color: #051625; opacity: 85%">
                     <h2 class="text-white">Mountain</h2>
                     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci esse vitae exercitationem
                         fugit, numquam minus!</p>
                 </div>
             </div>
+            {{else}}
 
-            {{if .Sliders}}
                 {{with .Sliders}}
-                    {{range .}}
-                        <div class="carousel-item ">
+                {{range $i, $e := .}}
+
+                        <div class="carousel-item  {{if eq $i 0}} active{{end}}" >
+                            <div class="overlay overlay-b"></div>
                             <img class="d-block img-fluid" width="100%" src='data:image/jpeg;base64,{{.SliderImage}}'
                                  alt="">
                             <div class="carousel-caption d-none d-md-block"
-                                 style="background-color: #4e555b; opacity: 85%">
+                                 style="background-color: #051625; opacity: 75%">
                                 <h2 class="text-white">{{.SliderName}}</h2>
-                                <p>{{.SliderMessage}}</p>
+                                <p>{{.Description}}</p>
                             </div>
                         </div>
                     {{end}}
@@ -159,7 +160,7 @@
             </div>
             <div class="col-lg-4">
                 <div class="single-service">
-                    <span class="lnr lnr-briefcase"></span>
+                    <span class="lnr  lnr-heart"></span>
                     <h4>Donate</h4>
                     <p>
                         Support and assist the spread and the
@@ -173,7 +174,7 @@
                                 range of items and features that we use in life Here, I focus on a range of items and
                                 features.that we use in life
                             </p>
-                            <a href="#" class="text-uppercase primary-btn">Donate</a>
+                            <a href="#"data-toggle="modal" class="text-uppercase primary-btn" data-target="#donationModal">Donate</a>
                         </div>
                     </div>
                 </div>
@@ -192,7 +193,6 @@
                     var div = document.getElementById('notification');
                     var myvalue = {{.PagePageSection.Notification}}
                         parseMe(myvalue);
-
                     function parseMe(value) {
                         div.innerHTML += value;
                     }
@@ -223,39 +223,6 @@
 </section>
 <!-- End quote Area -->
 
-<div class="">
-    <div class="container">
-        <div class="section-top-border">
-            <div class="row">
-
-                {{if .PagePageSection.ShareYourStory}}
-                <div class="title text-center" id="shareYourStory">
-                    <script>
-                        var div = document.getElementById('shareYourStory');
-                        var myvalue = {{.PagePageSection.ShareYourStory}}
-                            parseMe(myvalue);
-                        function parseMe(value) {
-                            div.innerHTML += value;
-                        }
-                    </script>
-                </div>
-                {{else}}
-                <div class="col-md-5">
-                    <h3 class="mb-30 text-center">Share Your Story Here.</h3>
-                    <img width="450px" src="../assets/img/share_your_story.jpg" alt="">
-                </div>
-                <div class="col-md-7 mt-sm-20">
-                    <h1 class="quote-right" style="margin-top: 30%">
-                        The History of simon's town is collected and written by the personage of the history.
-                    </h1>
-                    <br>
-                    <a data-toggle="modal" href="" data-target="#Contribution" class="genric-btn info radius e-large">Share</a>
-                </div>
-                {{end}}
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- start project Area -->
 <!-- 1. check if there is any projects in the list so that we can display this block-->
@@ -468,7 +435,7 @@
 <section class="blog-area " id="blog">
     <div class="container">
         <div class="row d-flex justify-content-center">
-            <div class="menu-content pb-70 col-lg-8">
+            <div class="menu-content  col-lg-8">
                 {{if .PagePageSection.ExhibitionIntro}}
                     <div class="title text-center" id="me">
                         <script>
@@ -553,6 +520,45 @@
         </div-->
     </div>
 </section>
+
+<div class="">
+    <div class="container">
+        <div class="section-top-border">
+            <div class="row">
+
+                {{if .PagePageSection.ShareYourStory}}
+                <div class="title text-center" id="shareYourStory">
+                    <script>
+                        var div = document.getElementById('shareYourStory');
+                        var myvalue = {{.PagePageSection.ShareYourStory}}
+                        parseMe(myvalue);
+                        function parseMe(value) {
+                            div.innerHTML += value;
+                        }
+                    </script>
+                </div>
+                {{else}}
+                <div class="col-md-5">
+                    <h3 class="mb-30 text-center">Share Your Story Here.</h3>
+                    <img width="450px" src="../assets/img/share_your_story.jpg" alt="">
+                </div>
+                <div class="col-md-7 mt-sm-20">
+                    <h1 class="quote-right" style="margin-top: 30%">
+                        Be part of creating a living archive. Share your story, image, voicenote, text of what you remember of simonstown.
+                    </h1>
+                    <br>
+                    <a data-toggle="modal" href="" data-target="#Contribution" class="genric-btn info radius e-large">Share</a>
+                    <hr>
+                </div>
+                {{end}}
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- start footer Area -->
+{{template "footer" .}}
+<!-- End footer Area -->
 
 <!-- End blog Area -->
 
@@ -734,6 +740,30 @@
     </div>
 </div>
 
+<div class="modal fade" id="donationModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <div class="col-xl"><i class="lnr  lnr-heart"></i><h3>Contact Us For Your Donation</h3>  </div>
+            </div>
+            <div class="modal-body">
+                <p>the Museum at cathy@simonstownmuseum.co.za or education@simonstownmuseum.co.za
+                </p>
+                <h4>
+                    Phone:    +27 21 786 3046
+                    Fax No :    +27 21 786 2391
+                </h4>
+            </div>
+            <div class="modal-footer">
+                <!--button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-primary" href="#">Logout</a-->
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade bd-example-modal-lg" id="Contribution" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -798,9 +828,8 @@
     </div>
 </div>
 
-<!-- start footer Area -->
-{{template "footer" .}}
-<!-- End footer Area -->
+
+
 
 <script src="../assets/js/vendor/jquery-2.2.4.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"

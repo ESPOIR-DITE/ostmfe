@@ -22,6 +22,7 @@ import (
 	"ostmfe/io/image_io"
 	"ostmfe/io/pageData_io"
 	"ostmfe/io/project_io"
+	"ostmfe/utile"
 	"path/filepath"
 	"strings"
 	"time"
@@ -159,6 +160,10 @@ func ReadSingleProjectHanler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			fmt.Println(err, " error reading projects comment Number")
 		}
+		pageFlows, err := project_io.ReadProjectPageFLowsWithProjectId(projectId)
+		if err != nil {
+			fmt.Println(err, " error reading reading PageFlow")
+		}
 		projectComment := comment2.GetProjectComment(projectId)
 		//fmt.Println(" projectComment: ",projectComment)
 		type PageData struct {
@@ -168,8 +173,9 @@ func ReadSingleProjectHanler(app *config.Env) http.HandlerFunc {
 			CommentNumber      int64
 			//GalleryString      []string
 			GalleryImages []misc.ProjectGalleryImages
+			PageFlows     []project2.ProjectPageFlow
 		}
-		data := PageData{projectDataHistory, projects, projectComment, commentNumber, misc.GetProjectGallery(projectId)}
+		data := PageData{projectDataHistory, projects, projectComment, commentNumber, misc.GetProjectGallery(projectId), pageFlows}
 
 		files := []string{
 			app.Path + "project/project_single.html",
@@ -246,17 +252,20 @@ func getProjectDataHistory(projectId string) ProjectDataHistory {
 		return projectDataHistory
 	}
 	for _, projectImage := range projectImages {
-		if projectImage.ImageType == "1" || projectImage.ImageType == "profile" {
-			profileImage, err = image_io.ReadImage(projectImage.ImageId)
-			if err != nil {
-				fmt.Println(err, " error has occurred when reading image")
-			}
-		}
 		image, err := image_io.ReadImage(projectImage.ImageId)
 		if err != nil {
 			fmt.Println(err, " error has occurred when reading image")
 		}
-		images = append(images, image)
+		if projectImage.ImageType == utile.PROFILE {
+			profileImage = image
+			profileImage, err = image_io.ReadImage(projectImage.ImageId)
+			if err != nil {
+				fmt.Println(err, " error has occurred when reading image")
+			}
+		} else {
+			images = append(images, image)
+		}
+
 	}
 	//History
 	fmt.Println(project.Id)

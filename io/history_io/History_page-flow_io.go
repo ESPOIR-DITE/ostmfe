@@ -1,17 +1,16 @@
-package people_io
+package history_io
 
 import (
 	"errors"
 	"ostmfe/api"
 	"ostmfe/domain/history"
-	"ostmfe/domain/people"
 )
 
-const peoplehistoryURL = api.BASE_URL + "people_history/"
+const historypageflowURL = api.BASE_URL + "history_page_low/"
 
-func CreatePeopleHistory(history people.PeopleHistory) (people.PeopleHistory, error) {
-	entity := people.PeopleHistory{}
-	resp, _ := api.Rest().SetBody(history).Post(peoplehistoryURL + "create")
+func CreateHistoryPageFLow(hist history.HistoryPageFlow) (history.HistoryPageFlow, error) {
+	entity := history.HistoryPageFlow{}
+	resp, _ := api.Rest().SetBody(hist).Post(historypageflowURL + "create")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -21,46 +20,22 @@ func CreatePeopleHistory(history people.PeopleHistory) (people.PeopleHistory, er
 	}
 	return entity, nil
 }
+func UpdateHistoryPageFLow(hist history.HistoryPageFlow) (history.HistoryPageFlow, error) {
+	entity := history.HistoryPageFlow{}
+	resp, _ := api.Rest().SetBody(hist).Post(historypageflowURL + "update")
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
 
-func UpdatePeopleHistory(history people.PeopleHistory) (people.PeopleHistory, error) {
-	entity := people.PeopleHistory{}
-	resp, _ := api.Rest().SetBody(history).Post(peoplehistoryURL + "update")
-	if resp.IsError() {
-		return entity, errors.New(resp.Status())
-	}
-	err := api.JSON.Unmarshal(resp.Body(), &entity)
-	if err != nil {
-		return entity, errors.New(resp.Status())
-	}
-	return entity, nil
 }
-func ReadPeopleHistory(id string) (people.PeopleHistory, error) {
-	entity := people.PeopleHistory{}
-	resp, _ := api.Rest().Get(peoplehistoryURL + "read?id=" + id)
-	if resp.IsError() {
-		return entity, errors.New(resp.Status())
-	}
-	err := api.JSON.Unmarshal(resp.Body(), &entity)
-	if err != nil {
-		return entity, errors.New(resp.Status())
-	}
-	return entity, nil
-}
-func ReadPeopleHistoryWithPplId(id string) (people.PeopleHistory, error) {
-	entity := people.PeopleHistory{}
-	resp, _ := api.Rest().Get(peoplehistoryURL + "readWithPplId?id=" + id)
-	if resp.IsError() {
-		return entity, errors.New(resp.Status())
-	}
-	err := api.JSON.Unmarshal(resp.Body(), &entity)
-	if err != nil {
-		return entity, errors.New(resp.Status())
-	}
-	return entity, nil
-}
-func DeletePeopleHistory(id string) (people.PeopleHistory, error) {
-	entity := people.PeopleHistory{}
-	resp, _ := api.Rest().Get(peoplehistoryURL + "delete?id=" + id)
+func ReadHistoryPageFLow(id string) (history.HistoryPageFlow, error) {
+	entity := history.HistoryPageFlow{}
+	resp, _ := api.Rest().Get(historypageflowURL + "read?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -71,9 +46,9 @@ func DeletePeopleHistory(id string) (people.PeopleHistory, error) {
 	return entity, nil
 }
 
-func ReadPeopleHistories(peopleId string) (history.Histories, error) {
-	entity := history.Histories{}
-	resp, _ := api.Rest().Get(peoplehistoryURL + "getHistories?peopleId=" + peopleId)
+func ReadHistoryPageFLowWithHistoryId(id string) (history.HistoryPageFlow, error) {
+	entity := history.HistoryPageFlow{}
+	resp, _ := api.Rest().Get(historypageflowURL + "readWithHistoryId?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -83,10 +58,9 @@ func ReadPeopleHistories(peopleId string) (history.Histories, error) {
 	}
 	return entity, nil
 }
-
-func ReadPeopleHistorys() ([]people.PeopleHistory, error) {
-	entity := []people.PeopleHistory{}
-	resp, _ := api.Rest().Get(peoplehistoryURL + "reads")
+func ReadHistoryPageFLowsWithHistoryId(id string) ([]history.HistoryPageFlow, error) {
+	entity := []history.HistoryPageFlow{}
+	resp, _ := api.Rest().Get(historypageflowURL + "readAllWithHistoryId?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
 	}
@@ -95,4 +69,30 @@ func ReadPeopleHistorys() ([]people.PeopleHistory, error) {
 		return entity, errors.New(resp.Status())
 	}
 	return entity, nil
+}
+func DeleteHistoryPageFLow(id string) (history.HistoryPageFlow, error) {
+	entity := history.HistoryPageFlow{}
+	resp, _ := api.Rest().Get(historypageflowURL + "delete?id=" + id)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+
+}
+func ReadHistoryPageFLows() (history.HistoryPageFlow, error) {
+	entity := history.HistoryPageFlow{}
+	resp, _ := api.Rest().Get(historypageflowURL + "reads")
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+
 }

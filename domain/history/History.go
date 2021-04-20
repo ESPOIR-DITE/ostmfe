@@ -64,3 +64,9 @@ type HistoryCategory struct {
 	Category  string `json:"category"`
 	HistoryId string `json:"historyId"`
 }
+type HistoryPageFlow struct {
+	Id         string `json:"id"`
+	Title      string `json:"title"`
+	HistoryId  string `json:"historyId"`
+	PageFlowId string `json:"pageFlowId"`
+}

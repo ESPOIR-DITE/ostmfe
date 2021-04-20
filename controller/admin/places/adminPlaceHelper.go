@@ -2,6 +2,7 @@ package places
 
 import (
 	"fmt"
+	"ostmfe/controller/admin/adminHelper"
 	"ostmfe/controller/misc"
 	"ostmfe/domain/comment"
 	"ostmfe/domain/event"
@@ -49,16 +50,11 @@ func GetPlaceEditable(placeId string) PlaceDataEditable {
 	} else {
 		fmt.Println("looping PlaceImages ", placeImages)
 		for _, placeImage := range placeImages {
-			if placeImage.Description == "1" || placeImage.Description == "profile" {
-				profImage, err := image_io.ReadImage(placeImage.ImageId)
-				if err != nil {
-					fmt.Println(err, " error reading Image")
-				}
-				profileImage = PlaceImageHelperEditable{profImage.Id, misc.ConvertingToString(profImage.Image), placeImage.Id}
-			}
 			image, err := image_io.ReadImage(placeImage.ImageId)
 			if err != nil {
 				fmt.Println(err, " error reading Image")
+			} else if adminHelper.CheckIfImageTypeIsProfile(placeImage.ImageType) {
+				profileImage = PlaceImageHelperEditable{image.Id, misc.ConvertingToString(image.Image), placeImage.Id}
 			}
 			imageObject := PlaceImageHelperEditable{image.Id, misc.ConvertingToString(image.Image), placeImage.Id}
 			images = append(images, imageObject)

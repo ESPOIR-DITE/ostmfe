@@ -63,3 +63,29 @@ func TestReadPeoplePlaceAllByPlaceId(t *testing.T) {
 	assert.Nil(t, err)
 	fmt.Println("result: ", result)
 }
+
+//PeopleCategory
+
+func TestCreatePeopleCategory(t *testing.T) {
+	object := people.PeopleCategory{"", "0001", "00001", "sjhdfdjhfkhf"}
+	result, err := CreatePeopleCategory(object)
+	assert.Nil(t, err)
+	fmt.Println("result: ", result)
+}
+
+func TestReadPeopleCategoryWithCategoryId(t *testing.T) {
+	result, err := ReadPeopleCategoryWithCategoryId("0001")
+	assert.Nil(t, err)
+	fmt.Println("result: ", result)
+}
+
+//func TestReadPeopleCategoriesWithPplId(t *testing.T) {
+//	result,err := ReadPeopleCategoriesWithPplId("00001")
+//	assert.Nil(t, err)
+//	fmt.Println("result: ", result)
+//}
+func TestReadPeopleCategoryWithPplId(t *testing.T) {
+	result, err := ReadPeopleCategoryWithPplId("00001")
+	assert.Nil(t, err)
+	fmt.Println("result: ", result)
+}

@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"ostmfe/config"
+	"ostmfe/controller/admin/adminHelper"
 	"ostmfe/controller/misc"
 	"ostmfe/domain/comment"
 	"ostmfe/domain/group"
@@ -40,12 +41,91 @@ func GroupHome(app *config.Env) http.Handler {
 	r.Post("/update_details", UpdateDetailsHandler(app))
 
 	r.Get("/activate_comment/{commentId}/{groupId}", ActivateCommentHandler(app))
+	r.Get("/delete-group/{groupId}", DeleteGroup(app))
+	r.Post("/add_group_pictures/{groupId}", AddGroupGallery(app))
 
 	//Gallery
 	r.Post("/create-gallery", CreateEventGalleryHandler(app))
 	r.Get("/delete-gallery/{pictureId}/{groupId}/{groupGalleryId}", DeleteGalleryHandler(app))
 
 	return r
+}
+
+func AddGroupGallery(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var content []byte
+		r.ParseForm()
+		file, _, err := r.FormFile("file")
+		groupId := r.PostFormValue("groupId")
+		description := r.PostFormValue("description")
+		if err != nil {
+			fmt.Println(err, "<<<<<< error reading contribution file>>>>This error should happen>>>")
+		} else {
+			reader := bufio.NewReader(file)
+			content, _ = ioutil.ReadAll(reader)
+		}
+		if groupId != "" && description != "" {
+			galery := image.Galery{"", content, description}
+			galleryObject, err := image_io.CreateGalery(galery)
+			if err != nil {
+				fmt.Println(err, " error creating gallery")
+			} else {
+				groupGallery := group.GroupGalery{"", groupId, galleryObject.Id}
+				_, err := group_io.CreateGroupGalery(groupGallery)
+				if err != nil {
+					fmt.Println(err, " error creating GroupGallery")
+					if app.Session.GetString(r.Context(), "user-create-error") != "" {
+						app.Session.Remove(r.Context(), "user-create-error")
+					}
+					app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+					http.Redirect(w, r, "/admin_user/group/edit/"+groupId, 301)
+					return
+				}
+				if app.Session.GetString(r.Context(), "creation-successful") != "" {
+					app.Session.Remove(r.Context(), "creation-successful")
+				}
+				app.Session.Put(r.Context(), "creation-successful", "You have successfully deleted an event Group")
+				http.Redirect(w, r, "/admin_user/group/edit/"+groupId, 301)
+				return
+			}
+		}
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			app.Session.Remove(r.Context(), "user-create-error")
+		}
+		app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+		http.Redirect(w, r, "/admin_user/group/", 301)
+		return
+	}
+}
+
+func DeleteGroup(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
+		groupId := chi.URLParam(r, "groupId")
+		if groupId != "" {
+			_, err := group_io.DeleteGroup(groupId)
+			if err != nil {
+				app.ErrorLog.Println(err, " error deleting group")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/group/edit/"+groupId, 301)
+				return
+			}
+		} else {
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+			http.Redirect(w, r, "/admin_user/group/edit/"+groupId, 301)
+			return
+		}
+		http.Redirect(w, r, "/admin_user/group", 301)
+		return
+	}
 }
 
 func ActivateCommentHandler(app *config.Env) http.HandlerFunc {
@@ -61,6 +141,9 @@ func ActivateCommentHandler(app *config.Env) http.HandlerFunc {
 
 func DeleteGalleryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		pictureId := chi.URLParam(r, "pictureId")
 		groupId := chi.URLParam(r, "groupId")
 		groupGalleryId := chi.URLParam(r, "groupGalleryId")
@@ -101,6 +184,9 @@ func DeleteGalleryHandler(app *config.Env) http.HandlerFunc {
 
 func CreateEventGalleryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		var content []byte
 		r.ParseForm()
 		file, _, err := r.FormFile("file")
@@ -148,6 +234,9 @@ func CreateEventGalleryHandler(app *config.Env) http.HandlerFunc {
 
 func UpdateDetailsHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		r.ParseForm()
 		groupId := r.PostFormValue("groupId")
 		groupName := r.PostFormValue("groupName")
@@ -185,6 +274,9 @@ func UpdateDetailsHandler(app *config.Env) http.HandlerFunc {
 
 func UpdateHistoryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		r.ParseForm()
 		historyContent := r.PostFormValue("myArea")
 		groupId := r.PostFormValue("groupId")
@@ -222,6 +314,9 @@ func UpdateHistoryHandler(app *config.Env) http.HandlerFunc {
 
 func CreateHistoryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		r.ParseForm()
 		historyContent := r.PostFormValue("myArea")
 		groupId := r.PostFormValue("groupId")
@@ -277,6 +372,9 @@ func CreateHistoryHandler(app *config.Env) http.HandlerFunc {
 
 func UpdateImageHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		r.ParseForm()
 		file, _, err := r.FormFile("file")
 		groupId := r.PostFormValue("groupId")
@@ -323,6 +421,9 @@ func UpdateImageHandler(app *config.Env) http.HandlerFunc {
 
 func CreateImageHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		r.ParseForm()
 		var content []byte
 		file, _, err := r.FormFile("file")

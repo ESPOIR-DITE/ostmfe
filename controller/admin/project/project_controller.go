@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"github.com/go-chi/chi"
 	"html/template"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"ostmfe/config"
+	"ostmfe/controller/admin/adminHelper"
 	"ostmfe/controller/misc"
 	"ostmfe/domain/comment"
 	"ostmfe/domain/event"
@@ -21,6 +21,7 @@ import (
 	"ostmfe/io/image_io"
 	"ostmfe/io/place_io"
 	"ostmfe/io/project_io"
+	"ostmfe/utile"
 )
 
 func ProjectHome(app *config.Env) http.Handler {
@@ -45,12 +46,65 @@ func ProjectHome(app *config.Env) http.Handler {
 	r.Get("/delete_project/{projectId}", DeleteProjectHandler(app))
 	r.Get("/activate_comment/{commentId}/{projectId}", ActivateCommentHandler(app))
 
+	r.Post("/create-page-flow", CreatePageFlowHandler(app))
+	r.Get("/delete-pageFlow/{projectPageFlowId}/{projectId}", DeletePageFlowHandler(app))
 	return r
+}
+
+func DeletePageFlowHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
+		projectPageFlowId := chi.URLParam(r, "projectPageFlowId")
+		projectId := chi.URLParam(r, "projectId")
+
+		_, err := project_io.DeleteProjectPageFLow(projectPageFlowId)
+		if err != nil {
+			fmt.Println("error deleting History Page FLow")
+			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+				app.Session.Remove(r.Context(), "user-create-error")
+			}
+			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+			http.Redirect(w, r, "/admin_user/project/edit/"+projectId, 301)
+			return
+		}
+		fmt.Println(" successful deletion.")
+		app.Session.Put(r.Context(), "creation-successful", "You have successfully deleted: Project Gallery. ")
+		http.Redirect(w, r, "/admin_user/project/edit/"+projectId, 301)
+		return
+	}
+}
+
+func CreatePageFlowHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
+		r.ParseForm()
+		projectId := r.PostFormValue("projectId")
+		pageFlowTitle := r.PostFormValue("pageFlowTitle")
+		scr := r.PostFormValue("scr")
+
+		if scr != "" && projectId != "" && pageFlowTitle != "" {
+			_, err := project_io.CreateProjectPageFLow(project2.ProjectPageFlow{"", pageFlowTitle, projectId, scr})
+			if err != nil {
+				fmt.Println(err, " error creating page flow!")
+			}
+		} else {
+			app.ErrorLog.Print("Error creating projectPageFlow")
+		}
+		http.Redirect(w, r, "/admin_user/project/edit/"+projectId, 301)
+		return
+	}
 }
 
 //Todo finish this method.
 func AddPlaceHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		r.ParseForm()
 		projectId := r.PostFormValue("projectId")
 		PlaceId := r.PostFormValue("PlaceId")
@@ -63,6 +117,9 @@ func AddPlaceHandler(app *config.Env) http.HandlerFunc {
 }
 func ActivateCommentHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		commentId := chi.URLParam(r, "commentId")
 		projectId := chi.URLParam(r, "projectId")
 		result := misc.ActivateComment(commentId)
@@ -73,6 +130,9 @@ func ActivateCommentHandler(app *config.Env) http.HandlerFunc {
 }
 func DeleteGalleryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		pictureId := chi.URLParam(r, "pictureId")
 		projectId := chi.URLParam(r, "projectId")
 		projectGalleryPictureId := chi.URLParam(r, "projectGalleryPictureId")
@@ -115,6 +175,9 @@ func DeleteGalleryHandler(app *config.Env) http.HandlerFunc {
 
 func CreateGalleryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		var content []byte
 		r.ParseForm()
 		file, _, err := r.FormFile("file")
@@ -162,6 +225,9 @@ func CreateGalleryHandler(app *config.Env) http.HandlerFunc {
 
 func DeleteProjectHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		projectId := chi.URLParam(r, "projectId")
 
 		//Reading the project
@@ -247,6 +313,9 @@ func DeleteProjectHandler(app *config.Env) http.HandlerFunc {
 
 func ProjectUpdateDetails(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		r.ParseForm()
 		projectTitle := r.PostFormValue("projectTitle")
 		projectId := r.PostFormValue("projectId")
@@ -294,6 +363,9 @@ func ProjectUpdateDetails(app *config.Env) http.HandlerFunc {
 
 func ProjectCreateHistoryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		r.ParseForm()
 		historyContent := r.PostFormValue("myArea")
 		projectId := r.PostFormValue("projectId")
@@ -348,6 +420,9 @@ func ProjectCreateHistoryHandler(app *config.Env) http.HandlerFunc {
 //TODO for now we are accepting mytextarea maybe empty. but this will will need to be investigates
 func ProjectUpdateHistoryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		r.ParseForm()
 		historyContent := r.PostFormValue("myArea")
 		projectId := r.PostFormValue("projectId")
@@ -391,6 +466,9 @@ func ProjectUpdateHistoryHandler(app *config.Env) http.HandlerFunc {
 }
 func EditeProjectsHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		projectId := chi.URLParam(r, "projectId")
 
 		selectedProjest := misc.GetProjectEditable(projectId)
@@ -406,6 +484,10 @@ func EditeProjectsHandler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			fmt.Println(err, " Error reading events")
 		}
+		projectPageFlow, err := project_io.ReadProjectPageFLowsWithProjectId(projectId)
+		if err != nil {
+			fmt.Println(err, " Error reading pageFlows")
+		}
 		commentNumber, pendingcomments, activeComments := projectCommentCalculation(projectId)
 		type PageData struct {
 			Events          []event.Event
@@ -418,6 +500,7 @@ func EditeProjectsHandler(app *config.Env) http.HandlerFunc {
 			CommentNumber   int64
 			PendingComments int64
 			ActiveComments  int64
+			PageFlows       []project2.ProjectPageFlow
 		}
 		data := PageData{events,
 			Places,
@@ -427,6 +510,7 @@ func EditeProjectsHandler(app *config.Env) http.HandlerFunc {
 			GetProjectCommentsWithProjectId(projectId),
 			misc.GetProjectGallery(projectId),
 			commentNumber, pendingcomments, activeComments,
+			projectPageFlow,
 		}
 		files := []string{
 			app.Path + "admin/project/edite_project.html",
@@ -449,6 +533,9 @@ func EditeProjectsHandler(app *config.Env) http.HandlerFunc {
 
 func NewProjectsHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		var unknown_error string
 		var backend_error string
 		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
@@ -484,6 +571,9 @@ func NewProjectsHandler(app *config.Env) http.HandlerFunc {
 
 func ProjectsHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		projects, err := project_io.ReadProjects()
 		if err != nil {
 			fmt.Println(err, " error reading projects")
@@ -530,13 +620,12 @@ func CreateProjectHandler(app *config.Env) http.HandlerFunc {
 
 	*/
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
+		var content []byte
 		r.ParseForm()
 		file, _, err := r.FormFile("file")
-		file2, _, err := r.FormFile("file2")
-		file3, _, err := r.FormFile("file3")
-		file4, _, err := r.FormFile("file4")
-		file5, _, err := r.FormFile("file5")
-		file6, _, err := r.FormFile("file6")
 		project_name := r.PostFormValue("project_name")
 		description := r.PostFormValue("description")
 		mytextarea := r.PostFormValue("mytextarea")
@@ -544,8 +633,12 @@ func CreateProjectHandler(app *config.Env) http.HandlerFunc {
 			fmt.Println(err, "<<<<<< error reading file>>>>>>>")
 		}
 
-		filesArray := []io.Reader{file, file2, file3, file4, file5, file6}
-		filesByteArray := misc.CheckFiles(filesArray)
+		if err != nil {
+			fmt.Println(err, "<<<error reading file>>>>This error may happen if there is no picture selected>>>")
+		} else {
+			reader := bufio.NewReader(file)
+			content, _ = ioutil.ReadAll(reader)
+		}
 
 		fmt.Println(project_name, "<<<Project Name|| description>>>", description)
 
@@ -563,9 +656,14 @@ func CreateProjectHandler(app *config.Env) http.HandlerFunc {
 			}
 
 			//project Image
-			projectImage := project2.ProjectImage{"", new_project.Id, "", ""}
-			helper := project2.ProjectImageHelper{filesByteArray, projectImage}
-			_, errr := project_io.CreateProjectImage(helper)
+			//Image
+			imageObject := image2.Images{"", content, utile.PROFILE}
+			imageObjectNew, err := image_io.CreateImage(imageObject)
+			if err != nil {
+				fmt.Println(err, " error creating a new image")
+			}
+			projectImage := project2.ProjectImage{"", new_project.Id, imageObjectNew.Id, utile.PROFILE}
+			_, errr := project_io.CreateProjectImage(projectImage)
 			if errr != nil {
 				fmt.Println(errr, " error creating projectImage")
 				_, err := project_io.DeleteProject(new_project.Id)
@@ -613,6 +711,9 @@ func CreateProjectHandler(app *config.Env) http.HandlerFunc {
 }
 func CreateProjectHistoryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		r.ParseForm()
 		projectId := r.PostFormValue("projectId")
 		history := r.PostFormValue("mytextarea")
@@ -677,6 +778,9 @@ func CreateProjectHistoryHandler(app *config.Env) http.HandlerFunc {
 
 func NewProjectHistoryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		var unknown_error string
 		var backend_error string
 		projects, err := project_io.ReadProjects()
@@ -730,9 +834,10 @@ func NewProjectHistoryHandler(app *config.Env) http.HandlerFunc {
 }
 func ProjectUpdatePictureHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		r.ParseForm()
-		//fileslist := r.Form["file"]
-
 		file, _, err := r.FormFile("file")
 		imageId := r.PostFormValue("imageId")
 		decription := r.PostFormValue("decription")
@@ -784,6 +889,9 @@ func ProjectUpdatePictureHandler(app *config.Env) http.HandlerFunc {
 
 func ProjectUpdatePicturesHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		r.ParseForm()
 
 		var content []byte
@@ -827,6 +935,5 @@ func ProjectUpdatePicturesHandler(app *config.Env) http.HandlerFunc {
 			http.Redirect(w, r, "/admin_user/project/edit/"+project.Id, 301)
 			return
 		}
-
 	}
 }

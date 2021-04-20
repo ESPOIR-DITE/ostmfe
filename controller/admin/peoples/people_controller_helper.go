@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"ostmfe/controller/misc"
 	history2 "ostmfe/domain/history"
+	"ostmfe/domain/image"
 	"ostmfe/domain/people"
 	"ostmfe/io/comment_io"
 	"ostmfe/io/event_io"
@@ -29,7 +30,34 @@ type EventPeopleData struct {
 	Id        string
 	EventName string
 }
+type NewPeopleEditable struct {
+	People            people.People
+	ProfileImage      PeopleImageHelperEditable
+	DescriptiveImages []PeopleImageHelperEditable
+	History           history2.HistoriesHelper
+}
 
+func NewGetPeopleEditable(peopleId string) NewPeopleEditable {
+	var peopleEditable NewPeopleEditable
+
+	people, err := people_io.ReadPeople(peopleId)
+	if err != nil {
+		fmt.Println(err, " can not read this people")
+		return peopleEditable
+	}
+	profileImage, err := people_io.ReadPeopleProfileImage(peopleId)
+	if err != nil {
+		fmt.Println(err, " can not read this people profile Image")
+	}
+	descriptiveImage, err := people_io.ReadPeopleDescriptiveImage(peopleId)
+	if err != nil {
+		fmt.Println(err, " can not read this people descriptive Image")
+	}
+	History, err := people_io.ReadPeopleHistories(peopleId)
+	if err != nil {
+		fmt.Println(err, " can not read this people History")
+	}
+}
 func GetPeopleEditable(peopleId string) PeopleEditable {
 	var Images PeopleImageHelperEditable
 	var historyToreturn history2.HistoriesHelper
@@ -119,4 +147,38 @@ func GetPeopleEvents(peopleId string) []EventPeopleData {
 		eventPeopleObject = append(eventPeopleObject, EventPeopleData{peopleEvent.Id, event.Name})
 	}
 	return eventPeopleObject
+}
+
+func GetPeopleCategory(peopleId string) (people.Category, error) {
+	peopleCategory, err := people_io.ReadPeopleCategoryWithPplId(peopleId)
+	if err != nil {
+		fmt.Println(err, " error reading people category")
+		return people.Category{}, err
+	}
+	category, err := people_io.ReadCategory(peopleCategory.Category)
+	if err != nil {
+		fmt.Println(err, " error reading category")
+		return people.Category{}, err
+	}
+	return category, nil
+}
+func getPeopleObjectReady(peopleObject people.People) people.People {
+	var deathDate string
+	if misc.FormatDateMonth(peopleObject.BirthDate) == misc.FormatDateMonth(peopleObject.DeathDate) {
+		deathDate = "living"
+	} else {
+		deathDate = misc.FormatDateMonth(peopleObject.DeathDate)
+	}
+	return people.People{peopleObject.Id,
+		peopleObject.Name,
+		peopleObject.Surname,
+		misc.FormatDateMonth(peopleObject.BirthDate),
+		deathDate,
+		peopleObject.Origin,
+		peopleObject.Profession,
+		peopleObject.Brief}
+}
+func getProfileImageReady(ImageObejct image.Images) people.PeopleImageHelper {
+	imageObject := PeopleImageHelperEditable{ImageObejct.Id, misc.ConvertingToString(ImageObejct.Image), peopleImages.Id}
+
 }

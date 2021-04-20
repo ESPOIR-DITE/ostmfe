@@ -31,6 +31,7 @@ func Home(app *config.Env) http.Handler {
 func PeopleCategoryHanler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		categoryId := chi.URLParam(r, "categoryId")
+		fmt.Println(categoryId)
 
 		peoples, err := people_io.ReadCategories()
 		var bannerImage string

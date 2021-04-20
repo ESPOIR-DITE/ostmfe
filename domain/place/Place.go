@@ -9,10 +9,10 @@ type Place struct {
 	Description string `json:"description"`
 }
 type PlaceImage struct {
-	Id          string `json:"id"`
-	PlaceId     string `json:"placeId"`
-	ImageId     string `json:"imageId"`
-	Description string `json:"description"`
+	Id        string `json:"id"`
+	PlaceId   string `json:"placeId"`
+	ImageId   string `json:"imageId"`
+	ImageType string `json:"imageType"`
 }
 type PlaceHistories struct {
 	Id        string `json:"id"`

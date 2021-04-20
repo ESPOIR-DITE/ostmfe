@@ -9,6 +9,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"ostmfe/config"
+	"ostmfe/controller/constates"
+	"ostmfe/controller/generic"
 	"ostmfe/controller/misc"
 	people3 "ostmfe/controller/people"
 	"ostmfe/domain/comment"
@@ -26,8 +28,8 @@ import (
 
 func PeopleHome(app *config.Env) http.Handler {
 	r := chi.NewRouter()
-	r.Get("/", PeopleHandler(app))
 
+	r.Get("/", PeopleHandler(app))
 	r.Get("/new", NewPeopleHandler(app))
 	r.Get("/new_stp2/{peopleId}", NewPeoplestp2Handler(app))
 	r.Get("/edit/{peopleId}", EditPeopleHandler(app))
@@ -35,7 +37,7 @@ func PeopleHome(app *config.Env) http.Handler {
 	r.Get("/delete-category/{category}", DeletePeopleCategoryHandler(app))
 
 	r.Post("/create_stp1", CreatePeopleHandler(app))
-	r.Post("/create_stp2", CreatePeopleStp2Handler(app))
+	//r.Post("/create_stp2", CreatePeopleStp2Handler(app))
 	r.Post("/create_image", CreatePeopleImageHandler(app))
 
 	r.Post("/update_image", UpdatePeopleImageHandler(app))
@@ -55,7 +57,60 @@ func PeopleHome(app *config.Env) http.Handler {
 	r.Get("/people_category/new", NewPeopleCategoryHandler(app))
 	r.Post("/people_category/create", CreatePeopleCategoryHandler(app))
 
+	r.Post("/create-descriptive-Image", createDescriptiveImage(app))
+
 	return r
+}
+
+func createDescriptiveImage(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var content []byte
+		r.ParseForm()
+		file, _, err := r.FormFile("file")
+		peopleId := r.PostFormValue("peopleId")
+		description := r.PostFormValue("description")
+		if err != nil {
+			fmt.Println(err, "<<<<<< error reading contribution file>>>>This error should happen>>>")
+		} else {
+			reader := bufio.NewReader(file)
+			content, _ = ioutil.ReadAll(reader)
+		}
+		if peopleId != "" && description != "" {
+			ImageObject := image.Images{"", content, description}
+			imageObj, err := image_io.CreateImage(ImageObject)
+			if err != nil {
+				fmt.Println(err, " error creating image")
+			} else {
+				ImageType, err := image_io.ReadImageTypeWithName(constates.DESCRIPTIVE)
+				if err != nil {
+					fmt.Println(err, " error Reading image Type")
+				}
+				peopleImageObject := people2.PeopleImage{"", peopleId, imageObj.Id, ImageType.Id}
+				_, errx := people_io.CreatePeopleImageHere(peopleImageObject)
+				if errx != nil {
+					fmt.Println(err, " error creating GroupGallery")
+					if app.Session.GetString(r.Context(), "user-create-error") != "" {
+						app.Session.Remove(r.Context(), "user-create-error")
+					}
+					app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+					http.Redirect(w, r, "/admin_user/people/edit/"+peopleId, 301)
+					return
+				}
+				if app.Session.GetString(r.Context(), "creation-successful") != "" {
+					app.Session.Remove(r.Context(), "creation-successful")
+				}
+				app.Session.Put(r.Context(), "creation-successful", "You have successfully deleted an event Group")
+				http.Redirect(w, r, "/admin_user/people/edit/"+peopleId, 301)
+				return
+			}
+		}
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			app.Session.Remove(r.Context(), "user-create-error")
+		}
+		app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+		http.Redirect(w, r, "/admin_user/people/edit/"+peopleId, 301)
+		return
+	}
 }
 
 func DeleteEventPeopleHandler(app *config.Env) http.HandlerFunc {
@@ -303,7 +358,7 @@ func AddPeopleImageHandler(app *config.Env) http.HandlerFunc {
 
 		if peopleId != "" {
 
-			peopleImageObject := people2.People_image{"", peopleId, "", ""}
+			peopleImageObject := people2.PeopleImage{"", peopleId, "", ""}
 			peopleImageHelper := people2.PeopleImageHelper{peopleImageObject, filesByteArray, ""}
 
 			_, errx := people_io.CreatePeopleImage(peopleImageHelper)
@@ -356,7 +411,7 @@ func CreatePeopleImageHandler(app *config.Env) http.HandlerFunc {
 
 		if peopleId != "" {
 
-			peopleImageObject := people2.People_image{"", peopleId, "", ""}
+			peopleImageObject := people2.PeopleImage{"", peopleId, "", ""}
 			peopleImageHelper := people2.PeopleImageHelper{peopleImageObject, filesByteArray, ""}
 
 			_, errx := people_io.CreatePeopleImage(peopleImageHelper)
@@ -433,7 +488,8 @@ func UpdatePeopleDetailHandler(app *config.Env) http.HandlerFunc {
 		profession := r.PostFormValue("profession")
 		origin := r.PostFormValue("origin")
 		brief := r.PostFormValue("brief")
-		if name != "" && peopleId != "" && surname != "" && profession != "" && origin != "" {
+		categoryId := r.PostFormValue("categoryId")
+		if name != "" && peopleId != "" && surname != "" {
 			//TODO need to learn how to check if a data time if nil or empty....
 			peopleObejct := people2.People{peopleId, name, surname, b_date, d_date, origin, profession, brief}
 			people, err := people_io.UpdatePeople(peopleObejct)
@@ -446,6 +502,13 @@ func UpdatePeopleDetailHandler(app *config.Env) http.HandlerFunc {
 				http.Redirect(w, r, "/admin_user/people/edit/"+peopleId, 301)
 				return
 			}
+			if categoryId != "" {
+				peopleCategory := people2.PeopleCategory{"", categoryId, peopleId, ""}
+				_, err := people_io.CreatePeopleCategory(peopleCategory)
+				if err != nil {
+					fmt.Println(err, " error creating people category")
+				}
+			}
 			if app.Session.GetString(r.Context(), "creation-successful") != "" {
 				app.Session.Remove(r.Context(), "creation-successful")
 			}
@@ -453,6 +516,7 @@ func UpdatePeopleDetailHandler(app *config.Env) http.HandlerFunc {
 			http.Redirect(w, r, "/admin_user/people/edit/"+peopleId, 301)
 			return
 		}
+
 		fmt.Println("One of the field is missing")
 		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
 			app.Session.Remove(r.Context(), "creation-unknown-error")
@@ -478,7 +542,7 @@ func UpdatePeopleImageHandler(app *config.Env) http.HandlerFunc {
 		filesByteArray := misc.CheckFiles(filesArray)
 
 		if peopleId != "" && imageId != "" && imageType != "" && peopleImageId != "" {
-			peopleImage := people2.People_image{peopleImageId, peopleId, imageId, imageType}
+			peopleImage := people2.PeopleImage{peopleImageId, peopleId, imageId, imageType}
 			peopleImageHeper := people2.PeopleImageHelper{peopleImage, filesByteArray, imageId}
 			_, err := people_io.UpdatePeopleImage(peopleImageHeper)
 			if err != nil {
@@ -714,7 +778,7 @@ func CreatePeopleStp2Handler(app *config.Env) http.HandlerFunc {
 				http.Redirect(w, r, "/admin_user/people/new_stp2/"+peopleId, 301)
 				return
 			}
-			peopleImageObject := people2.People_image{"", peopleId, "", ""}
+			peopleImageObject := people2.PeopleImage{"", peopleId, "", ""}
 			peopleImage := people2.PeopleImageHelper{peopleImageObject, filesByteArray, ""}
 			_, errr := people_io.CreatePeopleImage(peopleImage)
 			/***
@@ -810,7 +874,7 @@ func CreatePeopleHandler(app *config.Env) http.HandlerFunc {
 		} else {
 			deathDate = d_date
 		}
-		if name != "" && surname != "" && profession != "" && origin != "" {
+		if name != "" && surname != "" {
 			peopleObject := people2.People{"", name, surname, b_date, deathDate, origin, profession, brief}
 			people, err := people_io.CreatePeople(peopleObject)
 			if err != nil {
@@ -832,7 +896,7 @@ func CreatePeopleHandler(app *config.Env) http.HandlerFunc {
 			}
 			//People Category
 			if categoryId != "" {
-				peopleCategoryObject := people2.PeopleCategory{"", people.Id, categoryId}
+				peopleCategoryObject := people2.PeopleCategory{"", categoryId, people.Id, ""}
 				_, err := people_io.CreatePeopleCategory(peopleCategoryObject)
 				if err != nil {
 					fmt.Println("error creating people Category")
@@ -850,14 +914,13 @@ func CreatePeopleHandler(app *config.Env) http.HandlerFunc {
 			if errc != nil {
 				fmt.Println(errc, " error creating a new people history")
 			}
-
 			//Image
 			imageObject := image.Images{"", content, description}
 			imageObjectNew, err := image_io.CreateImage(imageObject)
 			if err != nil {
 				fmt.Println(err, " error creating a new image")
 			}
-			peopleImageObject := people2.People_image{"", people.Id, imageObjectNew.Id, description}
+			peopleImageObject := people2.PeopleImage{"", people.Id, imageObjectNew.Id, generic.GetImageTypeId(constates.PROFILE)}
 			_, errx := people_io.CreatePeopleImageX(peopleImageObject)
 			if errx != nil {
 				fmt.Println(errx, " error creating a new placeImage")
@@ -918,7 +981,15 @@ func EditPeopleHandler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			fmt.Println(err, " error reading events")
 		}
+		category, err := GetPeopleCategory(peopleId)
+		if err != nil {
+			fmt.Println(err, " error reading category")
+		}
 
+		Categories, err := people_io.ReadCategories()
+		if err != nil {
+			fmt.Println(err, " error reading categories")
+		}
 		commentNumber, pendingcomments, activeComments := peopleCommentCalculation(peopleId)
 		type PageDate struct {
 			PeopleDetails   people2.People
@@ -935,6 +1006,8 @@ func EditPeopleHandler(app *config.Env) http.HandlerFunc {
 			Backend_error   string
 			Unknown_error   string
 			EventPeople     []EventPeopleData
+			Categories      []people2.Category
+			Category        people2.Category
 		}
 		data := PageDate{people,
 			peopleEditable,
@@ -950,6 +1023,8 @@ func EditPeopleHandler(app *config.Env) http.HandlerFunc {
 			backend_error,
 			unknown_error,
 			GetPeopleEvents(peopleId),
+			Categories,
+			category,
 		}
 
 		files := []string{

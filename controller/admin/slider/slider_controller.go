@@ -70,10 +70,9 @@ func CreateSlider(app *config.Env) http.HandlerFunc {
 		}
 		sliderName := r.PostFormValue("sliderName")
 		description := r.PostFormValue("description")
-		message := r.PostFormValue("message")
 
-		if message != "" && description != "" {
-			sliderObject := slider.Slider{"", sliderName, description, misc.ConvertToByteArray(message), content}
+		if description != "" {
+			sliderObject := slider.Slider{"", sliderName, description, content}
 			_, err := slider_io.CreateSlider(sliderObject)
 			if err != nil {
 				fmt.Println("error create slider")
@@ -106,7 +105,7 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 			fmt.Println("error reading Sliders")
 		} else {
 			for _, mySlider := range sliders {
-				sliderOblect := slider.SliderHelper{mySlider.Id, mySlider.SliderName, mySlider.Description, misc.ConvertingToString(mySlider.SliderMessage), misc.ConvertingToString(mySlider.SliderImage)}
+				sliderOblect := slider.SliderHelper{mySlider.Id, mySlider.SliderName, mySlider.Description, misc.ConvertingToString(mySlider.SliderImage)}
 				sliderList = append(sliderList, sliderOblect)
 				//sliderOblect = slider.SliderHelper{}
 			}

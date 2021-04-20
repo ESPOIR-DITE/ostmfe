@@ -18,6 +18,12 @@ type ProjectImage struct {
 	ImageId   string `json:"imageId"`
 	ImageType string `json:"imageType"`
 }
+type ProjectPageFlow struct {
+	Id         string `json:"id"`
+	Title      string `json:"title"`
+	ProjectId  string `json:"projectId"`
+	PageFlowId string `json:"pageFLowId"`
+}
 
 type ProjectPartner struct {
 	Id          string `json:"id"`

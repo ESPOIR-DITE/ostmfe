@@ -61,23 +61,16 @@
     <div class="col-lg-3 sidebar ScrollStyle" >
 
         <div class="single-widget protfolio-widget">
-            <br>
-            <img id="placeImage" width="250px" src="../../assets/img/share_your_story.jpg" alt="">
             <a  href="" data-toggle="modal" data-target="#Contribution" id="title-a"><h4 id="title"> Share your story about this place</h4></a>
+            <img id="placeImage" width="200px" src="../../assets/img/share_your_story.jpg" alt="">
             <p id="title-description">
                 You may ba aware of an event that happened and is linked to a particular location that you know better in Simon's Town.
             </p>
             <a id="shareBTN" data-toggle="modal" href="" data-target="#ContributionPlace" class="genric-btn info radius e-large">Share</a>
             <a id="placeBTN" class="genric-btn info radius e-large" hidden>Read more</a>
-            <ul>
-                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-                <li><a href="#"><i class="fa fa-behance"></i></a></li>
-            </ul>
         </div>
 
-        <div class="single-widget category-widget">
+        <div class="single-widget category-widget" id="eventBox" hidden>
             <h4 class="title">Events Linked to this place</h4>
             <h4 id="peopleTitle" ></h4>
             <ul id="peoplePlace">
@@ -85,42 +78,23 @@
             </ul>
         </div>
 
-        <div class="single-widget recent-posts-widget">
+        <div class="single-widget recent-posts-widget" id="peopleBox" hidden>
             <h4 class="title">People linked to this place</h4>
             <div id="peopleArea">
 
             </div>
         </div>
-
-        <!--div class="single-widget category-widget">
-            <h4 class="title">Post Archive</h4>
+        <div class="single-widget category-widget">
+            <h4 class="title">Map Legend</h4>
             <ul>
-                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Dec '17</h6> <span>37</span></a></li>
-                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Nov '17</h6> <span>24</span></a></li>
-                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Oct '17</h6> <span>59</span></a></li>
-                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Sep '17</h6> <span>29</span></a></li>
-                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Aug '17</h6> <span>15</span></a></li>
-                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Jul '17</h6> <span>09</span></a></li>
-                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Jun '17</h6> <span>44</span></a></li>
+                <li><a href="/history" class="justify-content-between align-items-center d-flex"><img src="../../assets/img/markers/blue.png" width="20px"> <span>Historic Fishing Sites</span></a></li>
+                <li><a href="/history" class="justify-content-between align-items-center d-flex"><img src="../../assets/img/markers/black.png" width="20px"> <span>Sites of Forced Removals</span></a></li>
+                <li><a href="/history" class="justify-content-between align-items-center d-flex"><img src="../../assets/img/markers/gray.png" width="20px"> <span>Historic Buildings</span></a></li>
+                <li><a href="/history" class="justify-content-between align-items-center d-flex"><img src="../../assets/img/markers/pink.png" width="20px"> <span>Interviews</span></a></li>
+                <li><a href="/history" class="justify-content-between align-items-center d-flex"><img src="../../assets/img/markers/green.png" width="20px"> <span>Naval and Maritime Sites</span></a></li>
+                <li><a href="/history" class="justify-content-between align-items-center d-flex"><img src="../../assets/img/markers/purple.png" width="20px"> <span>Other</span></a></li>
             </ul>
-        </div-->
-
-        <!--div class="single-widget tags-widget">
-            <h4 class="title">Tag Clouds</h4>
-            <ul>
-                <li><a href="#">Lifestyle</a></li>
-                <li><a href="#">Art</a></li>
-                <li><a href="#">Adventure</a></li>
-                <li><a href="#">Food</a></li>
-                <li><a href="#">Techlology</a></li>
-                <li><a href="#">Fashion</a></li>
-                <li><a href="#">Architecture</a></li>
-                <li><a href="#">Food</a></li>
-                <li><a href="#">Technology</a></li>
-            </ul>
-        </div-->
-
-
+        </div>
 
 </div>
 <div class="modal fade bd-example-modal-lg" id="ContributionPlace" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -186,8 +160,9 @@
         container: 'map',
         style: 'mapbox://styles/mapbox/streets-v11',
         center: [18.431896174363573,-34.19493744157412],
-        zoom: 10
+        zoom: 7
     });
+   // L.mapbox.legendControl({ position: 'topright' }).addLegend('<strong>My walk from the White House to the hill!</strong>').addTo(map);
 
     // add markers to map
    // geojson.features.forEach(function (marker) {
@@ -208,7 +183,7 @@
         // el.style.backgroundImage = '../../assets/img/marker-15.svg';
         // el.style.backgroundImage = url('../../assets/img/markers/pink.png');
         //el.style.backgroundImage = "url('../../assets/img/markers/pink.png')";
-        getMarker(el,marker.PlaceCategory);
+        getMarker(el,marker.Category.name);
         el.style.width = '45px';
         el.style.height = '65px';
         el.style.opacity = '90%';
@@ -224,6 +199,8 @@
 
             document.getElementById("shareBTN").setAttribute("hidden","true");
             document.getElementById("placeBTN").removeAttribute("hidden");
+            document.getElementById("peopleBox").removeAttribute("hidden");
+            document.getElementById("eventBox").removeAttribute("hidden");
             document.getElementById("placeBTN").setAttribute("href","/place/"+placeId);
 
             //console.log("marker.People: "+marker.People);
@@ -264,20 +241,20 @@
     //Returns a proper marker
     function getMarker(element,value) {
         switch(value) {
-            case "Historical site":
-                element.style.backgroundImage = "url('../../assets/img/markers/black')";
-                break;
-            case "Forced Removal":
+            case "Historic Fishing Sites":
                 element.style.backgroundImage = "url('../../assets/img/markers/blue.png')";
                 break;
-              case "Simon’s town site":
+            case "Sites of Forced Removals":
+                element.style.backgroundImage = "url('../../assets/img/markers/black.png')";
+                break;
+              case "Historic Buildings":
                   element.style.backgroundImage = "url('../../assets/img/markers/gray.png')";
                   break;
               case "Interviews":
-                  element.style.backgroundImage = "url('../../assets/img/markers/green.png')";
+                  element.style.backgroundImage = "url('../../assets/img/markers/pink.png')";
                   break;
-            case "Superstars’ site":
-                element.style.backgroundImage = "url('../../assets/img/markers/pink.png')";
+            case "Naval and Maritime Sites":
+                 element.style.backgroundImage = "url('../../assets/img/markers/green.png')";
                 break;
 
             default:

@@ -95,6 +95,18 @@
     <div class="col-lg-8 col-md-8">
         <section class="sample-text-area">
             <div class="container">
+                {{if .PageData}}
+                <div class="title text-center" id="welcome">
+                    <script>
+                        var div = document.getElementById('welcome');
+                        var myvalue = {{.PageData}}
+                        parseMe(myvalue);
+                        function parseMe(value) {
+                            div.innerHTML += value;
+                        }
+                    </script>
+                </div>
+                {{else}}
                 <h3 class="text-heading">COMMUNITIES</h3>
                 <p class="sample-text">
                     Simon’s Town was a town of many nations and cultures from its inception. Simon’s Bay was named by Simon van der Stel, when he was carrying out his survey of False Bay in 1687. He recommended Simon’s Bay as the new winter anchorage for the "Verenigde Oostindische Compagnie" fleet (in English, the " United East India Company" and nowadays more generally called the "Dutch East India Company") or simply the "VOC". After much dithering, the VOC finally acted on his recommendation in 1743, when Baron von Imhoff ordered the building of the Storehouses in what is now the West Dockyard. At first the settlement remained tiny, most of its inhabitants being resident only in the winter. The population of Simon’s Town were mainly VOC officials, soldiers and slaves that had been bought to the Cape from China, Indonesia, India, Madagascar, Mozambique, Zanzibar, Angola and other parts of West Africa and the indigenous Khoisan people. Small numbers of Scandinavians, Germans and Frenchmen joined the community as sailors, whalermen, mercenaries, farmers, teachers, traders and so on. The little village remained small though as a result of its seasonal trade with the Dutch East India Company fleet and other passing shipping.
@@ -107,7 +119,9 @@
                     Other nationalities who worked on the building of the East Dockyard were the Italians, the Chinese, Indians from the Punjab and again a large number of men from the United Kingdom.
                     In the late 1800’s and early 1900’s, a large number of Jewish people, mainly Lithuanians, settled and opened businesses in Simon’s Town, becoming prominent members of the community.
                     In addition, there were small numbers of Philippinos who settled in Simon’s Town in the 1800’s. They were mostly sailors or fishermen.
-                    Centuries of intermarriage and social interaction in Simon’s Town created a very culturally diverse community, whose history and heritage must be UNIQUE in South Africa, if not the world!                </p>
+                    Centuries of intermarriage and social interaction in Simon’s Town created a very culturally diverse community, whose history and heritage must be UNIQUE in South Africa, if not the world!
+                </p>
+                {{end}}
             </div>
         </section>
 

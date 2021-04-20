@@ -51,102 +51,34 @@
           <!-- Page Heading -->
           <!-- Add new -->
           {{if .Backend_error}}
-            <div class="text-center alert-warning">
-              <a class="small" href="#">{{.Backend_error}}</a>
-            </div>
-          {{end}}
-          {{if .Unknown_error}}
-            <div class="text-center alert-warning">
-              <a class="small" href="#">{{.Unknown_error}}</a>
-            </div>
-          {{end}}
-
-          <div class="card shadow mb-4">
-            <!-- Card Header - Accordion -->
-            <a href="#collapseCardExample" class="d-block card-header py-3 btn-success" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
-              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Create a new Slider</h6>
-            </a>
-            <!-- Card Content - Collapse -->
-            <div class="collapse " id="collapseCardExample">
-              <div class="card-body p-0">
-                <!-- Nested Row within Card Body -->
-                <div class="row">
-                  <div class="col-lg-12">
-                    <div class="p-5">
-                      {{if .Backend_error}}
-                        <div class="text-center alert-warning">
-                          <a class="small" href="#">{{.Backend_error}}</a>
-                        </div>
-                      {{end}}
-                      {{if .Unknown_error}}
-                        <div class="text-center alert-warning">
-                          <a class="small" href="#">{{.Unknown_error}}</a>
-                        </div>
-                      {{end}}
-                      <div class="text-center">
-                        <h1 class="h4 text-gray-900 mb-4">Slider</h1>
-                      </div>
-                      <form class="user" id="myform" method="post" action="/admin_user/slider/create" enctype="multipart/form-data">
-                        <div class="form-group ">
-                          <label>Slider Name</label>
-                          <input type="text" class="form-control" name="sliderName" id="exampleFirstName" placeholder="name">
-                        </div>
-                        <div class="form-group">
-                          <label>Slider Description <small> 150 Maximum characters limit</small></label>
-                          <textarea  class="form-control "  maxlength="150" style="height: 100px" name="description" id="exampleLastName" placeholder="Description"></textarea>
-                        </div>
-                        <div class="form-group">
-                          <label>Slider Message </label>
-                          <textarea  class="form-control " style="height: 200px" name="message" id="exampleLastName" placeholder="Description"></textarea>
-                        </div>
-
-                        <div class="form-group ">
-                          <label>Slider Image</label>
-                          <input type="file"name="file" class="form-control " id="file" required>
-                        </div>
-
-                        <br>
-
-
-                        <!--
-                        <div class="form-group  row" id="filesArea">
-
-
-                        </div>
-                        <div class="form-group row" >
-                          <div class="col-sm-6" >
-                            <button type="button" id="add_form_field" class="btn btn-primary btn-block">
-                              Add a picture
-                            </button>
-                          </div>
-
-                        </div>
-                        -->
-
-
-                        <button type="submit" class="btn btn-primary  btn-block">
-                          Submit
-                        </button>
-                        <hr>
-                        <a href="/admin_user" class="btn btn-google btn-block">
-                          <i class="fab"></i> Cancel
-                        </a>
-                      </form>
-                      <hr>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-            </div>
+          <div class="alert alert-danger">
+            <strong>Error! </strong> {{.Backend_error}}
           </div>
+          {{end}}
+
+          {{if .Unknown_error}}
+          <div class="alert alert-danger">
+            <strong>Error! </strong> {{.Unknown_error}}
+          </div>
+          {{end}}
 
 
           <h1 class="h3 mb-2 text-gray-800">Slider Table</h1>
           <!-- DataTales Example -->
           <div class="card shadow mb-4">
             <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary"></h6>
+
+              <div class="row" >
+                <div class="col-lg-6">
+                  <h6 class="m-0 font-weight-bold text-primary"></h6>
+                </div>
+                <div class="col-lg-6">
+                  <a class="float-right" href="#" data-toggle="modal" data-target="#exampleModalCreateSlider">
+                    <i class="fas fa-plus fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Add
+                  </a>
+                </div>
+              </div>
             </div>
             <div class="card-body">
               <div class="table-responsive">
@@ -249,6 +181,59 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
           <button type="button" class="btn btn-danger" id=""><a id="deleteBtn">Delete</a></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!--Delete warning Modal -->
+  <div class="modal fade" id="exampleModalCreateSlider" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-info" >Create New Slider</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form class="user" id="myform" method="post" action="/admin_user/slider/create" enctype="multipart/form-data">
+            <div class="form-group ">
+              <label>Slider Name</label>
+              <input type="text" class="form-control" name="sliderName" id="exampleFirstName" placeholder="name">
+            </div>
+            <div class="form-group">
+              <label>Slider Description <small> 150 Maximum characters limit</small></label>
+              <textarea  class="form-control "  maxlength="150" style="height: 100px" name="description" id="exampleLastName" placeholder="Description"></textarea>
+            </div>
+            <div class="form-group ">
+              <label>Slider Image</label>
+              <input type="file"name="file" class="form-control " id="file" required>
+            </div>
+
+            <br>
+
+
+            <!--
+            <div class="form-group  row" id="filesArea">
+
+
+            </div>
+            <div class="form-group row" >
+              <div class="col-sm-6" >
+                <button type="button" id="add_form_field" class="btn btn-primary btn-block">
+                  Add a picture
+                </button>
+              </div>
+
+            </div>
+            -->
+
+
+            <button type="submit" class="btn btn-primary  btn-block">
+              Submit
+            </button>
+          </form>
         </div>
       </div>
     </div>

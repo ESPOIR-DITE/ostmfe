@@ -214,6 +214,7 @@ type PlaceAggregatedDate struct {
 	People        []PeopleDataPlace
 	Image         string
 	PlaceCategory string
+	Category      place.PlaceCategory
 }
 
 //Get people data
@@ -232,6 +233,7 @@ func getPlaceAggregatedData() []PlaceAggregatedDate {
 	var peoples []PeopleDataPlace
 	var image string
 	var PlaceCategory string
+	var category place.PlaceCategory
 
 	places, err := place_io.ReadPlaces()
 	if err != nil {
@@ -246,6 +248,11 @@ func getPlaceAggregatedData() []PlaceAggregatedDate {
 			fmt.Println(err, " error Event place")
 		} else {
 			events = getEvents(eventPlace)
+		}
+		//Category
+		category, err = misc.GetPlaceCategory(place.Id)
+		if err != nil {
+			fmt.Println(err, " error getting place category")
 		}
 
 		//Gallery
@@ -270,7 +277,8 @@ func getPlaceAggregatedData() []PlaceAggregatedDate {
 		} else {
 			image = getImage(placeImage.ImageId).Id
 		}
-		placeAggregated = append(placeAggregated, PlaceAggregatedDate{place, events, gallery, peoples, image, PlaceCategory})
+		placeAggregated = append(placeAggregated, PlaceAggregatedDate{place,
+			events, gallery, peoples, image, PlaceCategory, category})
 	}
 	return placeAggregated
 }
@@ -355,7 +363,7 @@ func GetPeopleDataPlace(peopleId string) PeopleDataPlace {
 		}
 
 		//Getting People category
-		peoplecategories, err := people_io.ReadPeopleCategoryWithPplId(people.Id)
+		peoplecategories, err := people_io.ReadPeopleCategoryWithCategoryId(people.Id)
 		if err != nil {
 			fmt.Println(err, "error reading people category for peopleId: ", people.Id)
 		} else {

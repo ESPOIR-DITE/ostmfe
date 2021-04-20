@@ -17,7 +17,7 @@
     <title>Simon's Town Museum</title>
 
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.js"></script>
-    <link href="https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.css" rel="stylesheet" />
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.css" rel="stylesheet"/>
 
     <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700" rel="stylesheet">
     <!--
@@ -32,8 +32,18 @@
     <link rel="stylesheet" href="../../assets/css/owl.carousel.css">
     <link rel="stylesheet" href="../../assets/css/main.css">
     <style>
-        body { margin: 0; padding: 0; }
-        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+
         #marker {
             background-image: url('https://docs.mapbox.com/mapbox-gl-js/assets/washington-monument.jpg');
             background-size: cover;
@@ -58,7 +68,7 @@
                     {{.PlaceData.Place.Title}}
                 </h1>
                 <p class="text-white link-nav"><a href="/">Home </a> <span class="lnr lnr-arrow-right"></span> <a
-                            href="/place"> Places</a></p>
+                        href="/place"> Places</a></p>
             </div>
         </div>
     </div>
@@ -82,7 +92,7 @@
                         <script>
                             var div = document.getElementById('me');
                             var myvalue = {{.PlaceData.History.History}}
-                                parseMe(myvalue);
+                            parseMe(myvalue);
 
                             function parseMe(value) {
                                 div.innerHTML += value;
@@ -91,9 +101,8 @@
 
                     </div>
 
-
-<br>
-<br>
+                    <br>
+                    <br>
                     <div class="map-wrap" style="width:100%; height: 345px; position: center" id="mapCanvas"></div>
                     <hr>
 
@@ -162,58 +171,57 @@
 
                 </div>
 
-                </div>
-                <div class="col-lg-4 sidebar">
+            </div>
+            <div class="col-lg-4 sidebar">
 
-                    <div class="single-widget tags-widget">
-                        <h4 class="title">Other Places</h4>
-                        <ul>
-                            {{with .Places}}
-                                {{range .}}
-                                    <li><a href="/place/{{.Id}}">{{.Title}}</a></li>
-                                {{end}}
-                            {{end}}
-                        </ul>
-                    </div>
-
+                <div class="single-widget tags-widget">
+                    <h4 class="title">Other Places</h4>
+                    <ul>
+                        {{with .Places}}
+                        {{range .}}
+                        <li><a href="/place/{{.Id}}">{{.Title}}</a></li>
+                        {{end}}
+                        {{end}}
+                    </ul>
                 </div>
+
             </div>
         </div>
+    </div>
 </section>
 <!-- End blog-posts Area -->
 
 
-
-
-        <!--event gallery--->
-        <div class="container">
-            <div class="row d-flex justify-content-center">
-                <div class="menu-content pb-60 col-lg-10">
-                    {{if .GalleryString}}
-                    <div class="title text-center">
-                        <h1 class="mb-10"> Gallery</h1>
-                        <!--p>Who are in extremely love with eco friendly system.</p-->
-                    </div>
-                    {{end}}
-                </div>
+<!--event gallery--->
+<div class="container">
+    <div class="row d-flex justify-content-center">
+        <div class="menu-content pb-60 col-lg-10">
+            {{if .GalleryString}}
+            <div class="title text-center">
+                <h1 class="mb-10"> Gallery</h1>
+                <!--p>Who are in extremely love with eco friendly system.</p-->
             </div>
-            <div class="row">
-                <div class="active-exibition-carusel">
-                    {{with .GalleryString}}
-                        {{range .}}
-                            <div class="single-exibition item">
-                                <img id='base64image' height="200px"  src='data:image/jpeg;base64,{{.Image}}' alt="">
-                                <p>
-                                    {{.Description}}
-                                </p>
-                            </div>
-                        {{end}}
-                    {{end}}
-                </div>
-            </div>
+            {{end}}
         </div>
-        <br>
     </div>
+    <div class="row">
+        <div class="active-exibition-carusel">
+            {{with .GalleryString}}
+            {{range .}}
+            <div class="single-exibition item">
+                <img id='base64image' height="200px" src='data:image/jpeg;base64,{{.Image}}' alt="">
+                <br>
+                <h3 class="text-center">
+                    {{.Description}}
+                </h3>
+            </div>
+            {{end}}
+            {{end}}
+        </div>
+    </div>
+</div>
+<br>
+</div>
 </div>
 
 
@@ -233,8 +241,8 @@
                         Copyright &copy;<script>document.write(new Date().getFullYear());</script>
                         All rights reserved | This template is made with <i class="fa fa-heart-o"
                                                                             aria-hidden="true"></i> by <a
-                                href="https://colorlib.com" target="_blank">Colorlib</a> and distributed by <a
-                                href="https://themewagon.com" target="_blank">ThemeWagon</a>
+                            href="https://colorlib.com" target="_blank">Colorlib</a> and distributed by <a
+                            href="https://themewagon.com" target="_blank">ThemeWagon</a>
                         <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                     </p>
                 </div>
@@ -301,7 +309,12 @@
 <script src="../../assets/js/customer/map_for_place_page.js"></script>
 </body>
 <script>
-    var PlaceList ={{.PlaceData.Place}};
+    var PlaceList = {
+    {.
+        PlaceData.Place
+    }
+    }
+    ;
     mapboxgl.accessToken = 'pk.eyJ1IjoiZXNwb2lyLWRpdGUiLCJhIjoiY2tmaTZsdDBiMGpubzJzcDh2aXdodXlnayJ9.e6tqu6hLu5xlaSk84ERd9g';
     var monument = [PlaceList.latitude, PlaceList.longitude];
     var map = new mapboxgl.Map({
@@ -314,7 +327,7 @@
     //Getting the data
 
     // create the popup
-    var popup = new mapboxgl.Popup({ offset: 25 }).setText(
+    var popup = new mapboxgl.Popup({offset: 25}).setText(
         'Construction on the Washington Monument began in 1848.'
     );
 

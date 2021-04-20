@@ -25,3 +25,18 @@ func GetPlaceGallery(placeId string) []PlaceGalleryImages {
 	}
 	return GalleryImagesList
 }
+
+func GetPlaceCategory(placeId string) (place.PlaceCategory, error) {
+	var placeCategory place.PlaceCategory
+	placeType, err := place_io.ReadPlaceType(placeId)
+	if err != nil {
+		fmt.Println("error reading Places Category of... : ", err)
+		return placeCategory, err
+	}
+	placeCategory, err = place_io.ReadPlaceCategory(placeType.PlaceCategoryId)
+	if err != nil {
+		fmt.Println("error reading Places Category: ", err)
+		return placeCategory, err
+	}
+	return placeCategory, nil
+}

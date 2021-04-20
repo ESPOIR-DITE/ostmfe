@@ -95,31 +95,6 @@
                                 <hr>
 
 
-                            <!-- Start comment-sec Area -->
-                                {{template "comments" .}}
-                            <!-- End comment-sec Area -->
-
-                            <!-- Start commentform Area -->
-                            <section class="commentform-area pt-80">
-                                <div class="container">
-                                    <form method="post" action="/event/create">
-                                    <h5 class="pb-50">Leave a Comment</h5>
-                                    <div class="row flex-row d-flex">
-                                        <div class="col-lg-4 col-md-6">
-                                            <input name="name" placeholder="Enter your name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your name'" class="common-input mb-20 form-control" required="" type="text">
-                                            <input name="email" placeholder="Enter your email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your email'" class="common-input mb-20 form-control" required="" type="email">
-                                            <input name="Subject" placeholder="Subject" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your Subject'" class="common-input mb-20 form-control" required="" type="text">
-                                            <input name="groupId" value="{{.EventData.Event.Id}}" type="hidden">
-
-                                        </div>
-                                        <div class="col-lg-8 col-md-6">
-                                            <textarea class="form-control mb-10" name="message" placeholder="message" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Messege'" required=""></textarea>
-                                            <button type="submit" class="primary-btn mt-20" href="#">Comment</button>
-                                        </div>
-                                    </div>
-                                    </form>
-                                </div>
-                            </section>
                             <!-- End commentform Area -->
 
 
@@ -227,21 +202,7 @@
 			</section>
 			<!-- End blog-posts Area -->
 
-			<!-- Page flow -->
-        <div class="container">
-            {{with .PageFlow}}
-            {{range .}}
-            <div class="title text-center">
-                <h1 class="mb-10">{{.Title}}</h1>
-                <!--p>Who are in extremely love with eco friendly system.</p-->
-            </div>
-        <div >
-            <iframe width="100%"  height="400px" src="{{.PageFlow}}" allowfullscreen onmousewheel=" ">
-            </iframe>
-        </div>
-            {{end}}
-            {{end}}
-        </div>
+
 
         <!--event gallery--->
         <div class="container">
@@ -260,10 +221,10 @@
                     {{with .GalleryImages}}
                         {{range .}}
                             <div class="single-exibition item">
-                                <img id='base64image'  src='data:image/jpeg;base64,{{.Gallery.Image}}' alt="">
-                                <p>
+                                <img id='base64image' height="250px"  src='data:image/jpeg;base64,{{.Gallery.Image}}' alt="">
+                                <h2>
                                     {{.Gallery.Description}}
-                                </p>
+                                </h2>
                             </div>
                         {{end}}
                     {{end}}
@@ -271,6 +232,49 @@
             </div>
         </div>
         <br>
+
+        <!-- Page flow -->
+        <div class="container" >
+            {{with .PageFlow}}
+            {{range .}}
+            <div class="title text-center">
+                <h1 class="mb-10">{{.Title}}</h1>
+                <!--p>Who are in extremely love with eco friendly system.</p-->
+            </div>
+            <div >
+                <iframe width="100%"  height="400px" src="{{.PageFlow}}" allowfullscreen onmousewheel=" ">
+                </iframe>
+            </div>
+            {{end}}
+            {{end}}
+        </div>
+
+
+        <!-- Start comment-sec Area -->
+        {{template "comments" .}}
+        <!-- End comment-sec Area -->
+
+        <!-- Start commentform Area -->
+        <section class="commentform-area pt-80">
+            <div class="container">
+                <form method="post" action="/event/create">
+                    <h5 class="pb-50">Leave a Comment</h5>
+                    <div class="row flex-row d-flex">
+                        <div class="col-lg-4 col-md-6">
+                            <input name="name" placeholder="Enter your name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your name'" class="common-input mb-20 form-control" required="" type="text">
+                            <input name="email" placeholder="Enter your email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your email'" class="common-input mb-20 form-control" required="" type="email">
+                            <input name="Subject" placeholder="Subject" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your Subject'" class="common-input mb-20 form-control" required="" type="text">
+                            <input name="groupId" value="{{.EventData.Event.Id}}" type="hidden">
+
+                        </div>
+                        <div class="col-lg-8 col-md-6">
+                            <textarea class="form-control mb-10" name="message" placeholder="message" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Messege'" required=""></textarea>
+                            <button type="submit" class="primary-btn mt-20" href="#">Comment</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
 
         <!-- start footer Area -->
         {{template "footer" .}}

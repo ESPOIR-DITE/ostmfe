@@ -11,11 +11,11 @@ type People struct {
 	Brief      string `json:"brief"`
 }
 
-type People_image struct {
+type PeopleImage struct {
 	Id        string `json:"id"`
-	PeopleId  string `json:"people_id"`
-	ImageId   string `json:"image_id"`
-	ImageType string `json:"image_type"`
+	PeopleId  string `json:"peopleId"`
+	ImageId   string `json:"imageId"`
+	ImageType string `json:"imageTypeId"`
 }
 
 type People_profession struct {
@@ -24,9 +24,9 @@ type People_profession struct {
 	Description string `json:"description"`
 }
 type PeopleImageHelper struct {
-	People_image People_image `json:"peopleImage"`
-	Files        [][]byte     `json:"files"`
-	ImageId      string       `json:"imageId"` //this field will facilitate update process
+	People_image PeopleImage `json:"peopleImage"`
+	Files        [][]byte    `json:"files"`
+	ImageId      string      `json:"imageId"` //this field will facilitate update process
 }
 
 type PeoplePlace struct {
@@ -52,9 +52,10 @@ type PeopleHistory struct {
 	HistoryId string `json:"historyId"`
 }
 type PeopleCategory struct {
-	Id       string `json:"id"`
-	PeopleId string `json:"peopleId"`
-	Category string `json:"category"`
+	Id          string `json:"id"`
+	Category    string `json:"categoryId"`
+	PeopleId    string `json:"peopleId"`
+	Description string `json:"description"`
 }
 type PeopleGalery struct {
 	Id       string `json:"id"`
