@@ -2,10 +2,59 @@ package people_io
 
 import (
 	"fmt"
+	"github.com/SebastiaanKlippert/go-wkhtmltopdf"
 	"github.com/stretchr/testify/assert"
+	"io/ioutil"
+	"log"
+	"os"
 	"ostmfe/domain/people"
+	"strconv"
 	"testing"
+	"time"
 )
+
+//generate pdf function https://ichi.pro/fr/generation-de-pdf-dans-go-144610739774987
+func (r *RequestPdf) GeneratePDF(pdfPath string) (bool, error) {
+	t := time.Now().Unix()
+	// write whole the body
+	err1 := ioutil.WriteFile("storage/"+strconv.FormatInt(int64(t), 10)+".html", []byte(r.body), 0644)
+	if err1 != nil {
+		panic(err1)
+	}
+
+	f, err := os.Open("storage/" + strconv.FormatInt(int64(t), 10) + ".html")
+	if f != nil {
+		defer f.Close()
+	}
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	pdfg, err := wkhtmltopdf.NewPDFGenerator()
+	if err != nil {
+		os.Remove("storage/" + strconv.FormatInt(int64(t), 10) + ".html")
+		log.Fatal(err)
+	}
+
+	pdfg.AddPage(wkhtmltopdf.NewPageReader(f))
+
+	pdfg.PageSize.Set(wkhtmltopdf.PageSizeA4)
+
+	pdfg.Dpi.Set(300)
+
+	err = pdfg.Create()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = pdfg.WriteFile(pdfPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	os.Remove("storage/" + strconv.FormatInt(int64(t), 10) + ".html")
+
+	return true, nil
+}
 
 func TestCreatePeopleHistory(t *testing.T) {
 	obejct := people.PeopleHistory{"", "003003", "029342"}
@@ -86,6 +135,12 @@ func TestReadPeopleCategoryWithCategoryId(t *testing.T) {
 //}
 func TestReadPeopleCategoryWithPplId(t *testing.T) {
 	result, err := ReadPeopleCategoryWithPplId("00001")
+	assert.Nil(t, err)
+	fmt.Println("result: ", result)
+}
+
+func TestGetAggregatedPeople(t *testing.T) {
+	result, err := GetAggregatedPeople("PF-3ad971d3-d032-4c33-86ea-6c72c4f628a7")
 	assert.Nil(t, err)
 	fmt.Println("result: ", result)
 }

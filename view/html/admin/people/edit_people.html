@@ -103,7 +103,7 @@
                     <div class="p-5">
                       <div class="col-lg-12">
                         <!-- Default Card Example -->
-                        {{if .People.Images}}
+                        {{if .People.ProfileImage}}
 
                               <div class="card mb-4">
                                   <div class="card-header py-3">
@@ -121,15 +121,45 @@
                                   </div>
 
                                 <div class="card-body">
-                                  {{if .People.Images.Id}}
+                                  {{if .People.ProfileImage.Image}}
                                     <img class="card-img" style="width:100%;height:312px;"
                                          id='base64image'
 
-                                         src='data:image/jpeg;base64,{{.People.Images.Id}}' alt=""/>
+                                         src='data:image/jpeg;base64,{{.People.ProfileImage.Image}}' alt=""/>
                                   {{end}}
-
                                 </div>
                               </div>
+
+
+                          <div class="card mb-4">
+                              <div class="card-header py-3">
+                                  <div class="row" >
+                                      <div class="col-lg-6">
+                                          <h6 class="m-0 font-weight-bold text-primary">People Descriptive Images</h6>
+                                      </div>
+                                      <div class="col-lg-6">
+                                          <a class="float-right" href="#" data-toggle="modal" data-target="#updateImage">
+                                              <i class="fa fa-plus-circle"></i>
+                                              Add
+                                          </a>
+                                      </div>
+                                  </div>
+                              </div>
+                          <div class="card-body">
+                              <div class="row">
+                                  {{with .People.DescriptionImage}}
+                                  {{range .}}
+                                  <div class="col-md-3">
+                                      <a href="#" data-toggle="modal" data-target="#updateImage" onclick="viewDescriptiveImage({{.}})">
+                                          <img class="card-img" style="width:70%;height:120px;"
+                                               id='base64image' src='data:image/jpeg;base64,{{.Image}}' alt=""/>
+                                      </a>
+                                  </div>
+                                  {{end}}
+                                  {{end}}
+                              </div>
+                          </div>
+                          </div>
                         {{else}}
                           <div class="text-center">
                             <h1 class="h4 text-gray-900 mb-4">You have no pictures for this Project, Please Upload pictures</h1>
@@ -156,7 +186,6 @@
                           </form>
                         {{end}}
                       </div>
-                      <hr>
                     </div>
                   </div>
 
@@ -259,7 +288,6 @@
                                 </div>
                             </div>
                         </div>
-                        <hr>
                         </div>
                     </div>
                 </div>
@@ -302,7 +330,7 @@
                                                         </tr>
                                                         </thead>
                                                         <tbody>
-                                                        {{with .PeoplePlace}}
+                                                        {{with .People.Places}}
                                                             {{range $i, $e := .}}
                                                                 <tr>
                                                                     <td>{{$i}}</td>
@@ -345,11 +373,11 @@
                                                         </tr>
                                                         </thead>
                                                         <tbody>
-                                                        {{with .EventPeople}}
+                                                        {{with .People.Events}}
                                                         {{range $i, $e := .}}
                                                         <tr>
                                                             <td>{{$i}}</td>
-                                                            <td>{{.EventName}}</td>
+                                                            <td>{{.Name}}</td>
                                                             <td></td>
                                                             <td>
                                                                 <a href="/admin_user/people/delete_people/{{.Id}}/{{$.People.People.Id}}"
@@ -703,8 +731,8 @@
         </div>
         <div class="modal-body">
             <form class="user"method="post" id="" action="/admin_user/people/update_image" enctype="multipart/form-data">
-                <input type="hidden"name="imageId" value="{{.People.Images.ImageId}}" class="form-control " >
-                <input type="hidden"name="peopleImageId" value="{{.People.Images.PeopleImageId}}" class="form-control " >
+                <input type="hidden"name="imageId" value="{{.People.ProfileImage.Id}}" class="form-control " >
+                <input type="hidden"name="peopleImageId" value="{{.People.ProfileImage.BridgeId}}" class="form-control " >
                 <input type="hidden"name="peopleId" value="{{.People.People.Id}}" class="form-control " >
                 <div class="form-group row">
                     <div class="col-sm-6">
@@ -894,6 +922,9 @@ function changeContents(content) {
         $('#file'+id+'').remove();
         $('#btn'+id+'').remove();
         id =null;
+    }
+    function viewDescriptiveImage(data) {
+
     }
 
 

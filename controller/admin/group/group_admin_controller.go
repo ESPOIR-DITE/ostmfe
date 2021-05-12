@@ -65,7 +65,7 @@ func AddGroupGallery(app *config.Env) http.HandlerFunc {
 			content, _ = ioutil.ReadAll(reader)
 		}
 		if groupId != "" && description != "" {
-			galery := image.Galery{"", content, description}
+			galery := image.Gallery{"", content, description}
 			galleryObject, err := image_io.CreateGalery(galery)
 			if err != nil {
 				fmt.Println(err, " error creating gallery")
@@ -199,7 +199,7 @@ func CreateEventGalleryHandler(app *config.Env) http.HandlerFunc {
 			content, _ = ioutil.ReadAll(reader)
 		}
 		if groupId != "" && description != "" {
-			galery := image.Galery{"", content, description}
+			galery := image.Gallery{"", content, description}
 			galleryObject, err := image_io.CreateGalery(galery)
 			if err != nil {
 				fmt.Println(err, " error creating gallery")

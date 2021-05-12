@@ -8,9 +8,9 @@ import (
 
 const galeryURL = api.BASE_URL + "galery/"
 
-func CreateGalery(img image.Galery) (image.Galery, error) {
+func CreateGalery(img image.Gallery) (image.Gallery, error) {
 
-	entity := image.Galery{}
+	entity := image.Gallery{}
 	resp, _ := api.Rest().SetBody(img).Post(galeryURL + "create")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
@@ -22,9 +22,9 @@ func CreateGalery(img image.Galery) (image.Galery, error) {
 	return entity, nil
 
 }
-func UpdateGallery(img image.Galery) (image.Galery, error) {
+func UpdateGallery(img image.Gallery) (image.Gallery, error) {
 
-	entity := image.Galery{}
+	entity := image.Gallery{}
 	resp, _ := api.Rest().SetBody(img).Post(galeryURL + "update")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
@@ -36,9 +36,9 @@ func UpdateGallery(img image.Galery) (image.Galery, error) {
 	return entity, nil
 
 }
-func ReadGallery(id string) (image.Galery, error) {
+func ReadGallery(id string) (image.Gallery, error) {
 
-	entity := image.Galery{}
+	entity := image.Gallery{}
 	resp, _ := api.Rest().Get(galeryURL + "read?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
@@ -50,9 +50,9 @@ func ReadGallery(id string) (image.Galery, error) {
 	return entity, nil
 
 }
-func DeleteGalery(id string) (image.Galery, error) {
+func DeleteGalery(id string) (image.Gallery, error) {
 
-	entity := image.Galery{}
+	entity := image.Gallery{}
 	resp, _ := api.Rest().Get(galeryURL + "delete?id=" + id)
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())
@@ -64,9 +64,9 @@ func DeleteGalery(id string) (image.Galery, error) {
 	return entity, nil
 
 }
-func ReadGaleries() (image.Galery, error) {
+func ReadGaleries() (image.Gallery, error) {
 
-	entity := image.Galery{}
+	entity := image.Gallery{}
 	resp, _ := api.Rest().Get(galeryURL + "reads")
 	if resp.IsError() {
 		return entity, errors.New(resp.Status())

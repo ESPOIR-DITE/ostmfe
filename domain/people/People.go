@@ -1,5 +1,12 @@
 package people
 
+import (
+	"ostmfe/domain/event"
+	history2 "ostmfe/domain/history"
+	"ostmfe/domain/image"
+	"ostmfe/domain/place"
+)
+
 type People struct {
 	Id         string `json:"id"`
 	Name       string `json:"name"`
@@ -24,9 +31,10 @@ type People_profession struct {
 	Description string `json:"description"`
 }
 type PeopleImageHelper struct {
-	People_image PeopleImage `json:"peopleImage"`
-	Files        [][]byte    `json:"files"`
-	ImageId      string      `json:"imageId"` //this field will facilitate update process
+	People            People                   `json:"people"`
+	ProfileImage      image.Images             `json:"profileImage"`
+	DescriptiveImages []image.Images           `json:"descriptiveImages"`
+	History           history2.HistoriesHelper `json:"history"`
 }
 
 type PeoplePlace struct {
@@ -66,4 +74,16 @@ type PeopleGalery struct {
 type Category struct {
 	Id       string `json:"id"`
 	Category string `json:"category"`
+}
+
+type PeopleAggregate struct {
+	People           People                   `json:"people"`
+	Category         Category                 `json:"category"`
+	ProfileImage     image.ImagesHelper       `json:"profileImage"`
+	History          history2.HistoriesHelper `json:"histories"`
+	Gallery          []image.Gallery          `json:"gallery"`
+	DescriptionImage []image.ImagesHelper     `json:"descriptiveImage"`
+	Profession       []Profession             `json:"profession"`
+	Places           []place.Place            `json:"places"`
+	Events           []event.Event            `json:"events"`
 }

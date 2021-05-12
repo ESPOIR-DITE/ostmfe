@@ -190,7 +190,7 @@ func CreateGalleryHandler(app *config.Env) http.HandlerFunc {
 			content, _ = ioutil.ReadAll(reader)
 		}
 		if project != "" && description != "" {
-			galery := image2.Galery{"", content, description}
+			galery := image2.Gallery{"", content, description}
 			galleryObject, err := image_io.CreateGalery(galery)
 			if err != nil {
 				fmt.Println(err, " error creating gallery")

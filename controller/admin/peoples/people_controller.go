@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"github.com/go-chi/chi"
 	"html/template"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"ostmfe/config"
+	"ostmfe/controller/admin/adminHelper"
 	"ostmfe/controller/constates"
 	"ostmfe/controller/generic"
 	"ostmfe/controller/misc"
@@ -275,7 +275,7 @@ func createPeopleGaller(app *config.Env) http.HandlerFunc {
 			content, _ = ioutil.ReadAll(reader)
 		}
 		if peopleId != "" && description != "" {
-			galery := image.Galery{"", content, description}
+			galery := image.Gallery{"", content, description}
 			galleryObject, err := image_io.CreateGalery(galery)
 			if err != nil {
 				fmt.Println(err, " error creating gallery")
@@ -344,26 +344,20 @@ func AddPeopleImageHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		file, _, err := r.FormFile("file")
-		file2, _, err := r.FormFile("file2")
-		file3, _, err := r.FormFile("file3")
-		file4, _, err := r.FormFile("file4")
-		file5, _, err := r.FormFile("file5")
-		file6, _, err := r.FormFile("file6")
 		peopleId := r.PostFormValue("peopleId")
 		if err != nil {
 			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
 		}
-		filesArray := []io.Reader{file, file2, file3, file4, file5, file6}
-		filesByteArray := misc.CheckFiles(filesArray)
+		reader := bufio.NewReader(file)
+		content, _ := ioutil.ReadAll(reader)
 
 		if peopleId != "" {
 
-			peopleImageObject := people2.PeopleImage{"", peopleId, "", ""}
-			peopleImageHelper := people2.PeopleImageHelper{peopleImageObject, filesByteArray, ""}
-
-			_, errx := people_io.CreatePeopleImage(peopleImageHelper)
-			if errx != nil {
-				fmt.Println(errx, " error creating PeopleImage")
+			image := image.Images{"", content, ""}
+			peopleImageObject := people2.PeopleImage{"", peopleId, image.Id, ""}
+			_, err := people_io.CreatePeopleImage(peopleImageObject)
+			if err != nil {
+				fmt.Println(err, " error creating PeopleImage")
 				if app.Session.GetString(r.Context(), "user-create-error") != "" {
 					app.Session.Remove(r.Context(), "user-create-error")
 				}
@@ -390,6 +384,7 @@ func AddPeopleImageHandler(app *config.Env) http.HandlerFunc {
 	}
 }
 
+//TODO to be removed
 /****
 This method is requested when a people was created without an image now this method will help to create one.
 */
@@ -397,36 +392,35 @@ func CreatePeopleImageHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		file, _, err := r.FormFile("file")
-		file2, _, err := r.FormFile("file2")
-		file3, _, err := r.FormFile("file3")
-		file4, _, err := r.FormFile("file4")
-		file5, _, err := r.FormFile("file5")
-		file6, _, err := r.FormFile("file6")
 		peopleId := r.PostFormValue("peopleId")
 		if err != nil {
-			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
+			fmt.Println(err, "<<<<<< error reading file>>>>")
 		}
-		filesArray := []io.Reader{file, file2, file3, file4, file5, file6}
-		filesByteArray := misc.CheckFiles(filesArray)
+		reader := bufio.NewReader(file)
+		content, _ := ioutil.ReadAll(reader)
 
 		if peopleId != "" {
-
-			peopleImageObject := people2.PeopleImage{"", peopleId, "", ""}
-			peopleImageHelper := people2.PeopleImageHelper{peopleImageObject, filesByteArray, ""}
-
-			_, errx := people_io.CreatePeopleImage(peopleImageHelper)
-			if errx != nil {
-				fmt.Println(errx, " error creating PeopleImage")
-				if app.Session.GetString(r.Context(), "user-create-error") != "" {
-					app.Session.Remove(r.Context(), "user-create-error")
+			image := image.Images{"", content, ""}
+			imageObject, err := image_io.CreateImage(image)
+			if err != nil {
+				fmt.Println(err, "<<<<<< error reading file>>>>")
+			} else {
+				peopleImageObject := people2.PeopleImage{"", peopleId, imageObject.Id, ""}
+				_, err := people_io.CreatePeopleImage(peopleImageObject)
+				if err != nil {
+					fmt.Println(err, " error creating PeopleImage")
+					if app.Session.GetString(r.Context(), "user-create-error") != "" {
+						app.Session.Remove(r.Context(), "user-create-error")
+					}
+					app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+					http.Redirect(w, r, "/admin_user/people/edit/"+peopleId, 301)
+					return
 				}
-				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-				http.Redirect(w, r, "/admin_user/people/edit/"+peopleId, 301)
-				return
+				if app.Session.GetString(r.Context(), "creation-successful") != "" {
+					app.Session.Remove(r.Context(), "creation-successful")
+				}
 			}
-			if app.Session.GetString(r.Context(), "creation-successful") != "" {
-				app.Session.Remove(r.Context(), "creation-successful")
-			}
+
 			app.Session.Put(r.Context(), "creation-successful", "You have successfully updated a People Picture : ")
 			http.Redirect(w, r, "/admin_user/people/", 301)
 			return
@@ -529,7 +523,11 @@ func UpdatePeopleDetailHandler(app *config.Env) http.HandlerFunc {
 
 func UpdatePeopleImageHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		r.ParseForm()
+		var content []byte
 		file, _, err := r.FormFile("file")
 		imageId := r.PostFormValue("imageId")
 		peopleId := r.PostFormValue("peopleId")
@@ -537,16 +535,16 @@ func UpdatePeopleImageHandler(app *config.Env) http.HandlerFunc {
 		imageType := r.PostFormValue("imageType")
 		if err != nil {
 			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
+		} else {
+			reader := bufio.NewReader(file)
+			content, _ = ioutil.ReadAll(reader)
 		}
-		filesArray := []io.Reader{file}
-		filesByteArray := misc.CheckFiles(filesArray)
 
 		if peopleId != "" && imageId != "" && imageType != "" && peopleImageId != "" {
-			peopleImage := people2.PeopleImage{peopleImageId, peopleId, imageId, imageType}
-			peopleImageHeper := people2.PeopleImageHelper{peopleImage, filesByteArray, imageId}
-			_, err := people_io.UpdatePeopleImage(peopleImageHeper)
+			imageObject := image.Images{imageId, content, ""}
+			_, err := image_io.UpdateImage(imageObject)
 			if err != nil {
-				fmt.Println(err, " error updating peopleImageHeper")
+				fmt.Println(err, " error updating peopleImage")
 				if app.Session.GetString(r.Context(), "user-create-error") != "" {
 					app.Session.Remove(r.Context(), "user-create-error")
 				}
@@ -698,152 +696,11 @@ func NewPeoplestp2Handler(app *config.Env) http.HandlerFunc {
 	}
 }
 
-func CreatePeopleStp2Handler(app *config.Env) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var place place2.Place
-		var historynew history2.Histories
-		r.ParseForm()
-		//fileslist := r.Form["file"]
-
-		file, _, err := r.FormFile("file")
-		file2, _, err := r.FormFile("file2")
-		file3, _, err := r.FormFile("file3")
-		file4, _, err := r.FormFile("file4")
-		file5, _, err := r.FormFile("file5")
-		file6, _, err := r.FormFile("file6")
-		history := r.PostFormValue("history")
-		peopleId := r.PostFormValue("peopleId")
-		//latlng := r.PostFormValue("latlng")
-		//title := r.PostFormValue("title")
-		if err != nil {
-			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
-		}
-		filesArray := []io.Reader{file, file2, file3, file4, file5, file6}
-		filesByteArray := misc.CheckFiles(filesArray)
-
-		if history != "" && peopleId != "" {
-			fmt.Println(history, " HistoryId || PeopleId >>>>", peopleId)
-			historyObejct := history2.Histories{"", misc.ConvertToByteArray(history)}
-			historynew, err = history_io.CreateHistorie(historyObejct)
-			if err != nil {
-				fmt.Println(err, " error creating a new history")
-				if app.Session.GetString(r.Context(), "user-create-error") != "" {
-					app.Session.Remove(r.Context(), "user-create-error")
-				}
-				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-				http.Redirect(w, r, "/admin_user/people/new_stp2/"+peopleId, 301)
-				return
-			}
-			// I am checking if the this person is relative to a particular place
-			//if latlng != "" {
-			//	latitude, longitude := misc.SeparateLatLng(latlng)
-			//	placeObject := place2.Place{"", title, latitude, longitude, ""}
-			//	place, err = place_io.CreatePlace(placeObject)
-			//	if err != nil {
-			//		fmt.Println(err, " error creating a new Place")
-			//		_, err := history_io.DeleteHistory(historynew.Id)
-			//		if err != nil {
-			//			fmt.Println(err, " error could not delete history")
-			//		}
-			//		if app.Session.GetString(r.Context(), "user-create-error") != "" {
-			//			app.Session.Remove(r.Context(), "user-create-error")
-			//		}
-			//		app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-			//		http.Redirect(w, r, "/admin_user/people/new_stp2/"+peopleId, 301)
-			//		return
-			//	}
-			//}
-
-			peopleHistory := people2.PeopleHistory{"", peopleId, historynew.Id}
-
-			peopleHistoryNew, err := people_io.CreatePeopleHistory(peopleHistory)
-			if err != nil {
-				fmt.Println(err, " error creating a new people history")
-				_, err := history_io.DeleteHistorie(historynew.Id)
-				if err != nil {
-					fmt.Println(err, " error could not delete history")
-				}
-				//we need to make sure that the place was created
-				if place.Id != "" {
-					_, err := place_io.DeletePlace(place.Id)
-					if err != nil {
-						fmt.Println(err, " error could not delete history")
-					}
-				}
-
-				if app.Session.GetString(r.Context(), "user-create-error") != "" {
-					app.Session.Remove(r.Context(), "user-create-error")
-				}
-				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-				http.Redirect(w, r, "/admin_user/people/new_stp2/"+peopleId, 301)
-				return
-			}
-			peopleImageObject := people2.PeopleImage{"", peopleId, "", ""}
-			peopleImage := people2.PeopleImageHelper{peopleImageObject, filesByteArray, ""}
-			_, errr := people_io.CreatePeopleImage(peopleImage)
-			/***
-			RolBack
-			*/
-			if errr != nil {
-				if historynew.Id != "" {
-					fmt.Println(" error could not create people Image....")
-					_, err := history_io.DeleteHistorie(historynew.Id)
-					if err != nil {
-						fmt.Println(err, " error could not delete history....")
-					} else {
-						fmt.Println(err, " Deleted")
-					}
-				}
-
-				//we need to make sure that the place was created
-				if place.Id != "" {
-					fmt.Println(err, " Deleting Place of this event....")
-					_, err := place_io.DeletePlace(place.Id)
-					if err != nil {
-						fmt.Println(err, " error could not delete history")
-					} else {
-						fmt.Println(err, " Deleted")
-					}
-				}
-				//Now deleting People HistoryId
-				if peopleHistoryNew.Id != "" {
-					_, errx := people_io.DeletePeopleHistory(peopleHistoryNew.Id)
-					if errx != nil {
-						fmt.Println(err, " error could not delete people HistoryId")
-					} else {
-						fmt.Println(err, " Deleted")
-					}
-				}
-				if app.Session.GetString(r.Context(), "user-create-error") != "" {
-					app.Session.Remove(r.Context(), "user-create-error")
-				}
-				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-				http.Redirect(w, r, "/admin_user/people/new_stp2/"+peopleId, 301)
-				return
-			}
-			newPeople, errr := people_io.ReadPeople(peopleId)
-			if errr != nil {
-				fmt.Println(err, " error reading Place Line: 121")
-			}
-			if app.Session.GetString(r.Context(), "creation-successful") != "" {
-				app.Session.Remove(r.Context(), "creation-successful")
-			}
-			app.Session.Put(r.Context(), "creation-successful", "You have successfully create an new person : "+newPeople.Name)
-			http.Redirect(w, r, "/admin_user", 301)
-			return
-		}
-		fmt.Println("One of the field is missing")
-		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
-			app.Session.Remove(r.Context(), "creation-unknown-error")
-		}
-		app.Session.Put(r.Context(), "creation-unknown-error", "You have encountered an unknown error, please try again")
-		http.Redirect(w, r, "/admin_user/people/new_stp2/"+peopleId, 301)
-		return
-	}
-}
-
 func CreatePeopleHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		r.ParseForm()
 		var content []byte
 		file, _, err := r.FormFile("file")
@@ -860,7 +717,7 @@ func CreatePeopleHandler(app *config.Env) http.HandlerFunc {
 		categoryId := r.PostFormValue("categoryId")
 
 		if err != nil {
-			fmt.Println(err, "<<<error reading file>>>>This error may happen if there is no picture selected>>>")
+			fmt.Println(err, "<<<error reading file>>>>")
 		} else {
 			reader := bufio.NewReader(file)
 			content, _ = ioutil.ReadAll(reader)
@@ -947,6 +804,9 @@ func CreatePeopleHandler(app *config.Env) http.HandlerFunc {
 
 func EditPeopleHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		peopleId := chi.URLParam(r, "peopleId")
 		people, err := people_io.ReadPeople(peopleId)
 		if err != nil {
@@ -975,7 +835,11 @@ func EditPeopleHandler(app *config.Env) http.HandlerFunc {
 		peoplePlaces := people3.GetPeoplePlace(peopleId)
 
 		// Getting this method from client people_controller. it gives me a list of places that are linked to a people.
-		peopleEditable := GetPeopleEditable(people.Id)
+		peopleEditable, err := people_io.GetAggregatedPeople(people.Id)
+		if err != nil {
+			fmt.Println(err, " error reading events")
+		}
+		//app.InfoLog.Println(peopleEditable.ProfileImage)
 
 		events, err := event_io.ReadEvents()
 		if err != nil {
@@ -993,7 +857,7 @@ func EditPeopleHandler(app *config.Env) http.HandlerFunc {
 		commentNumber, pendingcomments, activeComments := peopleCommentCalculation(peopleId)
 		type PageDate struct {
 			PeopleDetails   people2.People
-			People          PeopleEditable
+			People          people2.PeopleAggregate
 			SidebarData     misc.SidebarData
 			PeoplePlace     []place2.Place
 			Places          []place2.Place
@@ -1028,7 +892,7 @@ func EditPeopleHandler(app *config.Env) http.HandlerFunc {
 		}
 
 		files := []string{
-			app.Path + "admin/people/new_edite_people.html",
+			app.Path + "admin/people/edit_people.html",
 			app.Path + "admin/template/navbar.html",
 			app.Path + "admin/template/cards.html",
 			app.Path + "admin/template/topbar.html",

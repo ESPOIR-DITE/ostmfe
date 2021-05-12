@@ -287,7 +287,7 @@ func CreatePlaceGalleryHandler(app *config.Env) http.HandlerFunc {
 			content, _ = ioutil.ReadAll(reader)
 		}
 		if placeId != "" && description != "" {
-			galery := image2.Galery{"", content, description}
+			galery := image2.Gallery{"", content, description}
 			galleryObject, err := image_io.CreateGalery(galery)
 			if err != nil {
 				fmt.Println(err, " error creating gallery")

@@ -3,6 +3,7 @@ module ostmfe
 go 1.13
 
 require (
+	github.com/SebastiaanKlippert/go-wkhtmltopdf v1.7.0 // indirect
 	github.com/alexedwards/scs/v2 v2.2.0
 	github.com/go-chi/chi v4.1.0+incompatible
 	github.com/json-iterator/go v1.1.9

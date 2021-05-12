@@ -9,7 +9,7 @@ import (
 
 const peopleImg = api.BASE_URL + "people_image/"
 
-func CreatePeopleImage(pI people.PeopleImageHelper) (people.PeopleImage, error) {
+func CreatePeopleImage(pI people.PeopleImage) (people.PeopleImage, error) {
 
 	entity := people.PeopleImage{}
 	resp, _ := api.Rest().SetBody(pI).Post(peopleImg + "create")
@@ -49,7 +49,7 @@ func CreatePeopleImageX(pI people.PeopleImage) (people.PeopleImage, error) {
 	}
 	return entity, nil
 }
-func UpdatePeopleImage(pI people.PeopleImageHelper) (people.PeopleImage, error) {
+func UpdatePeopleImage(pI people.PeopleImage) (people.PeopleImage, error) {
 
 	entity := people.PeopleImage{}
 	resp, _ := api.Rest().SetBody(pI).Post(peopleImg + "update")

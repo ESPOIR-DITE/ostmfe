@@ -68,3 +68,15 @@ func ReadPeoples() ([]people.People, error) {
 	}
 	return entity, nil
 }
+func GetAggregatedPeople(peopleId string) (people.PeopleAggregate, error) {
+	entity := people.PeopleAggregate{}
+	resp, _ := api.Rest().Get(pple + "readAggregated?peopleId=" + peopleId)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
