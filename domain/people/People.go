@@ -8,14 +8,15 @@ import (
 )
 
 type People struct {
-	Id         string `json:"id"`
-	Name       string `json:"name"`
-	Surname    string `json:"surname"`
-	BirthDate  string `json:"birth_date"`
-	DeathDate  string `json:"deathdate"`
-	Origin     string `json:"origin"`
-	Profession string `json:"profession"`
-	Brief      string `json:"brief"`
+	Id          string `json:"id"`
+	Name        string `json:"name"`
+	Surname     string `json:"surname"`
+	BirthDate   string `json:"birthDate"`
+	DeathDate   string `json:"deathDate"`
+	Origin      string `json:"origin"`
+	Profession  string `json:"profession"`
+	Brief       string `json:"brief"`
+	HistoriesId string `json:"historiesId"`
 }
 
 type PeopleImage struct {
@@ -31,10 +32,8 @@ type People_profession struct {
 	Description string `json:"description"`
 }
 type PeopleImageHelper struct {
-	People            People                   `json:"people"`
-	ProfileImage      image.Images             `json:"profileImage"`
-	DescriptiveImages []image.Images           `json:"descriptiveImages"`
-	History           history2.HistoriesHelper `json:"history"`
+	People      People             `json:"people"`
+	ImageHelper image.ImagesHelper `json:"imagesHelper"`
 }
 
 type PeoplePlace struct {
@@ -66,9 +65,9 @@ type PeopleCategory struct {
 	Description string `json:"description"`
 }
 type PeopleGalery struct {
-	Id       string `json:"id"`
-	PeopleId string `json:"peopleId"`
-	Galery   string `json:"galery"`
+	Id        string `json:"id"`
+	PeopleId  string `json:"peopleId"`
+	GalleryId string `json:"galleryId"`
 }
 
 type Category struct {
@@ -81,9 +80,16 @@ type PeopleAggregate struct {
 	Category         Category                 `json:"category"`
 	ProfileImage     image.ImagesHelper       `json:"profileImage"`
 	History          history2.HistoriesHelper `json:"histories"`
-	Gallery          []image.Gallery          `json:"gallery"`
+	Gallery          []image.GalleryHelper    `json:"gallery"`
 	DescriptionImage []image.ImagesHelper     `json:"descriptiveImage"`
 	Profession       []Profession             `json:"profession"`
 	Places           []place.Place            `json:"places"`
 	Events           []event.Event            `json:"events"`
+}
+type PeoplePresentation struct {
+	Id      string `json:"id"`
+	Name    string `json:"name"`
+	Surname string `json:"surname"`
+	Brief   string `json:"brief"`
+	Image   string `json:"image"`
 }

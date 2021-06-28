@@ -6,19 +6,21 @@ type Images struct {
 	Description string `json:"description"`
 }
 type ImagesHelper struct {
-	Id       string `json:"id"`
-	Image    string `json:"image"`
-	BridgeId string `json:"description"`
+	Id          string `json:"id"`
+	Image       string `json:"image"`
+	Description string `json:"description"`
+	BridgeId    string `json:"bridgeId"`
 }
 type Gallery struct {
 	Id          string `json:"id"`
 	Image       []byte `json:"image"`
 	Description string `json:"description"`
 }
-type GaleryHelper struct {
+type GalleryHelper struct {
 	Id          string `json:"id"`
 	Image       string `json:"image"`
 	Description string `json:"description"`
+	Bridge      string `json:"Bridge"`
 }
 type ImageType struct {
 	Id   string `json:"id"`

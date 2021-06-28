@@ -9,7 +9,7 @@ import (
 )
 
 type EventGalleryImages struct {
-	Gallery      image.GaleryHelper
+	Gallery      image.GalleryHelper
 	EventGallery event.EventGalery
 }
 
@@ -22,7 +22,7 @@ func GetEventGallery(eventId string) []EventGalleryImages {
 		return GalleryImagesList
 	}
 	for _, groupGalleryImage := range groupGalleryImages {
-		GalleryImagesList = append(GalleryImagesList, EventGalleryImages{GetGalleryImage(groupGalleryImage.GaleryId), groupGalleryImage})
+		GalleryImagesList = append(GalleryImagesList, EventGalleryImages{GetGalleryImage(groupGalleryImage.GaleryId, groupGalleryImage.Id), groupGalleryImage})
 	}
 	return GalleryImagesList
 }

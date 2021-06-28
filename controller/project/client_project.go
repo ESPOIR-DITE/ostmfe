@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"ostmfe/config"
 	comment2 "ostmfe/controller/comment"
+	"ostmfe/controller/generic"
 	"ostmfe/controller/misc"
 	"ostmfe/domain/comment"
 	contribution2 "ostmfe/domain/contribution"
@@ -20,7 +21,6 @@ import (
 	"ostmfe/io/contribution_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
-	"ostmfe/io/pageData_io"
 	"ostmfe/io/project_io"
 	"ostmfe/utile"
 	"path/filepath"
@@ -146,6 +146,13 @@ func createProjectComment(app *config.Env) http.HandlerFunc {
 func ReadSingleProjectHanler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		projectId := chi.URLParam(r, "projectId")
+		var bannerImage string
+		banner, err := misc.GetBanner("ProjectPage")
+		if err != nil {
+			fmt.Println(err, " There is an error when reading people pageBanner")
+		} else {
+			bannerImage = banner.Id
+		}
 		var projectDataHistory ProjectDataHistory
 
 		if projectId != "" {
@@ -167,6 +174,7 @@ func ReadSingleProjectHanler(app *config.Env) http.HandlerFunc {
 		projectComment := comment2.GetProjectComment(projectId)
 		//fmt.Println(" projectComment: ",projectComment)
 		type PageData struct {
+			ProjectBanner      string
 			ProjectDataHistory ProjectDataHistory
 			Projects           []project2.Project
 			Comments           []comment.CommentStack
@@ -175,7 +183,7 @@ func ReadSingleProjectHanler(app *config.Env) http.HandlerFunc {
 			GalleryImages []misc.ProjectGalleryImages
 			PageFlows     []project2.ProjectPageFlow
 		}
-		data := PageData{projectDataHistory, projects, projectComment, commentNumber, misc.GetProjectGallery(projectId), pageFlows}
+		data := PageData{bannerImage, projectDataHistory, projects, projectComment, commentNumber, misc.GetProjectGallery(projectId), pageFlows}
 
 		files := []string{
 			app.Path + "project/project_single.html",
@@ -199,11 +207,11 @@ func ReadSingleProjectHanler(app *config.Env) http.HandlerFunc {
 func homeHanler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var bannerImage string
-		pageBanner, err := pageData_io.ReadPageBannerWIthPageName("project-page")
+		banner, err := misc.GetBanner("ProjectPage")
 		if err != nil {
 			fmt.Println(err, " There is an error when reading people pageBanner")
 		} else {
-			bannerImage = misc.GetBannerImage(pageBanner.BannerId)
+			bannerImage = banner.Id
 		}
 
 		type PageData struct {
@@ -256,7 +264,7 @@ func getProjectDataHistory(projectId string) ProjectDataHistory {
 		if err != nil {
 			fmt.Println(err, " error has occurred when reading image")
 		}
-		if projectImage.ImageType == utile.PROFILE {
+		if projectImage.ImageType == generic.GetImageTypeId(utile.PROFILE) {
 			profileImage = image
 			profileImage, err = image_io.ReadImage(projectImage.ImageId)
 			if err != nil {

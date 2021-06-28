@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"net/http"
 	"ostmfe/config"
+	"ostmfe/controller/admin/adminHelper"
 	"ostmfe/controller/misc"
 	museum "ostmfe/domain"
 	"ostmfe/io"
@@ -84,14 +85,22 @@ func HomeHandler(app *config.Env) http.HandlerFunc {
 			fmt.Println(err, " error reading years")
 		}
 
+		adminName, adminImage, isTrue := adminHelper.CheckAdminDataInSession(app, r)
+		if !isTrue {
+			fmt.Println(isTrue, "error reading adminData")
+		}
 		type PagePage struct {
 			Backend_error string
 			Unknown_error string
 			Years         []museum.Years
 			SidebarData   misc.SidebarData
+			AdminName     string
+			AdminImage    string
 		}
 
-		data := PagePage{backend_error, unknown_error, years, misc.GetSideBarData("event", "year")}
+		data := PagePage{backend_error, unknown_error, years,
+			misc.GetSideBarData("event", "year"), adminName, adminImage,
+		}
 		files := []string{
 			app.Path + "admin/event/years-page.html",
 			app.Path + "admin/template/navbar.html",

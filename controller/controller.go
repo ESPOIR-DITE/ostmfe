@@ -24,6 +24,8 @@ import (
 	event2 "ostmfe/domain/event"
 	history2 "ostmfe/domain/history"
 	image3 "ostmfe/domain/image"
+	"ostmfe/domain/pageData"
+	"ostmfe/domain/pages"
 	place2 "ostmfe/domain/place"
 	project2 "ostmfe/domain/project"
 	"ostmfe/domain/slider"
@@ -32,6 +34,7 @@ import (
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
 	"ostmfe/io/pageData_io"
+	"ostmfe/io/pages/client"
 	"ostmfe/io/place_io"
 	"ostmfe/io/project_io"
 	"ostmfe/io/slider_io"
@@ -44,7 +47,8 @@ func Controllers(env *config.Env) http.Handler {
 	mux.Use(middleware.Logger)
 	mux.Use(env.Session.LoadAndSave)
 
-	mux.Handle("/", homeHanler(env))
+	//mux.Handle("/", homeHanler(env))
+	mux.Handle("/", homeHandler(env))
 	mux.Mount("/home", home.Home(env))
 	mux.Mount("/visit", visit.Home(env))
 	mux.Mount("/history", history.Home(env))
@@ -141,6 +145,70 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 
 		files := []string{
 			app.Path + "index.html",
+			app.Path + "base_templates/navigator.html",
+			app.Path + "base_templates/footer.html",
+		}
+		ts, err := template.ParseFiles(files...)
+		if err != nil {
+			app.ErrorLog.Println(err.Error())
+			return
+		}
+		err = ts.Execute(w, date)
+		if err != nil {
+			app.ErrorLog.Println(err.Error())
+		}
+	}
+}
+
+func homeHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		var sliderHelperList []slider.SliderHelper
+		var pageSections []pageData.ReadPageSectionHelper
+		//var projectImageHelper []project2.ProjectImageHelper
+		homeData, err := client.HomeClientPage()
+		if err != nil {
+			fmt.Println(err, " error reading all landing page data")
+		}
+
+		filetypes, err := contribution_io.ReadContributionFileTypes()
+		if err != nil {
+			fmt.Println(err, " error reading all the filetypes")
+		}
+
+		for _, sliderContent := range homeData.Sliders {
+			tempSliderObject := slider.SliderHelper{sliderContent.Id, sliderContent.SliderName, sliderContent.Description, misc.ConvertingToString(sliderContent.SliderImage)}
+			sliderHelperList = append(sliderHelperList, tempSliderObject)
+		}
+
+		for _, readPageSection := range homeData.ReadPageSection {
+			pageSections = append(pageSections, pageData.ReadPageSectionHelper{readPageSection.SectionName, readPageSection.Content})
+		}
+
+		type PageData struct {
+			FileTypes    []contribution.ContributionFileType
+			CheckOdds    func(index int) bool
+			HomeData     pages.ClientLandingPageData
+			Sliders      []slider.SliderHelper
+			PageSections []pageData.ReadPageSectionHelper
+		}
+
+		date := PageData{
+			filetypes,
+			func(index int) bool {
+				if index%2 == 0 {
+					return true
+				} else {
+					return false
+				}
+			},
+			homeData,
+			sliderHelperList,
+			pageSections,
+		}
+
+		files := []string{
+			app.Path + "index2.html",
 			app.Path + "base_templates/navigator.html",
 			app.Path + "base_templates/footer.html",
 		}

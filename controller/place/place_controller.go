@@ -51,7 +51,7 @@ func SinglePlaceHanler(app *config.Env) http.HandlerFunc {
 		type PageData struct {
 			Places        []place.Place
 			PlaceData     PlaceSingleData
-			GalleryString []image3.GaleryHelper
+			GalleryString []image3.GalleryHelper
 			CommentNumber int64
 			Comments      []comment.CommentStack
 			PageFlows     []place.PlacePageFlow
@@ -163,13 +163,13 @@ func getPlaceSingleData(placeId string) PlaceSingleData {
 				if err != nil {
 					fmt.Println(err, "Error reading image")
 				}
-				profileImage = image3.ImagesHelper{img.Id, misc.ConvertingToString(img.Image), placeImage.Id}
+				profileImage = image3.ImagesHelper{img.Id, misc.ConvertingToString(img.Image), img.Description, placeImage.Id}
 			}
 			img, err := image_io.ReadImage(placeImage.ImageId)
 			if err != nil {
 				fmt.Println(err, "Error reading image")
 			}
-			imageObject := image3.ImagesHelper{img.Id, misc.ConvertingToString(img.Image), placeImage.Id}
+			imageObject := image3.ImagesHelper{img.Id, misc.ConvertingToString(img.Image), img.Description, placeImage.Id}
 			image = append(image, imageObject)
 		}
 
@@ -189,8 +189,8 @@ func getPlaceSingleData(placeId string) PlaceSingleData {
 	return placeSingleData
 }
 
-func getPlaceGallery(placeId string) []image3.GaleryHelper {
-	var picture []image3.GaleryHelper
+func getPlaceGallery(placeId string) []image3.GalleryHelper {
+	var picture []image3.GalleryHelper
 	placeGallerys, err := place_io.ReadAllByPlaceGallery(placeId)
 	if err != nil {
 		fmt.Println(err, " error peopleGalleries.")
@@ -200,7 +200,7 @@ func getPlaceGallery(placeId string) []image3.GaleryHelper {
 			if err != nil {
 				fmt.Println(err, " error gallery")
 			} else {
-				picture = append(picture, image3.GaleryHelper{gallery.Id, misc.ConvertingToString(gallery.Image), gallery.Description})
+				picture = append(picture, image3.GalleryHelper{gallery.Id, misc.ConvertingToString(gallery.Image), gallery.Description, placeGallery.Id})
 			}
 		}
 	}
@@ -460,7 +460,7 @@ func getSubComment(parentComment string) []comment.CommentHelper {
 	}
 	for _, eventComment := range subComments {
 		if eventComment.ParentCommentId == parentComment && eventComment.Comment != nil {
-			commentHelper := comment.CommentHelper{eventComment.Id, eventComment.Email, eventComment.Name, misc.FormatDateMonth(eventComment.Date), misc.ConvertingToString(eventComment.Comment), eventComment.ParentCommentId, eventComment.Stat}
+			commentHelper := comment.CommentHelper{eventComment.Id, eventComment.Email, eventComment.Name, misc.FormatDateMonth(eventComment.Date), misc.ConvertingToString(eventComment.Comment), eventComment.ParentCommentId, eventComment.Stat, eventComment.Id}
 			myComments = append(myComments, commentHelper)
 		}
 	}
@@ -480,7 +480,7 @@ func getComments(placeId string) []comment.CommentHelper {
 		if err != nil {
 			fmt.Println("error reading Comment")
 		} else {
-			commentHelper := comment.CommentHelper{myComment.Id, myComment.Email, myComment.Name, misc.FormatDateMonth(myComment.Date), misc.ConvertingToString(myComment.Comment), myComment.ParentCommentId, myComment.Stat}
+			commentHelper := comment.CommentHelper{myComment.Id, myComment.Email, myComment.Name, misc.FormatDateMonth(myComment.Date), misc.ConvertingToString(myComment.Comment), myComment.ParentCommentId, myComment.Stat, eventComment.Id}
 			myCommentObject = append(myCommentObject, commentHelper)
 		}
 	}

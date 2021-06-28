@@ -664,6 +664,10 @@ func EditHistoryHandler(app *config.Env) http.HandlerFunc {
 		pageFlow, err := history_io.ReadHistoryPageFLowsWithHistoryId(historyId)
 
 		commentNumber, pendingcomments, activeComments := historyCommentCalculation(historyId)
+		adminName, adminImage, isTrue := adminHelper.CheckAdminDataInSession(app, r)
+		if !isTrue {
+			fmt.Println(isTrue, "error reading adminData")
+		}
 		type PageData struct {
 			HistoryData     HistorySimpleData
 			SidebarData     misc.SidebarData
@@ -674,6 +678,8 @@ func EditHistoryHandler(app *config.Env) http.HandlerFunc {
 			ActiveComments  int64
 			Contritbution   []contribution.Contribution
 			PageFlows       []history2.HistoryPageFlow
+			AdminName       string
+			AdminImage      string
 		}
 		data := PageData{GetHistorySimpleData(historyId),
 			misc.GetSideBarData("history", ""),
@@ -682,7 +688,7 @@ func EditHistoryHandler(app *config.Env) http.HandlerFunc {
 			pendingcomments,
 			activeComments,
 			GetContribution(historyId),
-			pageFlow}
+			pageFlow, adminName, adminImage}
 		files := []string{
 			app.Path + "admin/history/edit_history.html",
 			app.Path + "admin/template/navbar.html",
@@ -717,11 +723,17 @@ func NewHistoryHandler(app *config.Env) http.HandlerFunc {
 			backend_error = app.Session.GetString(r.Context(), "user-create-error")
 			app.Session.Remove(r.Context(), "user-create-error")
 		}
+		adminName, adminImage, isTrue := adminHelper.CheckAdminDataInSession(app, r)
+		if !isTrue {
+			fmt.Println(isTrue, "error reading adminData")
+		}
 		type PagePage struct {
 			Backend_error string
 			Unknown_error string
+			AdminName     string
+			AdminImage    string
 		}
-		data := PagePage{backend_error, unknown_error}
+		data := PagePage{backend_error, unknown_error, adminName, adminImage}
 		files := []string{
 			app.Path + "admin/history/new_history.html",
 			app.Path + "admin/template/navbar.html",
@@ -765,14 +777,21 @@ func HistoryHandler(app *config.Env) http.HandlerFunc {
 			historyObejct := history2.History{history.Id, history.Title, history.Description, misc.FormatDateMonth(history.Date)}
 			historieList = append(historieList, historyObejct)
 		}
+		adminName, adminImage, isTrue := adminHelper.CheckAdminDataInSession(app, r)
+		if !isTrue {
+			fmt.Println(isTrue, "error reading adminData")
+		}
 		type PagePage struct {
 			Backend_error string
 			Unknown_error string
 			Histories     []history2.History
 			SidebarData   misc.SidebarData
+			AdminName     string
+			AdminImage    string
 		}
 
-		data := PagePage{backend_error, unknown_error, historieList, misc.GetSideBarData("history", "")}
+		data := PagePage{backend_error, unknown_error, historieList,
+			misc.GetSideBarData("history", ""), adminName, adminImage}
 		files := []string{
 			app.Path + "admin/history/history.html",
 			app.Path + "admin/template/navbar.html",
@@ -809,11 +828,17 @@ func CreateImageHelper(app *config.Env) http.HandlerFunc {
 			http.Redirect(w, r, "/admin_user/history/edit/"+historyId, 301)
 			return
 		}
+		adminName, adminImage, isTrue := adminHelper.CheckAdminDataInSession(app, r)
+		if !isTrue {
+			fmt.Println(isTrue, "error reading adminData")
+		}
 		type PageData struct {
-			History history2.History
+			History    history2.History
+			AdminName  string
+			AdminImage string
 		}
 
-		data := PageData{history}
+		data := PageData{history, adminName, adminImage}
 		files := []string{
 			app.Path + "admin/history/image_history.html",
 			app.Path + "admin/template/navbar.html",

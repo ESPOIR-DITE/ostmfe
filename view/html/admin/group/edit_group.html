@@ -51,147 +51,234 @@
 
             <!-- Page Heading -->
             <div class="d-sm-flex align-items-center justify-content-between mb-4">
-              <h1 class="h3 mb-0 text-gray-800">{{.Groups.Group.Name}}</h1>
+              <h1 class="h3 mb-0 text-gray-800">{{.PageData.Group.Name}}</h1>
             </div>
 
-            {{template "cards" .}}
+            <div class="row">
+
+              <!-- Earnings (Monthly) Card Example -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Number Of Comments</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{.CommentNumber}}</div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Earnings (Monthly) Card Example -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Active Comments</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{.ActiveComments}}</div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Earnings (Monthly) Card Example -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Members</div>
+                        <div class="row no-gutters align-items-center">
+                          <div class="col-auto">
+                            <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{.GroupNumber}}</div>
+                          </div>
+                          <div class="col">
+                            <div class="progress progress-sm mr-2">
+                              <div class="progress-bar bg-info" role="progressbar" style="width: 50%" aria-valuenow="{{.GroupNumber}}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Pending Requests Card Example -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Pending Comments</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{.PendingComments}}</div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-comments fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
 
           <!---Project Images---->
-
           <div class="card shadow mb-4">
-            <!-- Card Header - Accordion -->
-            <a href="#collapseCardImage" class="d-block card-header py-3 btn-success" data-toggle="collapse"
-               role="button" aria-expanded="true" aria-controls="collapseCardExample">
-              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Group Image</h6>
-            </a>
-            <!-- Card Content - Collapse -->
-            <div class="collapse " id="collapseCardImage">
-              <div class="card-body p-0">
-                <!-- Nested Row within Card Body -->
-                <div class="row">
-                  <div class="col-lg-6">
-                    <div class="p-5">
-                      <div class="text-center">
-                        <h1 class="h4 text-gray-900 mb-4">Group Picture </h1>
-                      </div>
-                      <div class="col-lg-12 row">
-                        <!-- Default Card Example -->
-                        {{if .Groups.Images}}
-                          {{with .Groups.Images}}
-                            {{range $i,$e :=.}}
-                              <div class="card mb-4">
-                                <div class="card-body">
-                                  {{if .Id}}
-                                    <img class="card-img" style="width:100%;height:312px;"
-                                         id='base64image'
-                                         src='data:image/jpeg;base64,{{.Id}}' alt=""/>
-                                    <a class="btn btn-google btn-user btn-block" data-toggle="modal" onclick="deleteGroupImageBTN({{.ImageId}},{{$.Groups.Group.Id}},{{.ImageId}})"  data-target="#exampleModalGroup" hidden>
-                                      Delete
-                                    </a>
-
-
-                                  <div class="text-center">
-                                    <h1 class="h4 text-gray-900 mb-4">You can update this image here</h1>
-                                  </div>
-                                  <form class="user"method="post" id="" action="/admin_user/group/update_pictures" enctype="multipart/form-data">
-                                    <input type="hidden"name="imageId" value="{{.ImageId}}" class="form-control " >
-                                    <input type="hidden"name="groupImageId" value="{{.BridgeId}}" class="form-control " >
-                                    <input type="hidden"name="groupId" value="{{$.Groups.Group.Id}}" class="form-control " >
-                                    <div class="form-group row">
-                                      <div class="col-sm-6">
-                                        <select name="imageType" class="browser-default custom-select" required>
-                                          <option selected>Picture type</option>
-                                          <option value="1">Profile image</option>
-                                          <option value="2">Secondary Image</option>
-                                        </select>
-                                      </div>
-                                      <div class="col-sm-6">
-                                        <input type="file"name="file" class="form-control" id="fileInput" onchange="projectFileToUpdate()" required>
-                                      </div>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary btn-block" id="completeBTN" hidden>Update</button>
-                                  </form>
-                                  {{end}}
+              <!-- Card Header - Accordion -->
+              <a href="#collapseCardImage" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+                 role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Image</h6>
+              </a>
+              <!-- Card Content - Collapse -->
+              <div class="collapse " id="collapseCardImage">
+                <div class="card-body p-0">
+                  <!-- Nested Row within Card Body -->
+                  <div class="row">
+                    <div class="col-lg-6">
+                      <div class="p-5">
+                        <div class="col-lg-12">
+                          <!-- Default Card Example -->
+                          {{if .PageData.ProfileImage}}
+                          <div class="card mb-4">
+                            <div class="card-header py-3">
+                              <div class="row" >
+                                <div class="col-lg-6">
+                                  <h6 class="m-0 font-weight-bold text-primary">Group Image</h6>
+                                </div>
+                                <div class="col-lg-6">
+                                  <a class="float-right" href="#" data-toggle="modal" data-target="#updateImage">
+                                    <i class="fas fa-plus fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Update
+                                  </a>
                                 </div>
                               </div>
-                            {{end}}
-                          {{end}}
-                        {{else}}
+                            </div>
+
+                            <div class="card-body">
+                              {{if .PageData.ProfileImage.Image}}
+                              <img class="card-img" style="width:100%;height:312px;"
+                                   src='data:image/jpeg;base64,{{.PageData.ProfileImage.Image}}' alt=""/>
+                              {{end}}
+                            </div>
+                          </div>
+
+
+                          <div class="card mb-4">
+                            <div class="card-header py-3">
+                              <div class="row" >
+                                <div class="col-lg-6">
+                                  <h6 class="m-0 font-weight-bold text-primary">Group Descriptive Images</h6>
+                                </div>
+                                <div class="col-lg-6">
+                                  <a class="float-right" href="#" data-toggle="modal" data-target="#updateDescriptiveImage">
+                                    <i class="fa fa-plus-circle"></i>
+                                    Add
+                                  </a>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="card-body">
+                              <div class="row">
+                                {{with .PageData.DescriptiveImages}}
+                                {{range .}}
+                                <div class="col-md-3">
+                                  <a href="#" data-toggle="modal" data-target="#updateImage" onclick="viewDescriptiveImage({{.Image}})">
+                                    <img class="card-img" style="width:70%;height:120px;" src='data:image/jpeg;base64,{{.Image}}' alt=""/>
+                                  </a>
+                                </div>
+                                {{end}}
+                                {{end}}
+                              </div>
+                            </div>
+                          </div>
+                          {{else}}
                           <div class="text-center">
-                            <h1 class="h4 text-gray-900 mb-4">You have no pictures for this Group, Please Upload pictures</h1>
+                            <h1 class="h4 text-gray-900 mb-4">Profile picture missing !!!</h1>
                           </div>
                           <form class="user"method="post" action="/admin_user/group/create_pictures" enctype="multipart/form-data">
-                            <input type="hidden"name="groupId" value="{{.Groups.Group.Id}}" required>
+                            <input type="hidden"name="peopleId" value="{{.PageData.Group.Id}}" required>
                             <div class="form-group ">
-                              <label>Place profile Picture</label>
+                              <label>Project profile Picture</label>
                               <input type="file"name="file" class="form-control " id="file" placeholder="Project Name" required>
                             </div>
 
-                            <div class="form-group">
-                              <select name="imageType" class="browser-default custom-select" required>
-                                <option selected>Picture type</option>
-                                <option value="1">Profile image</option>
-                                <option value="2">Secondary Image</option>
-                              </select>
+                            <div class="form-group  row" id="filesArea"></div>
+                            <div class="form-group row" >
+                              <div class="col-sm-6" >
+                                <button type="button" id="add_form_field" class="btn btn-primary  btn-block">
+                                  Add a picture
+                                </button>
+                              </div>
                             </div>
 
                             <button type="submit" class="btn btn-primary btn-block">
                               Add
                             </button>
                           </form>
-                        {{end}}
+                          {{end}}
+                        </div>
                       </div>
-                      <hr>
+                    </div>
+
+                    <div class="col-lg-6">
+                      <div class="p-5">
+                        <div class="col-lg-12">
+                          <!-- Default Card Example -->
+                          <div class="card mb-4">
+                            <div class="card-header py-3">
+                              <div class="row" >
+                                <div class="col-lg-6">
+                                  <h6 class="m-0 font-weight-bold text-primary">Group Details</h6>
+                                </div>
+                                <div class="col-lg-6">
+                                  <a class="float-right" href="#" data-toggle="modal" data-target="#updateGroupDetail">
+                                    <i class="fas fa-plus fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Update
+                                  </a>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="card-body">
+                              <div class="row no-gutters align-items-center margin-bottom-2rem">
+                                <div class="col mr-2">
+                                  <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Group Name</div>
+                                  <div class="h5 mb-0 font-weight-bold text-gray-800" >{{.PageData.Group.Name}}</div>
+                                </div>
+                                <div class="col-auto">
+                                  <i class="fas fa-id-badge fa-2x text-gray-300"></i>
+                                </div>
+                              </div>
+                              <br>
+                              <div class="row no-gutters align-items-center margin-bottom-2rem">
+                                <div class="col mr-2">
+                                  <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Description</div>
+                                  <textarea class="form-control">{{.PageData.Group.Description}}</textarea>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-
                 </div>
               </div>
             </div>
-          </div>
 
-          <!---Project Detail---->
-          <div class="card shadow mb-4">
-            <!-- Card Header - Accordion -->
-            <a href="#collapseCardDetails" class="d-block card-header py-3 btn-success" data-toggle="collapse"
-               role="button" aria-expanded="true" aria-controls="collapseCardExample">
-              <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Group Details</h6>
-            </a>
-            <!-- Card Content - Collapse -->
-            <div class="collapse " id="collapseCardDetails">
-              <div class="card-body p-0">
-                <!-- Nested Row within Card Body -->
-                <div class="row">
-                  <div class="col-lg-12">
-                    <!-- Default Card Example -->
-                    <div class="card mb-4">
-                      <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary"> Details</h6>
-                      </div>
-                      <div class="card-body">
-                        <form class="user"method="post" id="" action="/admin_user/place/update_details">
-                          <input type="hidden"name="groupId" value="{{.Groups.Group.Id}}" class="form-control " >
-
-                          <div class="form-group ">
-                            <input type="text" class="form-control" value="{{.Groups.Group.Name}}" name="groupName" >
-                          </div>
-
-                          <div class="form-group ">
-                            <label>Description <small> Only 150 characters </small></label>
-                            <textarea class="form-control" name="description" maxlength="200">{{.Groups.Group.Description}}</textarea>
-                          </div>
-                          <button type="submit" class="btn btn-primary btn-block" >
-                            Update
-                          </button>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-                  <hr>
-                </div>
-              </div>
-            </div>
-          </div>
 
           <!---Project History---->
           <div class="card shadow mb-4">
@@ -370,6 +457,80 @@
             </div>
           </div>
 
+          <!---Group Members---->
+          <div class="card shadow mb-4">
+              <!-- Card Header - Accordion -->
+              <a href="#collapseMember" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+                 role="button" aria-expanded="true" aria-controls="collapseCardExample">
+                <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Members</h6>
+              </a>
+              <!-- Card Content - Collapse -->
+              <div class="collapse " id="collapseMember">
+                <div class="card-body p-0">
+                  <!-- Nested Row within Card Body -->
+
+                  <div class="row ">
+                    <div class="container ">
+                      <br>
+                      <div class="card-header py-3">
+                        <div class="row" >
+                          <div class="col-lg-6">
+                            <h6 class="m-0 font-weight-bold text-primary">Group Member Table</h6>
+                          </div>
+                          <div class="col-lg-6">
+                            <a class="float-right" href="#" data-toggle="modal" data-target="#">
+                              <i class="fas fa-plus fa-sm fa-fw mr-2 text-gray-400"></i>
+                              Add
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="table-responsive">
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                          <thead>
+                          <tr>
+                            <th>Nr</th>
+                            <th>Name</th>
+                            <th>Surname</th>
+                            <th>Email</th>
+                            <th>Date of subscription</th>
+                            <th></th>
+                            <th></th>
+                          </tr>
+                          </thead>
+                          <tbody>
+                          {{with .Members}}
+                          {{range $i, $e := .}}
+                          <tr>
+                            <td>{{$i}}</td>
+                            <td>{{.Member.Name}}</td>
+                            <td>{{.Member.Surname}}</td>
+                            <td>{{.Member.Email}}</td>
+                            <td>{{.Date}}</td>
+                            <td><a href="#"
+                                   class="btn btn-google btn-user btn-block">
+                              <i class="fab fa-trash"></i> Delete
+                            </a>
+                            </td>
+                            <td><a href="#" onclick="getMemberView({{.}})" data-toggle="modal" data-target="#memberView"
+                                   class="btn btn-user btn-info btn-block">
+                              <i class="fab fa-eye"></i> View
+                            </a>
+                            </td>
+                          </tr>
+                          {{end}}
+                          {{end}}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
         </div>
         <!-- /.container-fluid -->
 
@@ -397,6 +558,73 @@
     <i class="fas fa-angle-up"></i>
   </a>
 
+    <!--  update Group details -->
+    <div class="modal fade" id="updateGroupDetail" tabindex="-1" role="dialog" aria-labelledby="campusModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content modal-xl">
+          <div class="modal-header">
+            <h5 class="modal-title" id="campusModalLabel">Update Group Details</h5>
+            <button class="close" onclick="resetFrom('user')" type="button" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <form class="user"method="post" action="/admin_user/group/update_details">
+
+              <input type="hidden"name="groupId" value="{{.PageData.Group.Id}}" class="form-control " >
+
+              <input type="hidden"name="historyId" {{if .PageData.Group.HistoryId}} value="{{.PageData.Group.HistoryId}}" {{end}} class="form-control " >
+
+              <div class="form-group">
+                  <label>Person Name</label>
+                  <input type="text" name="groupName" class="form-control" value="{{.PageData.Group.Name}}" required>
+              </div>
+              <div class="form-group">
+                <label>Group Description</label>
+                <textarea  name="Description" class="form-control" required>{{.PageData.Group.Description}}</textarea>
+              </div>
+              <button type="submit" class="btn btn-primary btn-block">
+                Complete
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--Add people Descriptive Image -->
+    <div class="modal fade" id="updateDescriptiveImage" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title text-success" >Descriptive Image</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form method="post" action="/admin_user/group/create-descriptive-Image" enctype="multipart/form-data">
+              <input type="hidden"name="groupId" value="{{.PageData.Group.Id}}" required>
+              <div class="form-group ">
+                <label>JPG Image</label>
+                <input type="file"name="file" class="form-control " placeholder="Project Name" required>
+              </div>
+              <div class="form-group ">
+                <label>Description</label>
+                <TEXTAREA type="text"name="description" maxlength="150" class="form-control " placeholder="Project Name" required></TEXTAREA>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-block">
+                Add
+              </button>
+              <hr>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
   <!-- Logout Modal-->
   <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -450,7 +678,112 @@
     </div>
   </div>
 
+    <!--Update Image -->
+    <div class="modal fade" id="updateImage" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title text-success" id="exampleModalLongTitle">Update People Image</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form class="user"method="post"  action="/admin_user/group/update_pictures" enctype="multipart/form-data">
+              <input type="hidden"name="imageId" value="{{.PageData.ProfileImage.Id}}" class="form-control " >
+              <input type="hidden"name="bridge" value="{{.PageData.ProfileImage.BridgeId}}" class="form-control " >
+              <input type="hidden"name="groupId" value="{{.PageData.Group.Id}}" class="form-control " >
+              <div class="form-group ">
+                  <input type="file"name="file" class="form-control " required>
+              </div>
+              <button type="submit" class="btn btn-primary btn-block">
+                Complete
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
 
+  <!--View Member -->
+  <div class="modal fade" id="memberView" tabindex="-1" role="dialog"
+       aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-success" id="exampleModalLongTitle">View Member Details</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="p-5 ScrollStyle">
+          <div class="row no-gutters align-items-center margin-bottom-2rem">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1"> Name</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800" id="name" ></div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-id-badge fa-2x text-gray-300"></i>
+            </div>
+            <br>
+          </div>
+            <div class="row no-gutters align-items-center margin-bottom-2rem">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1"> Surname</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800" id="surname" ></div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-id-badge fa-2x text-gray-300"></i>
+            </div>
+            <br>
+            </div>
+            <div class="row no-gutters align-items-center margin-bottom-2rem">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1"> Email</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800" id="email" ></div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-at fa-2x text-gray-300"></i>
+            </div>
+            <br>
+            </div>
+            <div class="row no-gutters align-items-center margin-bottom-2rem">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1"> Address</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800" id="address" ></div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-map-marker fa-2x text-gray-300"></i>
+            </div>
+            <br>
+            </div>
+            <div class="row no-gutters align-items-center margin-bottom-2rem">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1"> Interested In</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800" id="interestedIn" ></div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-pagelines fa-2x text-gray-300"></i>
+            </div>
+            <br>
+            </div>
+            <div class="row no-gutters align-items-center margin-bottom-2rem">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1"> Message</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800" id="message" ></div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-archive fa-2x text-gray-300"></i>
+            </div>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!--Delete warning Modal -->
   <div class="modal fade" id="exampleModalGroup" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -516,6 +849,15 @@
   function deleteGroupImageBTN(id,name) {
    // $("#deleteBtn").attr('href','/admin_user/project/delete_project/'+id);
    // $("#value").text(name);
+  }
+  function getMemberView(data){
+    console.log(data);
+  document.getElementById("name").innerText=data.Member.name;
+  document.getElementById("surname").innerText=data.Member.surname;
+  document.getElementById("email").innerText=data.Member.email;
+  document.getElementById("address").innerText=data.Member.address;
+  document.getElementById("interestedIn").innerText=data.Member.interestedIn;
+  document.getElementById("message").innerText=data.Member.message;
   }
 </script>
 

@@ -1,5 +1,6 @@
 <!--event gallery--->
 {{define "gallery"}}
+{{if .PageData.Gallery}}
 <div class="container">
     <div class="row d-flex justify-content-center">
         <div class="menu-content pb-60 col-lg-10">
@@ -11,13 +12,13 @@
     </div>
     <div class="row">
         <div class="active-exibition-carusel">
-            {{with .GalleryImages}}
+            {{with .PageData.Gallery}}
             {{range .}}
             <div class="single-exibition item">
-                <img id='base64image'  src='data:image/jpeg;base64,{{.Gallery.Image}}' alt="">
+                <img id='base64image'  src='data:image/jpeg;base64,{{.Image}}' alt="">
                 <br>
                 <p class="text-center">
-                    {{.Gallery.Description}}
+                    {{.Description}}
                 </p>
             </div>
             {{end}}
@@ -26,4 +27,5 @@
     </div>
 </div>
 <br>
+{{end}}
 {{end}}

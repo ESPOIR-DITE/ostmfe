@@ -18,6 +18,7 @@ type CommentHelper struct {
 	Comment         string `json:"comment"`
 	ParentCommentId string `json:"parentCommentId"`
 	Stat            bool   `json:"stat"`
+	BridgeId        string `json:"bridgeId"`
 }
 type CommentHelper2 struct {
 	Id              string `json:"id"`

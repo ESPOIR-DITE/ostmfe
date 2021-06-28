@@ -104,7 +104,6 @@
                       <div class="col-lg-12">
                         <!-- Default Card Example -->
                         {{if .People.ProfileImage}}
-
                               <div class="card mb-4">
                                   <div class="card-header py-3">
                                       <div class="row" >
@@ -138,7 +137,7 @@
                                           <h6 class="m-0 font-weight-bold text-primary">People Descriptive Images</h6>
                                       </div>
                                       <div class="col-lg-6">
-                                          <a class="float-right" href="#" data-toggle="modal" data-target="#updateImage">
+                                          <a class="float-right" href="#" data-toggle="modal" data-target="#updateDescriptiveImage">
                                               <i class="fa fa-plus-circle"></i>
                                               Add
                                           </a>
@@ -523,17 +522,17 @@
                 </div>
             </div>
 
-            <!-- Gallery---->
+            <!-- Gallery
             <div class="card shadow mb-4">
-                <!-- Card Header - Accordion -->
+
                 <a href="#collapseGallery" class="d-block card-header py-3 btn-success" data-toggle="collapse"
                    role="button" aria-expanded="true" aria-controls="collapseCardExample">
                     <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Create new People gallery</h6>
                 </a>
-                <!-- Card Content - Collapse -->
+
                 <div class="collapse " id="collapseGallery">
                     <div class="card-body p-0">
-                        <!-- Nested Row within Card Body -->
+
                         <div class="row">
 
                             <div class="col-lg-12">
@@ -542,7 +541,7 @@
                                         <h1 class="h4 text-gray-900 mb-4">New Picture</h1>
                                     </div>
                                     <form class="user" method="post" action="/admin_user/people/create-gallery" enctype="multipart/form-data">
-                                        <input type="hidden" name="placeId" value="{{.PeopleDetails.Id}}" class="form-control ">
+                                        <input type="hidden" name="peopleId" value="{{.PeopleDetails.Id}}" class="form-control ">
 
                                         <div class="form-group ">
                                             <label>Description <small> Only 200 characters </small></label>
@@ -579,13 +578,13 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        {{with .Gallery}}
+                                        {{with .People.Gallery}}
                                             {{range $i, $e := .}}
                                                 <tr>
                                                     <td>{{$i}}</td>
-                                                    <td><img id='base64image' width="100px" src='data:image/jpeg;base64,{{.Gallery.Image}}' alt=""></td>
-                                                    <td>{{.Gallery.Description}}</td>
-                                                    <td><a href="/admin_user/group/delete-gallery/{{.Gallery.Id}}/{{.PlaceGallery.Id}}/{{$.PeopleGallery.PeopleId}}"
+                                                    <td><img id='base64image' width="100px" src='data:image/jpeg;base64,{{.Image}}' alt=""></td>
+                                                    <td>{{.Description}}</td>
+                                                    <td><a href="/admin_user/people/delete-gallery/{{.Id}}/{{$.PeopleDetails.Id}}/{{.Bridge}}"
                                                            class="btn btn-google btn-user btn-block">
                                                             <i class="fab fa-fw"></i> Delete
                                                         </a>
@@ -602,7 +601,7 @@
 
                 </div>
             </div>
-
+          ---->
         </div>
         <!-- /.container-fluid -->
 
@@ -718,6 +717,39 @@
     </div>
   </div>
 
+ <!--Add people Descriptive Image -->
+  <div class="modal fade" id="updateDescriptiveImage" tabindex="-1" role="dialog"
+       aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-success" >Descriptive Image</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form method="post" action="/admin_user/people/create-descriptive-Image" enctype="multipart/form-data">
+                <input type="hidden"name="peopleId" value="{{.People.People.Id}}" required>
+                <div class="form-group ">
+                    <label>JPG Image</label>
+                    <input type="file"name="file" class="form-control " placeholder="Project Name" required>
+                </div>
+                <div class="form-group ">
+                    <label>Description</label>
+                    <TEXTAREA type="text"name="description" maxlength="150" class="form-control " placeholder="Project Name" required></TEXTAREA>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                    Add
+                </button>
+                <hr>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!--Update people Image -->
   <div class="modal fade" id="updateImage" tabindex="-1" role="dialog"
        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -807,6 +839,8 @@
 
                       <input type="hidden"name="peopleId" value="{{.People.People.Id}}" class="form-control " >
 
+                      <input type="hidden"name="historyId" {{if .People.People.HistoriesId}} value="{{.People.People.HistoriesId}}" {{end}} class="form-control " >
+
                       <div class="form-group row">
                           <div class="col-sm-6">
                               <label>Person Name</label>
@@ -840,14 +874,14 @@
                       <div class="form-group">
                           <label>Category<small></small> </label>
                           <select name="categoryId" class="browser-default custom-select" required>
-                              {{if .Category.Category}}
-                              <option selected>{{.Category.Category}}</option>
-                              {{else}}
-                              {{end}}
-                              <option selected>Choose a Category</option>
+
                               {{with .Categories}}
                               {{range .}}
-                              <option value={{.Id}}>{{.Category}}</option>
+                              {{if $.Category.Id}}
+                              <option {{if eq $.Category.Id .Id}} value={{.Id}} selected {{end}}>{{.Category}}</option>
+                              {{else}}
+                              <option selected DISABLED> Choose a category</option>
+                              {{end}}
                               {{end}}
                               {{end}}
                           </select>

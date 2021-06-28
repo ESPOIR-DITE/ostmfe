@@ -10,15 +10,15 @@ import (
 	"net/http"
 	"ostmfe/config"
 	"ostmfe/controller/admin/adminHelper"
-	event3 "ostmfe/controller/event"
+	"ostmfe/controller/generic"
 	"ostmfe/controller/misc"
 	museum "ostmfe/domain"
-	"ostmfe/domain/comment"
 	"ostmfe/domain/contribution"
 	event2 "ostmfe/domain/event"
 	"ostmfe/domain/group"
 	history2 "ostmfe/domain/history"
 	"ostmfe/domain/image"
+	"ostmfe/domain/pages"
 	partner2 "ostmfe/domain/partner"
 	"ostmfe/domain/people"
 	place2 "ostmfe/domain/place"
@@ -29,6 +29,7 @@ import (
 	"ostmfe/io/group_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
+	"ostmfe/io/pages/admin"
 	"ostmfe/io/partner_io"
 	"ostmfe/io/people_io"
 	"ostmfe/io/place_io"
@@ -40,6 +41,7 @@ func EventHome(app *config.Env) http.Handler {
 	r := chi.NewRouter()
 	r.Get("/", EventsHandler(app))
 	r.Get("/new", NewEventsHandler(app))
+	//r.Get("/edit/{eventId}", EditEventsHandler(app))
 	r.Get("/edit/{eventId}", EditEventsHandler(app))
 	r.Post("/create", CreateEventHandler(app))
 	r.Post("/create-history", CreateEventHistoryEventHandler(app))
@@ -68,8 +70,78 @@ func EventHome(app *config.Env) http.Handler {
 	//Gallery
 	r.Post("/create-gallery", CreateEventGalleryHandler(app))
 	r.Get("/delete-gallery/{pictureId}/{eventId}/{eventGalleryId}", DeleteGalleryHandler(app))
+	r.Post("/add-descriptive-image", AddEventDescriptiveImage(app))
+	r.Post("/delete/descriptive-image", DeleteDescriptiveImage(app))
 
 	return r
+}
+
+func DeleteDescriptiveImage(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+			return
+		}
+		r.ParseForm()
+		eventId := r.PostFormValue("eventId")
+		bridge := r.PostFormValue("bridge")
+		fmt.Println(eventId, " EventId bridge ", bridge)
+		if bridge != "" {
+			descriptiveEventImage, err := event_io.DeleteEventImg(bridge)
+			if err != nil {
+				fmt.Println(err, " error deleting descriptive image")
+			} else {
+				_, err := image_io.DeleteImage(descriptiveEventImage.ImageId)
+				if err != nil {
+					fmt.Println(err, " error deleting image")
+				} else {
+					fmt.Println("image deleted successfully")
+				}
+			}
+		}
+
+		http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
+		return
+	}
+}
+
+func AddEventDescriptiveImage(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+			return
+		}
+		var content []byte
+		r.ParseForm()
+		file, _, err := r.FormFile("file")
+		eventId := r.PostFormValue("eventId")
+		description := r.PostFormValue("description")
+		if err != nil {
+			fmt.Println(err, "<<<<<< error reading contribution file>>>>This error should happen>>>")
+		} else {
+			reader := bufio.NewReader(file)
+			content, _ = ioutil.ReadAll(reader)
+		}
+		if eventId != "" {
+			imageResult, err := image_io.CreateImage(image.Images{"", content, description})
+			if err != nil {
+				fmt.Println(err, " error creating image")
+				http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
+				return
+			}
+			imageTypeId, err := adminHelper.GetDescriptiveImageId()
+			_, err = event_io.CreateEventImg(event2.EventImage{"", imageResult.Id, eventId, imageTypeId, ""})
+			if err != nil {
+				fmt.Println(err, " error creating event image")
+				_, err := image_io.DeleteImage(imageResult.Id)
+				if err != nil {
+					fmt.Println(err, " error deleting event image")
+				}
+			}
+		}
+		http.Redirect(w, r, "/admin_user/event/edit/"+eventId, 301)
+		return
+	}
 }
 
 func DeletePageFlowHandler(app *config.Env) http.HandlerFunc {
@@ -676,7 +748,7 @@ func CreateEventPictureEventHandler(app *config.Env) http.HandlerFunc {
 		r.ParseForm()
 		file, _, err := r.FormFile("file")
 		eventId := r.PostFormValue("eventId")
-		imageType := r.PostFormValue("imageType")
+		//imageType := r.PostFormValue("imageType")
 		if err != nil {
 			fmt.Println(err, "<<<error reading file>>>>This error may happen if there is no picture selected>>>")
 		} else {
@@ -691,7 +763,7 @@ func CreateEventPictureEventHandler(app *config.Env) http.HandlerFunc {
 				fmt.Println(err, " error creating a new image")
 			}
 
-			eventImageObject := event2.EventImage{"", imageObject.Id, eventId, imageType, ""}
+			eventImageObject := event2.EventImage{"", imageObject.Id, eventId, generic.GetImageTypeId(utile.PROFILE), ""}
 
 			_, errx := event_io.CreateEventImg(eventImageObject)
 			if errx != nil {
@@ -1204,6 +1276,109 @@ func EventPicture(app *config.Env) http.HandlerFunc {
 	}
 }
 
+// Deprecated
+//func EditEventsHandler(app *config.Env) http.HandlerFunc {
+//	return func(w http.ResponseWriter, r *http.Request) {
+//		if !adminHelper.CheckAdminInSession(app, r) {
+//			http.Redirect(w, r, "/administration/", 301)
+//			return
+//		}
+//		eventId := chi.URLParam(r, "eventId")
+//		event, err := event_io.ReadEvent(eventId)
+//		if err != nil {
+//			fmt.Println(err, " error reading an event")
+//			if app.Session.GetString(r.Context(), "user-create-error") != "" {
+//				app.Session.Remove(r.Context(), "user-create-error")
+//			}
+//			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+//			http.Redirect(w, r, "/admin_user/event", 301)
+//			return
+//		}
+//		projects, err := project_io.ReadProjects()
+//		if err != nil {
+//			fmt.Println(err, " error reading projects")
+//		}
+//		partners, err := partner_io.ReadPartners()
+//		if err != nil {
+//			fmt.Println(err, " error reading partener")
+//		}
+//		peoples, err := people_io.ReadPeoples()
+//		if err != nil {
+//			fmt.Println(err, " error reading peoples")
+//		}
+//		places, err := place_io.ReadPlaces()
+//		if err != nil {
+//			fmt.Println(err, " error reading peoples")
+//		}
+//		years, err := io2.ReadYears()
+//		if err != nil {
+//			fmt.Println(err, " error reading all the years")
+//		}
+//		eventData := misc.GetEventDate(eventId)
+//
+//		groups, err := group_io.ReadGroups()
+//		if err != nil {
+//			fmt.Println(err, " error reading all the groups")
+//		}
+//		pageFlows, err := event_io.ReadAllEventPageFlowByEventId(eventId)
+//		if err != nil {
+//			fmt.Println(err, " error reading all the pageflow")
+//		}
+//		adminName,adminImage,isTrue := adminHelper.CheckAdminDataInSession(app,r)
+//		if !isTrue{
+//			fmt.Println(isTrue,"error reading adminData")
+//		}
+//		type PageData struct {
+//			Event       event2.Event
+//			EventData   misc.EventData
+//			Projects    []project2.Project
+//			Partners    []partner2.Partner
+//			SidebarData misc.SidebarData
+//			Peoples     []people.People
+//			Places      []place2.Place
+//			Years       []museum.Years
+//			GroupData   []event3.GroupData
+//			Groups      []group.Groupes
+//			Comments    []comment.CommentHelper2
+//			Gallery     []misc.EventGalleryImages
+//			PageFLow    []contribution.EventPageFlow
+//			AdminName string
+//			AdminImage string
+//		}
+//		date := PageData{event,
+//			eventData,
+//			projects,
+//			partners,
+//			misc.GetSideBarData("event", ""),
+//			peoples,
+//			places,
+//			years,
+//			event3.GetGroupsData(eventId),
+//			groups,
+//			GetEventCommentsWithEventId(eventId),
+//			misc.GetEventGallery(eventId),
+//			pageFlows,
+//			adminName,adminImage,
+//		}
+//		files := []string{
+//			app.Path + "admin/event/edit_event.html",
+//			app.Path + "admin/template/navbar.html",
+//			app.Path + "base_templates/footer.html",
+//			app.Path + "admin/template/cards.html",
+//			app.Path + "admin/template/topbar.html",
+//		}
+//		ts, err := template.ParseFiles(files...)
+//		if err != nil {
+//			app.ErrorLog.Println(err.Error())
+//			return
+//		}
+//		err = ts.Execute(w, date)
+//		if err != nil {
+//			app.ErrorLog.Println(err.Error())
+//		}
+//	}
+//}
+
 func EditEventsHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if !adminHelper.CheckAdminInSession(app, r) {
@@ -1211,7 +1386,7 @@ func EditEventsHandler(app *config.Env) http.HandlerFunc {
 			return
 		}
 		eventId := chi.URLParam(r, "eventId")
-		event, err := event_io.ReadEvent(eventId)
+		_, err := event_io.ReadEvent(eventId)
 		if err != nil {
 			fmt.Println(err, " error reading an event")
 			if app.Session.GetString(r.Context(), "user-create-error") != "" {
@@ -1221,64 +1396,25 @@ func EditEventsHandler(app *config.Env) http.HandlerFunc {
 			http.Redirect(w, r, "/admin_user/event", 301)
 			return
 		}
-		projects, err := project_io.ReadProjects()
+		eventViewData, err := admin.GetEventEditData(eventId)
 		if err != nil {
-			fmt.Println(err, " error reading projects")
+			fmt.Println(err, "error reading eventView Data")
 		}
-		partners, err := partner_io.ReadPartners()
-		if err != nil {
-			fmt.Println(err, " error reading partener")
-		}
-		peoples, err := people_io.ReadPeoples()
-		if err != nil {
-			fmt.Println(err, " error reading peoples")
-		}
-		places, err := place_io.ReadPlaces()
-		if err != nil {
-			fmt.Println(err, " error reading peoples")
-		}
-		years, err := io2.ReadYears()
-		if err != nil {
-			fmt.Println(err, " error reading all the years")
-		}
-		eventData := misc.GetEventDate(eventId)
-
-		groups, err := group_io.ReadGroups()
-		if err != nil {
-			fmt.Println(err, " error reading all the groups")
-		}
-		pageFlows, err := event_io.ReadAllEventPageFlowByEventId(eventId)
-		if err != nil {
-			fmt.Println(err, " error reading all the pageflow")
+		adminName, adminImage, isTrue := adminHelper.CheckAdminDataInSession(app, r)
+		if !isTrue {
+			fmt.Println(isTrue, "error reading adminData")
 		}
 		type PageData struct {
-			Event       event2.Event
-			EventData   misc.EventData
-			Projects    []project2.Project
-			Partners    []partner2.Partner
+			Data        pages.EventViewData
 			SidebarData misc.SidebarData
-			Peoples     []people.People
-			Places      []place2.Place
-			Years       []museum.Years
-			GroupData   []event3.GroupData
-			Groups      []group.Groupes
-			Comments    []comment.CommentHelper2
-			Gallery     []misc.EventGalleryImages
-			PageFLow    []contribution.EventPageFlow
+			AdminName   string
+			AdminImage  string
 		}
-		date := PageData{event,
-			eventData,
-			projects,
-			partners,
+		date := PageData{
+			eventViewData,
 			misc.GetSideBarData("event", ""),
-			peoples,
-			places,
-			years,
-			event3.GetGroupsData(eventId),
-			groups,
-			GetEventCommentsWithEventId(eventId),
-			misc.GetEventGallery(eventId),
-			pageFlows}
+			adminName, adminImage,
+		}
 		files := []string{
 			app.Path + "admin/event/edit_event.html",
 			app.Path + "admin/template/navbar.html",
@@ -1355,6 +1491,10 @@ func EventsHandler(app *config.Env) http.HandlerFunc {
 		if !adminHelper.CheckAdminInSession(app, r) {
 			http.Redirect(w, r, "/administration/", 301)
 		}
+		adminName, adminImage, isTrue := adminHelper.CheckAdminDataInSession(app, r)
+		if !isTrue {
+			fmt.Println(isTrue, "error reading adminData")
+		}
 
 		var unknown_error string
 		var backend_error string
@@ -1407,8 +1547,15 @@ func EventsHandler(app *config.Env) http.HandlerFunc {
 			Places        []place2.Place
 			Peoples       []people.People
 			Years         []museum.Years
+			AdminName     string
+			AdminImage    string
 		}
-		data := PageData{projects, partners, backend_error, unknown_error, eventList, misc.GetSideBarData("event", "event"), places, peoples, years}
+		data := PageData{projects, partners,
+			backend_error, unknown_error, eventList,
+			misc.GetSideBarData("event", "event"),
+			places, peoples, years,
+			adminName, adminImage,
+		}
 		files := []string{
 			app.Path + "admin/event/events.html",
 			app.Path + "admin/template/navbar.html",

@@ -59,7 +59,7 @@ func GetHistorySimpleData(historyId string) HistorySimpleData {
 			if err != nil {
 				fmt.Println(err, " error reading ProfileImages")
 			}
-			imageObject := image3.ImagesHelper{ImageObejct.Id, misc.ConvertingToString(ImageObejct.Image), historyImage.Id}
+			imageObject := image3.ImagesHelper{ImageObejct.Id, misc.ConvertingToString(ImageObejct.Image), ImageObejct.Description, historyImage.Id}
 			images = append(images, imageObject)
 		}
 	}

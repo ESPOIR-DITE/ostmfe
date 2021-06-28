@@ -11,18 +11,17 @@ type PageBannerData struct {
 	Image      string
 }
 
-func GetPageBannerData() []PageBannerData {
-	var pageBannerList []PageBannerData
-
-	pageBanners, err := pageData_io.ReadPageBanners()
+func GetPageBannerData(data pageData.PageData) pageData.BannerImageHelper {
+	var pageBannerList pageData.BannerImageHelper
+	if data.BannerId == "" {
+		return pageBannerList
+	}
+	banner, err := pageData_io.ReadBannerN(data.BannerId)
 	if err != nil {
 		fmt.Println(err, " error reading pageBanners")
 		return pageBannerList
 	}
-	for _, pageBanner := range pageBanners {
-		pageBannerList = append(pageBannerList, PageBannerData{pageBanner, GetBannerImage(pageBanner.BannerId)})
-	}
-	return pageBannerList
+	return banner
 }
 
 //This method will take a bannerId and returns a string containing an image.

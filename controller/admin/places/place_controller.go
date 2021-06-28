@@ -678,6 +678,10 @@ func EditPlacesHandler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			app.InfoLog.Println("error reading Places Category: ", err)
 		}
+		adminName, adminImage, isTrue := adminHelper.CheckAdminDataInSession(app, r)
+		if !isTrue {
+			fmt.Println(isTrue, "error reading adminData")
+		}
 		commentNumber, pendingcomments, activeComments := placeCommentCalculation(placeId)
 		type PageData struct {
 			PlaceData       PlaceDataEditable
@@ -696,6 +700,8 @@ func EditPlacesHandler(app *config.Env) http.HandlerFunc {
 			Unknown_error   string
 			PlaceCategories []place2.PlaceCategory
 			PlaceCategory   place2.PlaceCategory
+			AdminName       string
+			AdminImage      string
 		}
 		data := PageData{placeDate, misc.GetSideBarData("place", ""),
 			GetPlaceCommentsWithEventId(placeId), misc.GetPlaceGallery(placeId),
@@ -707,7 +713,7 @@ func EditPlacesHandler(app *config.Env) http.HandlerFunc {
 			backend_error,
 			unknown_error,
 			placeCategories,
-			placeCategory,
+			placeCategory, adminName, adminImage,
 		}
 		files := []string{
 			app.Path + "admin/place/new_edit_place.html",
@@ -740,11 +746,17 @@ func NewPlacesHandler(app *config.Env) http.HandlerFunc {
 			backend_error = app.Session.GetString(r.Context(), "user-create-error")
 			app.Session.Remove(r.Context(), "user-create-error")
 		}
+		adminName, adminImage, isTrue := adminHelper.CheckAdminDataInSession(app, r)
+		if !isTrue {
+			fmt.Println(isTrue, "error reading adminData")
+		}
 		type PagePage struct {
 			Backend_error string
 			Unknown_error string
+			AdminName     string
+			AdminImage    string
 		}
-		data := PagePage{backend_error, unknown_error}
+		data := PagePage{backend_error, unknown_error, adminName, adminImage}
 		files := []string{
 			app.Path + "admin/place/new_place.html",
 			//app.Path + "admin/template/navbar.html",
@@ -809,18 +821,24 @@ func PlacesHandler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			app.InfoLog.Println("error reading Places Category: ", err)
 		}
+		adminName, adminImage, isTrue := adminHelper.CheckAdminDataInSession(app, r)
+		if !isTrue {
+			fmt.Println(isTrue, "error reading adminData")
+		}
 		type PageData struct {
 			Backend_error   string
 			Unknown_error   string
 			Places          []place2.Place
 			SidebarData     misc.SidebarData
 			PlaceCategories []place2.PlaceCategory
+			AdminName       string
+			AdminImage      string
 		}
 		data := PageData{backend_error,
 			unknown_error,
 			places,
 			misc.GetSideBarData("place", ""),
-			placeCategories,
+			placeCategories, adminName, adminImage,
 		}
 		files := []string{
 			app.Path + "admin/place/places.html",

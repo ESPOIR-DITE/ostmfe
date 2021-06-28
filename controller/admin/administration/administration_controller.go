@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"net/http"
 	"ostmfe/config"
+	"ostmfe/controller/admin/adminHelper"
 	"ostmfe/io/login"
 )
 
@@ -33,6 +34,7 @@ func SubmitLoginDetails(app *config.Env) http.HandlerFunc {
 			result := login.AdminLogin(email, password)
 			if result == true {
 				app.Session.Put(r.Context(), "email", email)
+				adminHelper.PutAdminDataInSession(app, r, email)
 				http.Redirect(w, r, "/admin_user/", 301)
 				return
 			} else {

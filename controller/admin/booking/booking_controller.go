@@ -38,7 +38,10 @@ func homeHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if !adminHelper.CheckAdminInSession(app, r) {
 			http.Redirect(w, r, "/administration/", 301)
-			return
+		}
+		adminName, adminImage, isTrue := adminHelper.CheckAdminDataInSession(app, r)
+		if !isTrue {
+			fmt.Println(isTrue, "error reading adminData")
 		}
 
 		var unknown_error string
@@ -64,8 +67,13 @@ func homeHandler(app *config.Env) http.HandlerFunc {
 			SidebarData   misc.SidebarData
 			Backend_error string
 			Unknown_error string
+			AdminName     string
+			AdminImage    string
 		}
-		data := PageData{bookingList, misc.GetSideBarData("booking", ""), backend_error, unknown_error}
+		data := PageData{bookingList,
+			misc.GetSideBarData("booking", ""),
+			backend_error, unknown_error,
+			adminName, adminImage}
 		files := []string{
 			app.Path + "admin/booking/booking.html",
 			app.Path + "admin/template/navbar.html",

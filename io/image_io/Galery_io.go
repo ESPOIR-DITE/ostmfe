@@ -36,8 +36,22 @@ func UpdateGallery(img image.Gallery) (image.Gallery, error) {
 	return entity, nil
 
 }
-func ReadGallery(id string) (image.Gallery, error) {
+func ReadGalleryH(id string) (image.GalleryHelper, error) {
+	entity := image.GalleryHelper{}
+	resp, _ := api.Rest().Get(galeryURL + "readH?id=" + id)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
 
+}
+
+//Deprecated
+func ReadGallery(id string) (image.Gallery, error) {
 	entity := image.Gallery{}
 	resp, _ := api.Rest().Get(galeryURL + "read?id=" + id)
 	if resp.IsError() {

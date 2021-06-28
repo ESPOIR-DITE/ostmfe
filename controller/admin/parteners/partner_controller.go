@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"net/http"
 	"ostmfe/config"
+	"ostmfe/controller/admin/adminHelper"
 	"ostmfe/controller/misc"
 	partner2 "ostmfe/domain/partner"
 	"ostmfe/io/partner_io"
@@ -131,18 +132,26 @@ func EditePartenersHandler(app *config.Env) http.HandlerFunc {
 			backend_error = app.Session.GetString(r.Context(), "user-create-error")
 			app.Session.Remove(r.Context(), "user-create-error")
 		}
+		adminName, adminImage, isTrue := adminHelper.CheckAdminDataInSession(app, r)
+		if !isTrue {
+			fmt.Println(isTrue, "error reading adminData")
+		}
 
 		type PagePage struct {
 			Backend_error string
 			Unknown_error string
 			SidebarData   misc.SidebarData
+			AdminName     string
+			AdminImage    string
 		}
-		data := PagePage{backend_error, unknown_error, misc.GetSideBarData("partner", "")}
+		data := PagePage{backend_error, unknown_error,
+			misc.GetSideBarData("partner", ""),
+			adminName, adminImage}
 
 		files := []string{
 			app.Path + "admin/collection/edit_partner.html",
-			//app.Path + "admin/template/navbar.html",
-			//app.Path + "base_templates/footer.html",
+			app.Path + "admin/template/navbar.html",
+			app.Path + "admin/template/topbar.html",
 		}
 		ts, err := template.ParseFiles(files...)
 		if err != nil {
@@ -172,17 +181,24 @@ func PartenersHandler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			fmt.Println(err, " error reading Partners")
 		}
+		adminName, adminImage, isTrue := adminHelper.CheckAdminDataInSession(app, r)
+		if !isTrue {
+			fmt.Println(isTrue, "error reading adminData")
+		}
 		type PagePage struct {
 			Backend_error string
 			Unknown_error string
 			Partners      []partner2.Partner
 			SidebarData   misc.SidebarData
+			AdminName     string
+			AdminImage    string
 		}
-		data := PagePage{backend_error, unknown_error, partners, misc.GetSideBarData("partner", "")}
+		data := PagePage{backend_error, unknown_error,
+			partners, misc.GetSideBarData("partner", ""), adminName, adminImage}
 		files := []string{
 			app.Path + "admin/partner/partners.html",
 			app.Path + "admin/template/navbar.html",
-			//app.Path + "base_templates/footer.html",
+			app.Path + "admin/template/topbar.html",
 		}
 		ts, err := template.ParseFiles(files...)
 		if err != nil {
@@ -208,15 +224,21 @@ func NewPartenersHandler(app *config.Env) http.HandlerFunc {
 			backend_error = app.Session.GetString(r.Context(), "user-create-error")
 			app.Session.Remove(r.Context(), "user-create-error")
 		}
+		adminName, adminImage, isTrue := adminHelper.CheckAdminDataInSession(app, r)
+		if !isTrue {
+			fmt.Println(isTrue, "error reading adminData")
+		}
 		type PagePage struct {
 			Backend_error string
 			Unknown_error string
+			AdminName     string
+			AdminImage    string
 		}
-		data := PagePage{backend_error, unknown_error}
+		data := PagePage{backend_error, unknown_error, adminName, adminImage}
 		files := []string{
 			app.Path + "admin/partner/new_partner.html",
-			//app.Path + "admin/template/navbar.html",
-			//app.Path + "base_templates/footer.html",
+			app.Path + "admin/template/navbar.html",
+			app.Path + "admin/template/topbar.html",
 		}
 		ts, err := template.ParseFiles(files...)
 		if err != nil {

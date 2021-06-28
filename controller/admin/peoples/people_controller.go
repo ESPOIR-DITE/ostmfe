@@ -112,7 +112,6 @@ func createDescriptiveImage(app *config.Env) http.HandlerFunc {
 		return
 	}
 }
-
 func DeleteEventPeopleHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		eventPeopleId := chi.URLParam(r, "eventPeopleId")
@@ -135,7 +134,6 @@ func ActivateCommentHandler(app *config.Env) http.HandlerFunc {
 		return
 	}
 }
-
 func CreatePeopleHistoryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
@@ -153,10 +151,41 @@ func CreatePeopleHistoryHandler(app *config.Env) http.HandlerFunc {
 				http.Redirect(w, r, "/admin_user/people/edit/"+peopleId, 301)
 				return
 			}
-			peopleHistoryObject := people2.PeopleHistory{"", peopleId, historie.Id}
-			_, errx := people_io.CreatePeopleHistory(peopleHistoryObject)
-			if errx != nil {
-				fmt.Println(errx, "creating people history")
+			people, err := people_io.ReadPeople(peopleId)
+			if err != nil {
+				fmt.Println(err, " error reading people")
+				fmt.Println("Deleting history ....")
+				_, err = history_io.DeleteHistorie(historie.Id)
+				if err != nil {
+					fmt.Println(err, " can't delete peopleHistory")
+				}
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/people/edit/"+peopleId, 301)
+				return
+			}
+
+			updatedPeople := people2.People{people.Id, people.Name, people.Surname, people.BirthDate, people.DeathDate, people.Origin, people.Profession, people.Brief, historie.Id}
+			_, err = people_io.UpdatePeople(updatedPeople)
+			if err != nil {
+				fmt.Println(err, " error updating people")
+				fmt.Println("Deleting history ....")
+				_, err = history_io.DeleteHistorie(historie.Id)
+				if err != nil {
+					fmt.Println(err, " can't delete peopleHistory")
+				}
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/people/edit/"+peopleId, 301)
+				return
+			}
+			fmt.Println("update done successfully.")
+			if app.Session.GetString(r.Context(), "creation-successful") != "" {
+				app.Session.Remove(r.Context(), "creation-successful")
 			}
 			if app.Session.GetString(r.Context(), "creation-successful") != "" {
 				app.Session.Remove(r.Context(), "creation-successful")
@@ -206,7 +235,6 @@ func AddEventHandler(app *config.Env) http.HandlerFunc {
 		http.Redirect(w, r, "/admin_user/people", 301)
 	}
 }
-
 func DeletePeopleCategoryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		category := chi.URLParam(r, "category")
@@ -220,7 +248,6 @@ func DeletePeopleCategoryHandler(app *config.Env) http.HandlerFunc {
 		return
 	}
 }
-
 func DeleteGalleryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		pictureId := chi.URLParam(r, "pictureId")
@@ -260,7 +287,6 @@ func DeleteGalleryHandler(app *config.Env) http.HandlerFunc {
 		return
 	}
 }
-
 func createPeopleGaller(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var content []byte
@@ -483,9 +509,10 @@ func UpdatePeopleDetailHandler(app *config.Env) http.HandlerFunc {
 		origin := r.PostFormValue("origin")
 		brief := r.PostFormValue("brief")
 		categoryId := r.PostFormValue("categoryId")
+		historyId := r.PostFormValue("historyId")
 		if name != "" && peopleId != "" && surname != "" {
 			//TODO need to learn how to check if a data time if nil or empty....
-			peopleObejct := people2.People{peopleId, name, surname, b_date, d_date, origin, profession, brief}
+			peopleObejct := people2.People{peopleId, name, surname, b_date, d_date, origin, profession, brief, historyId}
 			people, err := people_io.UpdatePeople(peopleObejct)
 			if err != nil {
 				fmt.Println(err, "updating people details")
@@ -620,13 +647,20 @@ func NewPeopleCategoryHandler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			fmt.Println(err, " There is an error when reading all the people category")
 		}
+		adminName, adminImage, isTrue := adminHelper.CheckAdminDataInSession(app, r)
+		if !isTrue {
+			fmt.Println(isTrue, "error reading adminData")
+		}
 		type PageData struct {
 			Peoples       []people2.Category
 			Backend_error string
 			Unknown_error string
 			SidebarData   misc.SidebarData
+			AdminName     string
+			AdminImage    string
 		}
-		data := PageData{peoples, backend_error, unknown_error, misc.GetSideBarData("people", "people_category")}
+		data := PageData{peoples, backend_error, unknown_error,
+			misc.GetSideBarData("people", "people_category"), adminName, adminImage}
 		files := []string{
 			app.Path + "admin/people/peopleCategory.html",
 			app.Path + "admin/template/navbar.html",
@@ -669,6 +703,10 @@ func NewPeoplestp2Handler(app *config.Env) http.HandlerFunc {
 			app.Session.Remove(r.Context(), "user-create-error")
 		}
 
+		adminName, adminImage, isTrue := adminHelper.CheckAdminDataInSession(app, r)
+		if !isTrue {
+			fmt.Println(isTrue, "error reading adminData")
+		}
 		peoples := misc.GetPeopleWithStringdate()
 		type PageData struct {
 			People        people2.People
@@ -676,8 +714,11 @@ func NewPeoplestp2Handler(app *config.Env) http.HandlerFunc {
 			Unknown_error string
 			Peoples       []misc.PeopleWithStringdate
 			SidebarData   misc.SidebarData
+			AdminName     string
+			AdminImage    string
 		}
-		data := PageData{people, backend_error, unknown_error, peoples, misc.GetSideBarData("people", "people")}
+		data := PageData{people, backend_error, unknown_error, peoples,
+			misc.GetSideBarData("people", "people"), adminName, adminImage}
 		files := []string{
 			app.Path + "admin/people/people_step2.html",
 			app.Path + "admin/template/navbar.html",
@@ -716,11 +757,22 @@ func CreatePeopleHandler(app *config.Env) http.HandlerFunc {
 		history := r.PostFormValue("history")
 		categoryId := r.PostFormValue("categoryId")
 
+		var newObjectHistory history2.Histories
+
 		if err != nil {
 			fmt.Println(err, "<<<error reading file>>>>")
 		} else {
 			reader := bufio.NewReader(file)
 			content, _ = ioutil.ReadAll(reader)
+		}
+
+		if history != "" {
+			//History
+			historyObejct := history2.Histories{"", misc.ConvertToByteArray(history)}
+			newObjectHistory, err = history_io.CreateHistorie(historyObejct)
+			if err != nil {
+				fmt.Println(err, " error creating a new history")
+			}
 		}
 
 		fmt.Println("death date: ", d_date)
@@ -732,7 +784,7 @@ func CreatePeopleHandler(app *config.Env) http.HandlerFunc {
 			deathDate = d_date
 		}
 		if name != "" && surname != "" {
-			peopleObject := people2.People{"", name, surname, b_date, deathDate, origin, profession, brief}
+			peopleObject := people2.People{"", name, surname, b_date, deathDate, origin, profession, brief, newObjectHistory.Id}
 			people, err := people_io.CreatePeople(peopleObject)
 			if err != nil {
 				fmt.Println(err, " error creating a new people")
@@ -760,17 +812,6 @@ func CreatePeopleHandler(app *config.Env) http.HandlerFunc {
 				}
 			}
 
-			//History
-			historyObejct := history2.Histories{"", misc.ConvertToByteArray(history)}
-			newObject, err := history_io.CreateHistorie(historyObejct)
-			if err != nil {
-				fmt.Println(err, " error creating a new history")
-			}
-			peopleHistoryObject := people2.PeopleHistory{"", people.Id, newObject.Id}
-			_, errc := people_io.CreatePeopleHistory(peopleHistoryObject)
-			if errc != nil {
-				fmt.Println(errc, " error creating a new people history")
-			}
 			//Image
 			imageObject := image.Images{"", content, description}
 			imageObjectNew, err := image_io.CreateImage(imageObject)
@@ -855,6 +896,10 @@ func EditPeopleHandler(app *config.Env) http.HandlerFunc {
 			fmt.Println(err, " error reading categories")
 		}
 		commentNumber, pendingcomments, activeComments := peopleCommentCalculation(peopleId)
+		adminName, adminImage, isTrue := adminHelper.CheckAdminDataInSession(app, r)
+		if !isTrue {
+			fmt.Println(isTrue, "error reading adminData")
+		}
 		type PageDate struct {
 			PeopleDetails   people2.People
 			People          people2.PeopleAggregate
@@ -872,6 +917,8 @@ func EditPeopleHandler(app *config.Env) http.HandlerFunc {
 			EventPeople     []EventPeopleData
 			Categories      []people2.Category
 			Category        people2.Category
+			AdminName       string
+			AdminImage      string
 		}
 		data := PageDate{people,
 			peopleEditable,
@@ -889,6 +936,8 @@ func EditPeopleHandler(app *config.Env) http.HandlerFunc {
 			GetPeopleEvents(peopleId),
 			Categories,
 			category,
+			adminName,
+			adminImage,
 		}
 
 		files := []string{
@@ -970,6 +1019,10 @@ func PeopleHandler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			fmt.Println("error reading Categories")
 		}
+		adminName, adminImage, isTrue := adminHelper.CheckAdminDataInSession(app, r)
+		if !isTrue {
+			fmt.Println(isTrue, "error reading adminData")
+		}
 		type PagePage struct {
 			Places        []place2.Place
 			Categories    []people2.Category
@@ -977,8 +1030,11 @@ func PeopleHandler(app *config.Env) http.HandlerFunc {
 			Unknown_error string
 			Peoples       []misc.PeopleWithStringdate
 			SidebarData   misc.SidebarData
+			AdminName     string
+			AdminImage    string
 		}
-		data := PagePage{places, categories, backend_error, unknown_error, peoples, misc.GetSideBarData("people", "people")}
+		data := PagePage{places, categories, backend_error, unknown_error,
+			peoples, misc.GetSideBarData("people", "people"), adminName, adminImage}
 		files := []string{
 			app.Path + "admin/people/people.html",
 			app.Path + "admin/template/navbar.html",

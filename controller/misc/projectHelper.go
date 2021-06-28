@@ -10,7 +10,7 @@ import (
 )
 
 type ProjectGalleryImages struct {
-	Gallery        image.GaleryHelper
+	Gallery        image.GalleryHelper
 	ProjectGallery project.ProjectGallery
 }
 
@@ -23,7 +23,7 @@ func GetProjectGallery(projectId string) []ProjectGalleryImages {
 		return GalleryImagesList
 	}
 	for _, projectGalleryImage := range projectGalleryImages {
-		GalleryImagesList = append(GalleryImagesList, ProjectGalleryImages{GetGalleryImage(projectGalleryImage.GalleryId), projectGalleryImage})
+		GalleryImagesList = append(GalleryImagesList, ProjectGalleryImages{GetGalleryImage(projectGalleryImage.GalleryId, projectGalleryImage.Id), projectGalleryImage})
 	}
 	return GalleryImagesList
 }
@@ -51,5 +51,5 @@ func getParentDeatils(commentId string) comment.CommentHelper {
 		fmt.Println(err, " error reading all the Contribution")
 		return comment.CommentHelper{}
 	}
-	return comment.CommentHelper{commentObject.Id, commentObject.Email, commentObject.Name, FormatDateMonth(commentObject.Date), ConvertingToString(commentObject.Comment), commentObject.ParentCommentId, commentObject.Stat}
+	return comment.CommentHelper{commentObject.Id, commentObject.Email, commentObject.Name, FormatDateMonth(commentObject.Date), ConvertingToString(commentObject.Comment), commentObject.ParentCommentId, commentObject.Stat, ""}
 }

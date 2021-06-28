@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"net/http"
 	"ostmfe/config"
+	"ostmfe/controller/admin/adminHelper"
 	"ostmfe/controller/misc"
 	user2 "ostmfe/domain/user"
 	"ostmfe/io/user_io"
@@ -106,14 +107,23 @@ func RoleHandler(app *config.Env) http.HandlerFunc {
 			Error = "Internal error,Please try again later"
 			fmt.Println("error reading roles")
 		}
+		adminName, adminImage, isTrue := adminHelper.CheckAdminDataInSession(app, r)
+		if !isTrue {
+			fmt.Println(isTrue, "error reading adminData")
+		}
 		type PagePage struct {
 			Backend_error string
 			Unknown_error string
 			Error         string
 			RoleList      []user2.Roles
 			SidebarData   misc.SidebarData
+			AdminName     string
+			AdminImage    string
 		}
-		data := PagePage{backend_error, unknown_error, Error, roles, misc.GetSideBarData("user", "role")}
+		data := PagePage{backend_error, unknown_error, Error, roles,
+			misc.GetSideBarData("user", "role"),
+			adminName, adminImage,
+		}
 		files := []string{
 			app.Path + "admin/user/roles.html",
 			app.Path + "admin/template/navbar.html",

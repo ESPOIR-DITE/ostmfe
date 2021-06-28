@@ -28,7 +28,7 @@ func GetHistoryComments(historyId string) []comment.CommentHelper2 {
 }
 
 type HistoryGalleryImages struct {
-	Gallery        image.GaleryHelper
+	Gallery        image.GalleryHelper
 	HistoryGallery history.HistoryGalery
 }
 
@@ -40,7 +40,7 @@ func GetHistoryGallery(historyId string) []HistoryGalleryImages {
 		return GalleryImagesList
 	}
 	for _, peopleGallerie := range peopleGalleries {
-		GalleryImagesList = append(GalleryImagesList, HistoryGalleryImages{GetGalleryImage(peopleGallerie.GaleryId), peopleGallerie})
+		GalleryImagesList = append(GalleryImagesList, HistoryGalleryImages{GetGalleryImage(peopleGallerie.GaleryId, peopleGallerie.Id), peopleGallerie})
 	}
 	return GalleryImagesList
 }

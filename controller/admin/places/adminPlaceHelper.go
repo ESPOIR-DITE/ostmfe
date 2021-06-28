@@ -91,19 +91,19 @@ func GetPlaceCommentsWithEventId(placeId string) []comment.CommentHelper2 {
 			if err != nil {
 				fmt.Println(err, " error reading all the Contribution")
 			}
-			commentObject2 := comment.CommentHelper2{commentObject.Id, commentObject.Email, commentObject.Name, misc.FormatDateMonth(commentObject.Date), misc.ConvertingToString(commentObject.Comment), getParentDeatils(commentObject.ParentCommentId), placeComment.Id}
+			commentObject2 := comment.CommentHelper2{commentObject.Id, commentObject.Email, commentObject.Name, misc.FormatDateMonth(commentObject.Date), misc.ConvertingToString(commentObject.Comment), getParentDeatils(commentObject.ParentCommentId, placeComment.Id), placeComment.Id}
 			commentList = append(commentList, commentObject2)
 		}
 	}
 	return commentList
 }
-func getParentDeatils(commentId string) comment.CommentHelper {
+func getParentDeatils(commentId, bridgeId string) comment.CommentHelper {
 	commentObject, err := comment_io.ReadComment(commentId)
 	if err != nil {
 		fmt.Println(err, " error reading all the Contribution")
 		return comment.CommentHelper{}
 	}
-	return comment.CommentHelper{commentObject.Id, commentObject.Email, commentObject.Name, misc.FormatDateMonth(commentObject.Date), misc.ConvertingToString(commentObject.Comment), commentObject.ParentCommentId, commentObject.Stat}
+	return comment.CommentHelper{commentObject.Id, commentObject.Email, commentObject.Name, misc.FormatDateMonth(commentObject.Date), misc.ConvertingToString(commentObject.Comment), commentObject.ParentCommentId, commentObject.Stat, bridgeId}
 }
 
 //Getting all the PlacePeople Of a particular place.
@@ -120,7 +120,7 @@ func GetAllPeoplePlace(placeId string) []people.People {
 			fmt.Println(err, " error reading all People")
 		} else {
 			//We are putting the Id of the PeoplePlace into people id field so that we can be able to delete peoplePlace
-			peopleList = append(peopleList, people.People{PeoplePlace.Id, PeopleObejct.Name, PeopleObejct.Surname, misc.FormatDateMonth(PeopleObejct.BirthDate), PeopleObejct.DeathDate, PeopleObejct.Origin, PeopleObejct.Profession, PeopleObejct.Brief})
+			peopleList = append(peopleList, people.People{PeoplePlace.Id, PeopleObejct.Name, PeopleObejct.Surname, misc.FormatDateMonth(PeopleObejct.BirthDate), PeopleObejct.DeathDate, PeopleObejct.Origin, PeopleObejct.Profession, PeopleObejct.Brief, PeopleObejct.HistoriesId})
 		}
 	}
 	return peopleList

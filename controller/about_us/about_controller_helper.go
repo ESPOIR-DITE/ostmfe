@@ -48,12 +48,12 @@ func GetGroupDataHistory(groupId string) GroupDataHistory {
 		}
 		images = append(images, image)
 	}
-	groupHistory, err := group_io.ReadGroupHistoryWithGroupId(groupId)
-	if err != nil {
-		fmt.Println("could not read group history")
-		return groupDataHistory
-	}
-	history, err := history_io.ReadHistorie(groupHistory.HistoryId)
+	//groupHistory, err := group_io.ReadGroupHistoryWithGroupId(groupId)
+	//if err != nil {
+	//	fmt.Println("could not read group history")
+	//	return groupDataHistory
+	//}
+	history, err := history_io.ReadHistorie(groupObject.HistoryId)
 	if err != nil {
 		fmt.Println("could not read history")
 		return groupDataHistory

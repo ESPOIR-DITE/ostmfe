@@ -8,7 +8,7 @@ import (
 )
 
 type PlaceGalleryImages struct {
-	Gallery      image.GaleryHelper
+	Gallery      image.GalleryHelper
 	PlaceGallery place.PlaceGallery
 }
 
@@ -21,7 +21,7 @@ func GetPlaceGallery(placeId string) []PlaceGalleryImages {
 		return GalleryImagesList
 	}
 	for _, placeGalleryImage := range placeGalleryImages {
-		GalleryImagesList = append(GalleryImagesList, PlaceGalleryImages{GetGalleryImage(placeGalleryImage.GalleryId), placeGalleryImage})
+		GalleryImagesList = append(GalleryImagesList, PlaceGalleryImages{GetGalleryImage(placeGalleryImage.GalleryId, placeGalleryImage.Id), placeGalleryImage})
 	}
 	return GalleryImagesList
 }

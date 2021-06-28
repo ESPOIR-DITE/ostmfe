@@ -18,7 +18,7 @@ type HistoryAndProfile struct {
 }
 
 type GroupGalleryImages struct {
-	Gallery      image.GaleryHelper
+	Gallery      image.GalleryHelper
 	GroupGallery group.GroupGalery
 }
 
@@ -34,7 +34,7 @@ func GetGroupGallery(groupId string) []GroupGalleryImages {
 		return GalleryImagesList
 	}
 	for _, groupGalleryImage := range groupGalleryImages {
-		GalleryImagesList = append(GalleryImagesList, GroupGalleryImages{GetGalleryImage(groupGalleryImage.GaleryId), groupGalleryImage})
+		GalleryImagesList = append(GalleryImagesList, GroupGalleryImages{GetGalleryImage(groupGalleryImage.GaleryId, groupGalleryImage.Id), groupGalleryImage})
 	}
 	return GalleryImagesList
 }
@@ -51,7 +51,7 @@ func GetAllGroupGallery() []GroupGalleryImages {
 		return GalleryImagesList
 	}
 	for _, groupGalleryImage := range groupGalleryImages {
-		GalleryImagesList = append(GalleryImagesList, GroupGalleryImages{GetGalleryImage(groupGalleryImage.GaleryId), groupGalleryImage})
+		GalleryImagesList = append(GalleryImagesList, GroupGalleryImages{GetGalleryImage(groupGalleryImage.GaleryId, groupGalleryImage.Id), groupGalleryImage})
 	}
 	return GalleryImagesList
 }

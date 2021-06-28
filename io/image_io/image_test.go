@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"ostmfe/domain/image"
+	"ostmfe/utile"
 	"testing"
 )
 
@@ -14,7 +15,7 @@ func TestCreateImageType(t *testing.T) {
 	fmt.Println(result)
 }
 func TestReadImageTypeWithName(t *testing.T) {
-	result, err := ReadImageTypeWithName("other")
+	result, err := ReadImageTypeWithName(utile.PROFILE)
 	assert.Nil(t, err)
 	fmt.Println(result)
 }

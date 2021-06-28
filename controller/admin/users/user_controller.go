@@ -12,9 +12,11 @@ import (
 	"ostmfe/controller/misc"
 	history2 "ostmfe/domain/history"
 	image2 "ostmfe/domain/image"
+	"ostmfe/domain/pages"
 	user2 "ostmfe/domain/user"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
+	"ostmfe/io/pages/admin"
 	"ostmfe/io/user_io"
 	"time"
 )
@@ -229,7 +231,7 @@ func EditUserHandler(app *config.Env) http.HandlerFunc {
 			if err != nil {
 				fmt.Println(err, "error reading image for: ", userImage.ImageId)
 			} else {
-				imagehelper = image2.ImagesHelper{imageObject.Id, misc.ConvertingToString(imageObject.Image), userImage.Id}
+				imagehelper = image2.ImagesHelper{imageObject.Id, misc.ConvertingToString(imageObject.Image), imageObject.Description, userImage.Id}
 			}
 			//Reading history
 			userHistory, err := history_io.ReadHistorie(userImage.HistoryId)
@@ -279,6 +281,11 @@ func UserHandler(app *config.Env) http.HandlerFunc {
 		if !adminHelper.CheckAdminInSession(app, r) {
 			http.Redirect(w, r, "/administration/", 301)
 		}
+		adminName, adminImage, isTrue := adminHelper.CheckAdminDataInSession(app, r)
+		if !isTrue {
+			fmt.Println(isTrue, "error reading adminData")
+		}
+		email := app.Session.GetString(r.Context(), "email")
 		var unknown_error string
 		var backend_error string
 		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
@@ -289,19 +296,24 @@ func UserHandler(app *config.Env) http.HandlerFunc {
 			backend_error = app.Session.GetString(r.Context(), "user-create-error")
 			app.Session.Remove(r.Context(), "user-create-error")
 		}
-		users := misc.GetUserAndRole()
-		role, err := user_io.ReadRoles()
+
+		userPageData, err := admin.GetUsersPageData(email)
 		if err != nil {
 			fmt.Println("error: ", err)
 		}
 		type PagePage struct {
 			Backend_error string
 			Unknown_error string
-			Users         []misc.UsersAndRoles
-			Roles         []user2.Roles
 			SidebarData   misc.SidebarData
+			PageData      pages.UserPageData
+			AdminName     string
+			AdminImage    string
 		}
-		data := PagePage{backend_error, unknown_error, users, role, misc.GetSideBarData("user", "user")}
+		data := PagePage{backend_error,
+			unknown_error,
+			misc.GetSideBarData("user", "user"),
+			userPageData, adminName, adminImage,
+		}
 		files := []string{
 			app.Path + "admin/user/users.html",
 			app.Path + "admin/template/navbar.html",

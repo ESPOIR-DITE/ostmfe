@@ -2,17 +2,20 @@ package group
 
 import (
 	"fmt"
+	"ostmfe/controller/admin/adminHelper"
 	"ostmfe/controller/misc"
 	"ostmfe/domain/comment"
 	"ostmfe/domain/group"
 	history2 "ostmfe/domain/history"
 	image2 "ostmfe/domain/image"
+	"ostmfe/domain/member"
 	partner2 "ostmfe/domain/partner"
 	project2 "ostmfe/domain/project"
 	"ostmfe/io/comment_io"
 	"ostmfe/io/group_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
+	"ostmfe/io/member_io"
 	"ostmfe/io/partner_io"
 	"ostmfe/io/project_io"
 )
@@ -25,7 +28,31 @@ type GroupData struct {
 	Partner []partner2.Partner
 	Project []project2.Project
 }
+type MemberData struct {
+	Member member.Member
+	Date   string
+}
 
+func GetMembers(groupId string) ([]MemberData, int64, error) {
+	var members []MemberData
+	var number int64
+
+	groupMembers, err := group_io.ReadGroupMemberAllByGroupId(groupId)
+	if err != nil {
+		fmt.Println(err, " error reading groupMembers")
+		return nil, number, err
+	}
+	for _, groupMember := range groupMembers {
+		member, err := member_io.ReadMember(groupMember.MemberId)
+		if err != nil {
+			fmt.Println(err, " error reading Member")
+		} else {
+			members = append(members, MemberData{member, groupMember.Date})
+			number++
+		}
+	}
+	return members, number, nil
+}
 func GetGroupData(groupId string) GroupData {
 	var groupData GroupData
 	var profileImage image2.Images
@@ -45,7 +72,7 @@ func GetGroupData(groupId string) GroupData {
 		fmt.Println(err, " error reading groupImage")
 	} else {
 		for _, groupImage := range groupImages {
-			if groupImage.Description == "1" || groupImage.Description == "profile" {
+			if groupImage.ImageTypeId == adminHelper.GetProfileImageId() {
 				profileImage, err = image_io.ReadImage(groupImage.ImageId)
 				if err != nil {
 					fmt.Println(err, " error reading groupImage")
@@ -55,7 +82,7 @@ func GetGroupData(groupId string) GroupData {
 			if err != nil {
 				fmt.Println(err, " error reading groupImage")
 			}
-			imageObejectHelper := image2.ImagesHelper{imageObject.Id, misc.ConvertingToString(imageObject.Image), groupImage.Id}
+			imageObejectHelper := image2.ImagesHelper{imageObject.Id, misc.ConvertingToString(imageObject.Image), imageObject.Description, groupImage.Id}
 			imageList = append(imageList, imageObejectHelper)
 		}
 	}
@@ -113,19 +140,19 @@ func GetGroupCommentsWithEventId(eventId string) []comment.CommentHelper2 {
 			if err != nil {
 				fmt.Println(err, " error reading all the Contribution")
 			}
-			commentObject2 := comment.CommentHelper2{commentObject.Id, commentObject.Email, commentObject.Name, misc.FormatDateMonth(commentObject.Date), misc.ConvertingToString(commentObject.Comment), getParentDeatils(commentObject.ParentCommentId), eventComment.Id}
+			commentObject2 := comment.CommentHelper2{commentObject.Id, commentObject.Email, commentObject.Name, misc.FormatDateMonth(commentObject.Date), misc.ConvertingToString(commentObject.Comment), getParentDeatils(commentObject.ParentCommentId, eventComment.Id), eventComment.Id}
 			commentList = append(commentList, commentObject2)
 		}
 	}
 	return commentList
 }
-func getParentDeatils(commentId string) comment.CommentHelper {
+func getParentDeatils(commentId, bridgeId string) comment.CommentHelper {
 	commentObject, err := comment_io.ReadComment(commentId)
 	if err != nil {
 		fmt.Println(err, " error reading all the Contribution")
 		return comment.CommentHelper{}
 	}
-	return comment.CommentHelper{commentObject.Id, commentObject.Email, commentObject.Name, misc.FormatDateMonth(commentObject.Date), misc.ConvertingToString(commentObject.Comment), commentObject.ParentCommentId, commentObject.Stat}
+	return comment.CommentHelper{commentObject.Id, commentObject.Email, commentObject.Name, misc.FormatDateMonth(commentObject.Date), misc.ConvertingToString(commentObject.Comment), commentObject.ParentCommentId, commentObject.Stat, bridgeId}
 }
 
 //With groupId, you get the commentNumber, pending, active.

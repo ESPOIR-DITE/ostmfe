@@ -1,5 +1,10 @@
 package event
 
+import (
+	museum "ostmfe/domain"
+	"ostmfe/domain/image"
+)
+
 type Event struct {
 	Id          string `json:"id"`
 	Name        string `json:"name"`
@@ -42,8 +47,8 @@ type EventHistory struct {
 	EventId   string `json:"eventId"`
 }
 type EventImageHelper struct {
-	EventImage EventImage `json:"eventImage"`
-	Files      [][]byte   `json:"files"`
+	Event  Event        `json:"event"`
+	Images image.Images `json:"images"`
 }
 type EventPeople struct {
 	Id       string `json:"id"`
@@ -54,6 +59,10 @@ type EventYear struct {
 	Id      string `json:"id"`
 	EventId string `json:"eventId"`
 	YearId  string `json:"yearId"`
+}
+type EventYearHelper struct {
+	Year   museum.Years `json:"years"`
+	Number int64        `json:"number"`
 }
 type EventGroup struct {
 	Id      string `json:"id"`

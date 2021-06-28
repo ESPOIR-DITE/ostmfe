@@ -75,7 +75,7 @@ func GetPeopleDataHistory(id string) PeopleDataHistory {
 		fmt.Println("could not read people")
 		return peopleDataHistory
 	}
-	peopleToReturn := people.People{peopleObject.Id, peopleObject.Name, peopleObject.Surname, misc.FormatDateMonth(peopleObject.BirthDate), misc.FormatDateMonth(peopleObject.DeathDate), peopleObject.Origin, peopleObject.Profession, peopleObject.Brief}
+	peopleToReturn := people.People{peopleObject.Id, peopleObject.Name, peopleObject.Surname, misc.FormatDateMonth(peopleObject.BirthDate), misc.FormatDateMonth(peopleObject.DeathDate), peopleObject.Origin, peopleObject.Profession, peopleObject.Brief, peopleObject.HistoriesId}
 
 	//Images
 	peopleImages, err := people_io.ReadPeopleImagewithPeopleId(id)
@@ -161,7 +161,7 @@ func GetpeopleGallery(peopleId string) []string {
 		fmt.Println(err, " error peopleGalleries.")
 	} else {
 		for _, peopleGallery := range peopleGallerys {
-			gallery, err := image_io.ReadGallery(peopleGallery.Galery)
+			gallery, err := image_io.ReadGallery(peopleGallery.GalleryId)
 			if err != nil {
 				fmt.Println(err, " error gallery")
 			} else {

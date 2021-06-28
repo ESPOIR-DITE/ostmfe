@@ -47,6 +47,18 @@ func ReadBanner(id string) (pageData.Banner, error) {
 	}
 	return entity, nil
 }
+func ReadBannerN(id string) (pageData.BannerImageHelper, error) {
+	entity := pageData.BannerImageHelper{}
+	resp, _ := api.Rest().Get(bannerURL + "readN?id=" + id)
+	if resp.IsError() {
+		return entity, errors.New(resp.Status())
+	}
+	err := api.JSON.Unmarshal(resp.Body(), &entity)
+	if err != nil {
+		return entity, errors.New(resp.Status())
+	}
+	return entity, nil
+}
 
 func DeleteBanner(id string) (pageData.Banner, error) {
 

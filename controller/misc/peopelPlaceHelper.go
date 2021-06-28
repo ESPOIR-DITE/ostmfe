@@ -28,7 +28,7 @@ func GetPeopleComments(peopleId string) []comment.CommentHelper2 {
 }
 
 type PeopleGalleryImages struct {
-	Gallery       image.GaleryHelper
+	Gallery       image.GalleryHelper
 	PeopleGallery people.PeopleGalery
 }
 
@@ -40,7 +40,7 @@ func GetPeopleGallery(placeId string) []PeopleGalleryImages {
 		return GalleryImagesList
 	}
 	for _, peopleGallerie := range peopleGaleries {
-		GalleryImagesList = append(GalleryImagesList, PeopleGalleryImages{GetGalleryImage(peopleGallerie.Galery), peopleGallerie})
+		GalleryImagesList = append(GalleryImagesList, PeopleGalleryImages{GetGalleryImage(peopleGallerie.GalleryId, peopleGallerie.Id), peopleGallerie})
 	}
 	return GalleryImagesList
 }

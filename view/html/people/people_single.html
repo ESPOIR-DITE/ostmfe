@@ -34,13 +34,13 @@
         {{template "navigator" .}}
 
             <!-- start banner Area -->
-            <section class="banner-area relative" id="home">
+        <section {{if .PageData.BannerImageHelper.Image}} style="background: url('data:image/jpeg;base64,{{.PageData.BannerImageHelper.Image}}') center; width: 100%;background-size: cover;background-color: rgba(0, 0, 0, 0.7);" class="relative banner" {{else}}class="banner-area relative" {{end}}  id="home" >
                 <div class="overlay overlay-bg"></div>
                 <div class="container">
                     <div class="row d-flex align-items-center justify-content-center">
                         <div class="about-content col-lg-12">
                             <h1 class="text-white">
-                                {{.PeopleDataHistory.People.Name}} &nbsp; {{.PeopleDataHistory.People.Surname}}
+                                {{.PageData.People.Name}} &nbsp; {{.PageData.People.Surname}}
                             </h1>
                             <p class="text-white link-nav"><a href="/">Home </a>  <span class="lnr lnr-arrow-right"></span>  <a href="/people"> People</a></p>
                         </div>
@@ -56,39 +56,16 @@
 					<div class="row">
 						<div class="col-lg-8 post-list blog-post-list">
 							<div class="single-post">
-                                <img id='base64image' height="400px" src='data:image/jpeg;base64,{{.PeopleDataHistory.ProfileImage.Id}}' alt="">
+                                <img id='base64image' height="400px" src='data:image/jpeg;base64,{{.PageData.ProfileImage.Image}}' alt="">
                                 <br>
                                 <br>
-                                <h2>{{.PeopleDataHistory.People.Name}} - {{.PeopleDataHistory.People.Surname}}</h2>
+                                <h2>{{.PageData.People.Name}} - {{.PageData.People.Surname}}</h2>
                                 <br>
-<!--                                <a href="#">-->
-<!--                                    {{if .PeopleDataHistory.People.Profession}}-->
-<!--                                        <h3>-->
-<!--                                          Profession <small> - {{.PeopleDataHistory.People.Profession}}</small>-->
-<!--                                        </h3>-->
-<!--                                    {{end}}-->
-<!--                                </a>-->
-<!--                                <a>-->
-<!--                                    {{if .PeopleDataHistory.People.BirthDate}}-->
-<!--                                    <h3>Birth Date <small>- {{.PeopleDataHistory.People.BirthDate}}</small> </h3>-->
-<!--                                    {{end}}-->
-<!--                                </a>-->
-<!--                                <a>-->
-<!--                                    {{if .PeopleDataHistory.People.DeathDate}}-->
-<!--                                    <h3>Death Date <small>- {{.PeopleDataHistory.People.DeathDate}}</small> </h3>-->
-<!--                                    {{end}}-->
-<!--                                </a>-->
-<!--                                <a>-->
-<!--                                    {{if .PeopleDataHistory.People.Origin}}-->
-<!--                                    <h3>Death Date <small>- {{.PeopleDataHistory.People.Origin}}</small> </h3>-->
-<!--                                    {{end}}-->
-<!--                                    <hr>-->
-<!--                                </a>-->
 
 								<div class="col-md-12" id="me">
                                     <script>
                                         var div= document.getElementById('me');
-                                        var myvalue = {{.PeopleDataHistory.History.History}}
+                                        var myvalue = {{.PageData.HistoriesHelper.History}}
                                             parseMe(myvalue);
                                         function parseMe(value) {
                                             div.innerHTML+=value;
@@ -96,29 +73,9 @@
                                     </script>
 								</div>
                                 <hr>
-								<div class="bottom-meta">
-									<div class="user-details row align-items-center">
-										<div class="comment-wrap col-lg-6 col-sm-6">
-											<ul>
-												<li><a href="#"><span class="lnr lnr-heart"></span>	4 likes</a></li>
-												<li><a href="#"><span class="lnr lnr-bubble"></span> 06 Comments</a></li>
-											</ul>
-										</div>
-										<div class="social-wrap col-lg-6">
-											<ul>
-												<li><a href="#"><i class="fa fa-facebook"></i></a></li>
-												<li><a href="#"><i class="fa fa-twitter"></i></a></li>
-												<li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-												<li><a href="#"><i class="fa fa-behance"></i></a></li>
-											</ul>
-
-										</div>
-									</div>
-								</div>
-
 
                             <!-- Start comment-sec Area -->
-                                {{template "comments" .}}
+
                             <!-- End comment-sec Area -->
 
                             <!-- Start commentform Area -->
@@ -145,37 +102,23 @@
 							</div>
 						</div>
 						<div class="col-lg-4 sidebar">
-							<div class="single-widget search-widget">
-								<form class="example" action="#" style="margin:auto;max-width:300px">
-								  <input type="text" placeholder="Search Posts" name="search2">
-								  <button type="submit"><i class="fa fa-search"></i></button>
-								</form>
-							</div>
-
-                            {{with .PeopleDataHistory.Images}}
+                            {{with .PageData.DescriptiveImage}}
                             {{range .}}
 							<div class="single-widget protfolio-widget">
-                                <img id='base64image' height="200px" src='data:image/jpeg;base64,{{.Id}}' alt="">
+                                <img id='base64image' height="200px" src='data:image/jpeg;base64,{{.Image}}' alt="">
 								<a href="#"><h4></h4></a>
-								<p>
-
+								<p>{{.Description}}
 								</p>
-								<ul>
-									<li><a href="#"><i class="fa fa-facebook"></i></a></li>
-									<li><a href="#"><i class="fa fa-twitter"></i></a></li>
-									<li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-									<li><a href="#"><i class="fa fa-behance"></i></a></li>
-								</ul>
 							</div>
                             {{end}}
                             {{end}}
 
-                            {{if .PeopleDataHistory.Place}}
+                            {{if .PageData.PlaceList}}
                             <div class="single-widget category-widget">
                                 <h4 class="title">Place</h4>
-                                <small>{{$.PeopleDataHistory.People.Name}} is linked to the following Place(s)</small>
+                                <small>{{$.PageData.People.Name}} is linked to the following Place(s)</small>
                                 <ul>
-                                    {{with .PeopleDataHistory.Place}}
+                                    {{with .PageData.PlaceList}}
                                     {{range .}}
                                     <li><a href="/place/{{.Id}}" class="justify-content-between align-items-center d-flex"><h6>{{.Title}}</h6><i class="fa fa-map-marker"></i></a></li>
                                     {{end}}
@@ -184,13 +127,13 @@
                             </div>
                             {{end}}
 
-                            {{if .PeopleDataHistory.Event}}
+                            {{if .PageData.Events}}
                             <div class="single-widget category-widget">
                                 <h4 class="title">Event</h4>
-                                <small>{{$.PeopleDataHistory.People.Name}} is linked to the following event(s)</small>
+                                <small>{{$.PageData.People.Name}} is linked to the following event(s)</small>
                                 <br>
                                 <ul>
-                                    {{with .PeopleDataHistory.Event}}
+                                    {{with .PageData.Events}}
                                     {{range .}}
                                     <li><a href="/event/single/{{.Id}}" class="justify-content-between align-items-center d-flex"><h6>{{.Name}}</h6></a></li>
                                     {{end}}

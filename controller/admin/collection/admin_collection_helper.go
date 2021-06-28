@@ -36,13 +36,13 @@ func GetCollectionData(collectionId string) CollectionData {
 				if err != nil {
 					fmt.Println(err, " error reading profileImage")
 				}
-				profileImage = image3.ImagesHelper{image.Id, misc.ConvertingToString(image.Image), collectionImage.Id}
+				profileImage = image3.ImagesHelper{image.Id, misc.ConvertingToString(image.Image), image.Description, collectionImage.Id}
 			}
 			image, err := image_io.ReadImage(collectionImage.ImageId)
 			if err != nil {
 				fmt.Println(err, " error reading Images")
 			}
-			imageObject := image3.ImagesHelper{image.Id, misc.ConvertingToString(image.Image), collectionImage.Id}
+			imageObject := image3.ImagesHelper{image.Id, misc.ConvertingToString(image.Image), image.Description, collectionImage.Id}
 			images = append(images, imageObject)
 		}
 	}

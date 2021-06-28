@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="zxx" class="no-js">
+<head>
+    <!-- Mobile Specific Meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Favicon-->
+    <link rel="shortcut icon" href="../assets/img/fav.png">
+    <!-- Author Meta -->
+    <meta name="author" content="codepixer">
+    <!-- Meta Description -->
+    <meta name="description" content="">
+    <!-- Meta Keyword -->
+    <meta name="keywords" content="">
+    <!-- meta character set -->
+    <meta charset="UTF-8">
+    <!-- Site Title -->
+    <title>Simon's Town Museum</title>
+    <style>
+        .overlay-b {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        a.julie:hover {
+            color: #1cc88a;
+        }
+    </style>
+    <base href="/">
+
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700" rel="stylesheet">
+    <!--
+    CSS
+    ============================================= -->
+    <link rel="stylesheet" href="../assets/css/linearicons.css">
+    <link rel="stylesheet" href="../assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../assets/css/bootstrap.css">
+    <link rel="stylesheet" href="../assets/css/magnific-popup.css">
+    <link rel="stylesheet" href="../assets/css/nice-select.css">
+    <link rel="stylesheet" href="../assets/css/animate.min.css">
+    <link rel="stylesheet" href="../assets/css/owl.carousel.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+
+{{template "navigator" .}}
+
+<section class=" relative" id="home">
+    <div class="overlay overlay-b"></div>
+    <div class="carousel slide" id="main-carousel" data-ride="carousel">
+        <ol class="carousel-indicators">
+            <li data-target="#main-carousel" data-slide-to="0" class="active"></li>
+            <li data-target="#main-carousel" data-slide-to="1"></li>
+            <li data-target="#main-carousel" data-slide-to="2"></li>
+        </ol><!-- /.carousel-indicators -->
+
+        <div class="carousel-inner ">
+            {{if not .HomeData.Sliders}}
+            <div class="carousel-item active">
+                <img class="d-block img-fluid" src="../assets/img/protestWithFilter.png" alt="">
+                <div class="carousel-caption d-none d-md-block primary-border"
+                     style="background-color: #051625; opacity: 85%">
+                    <h1 class="text-white font-weight-light font-italic">Mountain</h1>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img class="d-block img-fluid" src="../assets/img/schoutWithFilter.png" alt="">
+                <div class="carousel-caption d-none d-md-block primary-border "
+                     style="background-color: #051625; opacity: 85%; ">
+                    <h3 class="text-white">Mountain</h3>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci esse vitae exercitationem
+                        fugit, numquam minus!</p>
+                </div>
+            </div>
+            <div class="carousel-item banner">
+                <img class="d-block img-fluid" src="../assets/img/simonsTownWithFilter.png" alt="">
+                <div class="carousel-caption d-none d-md-block" style="background-color: #051625; opacity: 85%">
+                    <h2 class="text-white">Mountain</h2>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci esse vitae exercitationem
+                        fugit, numquam minus!</p>
+                </div>
+            </div>
+            {{else}}
+
+                {{with .Sliders}}
+                {{range $i, $e := .}}
+
+                        <div class="carousel-item  {{if eq $i 0}} active{{end}}" >
+                            <div class="overlay overlay-b"></div>
+                            <img class="d-block img-fluid" width="100%" src='data:image/jpeg;base64,{{.SliderImage}}'
+                                 alt="">
+                            <div class="carousel-caption d-none d-md-block"
+                                 style="background-color: #051625; opacity: 75%">
+                                <h2 class="text-white">{{.SliderName}}</h2>
+                                <p>{{.Description}}</p>
+                            </div>
+                        </div>
+                    {{end}}
+                {{end}}
+            {{end}}
+        </div>
+        <!-- /.carousel-inner -->
+
+        <a href="#main-carousel" class="carousel-control-prev" data-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+            <span class="sr-only" aria-hidden="true">Prev</span>
+        </a>
+        <a href="#main-carousel" class="carousel-control-next" data-slide="next">
+            <span class="carousel-control-next-icon"></span>
+            <span class="sr-only" aria-hidden="true">Next</span>
+        </a>
+    </div><!-- /.carousel -->
+
+</section>
+
+<!-- Start service Area -->
+<section class="service-area pt-100" id="about">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="single-service">
+                    <span class="lnr lnr-clock"></span>
+                    <h4>Openning Hours</h4>
+                    <p>
+                        Mon - Fri: 10.00am to 05.00pm
+                        Sat: 10.00pm to 01.00 pm
+                        Sundays & Public holidays: Closed
+                    </p>
+                    <div class="overlay">
+                        <div class="text">
+                            <p>
+                                If you have any queries or information on any of the Museum's research projects, please
+                                email the Museum at cathy@simonstownmuseum.co.za or education@simonstownmuseum.co.za.
+                            </p>
+                            <!--a href="#" data-toggle="modal" class="text-uppercase primary-btn"
+                               data-target="#bookingModel">Visit</a-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="single-service">
+                    <span class="lnr lnr-rocket"></span>
+                    <h4>Book a Tour</h4>
+                    <p>
+                        Visiting simon's town is an easy
+                        process. We offer tours facility
+                        for individual and groups.
+                    </p>
+                    <div class="overlay">
+                        <div class="text">
+                            <p>
+                                Here, I focus on a range of items and features that we use in life Here, I focus on a
+                                range of items and features that we use in life Here, I focus on a range of items and
+                                features.that we use in life
+                            </p>
+                            <a href="#" data-toggle="modal" class="text-uppercase primary-btn"
+                               data-target="#bookingModel">Book</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="single-service">
+                    <span class="lnr  lnr-heart"></span>
+                    <h4>Donate</h4>
+                    <p>
+                        Support and assist the spread and the
+                        learning of simon's town exciting
+                        history. we value your support.
+                    </p>
+                    <div class="overlay">
+                        <div class="text">
+                            <p>
+                                Here, I focus on a range of items and features that we use in life Here, I focus on a
+                                range of items and features that we use in life Here, I focus on a range of items and
+                                features.that we use in life
+                            </p>
+                            <a href="#"data-toggle="modal" class="text-uppercase primary-btn" data-target="#donationModal">Donate</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- End service Area -->
+
+<!-- Notification Section -->
+<section class="quote-area pt-100">
+    <div class="container">
+        {{with  .PageSections}}
+        {{range .}}
+        {{if eq .SectionName "Notification"}}
+            <div class="title text-center" id="notification">
+                <script>
+                    var div = document.getElementById('notification');
+                    var myvalue = {{.Content}}
+                        parseMe(myvalue);
+                    function parseMe(value) {
+                        div.innerHTML += value;
+                    }
+                </script>
+            </div>
+
+        {{end}}
+        {{end}}
+        {{end}}
+
+
+    </div>
+</section>
+<!-- End quote Area -->
+
+<!-- start project Area -->
+{{if .HomeData.ProjectImageHelper}}
+<section class="blog-posts-area">
+    <br>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 post-list blog-post-list">
+                {{with  .PageSections}}
+                {{range .}}
+                {{if eq .SectionName "ProjectIntro"}}
+                <div class="title text-center" id="ProjectIntro">
+                    <script>
+                        var div = document.getElementById('ProjectIntro');
+                        var myvalue = {{.Content}}
+                        parseMe(myvalue);
+
+                        function parseMe(value) {
+                            div.innerHTML += value;
+                        }
+                    </script>
+                </div>
+                {{end}}
+                {{end}}
+                {{end}}
+                <br/>
+
+                <div class="row">
+                    {{with .HomeData.ProjectImageHelper}}
+                    {{range .}}
+                    {{if .Image.Image}}
+                    <div class="col-lg-4">
+                        <div class="single-service">
+                            <img class="card-img" id='base64image'
+                                 height="200px"{{if .Image.Id}} src='data:image/jpeg;base64,{{.Image.Id}}' alt=""{{end}}/></a>
+                            <h4><a href="/project/read_single/{{.Project.Id}}"><h4>{{.Project.Title}}</h4></a></h4>
+                            <div class="overlay">
+                                <div class="text">
+                                    <p>{{.Project.Description}}</p>
+                                    <a href="/project/read_single/{{.Project.Id}}"
+                                       class="text-uppercase primary-btn"
+                                    >Read more</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{end}}
+                    {{end}}
+                    {{end}}
+                </div>
+
+                <hr>
+                <div class="col-md-12 text-center">
+                    <a href="/project" class="primary-btn text-uppercase text-center">View All The Projects</a>
+
+                </div>
+
+                {{if .HomeData.EventImageHelper}}
+                <section class="">
+                    <br>
+                    <div class="">
+                        <div class="container">
+                            <br>
+                            {{with  .PageSections}}
+                            {{range .}}
+                            {{if eq .SectionName "EventIntro"}}
+                            <div class="title text-center" id="EventIntro">
+                                <script>
+                                    var div = document.getElementById('EventIntro');
+                                    var myvalue = {{.Content}}
+                                    parseMe(myvalue);
+
+                                    function parseMe(value) {
+                                        div.innerHTML += value;
+                                    }
+                                </script>
+                            </div>
+                            {{end}}
+                            {{end}}
+                            {{end}}
+
+                            {{with .HomeData.EventImageHelper}}
+                            {{range $i, $e := .}}
+                            {{if (call $.CheckOdds $i )}}
+
+                            <div class="section-top-border">
+                                <div class="row">
+
+                                    <div class="col-md-5">
+                                        <img class="img-fluid" id='base64image' width="540px"
+                                             height="157px"
+                                             src='data:image/jpeg;base64,{{.Images.Id}}' alt="">
+                                    </div>
+                                    <div class="col-md-7 julie">
+                                        <a class="julie" href="/event/single/{{.Event.Id}}">
+                                            <h3>{{.Event.Name}}</h3></a>
+                                        <br>
+                                        <h6><span>{{.Event.Date}}</span></h6>
+                                        <div>
+                                            <p>
+                                                {{.Event.Description}}
+                                            </p>
+                                        </div>
+                                        <a href="/event/single/{{.Event.Id}}"
+                                           class="primary-btn text-uppercase">View Details</a></div>
+                                </div>
+                            </div>
+
+                            {{else}}
+                            <div class="section-top-border text-right">
+                                <div class="row">
+                                    <div class="col-md-7 julie">
+                                        <a class="julie" href="/event/single/{{.Event.Id}}">
+                                            <h3>{{.Event.Name}}</h3></a>
+                                        <br>
+                                        <h6><span>{{.Event.Date}}</span></h6>
+                                        <div>
+                                            <p>
+                                                {{.Event.Description}}
+                                            </p>
+                                        </div>
+                                        <a href="/event/single/{{.Event.Id}}"
+                                           class="primary-btn text-uppercase">View Details</a>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <img class="img-fluid" id='base64image' width="540px"
+                                             height="157px"
+                                             src='data:image/jpeg;base64,{{.Images.Id}}' alt="">
+                                    </div>
+                                </div>
+                            </div>
+                            {{end}}
+                            {{end}}
+                            {{end}}
+                            <hr>
+                            <div class="col-md-12 text-center">
+                                <a href="/event" class="primary-btn text-uppercase text-center">View All The
+                                    Event</a>
+                            </div>
+                            <br/>
+                        </div>
+                    </div>
+                </section>
+                {{end}}
+            </div>
+
+            <div class="col-lg-4 sidebar whole-wrap">
+
+                <div class="single-widget category-widget">
+                    <h4 class="title">Museum Projects</h4>
+                    <ul>
+                        {{with .HomeData.Projects}}
+                        {{range .}}
+                        <li><a href="/project/read_single/{{.Id}}" class="justify-content-between align-items-center d-flex"><h6>{{.Title}}</h6> </a></li>
+                        {{end}}
+                        {{end}}
+                    </ul>
+                </div>
+
+                {{if .HomeData.Histories}}
+                <div class="single-widget tags-widget">
+                    <h4 class="title">Simon's Town History</h4>
+                    <ul>
+                        {{with .HomeData.Histories}}
+                        {{range .}}
+                        <li><a href="/history/single_history/{{.Id}}">{{.Title}}</a></li>
+                        {{end}}
+                        {{end}}
+                    </ul>
+                </div>
+                {{end}}
+
+                <div class="single-widget category-widget">
+                    <h4 class="title">Simon's Town Places</h4>
+                    <ul>
+                        {{with .HomeData.Places}}
+                        {{range .}}
+                        <li><a href="/place/{{.Id}}" class="justify-content-between align-items-center d-flex"><h6>{{.Title}}</h6></a></li>
+                        {{end}}
+                        {{end}}
+                    </ul>
+                </div>
+
+                <div class="single-widget tags-widget">
+                    <a href="/place"><h4>View an interactive Simon's town Map</h4></a>
+                    <br>
+                    <p>
+                        Through an up to date map, the history of simon's town is transmitted to the current generation.
+                    </p>
+                    <div class="col-md-12 text-center">
+                        <a href="/place" class="primary-btn text-uppercase text-center">View The Map</a>
+                    </div>
+                </div>
+
+                <div class="single-widget recent-posts-widget">
+                    <h4 class="title">Peoples</h4>
+                    <div class="blog-list ">
+                        {{with .HomeData.PeoplePresentation}}
+                        {{range .}}
+                        <div class="single-recent-post d-flex flex-row">
+                            <div class="recent-thumb">
+                                <img  id='base64image' {{if .Image}} src='data:image/jpeg;base64,{{.Image}}' width="100px" alt=""{{end}}/>
+
+                            </div>
+                            <div class="recent-details">
+                                <a href="/people/people/{{.Id}}">
+                                    <h4>
+                                        {{.Name}} {{.Surname}}
+                                    </h4>
+                                </a>
+                                <p>
+                                    {{.Brief}}
+                                </p>
+                                <br>
+                            </div>
+
+                        </div>
+                        {{end}}
+                        {{end}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{{end}}
+<!-- end project Area -->
+
+
+<!-- start footer Area -->
+{{template "footer" .}}
+<!-- End footer Area -->
+
+<!-- End blog Area -->
+
+<!-- Start gallery Area -->
+<!--section class="gallery-area section-gap" id="gallery">
+    <div class="container">
+        <div class="row d-flex justify-content-center">
+            <div class="menu-content pb-70 col-lg-8">
+                <div class="title text-center">
+                    <h1 class="mb-10 text-white">Our Exhibition Gallery</h1>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut
+                        labore et dolore magna aliqua.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section-->
+<!-- End gallery Area -->
+<!-- Logout Modal-->
+<div class="modal fade" id="bookingModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <form action="/visit/book" method="post" class="col-12">
+                    <h5 class="modal-title" id="exampleModalLabel">Book a Tour</h5>
+                    <hr>
+                    <div class="mt-10">
+                        <input type="text" name="name" placeholder="Name" onfocus="this.placeholder = ''"
+                               onblur="this.placeholder = 'Name'" required class="single-input">
+                    </div>
+
+                    <div class="mt-10">
+                        <input type="text" name="phoneNumber" placeholder="Phone Number" onfocus="this.placeholder = ''"
+                               onblur="this.placeholder = 'Phone Number'" required class="single-input">
+                    </div>
+
+                    <div class="mt-10">
+                        <input type="text" name="organisation" placeholder="Name of Group, Organisation, School" onfocus="this.placeholder = ''"
+                               onblur="this.placeholder = 'Name of Group'" required class="single-input">
+                    </div>
+
+                    <div class="mt-10">
+                        <input type="text" name="language" placeholder="Language" onfocus="this.placeholder = ''"
+                               onblur="this.placeholder = 'Language'" required class="single-input">
+                    </div>
+
+                    <div class="input-group-icon mt-10">
+                        <label>Booking Purpose</label>
+                        <div class="form-select" id="default-select">
+                            <select id="bookingType" name="purpose">
+                                <option value="" selected>select the purpose</option>
+                                <option value="Education">Education</option>
+                                <option value="Leisure">Leisure</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input-group-icon mt-10">
+                        <label>First time visit</label>
+                        <div class="form-select" id="default-select">
+                            <select id="bookingType" name="visitTime">
+                                <option value="Education" selected>select one option</option>
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-10">
+                        <label>Special need of the group</label>
+                        <input type="text" name="need" placeholder="" onfocus="this.placeholder = ''"
+                               onblur="this.placeholder = 'Ex: view Collections'" required class="single-input">
+                    </div>
+
+                    <div class="mt-10">
+                        <label>Booking Date</label>
+                        <input type="date" name="date" placeholder="Date of visit" onfocus="this.placeholder = ''"
+                               onblur="this.placeholder = ''" required class="single-input">
+                    </div>
+
+                    <div class="mt-10">
+                        <label>Country of origin</label>
+                        <input type="text" name="country" placeholder="Country" onfocus="this.placeholder = ''"
+                               onblur="this.placeholder = 'Country'" required class="single-input">
+                    </div>
+
+                    <div class="mt-10">
+                        <label>Province of origin</label>
+                        <input type="text" name="province" placeholder="Province" onfocus="this.placeholder = ''"
+                               onblur="this.placeholder = 'Province'" required class="single-input">
+                    </div>
+
+                    <div class="mt-10">
+                        <label>Where did you hear about the Simon’s Town Museum ?</label>
+                        <textarea class="single-textarea" name="Message" placeholder="Message" onfocus="this.placeholder = ''"
+                                  onblur="this.placeholder = 'Message'" required></textarea>
+                    </div>
+
+                    <button class="primary-btn mt-20 text-white" style="float: right;">Submit</button>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <!--button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-primary" href="#">Logout</a-->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="warning" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <form action="/visit/book" method="post" class="col-12">
+                    <h5 class="modal-title" id="exampleModalLabel">Book a Tour</h5>
+                    <div class="mt-10">
+                        <input type="text" name="name" placeholder="name" onfocus="this.placeholder = ''"
+                               onblur="this.placeholder = 'First Name'" required class="single-input">
+                    </div>
+
+                    <div class="mt-10">
+                        <input type="text" name="phoneNumber" placeholder="Phone Number" onfocus="this.placeholder = ''"
+                               onblur="this.placeholder = 'First Name'" required class="single-input">
+                    </div>
+
+                    <div class="mt-10">
+                        <input type="text" name="organisation" placeholder="Name of Group, Organisation, School" onfocus="this.placeholder = ''"
+                               onblur="this.placeholder = 'First Name'" required class="single-input">
+                    </div>
+
+                    <div class="mt-10">
+                        <input type="email" name="language" placeholder="Language" onfocus="this.placeholder = ''"
+                               onblur="this.placeholder = 'Email address'" required class="single-input">
+                    </div>
+
+                    <br>
+                    <div class="input-group-icon mt-10">
+                        <label>Booking Purpose</label>
+                        <div class="form-select myinput" id="default-select">
+                            <select class="form-control" name="purpose">
+                                <option value="Education" selected>select the purpose</option>
+                                <option value="Education">Education</option>
+                                <option value="Leisure">Leisure</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mt-10">
+                        <input type="date" name="date" placeholder="Date" onfocus="this.placeholder = ''"
+                               onblur="this.placeholder = 'Email address'" required class="single-input">
+                    </div>
+
+                    <div class="mt-10">
+                        <input type="text" name="Country" placeholder="Country of Origin" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Country'" required class="single-input form-control myinput">
+                    </div>
+
+                    <div class="mt-10">
+                        <input type="text" name="province" placeholder="province" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Country'" required class="single-input form-control myinput">
+                    </div>
+
+                    <div class="mt-10">
+                        <textarea class="single-textarea" placeholder="Message" onfocus="this.placeholder = ''"
+                                  onblur="this.placeholder = 'Message'" required></textarea>
+                    </div>
+
+                    <button class="primary-btn mt-20 text-white" style="float: right;">Submit</button>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <!--button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-primary" href="#">Logout</a-->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="donationModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <div class="col-xl"><i class="lnr  lnr-heart"></i><h3>Contact Us For Your Donation</h3>  </div>
+            </div>
+            <div class="modal-body">
+                <p>the Museum at cathy@simonstownmuseum.co.za or education@simonstownmuseum.co.za
+                </p>
+                <h4>
+                    Phone:    +27 21 786 3046
+                    Fax No :    +27 21 786 2391
+                </h4>
+            </div>
+            <div class="modal-footer">
+                <!--button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-primary" href="#">Logout</a-->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bd-example-modal-lg" id="Contribution" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Contribute to this Project</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <p class="container">
+                <br>
+                Your contribution may consists of facts or events, archives or any tangible data patterning to this
+                Project.
+                We value your contribution and we need you to fill in bellow form so that we may also contact to learn
+                more from you.
+                We promise to protect you input and your identity. In case of any uncertainty and sensitivity of your
+                data that please
+                contact us on <b>simonstown@museum.co.za</b>.
+            </p>
+            <div class="container">
+                <form method="post" action="/admin_user/contribution/new" enctype="multipart/form-data">
+                    <br>
+
+                    <input name="name" placeholder="Enter your name" onfocus="this.placeholder = ''"
+                           onblur="this.placeholder = 'Enter your name'" class="common-input mb-20 form-control"
+                           required="true" type="text">
+                    <input name="email" placeholder="Enter your email" onfocus="this.placeholder = ''"
+                           onblur="this.placeholder = 'Enter your email'" class="common-input mb-20 form-control"
+                           required="true" type="email">
+                    <input name="cellphone" placeholder="Enter your phone number" onfocus="this.placeholder = ''"
+                           onblur="this.placeholder = 'Enter your phone number'" class="common-input mb-20 form-control"
+                           required="" type="number">
+
+                    <div class="input-group-icon mt-10">
+                        <label>Select the format of file you want to submit</label>
+                        <div class="form-select common-input mb-20 form-control"  id="default-select">
+                            <select name="filetypeId" class="common-input mb-20 form-control">
+                                <option value="" selected>Select a format</option>
+                                {{with .FileTypes}}
+                                {{range .}}
+                                <option value="{{.Id}}">{{.FileType}}</option>
+                                {{end}}
+                                {{end}}
+                            </select>
+                        </div>
+                    </div>
+                    <label class="text-sm-left">Please upload a contribution file of type:
+                        <small>pdf,jpg,doc,mp3,mp4</small></label>
+                    <input type="file" class="common-input mb-20 form-control" name="file"/>
+                    <label>Message</label>
+                    <textarea style="height: 200px" maxlength="150" class="form-control mb-10" name="message" placeholder="Message"
+                              onfocus="this.placeholder = ''" onblur="this.placeholder = 'Message'"
+                              required="true"></textarea>
+
+                    <button type="submit" class="primary-btn mt-20 " href="#">Submit</button>
+
+                </form>
+            </div>
+            <div class="mt-20">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script src="../assets/js/vendor/jquery-2.2.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="../assets/js/vendor/bootstrap.min.js"></script>
+<script type="text/javascript"
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA"></script>
+<script src="../assets/js/easing.min.js"></script>
+<script src="../assets/js/hoverIntent.js"></script>
+<script src="../assets/js/superfish.min.js"></script>
+<script src="../assets/js/jquery.ajaxchimp.min.js"></script>
+<script src="../assets/js/jquery.magnific-popup.min.js"></script>
+<script src="../assets/js/owl.carousel.min.js"></script>
+<script src="../assets/js/imagesloaded.pkgd.min.js"></script>
+<script src="../assets/js/justified.min.js"></script>
+<script src="../assets/js/jquery.sticky.js"></script>
+<script src="../assets/js/jquery.nice-select.min.js"></script>
+<script src="../assets/js/parallax.min.js"></script>
+<script src="../assets/js/mail-script.js"></script>
+<script src="../assets/js/main.js"></script>
+</body>
+<script>
+    $(document).ready(function () {
+        $("#gradeOrAge").hide();
+        // if () {
+        //     $('#warning').modal('show');
+        // }
+    })
+    $("select#bookingType").change(function () {
+        var bType = $("#bookingType option:selected").text();
+        if (bType !== "Private") {
+            $("#gradeOrAge").show(1000);
+        }
+        if (bType === "Private") {
+            $("#gradeOrAge").hide(1000);
+        }
+    })
+</script>
+</html>
+
+
+

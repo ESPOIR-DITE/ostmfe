@@ -13,27 +13,93 @@ import (
 	"ostmfe/domain/group"
 	history2 "ostmfe/domain/history"
 	"ostmfe/domain/image"
+	member2 "ostmfe/domain/member"
+	"ostmfe/domain/pages"
 	"ostmfe/domain/user"
 	"ostmfe/io/comment_io"
 	"ostmfe/io/event_io"
 	"ostmfe/io/group_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
+	"ostmfe/io/member_io"
 	"ostmfe/io/pageData_io"
+	"ostmfe/io/pages/client"
 	"ostmfe/io/user_io"
 	"time"
 )
 
 func Home(app *config.Env) http.Handler {
 	r := chi.NewRouter()
-	r.Get("/", homeHanler(app))
+	//r.Get("/", homeHanler(app))
+	r.Get("/", homeHandler(app))
 	r.Get("/group", GrouphomeHanler(app))
 	r.Get("/single/{groupId}", GroupHanler(app))
 	r.Post("/create-comment", CreateComment(app))
+	r.Post("/create-member", CreateMemberHandler(app))
 	//r.Use(middleware.LoginSession{SessionManager: app.Session}.RequireAuthenticatedUser)
 	//r.Get("/home", indexHanler(app))
 	//r.Get("/homeError", indexErrorHanler(app))
 	return r
+}
+
+func CreateMemberHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		r.ParseForm()
+		name := r.PostFormValue("name")
+		surname := r.PostFormValue("surname")
+		email := r.PostFormValue("email")
+		address := r.PostFormValue("address")
+		subject := r.PostFormValue("subject")
+		Messege := r.PostFormValue("message")
+		groupId := r.PostFormValue("groupId")
+
+		if name != "" && email != "" && surname != "" {
+			member := member2.Member{"", email, name, surname, subject, Messege, address}
+			fmt.Println("email: ", member)
+			newMember, err := member_io.CreateMember(member)
+			if err != nil {
+				fmt.Println("error creating member")
+			} else {
+				groupMember := group.GroupMember{"", newMember.Id, misc.FormatDateTime(time.Now()), groupId}
+				fmt.Println("Group Member: ", groupMember)
+				_, err := group_io.CreateGroupMember(groupMember)
+				if err != nil {
+					fmt.Println("error creating groupMember")
+				}
+			}
+		}
+		http.Redirect(w, r, "/about_us/single/"+groupId, 301)
+	}
+}
+
+func homeHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		aboutUsPageData, err := client.AboutClientPage()
+		if err != nil {
+			fmt.Println(err, " error reading about us page data")
+		}
+		type PageData struct {
+			Data pages.AboutUsPageData
+		}
+
+		data := PageData{aboutUsPageData}
+		files := []string{
+			app.Path + "about_us/about_us.html",
+			app.Path + "base_templates/navigator.html",
+			app.Path + "base_templates/footer.html",
+		}
+		ts, err := template.ParseFiles(files...)
+		if err != nil {
+			app.ErrorLog.Println(err.Error())
+			return
+		}
+		err = ts.Execute(w, data)
+		if err != nil {
+			app.ErrorLog.Println(err.Error())
+		}
+	}
 }
 
 func CreateComment(app *config.Env) http.HandlerFunc {
@@ -65,11 +131,19 @@ func CreateComment(app *config.Env) http.HandlerFunc {
 func GrouphomeHanler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		type PageData struct {
-			Groups    []GroupData
-			Histories []misc.HistoryAndProfile
+		var bannerImage string
+		banner, err := misc.GetBanner("Group-home")
+		if err != nil {
+			fmt.Println(err, " There is an error when reading people pageBanner")
+		} else {
+			bannerImage = banner.Id
 		}
-		data := PageData{GetGroupData(), misc.ReadHistoryWithImages()}
+		type PageData struct {
+			ProjectBanner string
+			Groups        []GroupData
+			Histories     []misc.HistoryAndProfile
+		}
+		data := PageData{bannerImage, GetGroupData(), misc.ReadHistoryWithImages()}
 		files := []string{
 			app.Path + "about_us/group-home.html",
 			app.Path + "base_templates/navigator.html",
@@ -89,12 +163,29 @@ func GrouphomeHanler(app *config.Env) http.HandlerFunc {
 
 func GroupHanler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var bannerImage string
+		var files []string
+		banner, err := misc.GetBanner("Group-home")
+		if err != nil {
+			fmt.Println(err, " There is an error when reading people pageBanner")
+		} else {
+			bannerImage = banner.Id
+		}
 		groupId := chi.URLParam(r, "groupId")
 		groupDataHistory := GetGroupDataHistory(groupId)
 
+		singleData, err := client.GetGroupClientSingleData(groupId)
+		if err != nil {
+			fmt.Println("error getting groupData")
+			app.InfoLog.Println(err, " error getting groupData")
+			http.Redirect(w, r, "/about_us/group", 301)
+			return
+		}
 		//We are checking if the previous method returns nothing, we should redirect people home page
 		//TODO we need to implement error reporter on People Home Page
 		if groupDataHistory.History.Id == "" {
+			app.InfoLog.Println(" error getting group History")
+			fmt.Println(" error getting group History")
 			//app.Session.Put(r.Context(), "user-read-error", "An error has occurred, Please try again late")
 			http.Redirect(w, r, "/about_us/group", 301)
 			return
@@ -107,19 +198,33 @@ func GroupHanler(app *config.Env) http.HandlerFunc {
 
 		fmt.Println("Comments: ", commentes)
 		type PageData struct {
+			ProjectBanner    string
+			PageDatas        pages.GroupClientSingleData
 			GroupDataHistory GroupDataHistory
 			EventData        []EventData
 			GalleryImages    []misc.GroupGalleryImages
 			Comments         []comment.CommentStack
 			CommentNumber    int64
+			NumberOfComments int64
 		}
-		data := PageData{groupDataHistory, getEventsData(groupId), misc.GetGroupGallery(groupId), commentes, eventCommentNumber}
-		files := []string{
-			app.Path + "about_us/groups_single.html",
-			app.Path + "base_templates/navigator.html",
-			app.Path + "base_templates/footer.html",
-			app.Path + "base_templates/comments.html",
+		data := PageData{bannerImage, singleData, groupDataHistory, getEventsData(groupId), misc.GetGroupGallery(groupId), commentes, eventCommentNumber, eventCommentNumber}
+
+		if singleData.Group.Name == "The Phoenix Committee" {
+			files = []string{
+				app.Path + "about_us/pheonix_group.html",
+				app.Path + "base_templates/navigator.html",
+				app.Path + "base_templates/footer.html",
+				app.Path + "base_templates/comments.html",
+			}
+		} else {
+			files = []string{
+				app.Path + "about_us/groups_single.html",
+				app.Path + "base_templates/navigator.html",
+				app.Path + "base_templates/footer.html",
+				app.Path + "base_templates/comments.html",
+			}
 		}
+
 		ts, err := template.ParseFiles(files...)
 		if err != nil {
 			app.ErrorLog.Println(err.Error())
@@ -239,7 +344,7 @@ func getStaff() []StaffData {
 						if err != nil && erri != nil {
 							fmt.Println(err, " error reading image and history")
 						} else {
-							imageHelper := image.ImagesHelper{imageObject.Id, misc.ConvertingToString(imageObject.Image), userImage.Id}
+							imageHelper := image.ImagesHelper{imageObject.Id, misc.ConvertingToString(imageObject.Image), imageObject.Description, userImage.Id}
 							historyHelper := history2.HistoriesHelper{history.Id, misc.ConvertingToString(history.History)}
 
 							staffs = append(staffs, StaffData{users, imageHelper, historyHelper})

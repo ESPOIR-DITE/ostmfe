@@ -1,5 +1,7 @@
 package project
 
+import "ostmfe/domain/image"
+
 type Project struct {
 	Id          string `json:"id"`
 	Title       string `json:"title"`
@@ -32,8 +34,8 @@ type ProjectPartner struct {
 	Description string `json:"description"`
 }
 type ProjectImageHelper struct {
-	Files        [][]byte     `json:"files"`
-	ProjectImage ProjectImage `json:"projectImage"`
+	Image   image.Images `json:"images"`
+	Project Project      `json:"project"`
 }
 type ProjectHistory struct {
 	Id        string `json:"id"`

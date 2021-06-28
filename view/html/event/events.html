@@ -40,7 +40,7 @@
 		{{template "navigator" .}}
 
 			<!-- start banner Area -->
-		<section {{if .EventBanner}} style="background: url('data:image/jpeg;base64,{{.EventBanner}}') center; width: 100%;background-size: cover;background-color: rgba(0, 0, 0, 0.7);" class="relative banner" {{else}}class="banner-area relative" {{end}}  id="home" >
+		<section {{if .PageData.BannerImageHelper}} style="background: url('data:image/jpeg;base64,{{.PageData.BannerImageHelper.Image}}') center; width: 100%;background-size: cover;background-color: rgba(0, 0, 0, 0.7);" class="relative banner" {{else}}class="banner-area relative" {{end}}  id="home" >
 				<div class="overlay overlay-bg"></div>
 				<div class="container">
 					<div class="row d-flex align-items-center justify-content-center">
@@ -62,11 +62,11 @@
 				<div class="row">
 					<div class="col-lg-8 ">
 						<div class="row">
-					{{with .Events}}
+					{{with .PageData.EventImageHelder}}
 						{{range .}}
 							<div class="col-lg-4">
 								<div class="single-service">
-									<img class="img-fluid" id='base64image' width="400px" src='data:image/jpeg;base64,{{.ProfileImage.Id}}' alt="">
+									<img class="img-fluid" id='base64image' width="400px" src='data:image/jpeg;base64,{{.Images.Id}}' alt="">
 									<h4><a href="/event/single/{{.Event.Id}}"><h4>{{.Event.Name}}</h4></a></h4>
 									<div class="overlay">
 										<div class="text">
@@ -84,11 +84,11 @@
 						</div>
 					</div>
 					<div class="col-lg-4 sidebar">
-						{{if .Years}}
+						{{if .PageData.EventYearHelper}}
 							<div class="single-widget category-widget">
 								<h4 class="title">Event Per years</h4>
 								<ul>
-									{{with .Years}}
+									{{with .PageData.EventYearHelper}}
 										{{range .}}
 											<li><a href="/event/ofayear/{{.Year.Id}}" class="justify-content-between align-items-center d-flex"><h6>
 														{{.Year.Year}}</h6> <span>{{.Number}}</span></a></li>
@@ -100,105 +100,6 @@
 
 
 						{{template "project-template" .}}
-						<!--
-                        <div class="single-widget recent-posts-widget">
-                            <h4 class="title">Recent Posts</h4>
-                            <div class="blog-list ">
-                                <div class="single-recent-post d-flex flex-row">
-                                    <div class="recent-thumb">
-                                        <img class="img-fluid" src="../../assets/img/blog/r1.jpg" alt="">
-                                    </div>
-                                    <div class="recent-details">
-                                        <a href="#">
-                                            <h4>
-                                                Home Audio Recording
-                                                For Everyone
-                                            </h4>
-                                        </a>
-                                        <p>
-                                            02 hours ago
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="single-recent-post d-flex flex-row">
-                                    <div class="recent-thumb">
-                                        <img class="img-fluid" src="../../assets/img/blog/r2.jpg" alt="">
-                                    </div>
-                                    <div class="recent-details">
-                                        <a href="#">
-                                            <h4>
-                                                Home Audio Recording
-                                                For Everyone
-                                            </h4>
-                                        </a>
-                                        <p>
-                                            02 hours ago
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="single-recent-post d-flex flex-row">
-                                    <div class="recent-thumb">
-                                        <img class="img-fluid" src="../../assets/img/blog/r3.jpg" alt="">
-                                    </div>
-                                    <div class="recent-details">
-                                        <a href="#">
-                                            <h4>
-                                                Home Audio Recording
-                                                For Everyone
-                                            </h4>
-                                        </a>
-                                        <p>
-                                            02 hours ago
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="single-recent-post d-flex flex-row">
-                                    <div class="recent-thumb">
-                                        <img class="img-fluid" src="../../assets/img/blog/r4.jpg" alt="">
-                                    </div>
-                                    <div class="recent-details">
-                                        <a href="blog-single.html">
-                                            <h4>
-                                                Home Audio Recording
-                                                For Everyone
-                                            </h4>
-                                        </a>
-                                        <p>
-                                            02 hours ago
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="single-widget category-widget">
-                            <h4 class="title">Post Archive</h4>
-                            <ul>
-                                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Dec '17</h6> <span>37</span></a></li>
-                                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Nov '17</h6> <span>24</span></a></li>
-                                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Oct '17</h6> <span>59</span></a></li>
-                                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Sep '17</h6> <span>29</span></a></li>
-                                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Aug '17</h6> <span>15</span></a></li>
-                                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Jul '17</h6> <span>09</span></a></li>
-                                <li><a href="#" class="justify-content-between align-items-center d-flex"><h6>Jun '17</h6> <span>44</span></a></li>
-                            </ul>
-                        </div>
-
-                        <div class="single-widget tags-widget">
-                            <h4 class="title">Tag Clouds</h4>
-                             <ul>
-                                 <li><a href="#">Lifestyle</a></li>
-                                 <li><a href="#">Art</a></li>
-                                 <li><a href="#">Adventure</a></li>
-                                 <li><a href="#">Food</a></li>
-                                 <li><a href="#">Techlology</a></li>
-                                 <li><a href="#">Fashion</a></li>
-                                 <li><a href="#">Architecture</a></li>
-                                 <li><a href="#">Food</a></li>
-                                 <li><a href="#">Technology</a></li>
-                             </ul>
-                        </div>	-->
-
 					</div>
 				</div>
 			</div>

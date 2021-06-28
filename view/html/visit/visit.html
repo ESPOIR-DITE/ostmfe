@@ -104,9 +104,9 @@
         <br/>
         <div class="section-top-border">
             {{if .VisitPageSection.MuseumIntro}}
-            <div class="title text-center" id="MuseumIntro">
+            <div class="title text-center" id="Museum-Introduction">
                 <script>
-                    var div= document.getElementById('MuseumIntro');
+                    var div= document.getElementById('Museum-Introduction');
                     var myvalue = {{.VisitPageSection.MuseumIntro}}
                         parseMe(myvalue);
                     function parseMe(value) {
@@ -130,8 +130,9 @@
             {{end}}
         </div>
 
+        {{if .VisitPageSection.MuseumService}}
         <div class="section-top-border">
-            {{if .VisitPageSection.MuseumService}}
+
             <div class="title text-center" id="MuseumService">
                 <script>
                     var div= document.getElementById('MuseumService');
@@ -142,31 +143,9 @@
                     }
                 </script>
             </div>
-            {{else}}
-            <h3 class="mb-30">Mandate of Museum Services, Western Cape.</h3>
-            <div class="row">
-                <div class="col-lg-12">
-                    <blockquote class="generic-blockquote">
-                        The Museum Service of the Western Cape Department of <a href="https://www.westerncape.gov.za/museums">Cultural</a> Affairs and Sport (DCAS) aims to promote respect for cultural diversity in South Africa and appreciation of our natural heritage. The Museum Service therefore sets out to build understanding and pride of our diverse heritage through the affiliated museums.
-                    <br>
-                        <br>
-                        <h4>Objectives</h4>
-                        <br>
-                        <ol class="unordered-list">
-                            <li>To establish, upgrade and maintain museum infrastructure.</li>
-                            <li>To facilitate access to museum facilities and programmes.</li>
-                            <li>To achieve international standards in collections care and management.</li>
-                            <li>To transform museum content and museum exhibitions.</li>
-                            <li>To entrench quality education services for schools and provide opportunities for lifelong learning for all.</li>
-                            <li>To ensure service excellence at museums in the major centres
-                                There are 29 museums in the Western Cape. Each of these museums develops and promotes collections, exhibitions and programmes for educational purposes and the public interest.</li>
-                        </ol>
-                        Find and explore our museums using the Living <a href="https://mapservices.westerncape.gov.za/apps/DCAS_AllFacilities">Atlas</a> museums and find out more about each facility.
-                    </blockquote>
-                </div>
-            </div>
-            {{end}}
+
         </div>
+        {{end}}
 
 
         <!----Booking Information---->
@@ -219,24 +198,32 @@
                     <h3 class="mb-30">Book a Visit</h3>
                     <form action="/visit/book" method="post">
                         <div class="mt-10">
-                            <input type="text"  name="name" placeholder="name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'First Name'" required class="single-input form-control myinput" >
+                            <label>Name</label>
+                            <input type="text"  name="name" placeholder="Name of Person Responsible for Booking" onfocus="this.placeholder = ''" onblur="this.placeholder = 'First Name'" required class="single-input form-control myinput" >
                         </div>
 
                         <div class="mt-10">
-                            <input type="text" name="phoneNumber" placeholder="Phone Number" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Phone Number'" required class="single-input form-control myinput">
+                            <label>Contact</label>
+                            <input type="text" name="phoneNumber" placeholder="Contact number of Person Responsible for Booking" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Phone Number'" required class="single-input form-control myinput">
+                        </div>
+                        <div class="mt-10">
+                            <label>Date of visit</label>
+                            <input type="date" name="date" placeholder="Date for Visit" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Your Language'" required class="single-input form-control myinput">
                         </div>
 
                         <div class="mt-10">
+                            <label>Name of Group, Organisation, School</label>
                             <input type="text" name="organisation" placeholder="Name of Group, Organisation, School" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Name of Group, Organisation, School'" required class="single-input form-control myinput">
                         </div>
 
                         <div class="mt-10">
+                            <label>Language Preference of Group</label>
                             <input type="text" name="language" placeholder="Language" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Your Language'" required class="single-input form-control myinput">
                         </div>
 
                         <br>
                         <div class="input-group-icon mt-10">
-                            <label>Booking Purpose</label>
+                            <label>Purpose of Visit</label>
                             <div class="form-select myinput" id="default-select">
                                 <select class="form-control" name="purpose">
                                     <option value="Education" selected>select the purpose</option>
@@ -251,7 +238,7 @@
                         </div>
 
                         <div class="mt-10">
-                            <input type="text" name="province" placeholder="province" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Country'" required class="single-input form-control myinput">
+                            <input type="text" name="province" placeholder="Province (if from South Africa) " onfocus="this.placeholder = ''" onblur="this.placeholder = 'Country'" required class="single-input form-control myinput">
                         </div>
 
                         <div class="mt-10">

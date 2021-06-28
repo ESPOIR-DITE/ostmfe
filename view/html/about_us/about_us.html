@@ -38,7 +38,7 @@
 {{template "navigator" .}}
 
 <!-- start banner Area -->
-<section {{if .AboutUsBanner}} style="background: url('data:image/jpeg;base64,{{.AboutUsBanner}}') center; width: 100%;background-size: cover;background-color: rgba(0, 0, 0, 0.7);" class="relative banner" {{else}}class="banner-area relative" {{end}}  id="home" >
+<section {{if .Data.BannerImageHelper.Id}} style="background: url('data:image/jpeg;base64,{{.Data.BannerImageHelper.Id}}') center; width: 100%;background-size: cover;background-color: rgba(0, 0, 0, 0.7);" class="relative banner" {{else}}class="banner-area relative" {{end}}  id="home" >
     <div class="overlay overlay-bg"></div>
     <div class="container">
         <div class="row d-flex align-items-center justify-content-center">
@@ -58,46 +58,37 @@
 <!-- Start Sample Area -->
 <section class="sample-text-area">
     <div class="container">
-        {{if .PageSections.Introduction}}
+        {{with .Data.PageSection}}
+        {{range .}}
+        {{if eq .SectionName "Introduction"}}
         <div class="title text-center" id="Introduction">
             <script>
                 var div= document.getElementById('Introduction');
-                var myvalue = {{.PageSections.Introduction}}
+                var myvalue = {{.Content}}
                     parseMe(myvalue);
                 function parseMe(value) {
                     div.innerHTML+=value;
                 }
             </script>
         </div>
-        {{else}}
-        <h3 class="text-heading">Simon's Town Museum</h3>
-        <p class="sample-text">
-            Every avid independent filmmaker has <b>Bold</b> about making that <i>Italic</i> interest documentary, or
-            short film to show off their creative prowess. Many have great ideas and want to “wow”
-            the<sup>Superscript</sup> scene, or video renters with their big project. But once you have the<sub>Subscript</sub>
-            “in the can” (no easy feat), how do you move from a
-            <del>Strike</del>
-            through of master DVDs with the <u>“Underline”</u> marked hand-written title inside a secondhand CD case, to
-            a pile of cardboard boxes full of shiny new, retail-ready DVDs, with UPC barcodes and polywrap sitting on
-            your doorstep? You need to create eye-popping artwork and have your project replicated. Using a reputable
-            full service DVD Replication company like PacificDisc, Inc. to partner with is certainly a helpful option to
-            ensure a professional end result, but to help with your DVD replication project, here are 4 easy steps to
-            follow for good DVD replication results:
-        </p>
+        {{end}}
+        {{end}}
         {{end}}
     </div>
 </section>
 
-{{if .Staffs}}
+{{if .Data.StaffImageHelper}}
 <section class="section info-area" id="about">
     <div class="container">
         <div class="row d-flex justify-content-center">
             <div class="menu-content pb-40 col-lg-8">
-                {{if .PageSections.StaffIntroTitle}}
-                <div class="title text-center" id="StaffIntroTitle">
+                {{with .Data.PageSection}}
+                {{range .}}
+                {{if eq .SectionName "Staff-Introduction-Title"}}
+                <div class="title text-center" id="Staff-Introduction-Title">
                     <script>
-                        var div= document.getElementById('StaffIntroTitle');
-                        var myvalue = {{.PageSections.StaffIntroTitle}}
+                        var div= document.getElementById('Staff-Introduction-Title');
+                        var myvalue = {{.Content}}
                             parseMe(myvalue);
                         function parseMe(value) {
                             div.innerHTML+=value;
@@ -105,33 +96,35 @@
                     </script>
                 </div>
                 {{else}}
-                <div class="title text-center">
-                    <h1 class="mb-10">Meet Simons's Town Staff</h1>
-                    <p>Who are in extremely love with eco friendly system.</p>
-                </div>
+<!--                <div class="title text-center">-->
+<!--                    <h1 class="mb-10">Meet Simons's Town Staff</h1>-->
+<!--                    <p>Who are in extremely love with eco friendly system.</p>-->
+<!--                </div>-->
+                {{end}}
+                {{end}}
                 {{end}}
             </div>
         </div>
 
-		{{with .Staffs}}
+		{{with .Data.StaffImageHelper}}
         {{range . }}
         <div class="single-info row mt-40" >
             <div class="col-lg-6 col-md-12 mt-120 text-center no-padding info-left">
                 <div class="info-thumb">
-                    <img  src='data:image/jpeg;base64,{{.Image.Id}}' class="img-fluid" alt="">
+                    <img  src='data:image/jpeg;base64,{{.Images.Id}}' class="img-fluid" alt="">
                 </div>
             </div>
             <div class="col-lg-6 col-md-12 no-padding info-rigth" >
                 <div class="info-content">
-                    <h2 class="pb-30">{{.User.Name}} <br>
-                        {{.User.Surname}} <br>
+                    <h2 class="pb-30">{{.Users.Name}} <br>
+                        {{.Users.Surname}} <br>
                         </h2>
 
                     <br>
-                    <div class="form-group " id="{{.User.Email}}" ></div>
+                    <div class="form-group " id="{{.Users.Email}}" ></div>
                         <script>
-                            var div= document.getElementById({{.User.Email}});
-                            var myvalue = {{.History.History}}
+                            var div= document.getElementById({{.Users.Email}});
+                            var myvalue = {{.Histories.History}}
                                 parseMe(myvalue);
                             function parseMe(value) {
                                 div.innerHTML+=value;
@@ -148,15 +141,16 @@
 {{end}}
 
 <!-- Start Align Area -->
-<div class="whole-wrap section-gap">
+<div class="section info-area section-gap">
     <div class="container">
-
-        {{if .Groups}}<!-- Checking if the slice has data! if there is no data this block wont display-->
-        {{if .PageSections.MemberIntroTitle}}
-        <div class="title text-center" id="MemberIntroTitle">
+        {{if .Data.GroupImageHelper}}<!-- Checking if the slice has data! if there is no data this block wont display-->
+        {{with .Data.PageSection}}
+        {{range .}}
+        {{if eq .SectionName "Member-Introduction-Title"}}
+        <div class="title text-center" id="Member-Introduction-Title">
             <script>
-                var div= document.getElementById('MemberIntroTitle');
-                var myvalue = {{.PageSections.MemberIntroTitle}}
+                var div= document.getElementById('Member-Introduction-Title');
+                var myvalue = {{.Content}}
                     parseMe(myvalue);
                 function parseMe(value) {
                     div.innerHTML+=value;
@@ -164,48 +158,55 @@
             </script>
         </div>
         {{else}}
-        <div class="title text-center">
-            <h1 class="mb-10">Become A Member</h1>
-            <p>Who are in extremely love with Simon's Town</p>
-            <br/>
-        </div>
+<!--        <div class="title text-center">-->
+<!--            <h1 class="mb-10">Become A Member</h1>-->
+<!--            <p>Who are in extremely love with Simon's Town</p>-->
+<!--            <br/>-->
+<!--        </div>-->
+        {{end}}
+        {{end}}
         {{end}}
 
-        {{with .Groups}}
+        {{with .Data.GroupImageHelper}}
         {{range .}}<!-- start looping the Groups slice-->
-        <h3 class="mb-30"><a href="/about_us/single/{{.Group.Id}}">{{.Group.Name}}</a></h3>
-        <div class="row">
+
+        <div class="row p-3"  >
             <div class="col-md-3">
-                <a href="/about_us/single/{{.Group.Id}}"><img class="card-img"
-                                                              id='base64image' height="200px"
-                            {{if .Image}}
-                        src='data:image/jpeg;base64,{{.Image.Id}}' alt=""
-                            {{end}}/></a>
+                <a href="/about_us/single/{{.Groupes.Id}}"><img class="card-img" id='base64image' height="200px" {{if .Images}} src='data:image/jpeg;base64,{{.Images.Id}}' alt="" {{end}}/></a>
             </div>
-            <div class="col-md-9 mt-sm-20">
-                <p>{{.Group.Description}}</p>
+            <div class="col-md-9 mt-sm-20" style="background-color: white">
+                <h3 class="mb-30 text-center"><a href="/about_us/single/{{.Groupes.Id}}">{{.Groupes.Name}}</a></h3>
+                <p class="text-center">{{.Groupes.Description}}</p>
             </div>
         </div>
-        <hr/>
-        {{end}}{{end}}<!-- End looping Groups slice-->
-        {{end}}<!-- End Checking the slice-->
+        {{end}}
+        {{end}}<!-- End looping Groups slice-->
+        {{end}}
+        <!-- Group section-->
 
-        <div class="section-top-border">
+        <!-- Gallery start here. -->
+        <div class="section-top-border text-center">
+            {{if .Data.GroupGallery}}
             <h3>Groups Gallery</h3>
-            <div class="row gallery-item">
-                {{with .GalleryImages}}
+            <br>
+            <div class="active-exibition-carusel">
+                {{with .Data.GroupGallery}}
                 {{range .}}
-                <div class="col-md-4">
-                    <a href="data:image/jpeg;base64,{{.Gallery.Image}}" class="img-pop-up">
-                        <div class="single-gallery-image"
-                             style="background: url('data:image/jpeg;base64,{{.Gallery.Image}}');"></div>
-                    </a>
+                <div class="single-exibition item">
+                    <img width="300px" src='data:image/jpeg;base64,{{.Image}}' height="200px" alt="">
+
+                    <h4 class="text-center">
+                        <br>
+                        {{.Description}}
+                    </h4>
                 </div>
+
                 {{end}}
                 {{end}}
             </div>
+            {{end}}
         </div>
-
+        <!--end Gallery-->
     </div>
 </div>
 </div>
@@ -225,9 +226,9 @@
         integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
         crossorigin="anonymous"></script>
 <script src="../../assets/js/vendor/bootstrap.min.js"></script>
-<script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA&callback=initMap">
-</script>
+<!--<script async defer-->
+<!--        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA&callback=initMap">-->
+<!--</script>-->
 <script src="../../assets/js/easing.min.js"></script>
 <script src="../../assets/js/hoverIntent.js"></script>
 <script src="../../assets/js/superfish.min.js"></script>

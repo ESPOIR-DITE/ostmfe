@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"fmt"
 	"github.com/go-chi/chi"
 	"html/template"
 	"net/http"
@@ -21,6 +22,8 @@ import (
 	"ostmfe/controller/admin/users"
 	"ostmfe/controller/admin/year"
 	"ostmfe/controller/misc"
+	"ostmfe/domain/pages"
+	"ostmfe/io/pages/admin"
 )
 
 /***
@@ -68,17 +71,31 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if !adminHelper.CheckAdminInSession(app, r) {
 			http.Redirect(w, r, "/administration/", 301)
+			return
 		}
+		email := app.Session.GetString(r.Context(), "email")
 		var success_notice string
 		if app.Session.GetString(r.Context(), "creation-successful") != "" {
 			success_notice = app.Session.GetString(r.Context(), "creation-successful")
 			app.Session.Remove(r.Context(), "creation-successful")
 		}
+		pageDate, err := admin.GetHomeAdminPage(email)
+		if err != nil {
+			fmt.Println(err, "error reading pageDate")
+		}
+
 		type PageData struct {
 			Success_notice string
 			SidebarData    misc.SidebarData
+			PageData       pages.AdminLandingPageData
+			AdminName      string
+			AdminImage     string
 		}
-		data := PageData{success_notice, misc.GetSideBarData("", "")}
+		data := PageData{success_notice,
+			misc.GetSideBarData("", ""),
+			pageDate,
+			pageDate.UserImageHelper.Users.Name,
+			pageDate.UserImageHelper.Images.Id}
 		files := []string{
 			app.Path + "admin/admin.html",
 			app.Path + "admin/template/navbar.html",

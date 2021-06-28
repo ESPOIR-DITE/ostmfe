@@ -6,14 +6,15 @@ import (
 	"html/template"
 	"net/http"
 	"ostmfe/config"
-	comment2 "ostmfe/controller/comment"
 	"ostmfe/controller/misc"
 	"ostmfe/domain/comment"
 	image3 "ostmfe/domain/image"
+	"ostmfe/domain/pages"
 	"ostmfe/domain/people"
 	"ostmfe/io/comment_io"
 	"ostmfe/io/image_io"
 	"ostmfe/io/pageData_io"
+	"ostmfe/io/pages/client"
 	"ostmfe/io/people_io"
 	"time"
 )
@@ -22,7 +23,7 @@ func Home(app *config.Env) http.Handler {
 	r := chi.NewRouter()
 	r.Get("/", homeHandler(app))
 	r.Post("/create-comment", CreateCommentHandler(app))
-	r.Get("/{peopleId}", PeopleHanler(app))
+	r.Get("/people/{peopleId}", PeopleHanler(app))
 	r.Get("/category/{categoryId}", PeopleCategoryHanler(app))
 
 	return r
@@ -33,12 +34,16 @@ func PeopleCategoryHanler(app *config.Env) http.HandlerFunc {
 		categoryId := chi.URLParam(r, "categoryId")
 		fmt.Println(categoryId)
 
+		categoryObject, err := people_io.ReadCategory(categoryId)
+		if err != nil {
+			fmt.Println(err, " There is an error when reading category")
+		}
 		peoples, err := people_io.ReadCategories()
 		var bannerImage string
 		if err != nil {
 			fmt.Println(err, " There is an error when reading all the category")
 		}
-		pageBanner, err := pageData_io.ReadPageBannerWIthPageName("people-page")
+		pageBanner, err := pageData_io.ReadPageBannerWIthPageName("PeopleSingle")
 		if err != nil {
 			fmt.Println(err, " There is an error when reading people pageBanner")
 		} else {
@@ -48,13 +53,14 @@ func PeopleCategoryHanler(app *config.Env) http.HandlerFunc {
 		type PageData struct {
 			Peoples      []people.Category
 			PeopleData   []PeopleBriefData
+			Category     people.Category
 			PeoplePage   PeoplePage
 			PeopleBanner string
 		}
 
-		data := PageData{peoples, peopleData, getPageData(), bannerImage}
+		data := PageData{peoples, peopleData, categoryObject, getPageData(), bannerImage}
 		files := []string{
-			app.Path + "people/people_home.html",
+			app.Path + "people/people_categorized.html",
 			app.Path + "base_templates/navigator.html",
 			app.Path + "base_templates/footer.html",
 		}
@@ -99,36 +105,23 @@ func CreateCommentHandler(app *config.Env) http.HandlerFunc {
 func PeopleHanler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		peopleId := chi.URLParam(r, "peopleId")
-		peopleDataHistory := GetPeopleDataHistory(peopleId)
-		var bannerImage string
+
+		peoplePageData, err := client.PeopleClientPage(peopleId)
 
 		//We are checking if the previous method returns nothing, we should redirect people home page
 		//TODO we need to implement error reporter on People Home Page
-		if peopleDataHistory.History.Id == "" {
+		if peoplePageData.HistoriesHelper.History == "" {
 			//app.Session.Put(r.Context(), "user-read-error", "An error has occurred, Please try again late")
+			fmt.Println("error reading people history")
 			http.Redirect(w, r, "/people", 301)
 			return
 		}
-		peopleComment, err := comment_io.CountCommentPeople(peopleId)
-		if err != nil {
-			fmt.Print(err, " error counting people comments")
-		}
-		pageBanner, err := pageData_io.ReadPageBannerWIthPageName("people-page")
-		if err != nil {
-			fmt.Println(err, " There is an error when reading people pageBanner")
-		} else {
-			bannerImage = misc.GetBannerImage(pageBanner.BannerId)
-		}
+
 		type PageData struct {
-			PeopleDataHistory PeopleDataHistory
-			GalleryString     []string
-			CommentNumber     int64
-			Comments          []comment.CommentStack
-			GalleryImages     []misc.PeopleGalleryImages
-			PeopleBanner      string
+			PageData pages.PeoplePageData
 		}
 
-		data := PageData{peopleDataHistory, GetpeopleGallery(peopleId), peopleComment, comment2.GetAllPeopleComments(peopleId), misc.GetPeopleGallery(peopleId), bannerImage}
+		data := PageData{peoplePageData}
 		files := []string{
 			app.Path + "people/people_single.html",
 			app.Path + "base_templates/navigator.html",
@@ -151,29 +144,16 @@ func PeopleHanler(app *config.Env) http.HandlerFunc {
 
 func homeHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		peoples, err := people_io.ReadCategories()
+		peopleHomePageData, err := client.PeopleHomePage()
 		if err != nil {
-			fmt.Println(err, " error reading peoples.")
-		}
-		var bannerImage string
-		if err != nil {
-			fmt.Println(err, " There is an error when reading all the category")
-		}
-		pageBanner, err := pageData_io.ReadPageBannerWIthPageName("people-page")
-		if err != nil {
-			fmt.Println(err, " There is an error when reading people pageBanner")
-		} else {
-			bannerImage = misc.GetBannerImage(pageBanner.BannerId)
-		}
-		peopleData := GetPeopleBriefData()
-		type PageData struct {
-			Peoples      []people.Category
-			PeopleData   []PeopleBriefData
-			PeoplePage   PeoplePage
-			PeopleBanner string
+			fmt.Println(err, " error reading peopleHomePageData")
 		}
 
-		data := PageData{peoples, peopleData, getPageData(), bannerImage}
+		type PageData struct {
+			PageData pages.PeopleHomePage
+		}
+
+		data := PageData{peopleHomePageData}
 		files := []string{
 			app.Path + "people/people_home.html",
 			app.Path + "base_templates/navigator.html",

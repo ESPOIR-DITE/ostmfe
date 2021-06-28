@@ -34,7 +34,7 @@
 		{{template "navigator" .}}
 
 			<!-- start banner Area -->
-			<section class="banner-area relative" id="home">
+		<section {{if .ProjectBanner}} style="background: url('data:image/jpeg;base64,{{.ProjectBanner}}') center; width: 100%;background-size: cover;background-color: rgba(0, 0, 0, 0.7);" class="relative banner" {{else}}class="banner-area relative" {{end}}  id="home" >
 				<div class="overlay overlay-bg"></div>
 				<div class="container">
 					<div class="row d-flex align-items-center justify-content-center">
@@ -54,7 +54,6 @@
 				<div class="container">
 					<div class="row">
 						<div class="col-lg-8 post-list blog-post-list">
-
 							<div class="row">
 								{{with .Groups}}
 									{{range .}}<!-- start looping the Groups slice-->
@@ -81,7 +80,7 @@
 							<div class="single-widget protfolio-widget">
 								<a href="#"><h4>Become A Member of a Group</h4></a>
 								<p>
-									You can become a member of any of the listed Groups. You just need to click your preferred group, you will see a form at the bottom of the page which you will need to fill up.
+									You can become a member of listed Groups. You just need to click your preferred group, you will see a link or form at the bottom of the page which you will need to fill up.
 								</p>
 							</div>
 

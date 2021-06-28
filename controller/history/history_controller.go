@@ -120,6 +120,13 @@ func SingleHistoryHandler(app *config.Env) http.HandlerFunc {
 		if historyId == "" {
 			http.Redirect(w, r, "/", 301)
 		}
+		var bannerImage string
+		banner, err := misc.GetBanner("History-page")
+		if err != nil {
+			fmt.Println(err, " There is an error when reading people pageBanner")
+		} else {
+			bannerImage = banner.Id
+		}
 		commentNumber, err := comment_io.CountCommentHistory(historyId)
 		if err != nil {
 			fmt.Println("error reading CommentEvent")
@@ -130,12 +137,13 @@ func SingleHistoryHandler(app *config.Env) http.HandlerFunc {
 			fmt.Println("error reading History page flow")
 		}
 		type PageData struct {
+			ProjectBanner string
 			History       HistoryData
 			CommentNumber int64
 			Comments      []comment.CommentStack
 			PageFlows     []history2.HistoryPageFlow
 		}
-		data := PageData{getHistoryData(historyId), commentNumber, getHistoryComments(historyId), historyPageFlow}
+		data := PageData{bannerImage, getHistoryData(historyId), commentNumber, getHistoryComments(historyId), historyPageFlow}
 		files := []string{
 			app.Path + "history/history_single.html",
 			app.Path + "base_templates/navigator.html",
@@ -167,7 +175,7 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 		}
 
 		var bannerImage string
-		pageBanner, err := pageData_io.ReadPageBannerWIthPageName("history-page")
+		pageBanner, err := pageData_io.ReadPageBannerWIthPageName("History-page")
 		if err != nil {
 			fmt.Println(err, " There is an error when reading people pageBanner")
 		} else {
@@ -176,12 +184,13 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 
 		pageDate := getPageData("history-page")
 		type PageData struct {
+			ProjectBanner string
 			History       []history2.History
 			HistoryData   []HistoryData
 			HistoryBanner string
 			PageData      string
 		}
-		data := PageData{histories, historyData, bannerImage, pageDate}
+		data := PageData{bannerImage, histories, historyData, bannerImage, pageDate}
 		files := []string{
 			app.Path + "history/history.html",
 			app.Path + "base_templates/navigator.html",
@@ -289,7 +298,7 @@ func getComments(historyId string) []comment.CommentHelper {
 		if err != nil {
 			fmt.Println("error reading Comment")
 		} else {
-			commentHelper := comment.CommentHelper{myComment.Id, myComment.Email, myComment.Name, misc.FormatDateMonth(myComment.Date), misc.ConvertingToString(myComment.Comment), myComment.ParentCommentId, myComment.Stat}
+			commentHelper := comment.CommentHelper{myComment.Id, myComment.Email, myComment.Name, misc.FormatDateMonth(myComment.Date), misc.ConvertingToString(myComment.Comment), myComment.ParentCommentId, myComment.Stat, eventComment.Id}
 			myCommentObject = append(myCommentObject, commentHelper)
 		}
 	}
@@ -304,7 +313,7 @@ func getSubComment(parentComment string) []comment.CommentHelper {
 	}
 	for _, eventComment := range subComments {
 		if eventComment.ParentCommentId == parentComment && eventComment.Comment != nil {
-			commentHelper := comment.CommentHelper{eventComment.Id, eventComment.Email, eventComment.Name, misc.FormatDateMonth(eventComment.Date), misc.ConvertingToString(eventComment.Comment), eventComment.ParentCommentId, eventComment.Stat}
+			commentHelper := comment.CommentHelper{eventComment.Id, eventComment.Email, eventComment.Name, misc.FormatDateMonth(eventComment.Date), misc.ConvertingToString(eventComment.Comment), eventComment.ParentCommentId, eventComment.Stat, eventComment.Id}
 			myComments = append(myComments, commentHelper)
 		}
 	}

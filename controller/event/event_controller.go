@@ -14,6 +14,7 @@ import (
 	museum "ostmfe/domain"
 	"ostmfe/domain/comment"
 	contribution2 "ostmfe/domain/contribution"
+	"ostmfe/domain/pages"
 	"ostmfe/domain/people"
 	place2 "ostmfe/domain/place"
 	"ostmfe/domain/project"
@@ -22,6 +23,7 @@ import (
 	"ostmfe/io/contribution_io"
 	"ostmfe/io/event_io"
 	"ostmfe/io/pageData_io"
+	"ostmfe/io/pages/client"
 	"ostmfe/io/project_io"
 	"path/filepath"
 	"strings"
@@ -30,7 +32,8 @@ import (
 
 func Home(app *config.Env) http.Handler {
 	r := chi.NewRouter()
-	r.Get("/", homeHanler(app))
+	//r.Get("/", homeHanler(app))
+	r.Get("/", homeHandler(app))
 	r.Get("/single/{eventId}", EventHanler(app))
 	r.Get("/ofayear/{yearId}", EventOfAYearHanler(app))
 	r.Post("/create", CreateComment(app))
@@ -153,6 +156,13 @@ func EventOfAYearHanler(app *config.Env) http.HandlerFunc {
 			http.Redirect(w, r, "/event", 301)
 			return
 		}
+		var bannerImage string
+		banner, err := misc.GetBanner("Event-Page")
+		if err != nil {
+			fmt.Println(err, " There is an error when reading people pageBanner")
+		} else {
+			bannerImage = banner.Id
+		}
 
 		events := misc.GetSimpleEventDataOfYear(yearId)
 		if len(events) == 0 {
@@ -160,11 +170,12 @@ func EventOfAYearHanler(app *config.Env) http.HandlerFunc {
 			return
 		}
 		type PageData struct {
-			Events []misc.SimpleEventData
-			Years  []YearData
-			Year   museum.Years
+			ProjectBanner string
+			Events        []misc.SimpleEventData
+			Years         []YearData
+			Year          museum.Years
 		}
-		data := PageData{events, getYearDate(), year}
+		data := PageData{bannerImage, events, getYearDate(), year}
 		files := []string{
 			app.Path + "event/events_year.html",
 			app.Path + "base_templates/navigator.html",
@@ -188,6 +199,13 @@ func EventHanler(app *config.Env) http.HandlerFunc {
 		if eventId == "" {
 			http.Redirect(w, r, "/", 301)
 		}
+		var bannerImage string
+		banner, err := misc.GetBanner("Event-Page")
+		if err != nil {
+			fmt.Println(err, " There is an error when reading people pageBanner")
+		} else {
+			bannerImage = banner.Id
+		}
 		eventdata := GetEventData(eventId)
 
 		eventNumber, err := comment_io.CountCommentEvent(eventId)
@@ -200,6 +218,7 @@ func EventHanler(app *config.Env) http.HandlerFunc {
 		}
 
 		type PageData struct {
+			ProjectBanner string
 			EventData     EventData
 			Place         place2.Place
 			Peoples       []people.People
@@ -210,7 +229,7 @@ func EventHanler(app *config.Env) http.HandlerFunc {
 			GalleryImages []misc.EventGalleryImages
 			PageFlow      []contribution2.EventPageFlow
 		}
-		data := PageData{eventdata,
+		data := PageData{bannerImage, eventdata,
 			GetEnventPlaceData(eventId),
 			GetEventPeopleData(eventId),
 			GetGroupsData(eventId),
@@ -261,6 +280,43 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 			EventBanner string
 		}
 		data := PageData{events, getYearDate(), projects, bannerImage}
+		files := []string{
+			app.Path + "event/events.html",
+			app.Path + "base_templates/navigator.html",
+			app.Path + "base_templates/footer.html",
+			app.Path + "base_templates/projects_template.html",
+		}
+		ts, err := template.ParseFiles(files...)
+		if err != nil {
+			app.ErrorLog.Println(err.Error())
+			return
+		}
+		err = ts.Execute(w, data)
+		if err != nil {
+			app.ErrorLog.Println(err.Error())
+		}
+	}
+}
+func homeHandler(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		var bannerImage string
+		banner, err := misc.GetBanner("Event-Page")
+		if err != nil {
+			fmt.Println(err, " There is an error when reading people pageBanner")
+		} else {
+			bannerImage = banner.Id
+		}
+		pageData, err := client.EVentClientPage()
+		if err != nil {
+			// todo redirect to the home page!
+		}
+		type PageData struct {
+			ProjectBanner string
+			PageData      pages.EventPageData
+			Projects      []project.Project
+		}
+		data := PageData{bannerImage, pageData, pageData.Project}
 		files := []string{
 			app.Path + "event/events.html",
 			app.Path + "base_templates/navigator.html",

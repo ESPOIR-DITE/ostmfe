@@ -111,13 +111,20 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 			}
 
 		}
+		adminName, adminImage, isTrue := adminHelper.CheckAdminDataInSession(app, r)
+		if !isTrue {
+			fmt.Println(isTrue, "error reading adminData")
+		}
 		type PageData struct {
 			Sliders       []slider.SliderHelper
 			Backend_error string
 			Unknown_error string
 			SidebarData   misc.SidebarData
+			AdminName     string
+			AdminImage    string
 		}
-		data := PageData{sliderList, backend_error, unknown_error, misc.GetSideBarData("slider", "")}
+		data := PageData{sliderList, backend_error, unknown_error,
+			misc.GetSideBarData("slider", ""), adminName, adminImage}
 		files := []string{
 			app.Path + "admin/slider/slider.html",
 			app.Path + "admin/template/navbar.html",

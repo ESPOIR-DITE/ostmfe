@@ -1,9 +1,12 @@
 package group
 
+import image3 "ostmfe/domain/image"
+
 type Groupes struct {
 	Id          string `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
+	HistoryId   string `json:"historyId"`
 }
 type GroupGalery struct {
 	Id       string `json:"id"`
@@ -24,8 +27,14 @@ type GroupImage struct {
 	Description string `json:"description"`
 }
 type GroupImageHelper struct {
-	GroupImage GroupImage `json:"groupImage"`
-	Files      [][]byte   `json:"files"`
+	Groupes Groupes       `json:"groupes"`
+	Images  image3.Images `json:"images"`
+}
+type GroupMember struct {
+	Id       string `json:"id"`
+	MemberId string `json:"userId"`
+	Date     string `json:"date"`
+	GroupId  string `json:"groupId"`
 }
 type GroupPartener struct {
 	Id          string `json:"id"`
@@ -38,4 +47,8 @@ type GroupProject struct {
 	ProjectId   string `json:"projectId"`
 	GroupId     string `json:"groupId"`
 	Description string `json:"description"`
+}
+type GroupMenberHelper struct {
+	Groupes Groupes `json:"groupes"`
+	Members int     `json:"members"`
 }

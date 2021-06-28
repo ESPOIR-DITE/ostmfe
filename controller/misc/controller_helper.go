@@ -832,12 +832,24 @@ func GetFileExtension(fileData *multipart.FileHeader) (bool, string) {
 	return false, ""
 }
 
-func GetGalleryImage(galleryId string) image3.GaleryHelper {
-	var galleryImage image3.GaleryHelper
-	gallery, err := image_io.ReadGallery(galleryId)
+func GetGalleryImage(galleryId, bridgeId string) image3.GalleryHelper {
+	var galleryImage image3.GalleryHelper
+	gallery, err := image_io.ReadGalleryH(galleryId)
 	if err != nil {
 		fmt.Println(err, " error reading image")
 		return galleryImage
 	}
-	return image3.GaleryHelper{gallery.Id, ConvertingToString(gallery.Image), gallery.Description}
+	return image3.GalleryHelper{gallery.Id, gallery.Image, gallery.Description, bridgeId}
+}
+
+func GetBanner(pageName string) (pageData.BannerImageHelper, error) {
+	page, err := pageData_io.ReadPageDataWIthName(pageName)
+	if err != nil {
+		return pageData.BannerImageHelper{}, err
+	}
+	banner, err := pageData_io.ReadBannerN(page.BannerId)
+	if err != nil {
+		return pageData.BannerImageHelper{}, err
+	}
+	return banner, nil
 }

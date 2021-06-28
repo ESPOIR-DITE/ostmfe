@@ -488,6 +488,10 @@ func EditeProjectsHandler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			fmt.Println(err, " Error reading pageFlows")
 		}
+		adminName, adminImage, isTrue := adminHelper.CheckAdminDataInSession(app, r)
+		if !isTrue {
+			fmt.Println(isTrue, "error reading adminData")
+		}
 		commentNumber, pendingcomments, activeComments := projectCommentCalculation(projectId)
 		type PageData struct {
 			Events          []event.Event
@@ -501,6 +505,8 @@ func EditeProjectsHandler(app *config.Env) http.HandlerFunc {
 			PendingComments int64
 			ActiveComments  int64
 			PageFlows       []project2.ProjectPageFlow
+			AdminName       string
+			AdminImage      string
 		}
 		data := PageData{events,
 			Places,
@@ -510,7 +516,7 @@ func EditeProjectsHandler(app *config.Env) http.HandlerFunc {
 			GetProjectCommentsWithProjectId(projectId),
 			misc.GetProjectGallery(projectId),
 			commentNumber, pendingcomments, activeComments,
-			projectPageFlow,
+			projectPageFlow, adminName, adminImage,
 		}
 		files := []string{
 			app.Path + "admin/project/edite_project.html",
@@ -546,11 +552,17 @@ func NewProjectsHandler(app *config.Env) http.HandlerFunc {
 			backend_error = app.Session.GetString(r.Context(), "user-create-error")
 			app.Session.Remove(r.Context(), "user-create-error")
 		}
+		adminName, adminImage, isTrue := adminHelper.CheckAdminDataInSession(app, r)
+		if !isTrue {
+			fmt.Println(isTrue, "error reading adminData")
+		}
 		type PagePage struct {
 			Backend_error string
 			Unknown_error string
+			AdminName     string
+			AdminImage    string
 		}
-		data := PagePage{backend_error, unknown_error}
+		data := PagePage{backend_error, unknown_error, adminName, adminImage}
 		files := []string{
 			app.Path + "admin/project/new_project.html",
 			app.Path + "admin/template/navbar.html",
@@ -588,13 +600,20 @@ func ProjectsHandler(app *config.Env) http.HandlerFunc {
 			backend_error = app.Session.GetString(r.Context(), "user-create-error")
 			app.Session.Remove(r.Context(), "user-create-error")
 		}
+		adminName, adminImage, isTrue := adminHelper.CheckAdminDataInSession(app, r)
+		if !isTrue {
+			fmt.Println(isTrue, "error reading adminData")
+		}
 		type PagePage struct {
 			Backend_error string
 			Unknown_error string
 			Projects      []project2.Project
 			SidebarData   misc.SidebarData
+			AdminName     string
+			AdminImage    string
 		}
-		data := PagePage{backend_error, unknown_error, projects, misc.GetSideBarData("project", "")}
+		data := PagePage{backend_error, unknown_error, projects,
+			misc.GetSideBarData("project", ""), adminName, adminImage}
 
 		files := []string{
 			app.Path + "admin/project/projects.html",
@@ -806,14 +825,20 @@ func NewProjectHistoryHandler(app *config.Env) http.HandlerFunc {
 			http.Redirect(w, r, "/admin_user/project/new", 301)
 			return
 		}
+		adminName, adminImage, isTrue := adminHelper.CheckAdminDataInSession(app, r)
+		if !isTrue {
+			fmt.Println(isTrue, "error reading adminData")
+		}
 
 		type PageData struct {
 			Project       project2.Project
 			Projects      []project2.Project
 			Backend_error string
 			Unknown_error string
+			AdminName     string
+			AdminImage    string
 		}
-		data := PageData{project, projects, backend_error, unknown_error}
+		data := PageData{project, projects, backend_error, unknown_error, adminName, adminImage}
 		files := []string{
 			//app.Path + "admin/project/new_project_history.html",
 			app.Path + "admin/project/projects_history.html",
@@ -832,6 +857,7 @@ func NewProjectHistoryHandler(app *config.Env) http.HandlerFunc {
 		}
 	}
 }
+
 func ProjectUpdatePictureHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if !adminHelper.CheckAdminInSession(app, r) {

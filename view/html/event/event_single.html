@@ -40,7 +40,7 @@
         {{template "navigator" .}}
 
             <!-- start banner Area -->
-            <section class="banner-area relative" id="home">
+        <section {{if .ProjectBanner}} style="background: url('data:image/jpeg;base64,{{.ProjectBanner}}') center; width: 100%;background-size: cover;background-color: rgba(0, 0, 0, 0.7);" class="relative banner" {{else}}class="banner-area relative" {{end}}  id="home" >
                 <div class="overlay overlay-bg"></div>
                 <div class="container">
                     <div class="row d-flex align-items-center justify-content-center">
@@ -48,7 +48,7 @@
                             <h1 class="text-white">
                                 {{.EventData.Event.Name}}
                             </h1>
-                            <p class="text-white link-nav"><a href="/">Home </a>  <span class="lnr lnr-arrow-right"></span>  <a href="#"> Event</a></p>
+                            <p class="text-white link-nav"><a href="/">Home </a>  <span class="lnr lnr-arrow-right"></span>  <a href="/event"> Event</a></p>
                         </div>
                     </div>
                 </div>
@@ -221,7 +221,7 @@
                     {{with .GalleryImages}}
                         {{range .}}
                             <div class="single-exibition item">
-                                <img id='base64image' height="250px"  src='data:image/jpeg;base64,{{.Gallery.Image}}' alt="">
+                                <img  height="250px"  src='data:image/jpeg;base64,{{.Gallery.Image}}' alt="">
                                 <h2>
                                     {{.Gallery.Description}}
                                 </h2>

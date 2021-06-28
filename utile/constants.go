@@ -1,8 +1,8 @@
 package utile
 
 const (
-	PROFILE   = "Profile"
-	SECONDARY = "other"
+	PROFILE     = "Profile-Image"
+	DESCRIPTIVE = "Descriptive"
 )
 const (
 	SuperStarSite  = "Superstars’ site"

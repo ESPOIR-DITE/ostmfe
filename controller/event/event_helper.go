@@ -128,7 +128,7 @@ func GetEventPeopleData(eventId string) []people.People {
 					}
 				}
 				//I am adding the image in deathdate variale
-				peopleObject := people.People{peopleObej.Id, peopleObej.Name, peopleObej.Surname, misc.FormatDateMonth(peopleObej.BirthDate), profileImage.Id, peopleObej.Origin, peopleObej.Profession, peopleObej.Brief}
+				peopleObject := people.People{peopleObej.Id, peopleObej.Name, peopleObej.Surname, misc.FormatDateMonth(peopleObej.BirthDate), profileImage.Id, peopleObej.Origin, peopleObej.Profession, peopleObej.Brief, peopleObej.HistoriesId}
 				peoples = append(peoples, peopleObject)
 			}
 		}

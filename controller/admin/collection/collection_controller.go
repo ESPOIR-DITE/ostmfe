@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"ostmfe/config"
+	"ostmfe/controller/admin/adminHelper"
 	"ostmfe/controller/misc"
 	"ostmfe/domain/collection"
 	"ostmfe/io/collection_io"
@@ -738,6 +739,7 @@ func CollectionHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var unknown_error string
 		var backend_error string
+
 		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
 			unknown_error = app.Session.GetString(r.Context(), "creation-unknown-error")
 			app.Session.Remove(r.Context(), "creation-unknown-error")
@@ -752,6 +754,10 @@ func CollectionHandler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			fmt.Println(err, " error reading collections")
 		}
+		adminName, adminImage, isTrue := adminHelper.CheckAdminDataInSession(app, r)
+		if !isTrue {
+			fmt.Println(isTrue, "error reading adminData")
+		}
 
 		type PagePage struct {
 			Backend_error  string
@@ -759,8 +765,14 @@ func CollectionHandler(app *config.Env) http.HandlerFunc {
 			Collections    []misc.CollectionBridge
 			CollectionType []collection.CollectionTypes
 			SidebarData    misc.SidebarData
+			AdminName      string
+			AdminImage     string
 		}
-		data := PagePage{backend_error, unknown_error, collections, collectionType, misc.GetSideBarData("collection", "collection")}
+		data := PagePage{backend_error,
+			unknown_error, collections,
+			collectionType,
+			misc.GetSideBarData("collection", "collection"),
+			adminName, adminImage}
 		files := []string{
 			app.Path + "admin/collection/collections.html",
 			app.Path + "admin/template/navbar.html",

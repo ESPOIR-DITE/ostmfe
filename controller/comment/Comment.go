@@ -41,7 +41,7 @@ func getGroupComment(groupId string) []comment.CommentHelper {
 
 		//fmt.Println("Id: ",myComment.Id,"\n Comment ParentId: ",myComment.ParentCommentId,"\n Comment: ",myComment.Comment)
 		if myComment.Comment != nil {
-			commentHelper := comment.CommentHelper{myComment.Id, myComment.Email, myComment.Name, misc.FormatDateMonth(myComment.Date), misc.ConvertingToString(myComment.Comment), myComment.ParentCommentId, myComment.Stat}
+			commentHelper := comment.CommentHelper{myComment.Id, myComment.Email, myComment.Name, misc.FormatDateMonth(myComment.Date), misc.ConvertingToString(myComment.Comment), myComment.ParentCommentId, myComment.Stat, groupComment.Id}
 			myCommentObject = append(myCommentObject, commentHelper)
 		}
 	}
@@ -78,7 +78,7 @@ func getProjectComment(projectId string) []comment.CommentHelper {
 			fmt.Println("error reading Comment")
 		}
 		if myComment.Comment != nil {
-			commentHelper := comment.CommentHelper{myComment.Id, myComment.Email, myComment.Name, misc.FormatDateMonth(myComment.Date), misc.ConvertingToString(myComment.Comment), myComment.ParentCommentId, myComment.Stat}
+			commentHelper := comment.CommentHelper{myComment.Id, myComment.Email, myComment.Name, misc.FormatDateMonth(myComment.Date), misc.ConvertingToString(myComment.Comment), myComment.ParentCommentId, myComment.Stat, projectComment.Id}
 			myCommentObject = append(myCommentObject, commentHelper)
 		}
 	}
@@ -116,7 +116,7 @@ func getPeopleComments(eventId string) []comment.CommentHelper {
 		if err != nil {
 			fmt.Println("error reading Comment")
 		} else {
-			commentHelper := comment.CommentHelper{myComment.Id, myComment.Email, myComment.Name, misc.FormatDateMonth(myComment.Date), misc.ConvertingToString(myComment.Comment), myComment.ParentCommentId, myComment.Stat}
+			commentHelper := comment.CommentHelper{myComment.Id, myComment.Email, myComment.Name, misc.FormatDateMonth(myComment.Date), misc.ConvertingToString(myComment.Comment), myComment.ParentCommentId, myComment.Stat, eventComment.Id}
 			myCommentObject = append(myCommentObject, commentHelper)
 		}
 	}
@@ -151,7 +151,7 @@ func getSubComment(parentComment string) []comment.CommentHelper {
 	}
 	for _, eventComment := range subComments {
 		if eventComment.ParentCommentId == parentComment && eventComment.Comment != nil {
-			commentHelper := comment.CommentHelper{eventComment.Id, eventComment.Email, eventComment.Name, misc.FormatDateMonth(eventComment.Date), misc.ConvertingToString(eventComment.Comment), eventComment.ParentCommentId, eventComment.Stat}
+			commentHelper := comment.CommentHelper{eventComment.Id, eventComment.Email, eventComment.Name, misc.FormatDateMonth(eventComment.Date), misc.ConvertingToString(eventComment.Comment), eventComment.ParentCommentId, eventComment.Stat, eventComment.Id}
 			myComments = append(myComments, commentHelper)
 		}
 	}
@@ -171,7 +171,7 @@ func getComments(eventId string) []comment.CommentHelper {
 		if err != nil {
 			fmt.Println("error reading Comment")
 		} else {
-			commentHelper := comment.CommentHelper{myComment.Id, myComment.Email, myComment.Name, misc.FormatDateMonth(myComment.Date), misc.ConvertingToString(myComment.Comment), myComment.ParentCommentId, myComment.Stat}
+			commentHelper := comment.CommentHelper{myComment.Id, myComment.Email, myComment.Name, misc.FormatDateMonth(myComment.Date), misc.ConvertingToString(myComment.Comment), myComment.ParentCommentId, myComment.Stat, eventComment.Id}
 			myCommentObject = append(myCommentObject, commentHelper)
 		}
 	}

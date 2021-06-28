@@ -208,15 +208,22 @@ func homeContributionHanler(app *config.Env) http.HandlerFunc {
 			backend_error = app.Session.GetString(r.Context(), "user-create-error")
 			app.Session.Remove(r.Context(), "user-create-error")
 		}
+		adminName, adminImage, isTrue := adminHelper.CheckAdminDataInSession(app, r)
+		if !isTrue {
+			fmt.Println(isTrue, "error reading adminData")
+		}
 
 		type PageData struct {
 			Contributions []ContributionFileAgregration
 			SidebarData   misc.SidebarData
 			Backend_error string
 			Unknown_error string
+			AdminName     string
+			AdminImage    string
 		}
 
-		data := PageData{getContributionWithFile(), misc.GetSideBarData("contribution", ""), backend_error, unknown_error}
+		data := PageData{getContributionWithFile(), misc.GetSideBarData("contribution", ""),
+			backend_error, unknown_error, adminName, adminImage}
 		files := []string{
 			app.Path + "admin/contribution/contribution.html",
 			app.Path + "admin/template/navbar.html",
@@ -328,6 +335,9 @@ func CreateFileType(app *config.Env) http.HandlerFunc {
 
 func homeHanler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
 		var success_notice string
 		if app.Session.GetString(r.Context(), "creation-successful") != "" {
 			success_notice = app.Session.GetString(r.Context(), "creation-successful")
@@ -346,14 +356,21 @@ func homeHanler(app *config.Env) http.HandlerFunc {
 			fmt.Println("error reading placeCategories")
 		}
 
+		adminName, adminImage, isTrue := adminHelper.CheckAdminDataInSession(app, r)
+		if !isTrue {
+			fmt.Println(isTrue, "error reading adminData")
+		}
 		type PageData struct {
 			Success_notice    string
 			SidebarData       misc.SidebarData
 			Contribution      []contribution.Contribution
 			ContributionTypes []contribution.ContributionFileType
 			PlaceCategories   []place.PlaceCategory
+			AdminName         string
+			AdminImage        string
 		}
-		data := PageData{success_notice, misc.GetSideBarData("setting", ""), contributions, contributionFileTypes, placeCategories}
+		data := PageData{success_notice, misc.GetSideBarData("setting", ""),
+			contributions, contributionFileTypes, placeCategories, adminName, adminImage}
 		files := []string{
 			app.Path + "admin/settings/admin-settings.html",
 			app.Path + "admin/template/navbar.html",

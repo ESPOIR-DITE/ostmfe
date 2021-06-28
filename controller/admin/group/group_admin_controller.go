@@ -6,21 +6,23 @@ import (
 	"fmt"
 	"github.com/go-chi/chi"
 	"html/template"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"ostmfe/config"
 	"ostmfe/controller/admin/adminHelper"
+	"ostmfe/controller/constates"
 	"ostmfe/controller/misc"
 	"ostmfe/domain/comment"
 	"ostmfe/domain/group"
 	history2 "ostmfe/domain/history"
 	"ostmfe/domain/image"
+	"ostmfe/domain/pages"
 	partner2 "ostmfe/domain/partner"
 	project2 "ostmfe/domain/project"
 	"ostmfe/io/group_io"
 	"ostmfe/io/history_io"
 	"ostmfe/io/image_io"
+	"ostmfe/io/pages/admin"
 	"ostmfe/io/partner_io"
 	"ostmfe/io/project_io"
 	"ostmfe/utile"
@@ -45,10 +47,63 @@ func GroupHome(app *config.Env) http.Handler {
 	r.Post("/add_group_pictures/{groupId}", AddGroupGallery(app))
 
 	//Gallery
-	r.Post("/create-gallery", CreateEventGalleryHandler(app))
+	r.Post("/create-gallery", CreateGroupGalleryHandler(app))
 	r.Get("/delete-gallery/{pictureId}/{groupId}/{groupGalleryId}", DeleteGalleryHandler(app))
 
+	r.Post("/create-descriptive-Image", AddDescriptiveImage(app))
+
 	return r
+}
+
+func AddDescriptiveImage(app *config.Env) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var content []byte
+		r.ParseForm()
+		file, _, err := r.FormFile("file")
+		groupId := r.PostFormValue("groupId")
+		description := r.PostFormValue("description")
+		if err != nil {
+			fmt.Println(err, "<<<<<< error reading contribution file>>>>This error should happen>>>")
+		} else {
+			reader := bufio.NewReader(file)
+			content, _ = ioutil.ReadAll(reader)
+		}
+		if groupId != "" && description != "" {
+			ImageObject := image.Images{"", content, description}
+			imageObj, err := image_io.CreateImage(ImageObject)
+			if err != nil {
+				fmt.Println(err, " error creating image")
+			} else {
+				ImageType, err := image_io.ReadImageTypeWithName(constates.DESCRIPTIVE)
+				if err != nil {
+					fmt.Println(err, " error Reading image Type")
+				}
+				groupImage := group.GroupImage{"", imageObj.Id, groupId, ImageType.Id, description}
+				_, errx := group_io.CreateGroupImage(groupImage)
+				if errx != nil {
+					fmt.Println(err, " error creating GroupImage")
+					if app.Session.GetString(r.Context(), "user-create-error") != "" {
+						app.Session.Remove(r.Context(), "user-create-error")
+					}
+					app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+					http.Redirect(w, r, "/admin_user/group/edit/"+groupId, 301)
+					return
+				}
+				if app.Session.GetString(r.Context(), "creation-successful") != "" {
+					app.Session.Remove(r.Context(), "creation-successful")
+				}
+				app.Session.Put(r.Context(), "creation-successful", "You have successfully deleted an event Group")
+				http.Redirect(w, r, "/admin_user/group/edit/"+groupId, 301)
+				return
+			}
+		}
+		if app.Session.GetString(r.Context(), "user-create-error") != "" {
+			app.Session.Remove(r.Context(), "user-create-error")
+		}
+		app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+		http.Redirect(w, r, "/admin_user/group/edit/"+groupId, 301)
+		return
+	}
 }
 
 func AddGroupGallery(app *config.Env) http.HandlerFunc {
@@ -182,7 +237,7 @@ func DeleteGalleryHandler(app *config.Env) http.HandlerFunc {
 	}
 }
 
-func CreateEventGalleryHandler(app *config.Env) http.HandlerFunc {
+func CreateGroupGalleryHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if !adminHelper.CheckAdminInSession(app, r) {
 			http.Redirect(w, r, "/administration/", 301)
@@ -241,10 +296,11 @@ func UpdateDetailsHandler(app *config.Env) http.HandlerFunc {
 		groupId := r.PostFormValue("groupId")
 		groupName := r.PostFormValue("groupName")
 		Description := r.PostFormValue("Description")
+		historyId := r.PostFormValue("historyId")
 
 		if Description != "" && groupId != "" && groupName != "" {
-			groupObejct := group.Groupes{groupId, groupName, Description}
-			group, err := group_io.CreateGroup(groupObejct)
+			groupObejct := group.Groupes{groupId, groupName, Description, historyId}
+			group, err := group_io.UpdateGroup(groupObejct)
 			if err != nil {
 				fmt.Println(err, " something went wrong! could not create group")
 				if app.Session.GetString(r.Context(), "user-create-error") != "" {
@@ -376,44 +432,33 @@ func UpdateImageHandler(app *config.Env) http.HandlerFunc {
 			http.Redirect(w, r, "/administration/", 301)
 		}
 		r.ParseForm()
+		var content []byte
 		file, _, err := r.FormFile("file")
 		groupId := r.PostFormValue("groupId")
-		groupImageId := r.PostFormValue("groupImageId")
-		imageType := r.PostFormValue("imageType")
 		imageId := r.PostFormValue("imageId")
 		if err != nil {
-			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
+			fmt.Println(err, "<<<error reading file>>>>This error may happen if there is no picture selected>>>")
+		} else {
+			reader := bufio.NewReader(file)
+			content, _ = ioutil.ReadAll(reader)
 		}
-		myGroup, err := group_io.ReadGroup(groupId)
-		if err != nil {
-			fmt.Println(err, " could not read group")
-			if app.Session.GetString(r.Context(), "user-create-error") != "" {
-				app.Session.Remove(r.Context(), "user-create-error")
+		if groupId != "" {
+			imageObject := image.Images{imageId, content, ""}
+			_, err := image_io.CreateImage(imageObject)
+			if err != nil {
+				fmt.Println(err, " error creating GroupImage")
+				if app.Session.GetString(r.Context(), "user-create-error") != "" {
+					app.Session.Remove(r.Context(), "user-create-error")
+				}
+				app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
+				http.Redirect(w, r, "/admin_user/group/edit/"+groupId, 301)
+				return
 			}
-			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-			http.Redirect(w, r, "/admin_user/group", 301)
-			return
-		}
-
-		filesArray := []io.Reader{file}
-		filesByteArray := misc.CheckFiles(filesArray)
-		groupImage := group.GroupImage{groupImageId, imageId, groupId, imageType, ""}
-
-		helper := group.GroupImageHelper{groupImage, filesByteArray}
-		_, errr := group_io.UpdateGroupImage(helper)
-		if errr != nil {
-			fmt.Println(errr, " error creating GroupImage")
-			if app.Session.GetString(r.Context(), "user-create-error") != "" {
-				app.Session.Remove(r.Context(), "user-create-error")
-			}
-			app.Session.Put(r.Context(), "user-create-error", "An error has occurred, Please try again late")
-			http.Redirect(w, r, "/admin_user/group/edit/"+groupId, 301)
-			return
 		}
 		if app.Session.GetString(r.Context(), "creation-successful") != "" {
 			app.Session.Remove(r.Context(), "creation-successful")
 		}
-		app.Session.Put(r.Context(), "creation-successful", "You have successfully created image(s) for the following Group  : "+myGroup.Name)
+		app.Session.Put(r.Context(), "creation-successful", "You have successfully updated an image for a Group")
 		http.Redirect(w, r, "/admin_user/group/edit/"+groupId, 301)
 		return
 	}
@@ -428,7 +473,7 @@ func CreateImageHandler(app *config.Env) http.HandlerFunc {
 		var content []byte
 		file, _, err := r.FormFile("file")
 		groupId := r.PostFormValue("groupId")
-		imageType := r.PostFormValue("imageType")
+		imageType := adminHelper.GetProfileImageId()
 		if err != nil {
 			fmt.Println(err, "<<<<<< error reading file>>>>This error should happen>>>")
 			http.Redirect(w, r, "/admin_user/group/edit/"+groupId, 301)
@@ -478,8 +523,21 @@ func GroupEditHandler(app *config.Env) http.HandlerFunc {
 		groupId := chi.URLParam(r, "groupId")
 
 		commentNumber, pendingcomments, activeComments := groupCommentCalculation(groupId)
+		adminName, adminImage, isTrue := adminHelper.CheckAdminDataInSession(app, r)
+		if !isTrue {
+			fmt.Println(isTrue, "error reading adminData")
+		}
+
+		groupAdinData, err := admin.GetGroupAdminEditPageData(groupId)
+		members, number, err := GetMembers(groupId)
+		if err != nil {
+			fmt.Println(err, " error reading group Member")
+		}
 
 		type PageData struct {
+			Members         []MemberData
+			GroupNumber     int64
+			PageData        pages.GroupAdminEditPresentation
 			Groups          GroupData
 			SidebarData     misc.SidebarData
 			Gallery         []misc.GroupGalleryImages
@@ -487,15 +545,18 @@ func GroupEditHandler(app *config.Env) http.HandlerFunc {
 			CommentNumber   int64
 			PendingComments int64
 			ActiveComments  int64
+			AdminName       string
+			AdminImage      string
 		}
 
-		data := PageData{GetGroupData(groupId),
+		data := PageData{members, number, groupAdinData,
+			GetGroupData(groupId),
 			misc.GetSideBarData("group", ""),
 			misc.GetGroupGallery(groupId),
 			GetGroupCommentsWithEventId(groupId),
 			commentNumber,
 			pendingcomments,
-			activeComments}
+			activeComments, adminName, adminImage}
 
 		files := []string{
 			app.Path + "admin/group/edit_group.html",
@@ -548,14 +609,20 @@ func GroupPictureHandler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			fmt.Println(err, " error reading all the partners")
 		}
+		adminName, adminImage, isTrue := adminHelper.CheckAdminDataInSession(app, r)
+		if !isTrue {
+			fmt.Println(isTrue, "error reading adminData")
+		}
 		type PageData struct {
 			Projects      []project2.Project
 			Partners      []partner2.Partner
 			Group         group.Groupes
 			Backend_error string
 			Unknown_error string
+			AdminName     string
+			AdminImage    string
 		}
-		data := PageData{projects, partners, groupObject, backend_error, unknown_error}
+		data := PageData{projects, partners, groupObject, backend_error, unknown_error, adminName, adminImage}
 		files := []string{
 			app.Path + "admin/group/group_image.html",
 			app.Path + "admin/template/navbar.html",
@@ -596,7 +663,24 @@ func CreateGroupsHandler(app *config.Env) http.HandlerFunc {
 		historyContent := r.PostFormValue("mytextarea")
 
 		if groupName != "" && description != "" {
-			groupObject := group.Groupes{"", groupName, description}
+
+			var historyReturnObject history2.Histories
+			//Creating group history.
+			if historyContent != "" {
+				history := history2.Histories{"", misc.ConvertToByteArray(historyContent)}
+
+				historyReturnObject, err = history_io.CreateHistorie(history)
+				if err != nil {
+					fmt.Println(err, " error when creating history")
+				} else {
+					_, err := group_io.CreateGroupHistory(group.GroupHistory{"", newGroup.Id, historyReturnObject.Id})
+					if err != nil {
+						fmt.Println(err, " error when creating group history")
+					}
+				}
+			}
+
+			groupObject := group.Groupes{"", groupName, description, historyReturnObject.Id}
 			errs := errors.New("")
 			newGroup, errs = group_io.CreateGroup(groupObject)
 			if errs != nil {
@@ -608,20 +692,7 @@ func CreateGroupsHandler(app *config.Env) http.HandlerFunc {
 				http.Redirect(w, r, "/admin_user/group", 301)
 				return
 			}
-			//Creating group history.
-			if historyContent != "" {
-				history := history2.Histories{"", misc.ConvertToByteArray(historyContent)}
 
-				historyReturnObject, err := history_io.CreateHistorie(history)
-				if err != nil {
-					fmt.Println(err, " error when creating history")
-				} else {
-					_, err := group_io.CreateGroupHistory(group.GroupHistory{"", newGroup.Id, historyReturnObject.Id})
-					if err != nil {
-						fmt.Println(err, " error when creating group history")
-					}
-				}
-			}
 			//Group Image
 			imageObject := image.Images{"", content, "profile"}
 			imageReturnObject, err := image_io.CreateImage(imageObject)
@@ -677,6 +748,13 @@ func CreateGroupsHandler(app *config.Env) http.HandlerFunc {
 
 func GroupsHandler(app *config.Env) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if !adminHelper.CheckAdminInSession(app, r) {
+			http.Redirect(w, r, "/administration/", 301)
+		}
+		adminName, adminImage, isTrue := adminHelper.CheckAdminDataInSession(app, r)
+		if !isTrue {
+			fmt.Println(isTrue, "error reading adminData")
+		}
 		var unknown_error string
 		var backend_error string
 		if app.Session.GetString(r.Context(), "creation-unknown-error") != "" {
@@ -700,6 +778,7 @@ func GroupsHandler(app *config.Env) http.HandlerFunc {
 		if err != nil {
 			fmt.Println(err, " error reading all the partners")
 		}
+
 		type PageData struct {
 			Projects      []project2.Project
 			Partners      []partner2.Partner
@@ -707,8 +786,13 @@ func GroupsHandler(app *config.Env) http.HandlerFunc {
 			Unknown_error string
 			Groups        []group.Groupes
 			SidebarData   misc.SidebarData
+			AdminName     string
+			AdminImage    string
 		}
-		data := PageData{projects, partners, backend_error, unknown_error, groups, misc.GetSideBarData("group", "")}
+		data := PageData{projects, partners,
+			backend_error,
+			unknown_error, groups,
+			misc.GetSideBarData("group", ""), adminName, adminImage}
 		files := []string{
 			app.Path + "admin/group/groups.html",
 			app.Path + "admin/template/navbar.html",

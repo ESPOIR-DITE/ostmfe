@@ -89,6 +89,8 @@
                     </div>
                     <form class="user" id="myform" method="post" action="/admin_user/page/create_section" >
                       <input type="hidden" class="form-control" name="pageId" value="{{.PageAggregatedData.PageDate.Id}}">
+                      <input type="hidden" class="form-control" name="pageName" value="{{.PageAggregatedData.PageDate.PageName}}">
+
                       <div class="form-group ">
                         <label>Section Name</label>
                         <input type="text" class="form-control" name="name" id="exampleFirstName" placeholder="name">
@@ -123,106 +125,57 @@
           </div>
         </div>
 
-        <!-- Page Banner-->
         <div class="card shadow mb-4">
           <!-- Card Header - Accordion -->
-          <a href="#collapseCardBanner" class="d-block card-header py-3 btn-success" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
-            <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Page Banner</h6>
+          <a href="#collapseCardImage" class="d-block card-header py-3 btn-success" data-toggle="collapse"
+             role="button" aria-expanded="true" aria-controls="collapseCardExample">
+            <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Banner</h6>
           </a>
           <!-- Card Content - Collapse -->
-          <div class="collapse " id="collapseCardBanner">
+          <div class="collapse " id="collapseCardImage">
             <div class="card-body p-0">
               <!-- Nested Row within Card Body -->
               <div class="row">
                 <div class="col-lg-12">
                   <div class="p-5">
-                    {{if .Backend_error}}
-                      <div class="text-center alert-warning">
-                        <a class="small" href="#">{{.Backend_error}}</a>
-                      </div>
-                    {{end}}
-                    {{if .Unknown_error}}
-                      <div class="text-center alert-warning">
-                        <a class="small" href="#">{{.Unknown_error}}</a>
-                      </div>
-                    {{end}}
-                    <div class="text-center">
-                      <h1 class="h4 text-gray-900 mb-4">Page Section</h1>
-                    </div>
-                    <form class="user" id="myform" method="post" action="/admin_user/page/create_banner" enctype="multipart/form-data">
-                      <input type="hidden" class="form-control" name="pageId" value="{{.PageAggregatedData.PageDate.Id}}">
-                      <div class="form-group ">
-                        <label>Section picture <small>Select a picture in jpg format of size 1900px</small></label>
-                        <input type="file" class="form-control" name="file" id="exampleFirstName" placeholder="banner">
-                      </div>
-                      <div class="form-group ">
-                        <label>Page Name <small> Every page should take the pagename-page name when creating. Ex visit-page</small></label>
-                        <input type="text" class="form-control" name="pageName" id="exampleFirstName" placeholder="banner">
-                      </div>
-                      <div class="form-group">
-                        <label>Section Description</label>
-                        <textarea  class="form-control " style="height: 100px" name="description" id="exampleLastName" placeholder="Description"></textarea>
-                      </div>
+                    <div class="col-lg-12">
+                      <!-- Default Card Example -->
+                      <div class="card mb-4">
+                        <div class="card-header py-3">
+                          <div class="row" >
+                            <div class="col-lg-6">
+                              <h6 class="m-0 font-weight-bold text-primary">Page Banner</h6>
+                            </div>
+                            <div class="col-lg-6">
+                              {{if not .PageBanner.Image}}
+                              <a class="float-right" href="#" data-toggle="modal" data-target="#createBannerModel">
+                                <i class="fas fa-plus fa-sm fa-fw mr-2 text-gray-400"></i>
+                                Add
+                              </a>
+                              {{else}}
+                              <a class="float-right" href="#" data-toggle="modal" data-target="#updateBannerModel">
+                                <i class="fas fa-plus fa-sm fa-fw mr-2 text-gray-400"></i>
+                                update
+                              </a>
+                              {{end}}
+                            </div>
+                          </div>
+                        </div>
 
-                      <button type="submit" class="btn btn-primary  btn-block">
-                        Submit
-                      </button>
-                      <hr>
-                      <a href="/admin_user" class="btn btn-google btn-block">
-                        <i class="fab"></i> Cancel
-                      </a>
-                    </form>
-                    <hr>
+                        <div class="card-body">
+                          {{if .PageBanner.Image}}
+                          <img class="img-fluid" id='base64image' src='data:image/jpeg;base64,{{.PageBanner.Id}}' alt="" ></td>
+                          {{end}}
+                        </div>
+                      </div>
                   </div>
                 </div>
               </div>
-
-
-              <div class="row">
-                <div class="col-lg-12">
-                  <div class="p-5">
-              <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                  <thead>
-                  <tr>
-                    <th>Nr</th>
-                    <th>Image</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Action</th>
-                    <th>Action</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  {{with .PageBanner}}
-                    {{range $i, $e := .}}
-                      <tr>
-                        <td>{{$i}}</td>
-                        <td><img class="img-fluid" id='base64image' src='data:image/jpeg;base64,{{.Image}}' alt="" width="150px"></td>
-                        <td>{{$e.PageBanner.PageName}}</td>
-                        <td>{{$e.PageBanner.Description}}</td>
-                        <td><a href="/admin_user/page/edit/{{$e.PageBanner.Id}}" class="btn btn-primary btn-user btn-block">
-                            Edit
-                          </a>
-                        </td>
-                        <td>
-                          <a class="btn btn-google btn-user btn-block" data-toggle="modal" onclick=""  data-target="#exampleModalHistory">
-                            Delete
-                          </a>
-                        </td>
-                      </tr>
-                    {{end}}
-                  {{end}}
-                  </tbody>
-                </table>
-              </div>
-                </div>
-                </div>
-              </div>
             </div>
-
           </div>
         </div>
+        </div>
+
 
 
         <!---Page Section---->
@@ -232,7 +185,7 @@
           <!-- Card Header - Accordion -->
           <a href="#collapseCardDetails{{.Id}}" class="d-block card-header py-3 btn-success" data-toggle="collapse"
              role="button" aria-expanded="true" aria-controls="collapseCardExample">
-            <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">{{.SectionName}}</h6>
+            <h6 class="m-0 font-weight-bold " style="color: #0b0b0b">Section Details</h6>
           </a>
           <!-- Card Content - Collapse -->
           <div class="collapse " id="collapseCardDetails{{.Id}}">
@@ -243,14 +196,18 @@
                   <!-- Default Card Example -->
                   <div class="card mb-4">
                     <div class="card-header py-3">
-                      <h6 class="m-0 font-weight-bold text-primary"> Details</h6>
+                      <h6 class="m-0 font-weight-bold text-primary"> {{.SectionName}} </h6>
                     </div>
                     <div class="card-body">
-                      <form class="user"method="post" id="" action="#">
+                      <form class="user"method="post"  action="/admin_user/page/update-section-name">
                         <input type="hidden"name="pageId" value="{{$.PageAggregatedData.PageDate.Id}}" class="form-control " >
                         <input type="hidden"name="sectionId" value="{{.SectionId}}" class="form-control " >
-                        <input type="hidden"name="pageSectionId" value="{{.Id}}" class="form-control " >
+                        <input type="hidden"name="pageSectionId" name="sectionName" value="{{.Id}}" class="form-control " >
 
+                        <div class="form-group ">
+                          <label>Description <small> Section Name </small></label>
+                          <input type="text" class="form-control" value="{{.SectionName}}">
+                        </div>
 
                         <div class="form-group ">
                           <label>Description <small> Only 150 characters </small></label>
@@ -364,6 +321,77 @@
       <div class="modal-footer">
         <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
         <a class="btn btn-primary" href="../login/login.html">Logout</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create a Banner-->
+<div class="modal fade" id="createBannerModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" >Ready to Leave?</h5>
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="user" id="myform" method="post" action="/admin_user/page/create_banner" enctype="multipart/form-data">
+          <input type="hidden" class="form-control" name="pageId" value="{{.PageAggregatedData.PageDate.Id}}">
+          <div class="form-group ">
+            <label>Section picture <small>Select a picture in jpg format of size 1900px</small></label>
+            <input type="file" class="form-control" name="file" id="exampleFirstName" placeholder="banner">
+          </div>
+          <div class="form-group ">
+            <label>Page Name <small> Every page should take the pagename-page name when creating. Ex visit-page</small></label>
+            <input type="text" class="form-control" name="pageName" id="exampleFirstName" placeholder="banner">
+          </div>
+          <div class="form-group">
+            <label>Section Description</label>
+            <textarea  class="form-control " style="height: 100px" name="description" id="exampleLastName" placeholder="Description"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary  btn-block">
+            Submit
+          </button>
+          <hr>
+          <a href="/admin_user" class="btn btn-google btn-block">
+            <i class="fab"></i> Cancel
+          </a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Update a Banner-->
+<div class="modal fade" id="updateBannerModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" >Ready to Leave?</h5>
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="user"  method="post" action="/admin_user/page/update_banner" enctype="multipart/form-data">
+          <input type="hidden" class="form-control" name="pageId" value="{{.PageAggregatedData.PageDate.Id}}">
+          <input type="hidden" class="form-control" name="bannerId" value="{{.PageBanner.Image}}">
+          <div class="form-group ">
+            <label>Section picture <small>Select a picture in jpg format of size 1900px</small></label>
+            <input type="file" class="form-control" name="file" placeholder="banner">
+          </div>
+
+          <button type="submit" class="btn btn-primary  btn-block">
+            Submit
+          </button>
+          <hr>
+          <a href="/admin_user" class="btn btn-google btn-block">
+            <i class="fab"></i> Cancel
+          </a>
+        </form>
       </div>
     </div>
   </div>

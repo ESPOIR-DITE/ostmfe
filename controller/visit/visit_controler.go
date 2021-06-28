@@ -62,13 +62,13 @@ func homeHandler(app *config.Env) http.HandlerFunc {
 		}
 
 		var bannerImage string
-		pageBanner, err := pageData_io.ReadPageBannerWIthPageName("visit-page")
+		banner, err := misc.GetBanner("Visit-page")
 		if err != nil {
 			fmt.Println(err, " There is an error when reading people pageBanner")
 		} else {
-			bannerImage = misc.GetBannerImage(pageBanner.BannerId)
+			bannerImage = banner.Id
 		}
-		data := PageData{getPageData("Visit"), bannerImage}
+		data := PageData{getPageData("Visit-page"), bannerImage}
 		files := []string{
 			app.Path + "visit/visit.html",
 			app.Path + "base_templates/navigator.html",
@@ -116,7 +116,7 @@ func getPageData(pageName string) VisitPageSection {
 			if err != nil {
 				fmt.Println(err, " error reading page")
 			} else {
-				if pageSection.SectionName == "welcome" {
+				if pageSection.SectionName == "Welcome" {
 					//fmt.Println(" Introduction",pageSection)
 					welcome = misc.ConvertingToString(pageDateSection.Content)
 				}

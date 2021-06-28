@@ -34,16 +34,16 @@
 {{template "navigator" .}}
 
 <!-- start banner Area -->
-<section class="banner-area relative" id="home">
+<section {{if .ProjectBanner}} style="background: url('data:image/jpeg;base64,{{.ProjectBanner}}') center; width: 100%;background-size: cover;background-color: rgba(0, 0, 0, 0.7);" class="relative banner" {{else}}class="banner-area relative" {{end}}  id="home" >
     <div class="overlay overlay-bg"></div>
     <div class="container">
         <div class="row d-flex align-items-center justify-content-center">
             <div class="about-content col-lg-12">
                 <h1 class="text-white">
-                    {{.GroupDataHistory.Group.Name}}
+                    {{.PageDatas.Group.Name}}
                 </h1>
                 <p class="text-white link-nav"><a href="/">Home </a> <span class="lnr lnr-arrow-right"></span> <a
-                            href="#"> Groups</a></p>
+                            href="/about_us/group"> Groups</a></p>
             </div>
         </div>
     </div>
@@ -58,15 +58,15 @@
             <div class="col-lg-8 post-list blog-post-list">
                 <div class="single-post">
                     <img id='base64image' height="400px"
-                         src='data:image/jpeg;base64,{{.GroupDataHistory.ProfileImage.Id}}' alt="">
+                         src='data:image/jpeg;base64,{{.PageDatas.ProfileImage.Image}}' alt="">
                     <hr>
                     <br>
-                    <h2>{{.GroupDataHistory.Group.Name}}</h2>
+                    <h2>{{.PageDatas.Group.Name}}</h2>
                     <br>
                     <div class="content-wrap" id="me">
                         <script>
                             var div = document.getElementById('me');
-                            var myvalue = {{.GroupDataHistory.History.History}}
+                            var myvalue = {{.PageDatas.History.History}}
                                 parseMe(myvalue);
 
                             function parseMe(value) {
@@ -78,6 +78,7 @@
                     <hr>
 
                     <!--Project Gallery-->
+                    {{if .PageDatas.Gallery}}
                     <div class="container">
                         <div class="row d-flex justify-content-center">
                             <div class="menu-content pb-60 col-lg-10">
@@ -89,13 +90,13 @@
                         </div>
                         <div class="row">
                             <div class="active-exibition-carusel">
-                                {{with .GalleryImages}}
+                                {{with .PageDatas.Gallery}}
                                 {{range .}}
                                 <div class="single-exibition item">
-                                    <img id='base64image' width="300px" src='data:image/jpeg;base64,{{.Gallery.Image}}' alt="">
+                                    <img width="300px" src='data:image/jpeg;base64,{{.Image}}' height="200px" alt="">
 
                                     <h2>
-                                        {{.Gallery.Description}}
+                                        {{.Description}}
                                     </h2>
                                 </div>
                                 {{end}}
@@ -103,79 +104,23 @@
                             </div>
                         </div>
                     </div>
+                    {{end}}
                     <br>
-
-                    <section class="contact-page-area section-gap">
-                        <div class="container">
-                            <div class="row">
-
-                                <h3 class="mb-30">How to Become part of this Group?</h3>
-
-                                <div class="col-lg-12">
-                                    <blockquote class="generic-blockquote">
-                                        The Museum Service of the Western Cape Department of <a
-                                                href="https://www.westerncape.gov.za/museums">Cultural</a> Affairs and
-                                        Sport (DCAS) aims to promote respect for cultural diversity in South Africa and
-                                        appreciation of our natural heritage. The Museum Service therefore sets out to
-                                        build understanding and pride of our diverse heritage through the affiliated
-                                        museums.
-                                        <br>
-                                    </blockquote>
-                                </div>
-
-                                <div class="col-lg-12">
-                                    <form class="form-area " id="myForm" action="mail.php" method="post"
-                                          class="contact-form text-right">
-                                        <div class="row">
-                                            <div class="col-lg-6 form-group">
-                                                <input name="name" placeholder="Enter your name"
-                                                       onfocus="this.placeholder = ''"
-                                                       onblur="this.placeholder = 'Enter your name'"
-                                                       class="common-input mb-20 form-control" required="" type="text">
-
-                                                <input name="email" placeholder="Enter email address"
-                                                       pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{1,63}$"
-                                                       onfocus="this.placeholder = ''"
-                                                       onblur="this.placeholder = 'Enter email address'"
-                                                       class="common-input mb-20 form-control" required="" type="email">
-
-                                                <input name="subject" placeholder="Enter your subject"
-                                                       onfocus="this.placeholder = ''"
-                                                       onblur="this.placeholder = 'Enter your subject'"
-                                                       class="common-input mb-20 form-control" required="" type="text">
-                                                <div class="mt-20 alert-msg" style="text-align: left;"></div>
-                                            </div>
-                                            <div class="col-lg-6 form-group">
-                                                <textarea class="common-textarea form-control" name="message"
-                                                          placeholder="Messege" onfocus="this.placeholder = ''"
-                                                          onblur="this.placeholder = 'Messege'" required=""></textarea>
-                                                <button class="primary-btn mt-20 text-white" style="float: right;">Send
-                                                    Message
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-
                     <!-- Start comment-sec Area -->
-                    {{template "comments" .}}
+                    {{template "comments"}}
                     <!-- End comment-sec Area -->
 
                     <!-- Start commentform Area -->
                     <section class="commentform-area pt-80">
                         <div class="container">
                             <form method="post" action="/about_us/create-comment">
-                                <h5 class="pb-50">Leave a Comment</h5>
+                                <h5 class="pb-50">Leave a Comment about this group</h5>
                                 <div class="row flex-row d-flex">
                                     <div class="col-lg-4 col-md-6">
                                         <input name="name" placeholder="Enter your name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your name'" class="common-input mb-20 form-control" required="" type="text">
                                         <input name="email" placeholder="Enter your email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your email'" class="common-input mb-20 form-control" required="" type="email">
                                         <input name="Subject" placeholder="Subject" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your Subject'" class="common-input mb-20 form-control" required="" type="text">
-                                        <input name="groupId" value="{{.GroupDataHistory.Group.Id}}" type="hidden">
+                                        <input name="groupId" value="{{.PageDatas.Group.Id}}" type="hidden">
 
                                     </div>
                                     <div class="col-lg-8 col-md-6">
@@ -199,13 +144,14 @@
                     </form>
                 </div-->
 
-                {{with .GroupDataHistory.Images}}
+
+                {{with .PageDatas.DescriptionImages}}
                     {{range .}}
                         <div class="single-widget protfolio-widget">
-                            <img id='base64image' height="200px" src='data:image/jpeg;base64,{{.Id}}' alt="">
-                            <a href="#"><h4>{{$.GroupDataHistory.Group.Name}}</h4></a>
+                            <img id='base64image' height="200px" src='data:image/jpeg;base64,{{.Image}}' alt="">
+                            <a href="#"><h4></h4></a>
                             <p>
-                                {{$.GroupDataHistory.Group.Description}}
+                                {{.Description}}
                             </p>
                             <ul>
                                 <li><a href="#"><i class="fa fa-facebook"></i></a></li>
@@ -217,6 +163,38 @@
                     {{end}}
                 {{end}}
 
+
+                {{if.PageDatas.PeoplePresentation}}
+                <div class="single-widget recent-posts-widget">
+
+                    <h4 class="title">Peoples</h4>
+
+                    <div class="blog-list ">
+                        {{with .PageDatas.PeoplePresentation}}
+                        {{range .}}
+                        <div class="single-recent-post d-flex flex-row">
+                            <div class="recent-thumb">
+                                <img {{if .Image}} src='data:image/jpeg;base64,{{.Image}}'width="100px" alt=""{{end}}/>
+                            </div>
+                            <div class="recent-details">
+                                <a href="/people/people/{{.Id}}">
+                                    <h4>
+                                        {{.Name}} {{.Surname}}
+                                        <br>
+                                    </h4>
+                                </a>
+                                <p>
+                                    {{.Brief}}
+                                </p>
+                                <br>
+                            </div>
+                            <br>
+                        </div>
+                        {{end}}
+                        {{end}}
+                    </div>
+                </div>
+                {{end}}
 
                 {{if .EventData}}
                     <div class="single-widget recent-posts-widget">
@@ -262,8 +240,8 @@
         integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
         crossorigin="anonymous"></script>
 <script src="../../assets/js/vendor/bootstrap.min.js"></script>
-<script type="text/javascript"
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA"></script>
+<!--<script type="text/javascript"-->
+<!--        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhOdIF3Y9382fqJYt5I_sswSrEw5eihAA"></script>-->
 <script src="../../assets/js/easing.min.js"></script>
 <script src="../../assets/js/hoverIntent.js"></script>
 <script src="../../assets/js/superfish.min.js"></script>

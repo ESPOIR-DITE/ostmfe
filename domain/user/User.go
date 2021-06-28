@@ -1,6 +1,10 @@
 package user
 
-import "time"
+import (
+	history2 "ostmfe/domain/history"
+	"ostmfe/domain/image"
+	"time"
+)
 
 type Users struct {
 	Email   string `json:"email"`
@@ -30,6 +34,11 @@ type UserImage struct {
 	Description string `json:"description"`
 }
 type UserImageHelper struct {
-	Files     [][]byte  `json:"files"`
-	UserImage UserImage `json:"userImage"`
+	Users  Users        `json:"users"`
+	Images image.Images `json:"images"`
+}
+type StaffImageHelper struct {
+	Users     Users                    `json:"users"`
+	Images    image.Images             `json:"images"`
+	Histories history2.HistoriesHelper `json:"histories"`
 }

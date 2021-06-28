@@ -155,8 +155,17 @@
         <!-- Nav Item - User Information -->
         <li class="nav-item dropdown no-arrow">
             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{if .AdminName}}
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{.AdminName}}</span>
+                {{else}}
                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">Admin</span>
+                {{end}}
+                {{if .AdminImage}}
+                <img class="img-profile rounded-circle" id='base64image'
+                     src='data:image/jpeg;base64,{{.AdminImage}}' alt=""/>
+                {{else}}
                 <img class="img-profile rounded-circle" src="../../assets/img/blog/c2.jpg">
+                {{end}}
             </a>
             <!-- Dropdown - User Information -->
             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">

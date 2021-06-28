@@ -177,5 +177,6 @@ func getPeopleObjectReady(peopleObject people.People) people.People {
 		deathDate,
 		peopleObject.Origin,
 		peopleObject.Profession,
-		peopleObject.Brief}
+		peopleObject.Brief,
+		peopleObject.HistoriesId}
 }

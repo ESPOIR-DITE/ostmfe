@@ -4,30 +4,9 @@
         <div class="row flex-column">
             <h5 class="text-uppercase pb-80">{{.CommentNumber}} Comments</h5>
             <br>
+
             {{with .Comments}}
-                {{range .}}
-            <div class="comment-list">
-                <div class="single-comment justify-content-between d-flex">
-                    <div class="user justify-content-between d-flex">
-                        <div class="thumb">
-                            <img src="../../assets/img/blog/c1.jpg" alt="">
-                        </div>
-                        <div class="desc">
-                            <h5><a href="#">{{.ParentComment.Name}}</a></h5>
-                            <p class="date">{{.ParentComment.Date}}</p>
-                            <p class="comment">
-                                {{.ParentComment.Comment}}
-                            </p>
-                        </div>
-                    </div>
-                    <!--div class="reply-btn">
-                        <a href="" class="btn-reply text-uppercase">reply</a>
-                    </div-->
-                </div>
-            </div>
-                {{if .SubComment}}
-                    {{with .Commets}}
-                        {{range .}}
+            {{range .}}
             <div class="comment-list left-padding">
                 <div class="single-comment justify-content-between d-flex">
                     <div class="user justify-content-between d-flex">
@@ -35,10 +14,10 @@
                             <img src="../../assets/img/blog/c2.jpg" alt="">
                         </div>
                         <div class="desc">
-                            <h5><a href="#">{{.SubComment.Name}}</a></h5>
-                            <p class="date">{{.SubComment.Date}}</p>
+                            <h5><a href="#">{{.Name}}</a></h5>
+                            <p class="date">{{.Date}}</p>
                             <p class="comment">
-                                {{.SubComment.Comment}}
+                                {{.Comment}}
                             </p>
                         </div>
                     </div>
@@ -47,12 +26,10 @@
                     </div>
                 </div>
             </div>
-                {{end}}
-                {{end}}
-                {{end}}
-            <br>
-                {{end}}
             {{end}}
+            {{end}}
+            <br>
+
         </div>
     </div>
 </section>

@@ -103,19 +103,19 @@
                     </tr>
                   </thead>
                   <tbody>
-                  {{with .Users}}
+                  {{with .PageData.UserAndRole}}
                   {{range $i, $e := .}}
                     <tr>
                       <td>{{$i}}</td>
-                      <td>{{.User.Name}}</td>
-                      <td>{{.User.Surname}}</td>
-                      <td>{{.User.Email}}</td>
-                      <td>{{if .Role}}{{.Role}}{{else}}NONE{{end}}</td>
-                      <td><a href="/admin_user/users/edit/{{.User.Email}}" class="btn btn-primary btn-user btn-block">
+                      <td>{{.Users.Name}}</td>
+                      <td>{{.Users.Surname}}</td>
+                      <td>{{.Users.Email}}</td>
+                      <td>{{if .Role}}{{.Role.Role}}{{else}}NONE{{end}}</td>
+                      <td><a href="/admin_user/users/edit/{{.Users.Email}}" class="btn btn-primary btn-user btn-block">
                           Edit
                         </a>
                       </td>
-                      <td><a href="/admin_user/users/delete/{{.User.Email}}" class="btn btn-google btn-user btn-block">
+                      <td><a href="/admin_user/users/delete/{{.Users.Email}}" class="btn btn-google btn-user btn-block">
                           <i class="fab fa-fw"></i> Delete
                         </a>
                       </td>
@@ -205,7 +205,7 @@
                   <label>User Role</label>
                   <select name="userRoleId" class="browser-default custom-select" required>
                     <option selected>Choose a role</option>
-                    {{with .Roles}}
+                    {{with .PageData.Role}}
                       {{range .}}
                         <option value={{.Id}}>{{.Role}}</option>
                       {{end}}
